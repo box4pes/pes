@@ -1,7 +1,7 @@
 {
     "name": "pes/pes",
     "description": "Psí framework.",
-    "license": "na dotaz",
+    "license": "MIT",
     "keywords": ["pes", "framework"],
     "authors": [
         {
