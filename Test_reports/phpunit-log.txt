@@ -1,0 +1,189 @@
+Pes\Autoloader\Autoloader
+ [x] Existing file
+ [x] Missing file
+ [x] Deep file
+ [x] Confusion
+
+EntityCollection
+ [ ] Incomplete
+
+KeyNormalizedMapCollection
+ [x] Constructor
+ [x] Set get remove
+ [x] Get iterator
+
+MapCollection
+ [x] Constructor
+ [x] Set get remove
+ [x] Get iterator
+ [x] Order
+ [x] Sort
+
+SetCollection
+ [x] Constructor
+ [x] Set remove count
+ [x] Order
+ [x] Sort
+
+AutowiringContainer
+ [x] Create db handler
+ [x] Autowire dependency resolving exception
+
+ContainerConfigurator
+ [x] Create
+
+Container
+ [x] Duplicate service definion exception
+ [x] Delegate has and get
+ [x] Service singleton behavior
+ [x] Create db handler
+
+ConnectionInfo
+ [x] Connection info
+
+DbTypeEnum
+ [x] Get mysql type
+ [x] Get mssql type
+
+HandlerMSSQL
+ [ ] Incomplete
+
+HandlerMySQL
+ [x] Handler create
+ [x] Statement from handler
+ [x] Hadler with windows coding
+
+AttributesProviderMysql
+ [x] Attributes provider mysql
+
+AttrubutesProviderNull
+ [x] Attributes provider null
+
+DsnProviderMysql
+ [x] Dsn provider mysql
+
+OptionsProviderMysql
+ [x] Option provider mysql
+
+OptionsProviderNull
+ [x] Mysql option provider
+
+Statement
+ [x] Statement
+ [x] Statement with file logger
+
+FileLogger
+ [x] Get instance and log
+
+ColumnAccessEnum
+ [x] Get default access type
+ [x] Get writing prohibited type
+ [x] Get update prohibited type
+ [x] Get always writeable type
+
+Criteria
+ [x] Criteria and condition match
+ [x] Conditions match with data set #0
+ [x] Conditions match with data set #1
+ [x] Conditions match with data set #2
+ [x] Conditions match with data set #3
+ [x] Conditions match with data set #4
+ [x] Conditions match with data set #5
+ [x] Conditions match with data set #6
+ [x] Conditions match with data set #7
+ [x] Conditions match with data set #8
+ [x] Conditions match with data set #9
+ [x] Conditions match with data set #10
+ [x] Conditions match with data set #11
+ [x] Conditions match with data set #12
+ [x] Conditions match with data set #13
+ [x] Conditions match with data set #14
+ [x] Conditions match with data set #15
+ [x] Conditions match with data set #16
+ [x] Conditions match with data set #17
+
+LogicOperatorEnum
+ [x] Get default access type
+ [x] Get writing prohibited type
+
+Order
+ [x] Get sql string
+ [x] Iterator
+
+OrderingEnum
+ [x] Get ascending ordering type
+ [x] Get decsending ordering type
+
+CompareMatcher
+ [x] Match
+
+InMatcher
+ [x] Match
+ [x] Match with scalar and null pattern
+
+LikeMatcher
+ [x] Match string
+ [x] Match escaped string
+ [x] Match string with wildcards
+ [x] Match escaped string with changed escape character
+
+NotInMatcher
+ [x] Match
+ [x] Match with scalar and null pattern
+
+MethodEnum
+ [x] Get get method type
+ [x] Get post method type
+ [x] Get put method type
+ [x] Get delete method type
+ [x] Get option method type
+ [x] Get patch method type
+
+Route
+ [x] Constructor
+ [x] Set method get method
+ [x] Set url pattern
+ [x] Exception empty pattern
+ [x] Exception missing left slash
+ [x] Exception paremeter in first section
+ [x] Set get url pattern
+ [x] Get pattern preg
+ [x] Set get action
+ [x] Get path for
+
+Coder
+ [x] Base 64 url
+ [x] Base 64
+ [x] Hex
+ [x] Raw
+ [x] All codings in enum
+
+CryptorOpenSSLBase
+ [x] Encrypt and decrypt
+ [x] Repeated encrypt
+ [x] Changeded message
+ [x] Corrupted message
+
+Password
+ [x] Get password hash
+ [x] Verify password
+ [x] Rehash old hash
+
+Enum
+ [x] Exception value not in enum
+ [x] Get const list
+ [x] Get type value with data set #0
+ [x] Get type value with data set #1
+ [x] Get uno type
+ [x] Get due type
+
+IsArrayKeyValidator
+ [x] Is valid
+
+IsObjectTypeValidator
+ [x] Constructor
+ [x] Is valid
+
+IsSerializableValidator
+ [x] Is valid
+

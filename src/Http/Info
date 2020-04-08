@@ -1,0 +1,14 @@
+upraveno ze Slim
+- Headers není array, ale Pes\Collection\MapCollection
+- Response
+    - rozdělen na ResponsePsr - implementuje metody PSR-7 dané PSR interfacem a na Response a ResponseInterface- ten obsahuje přidané metody nad rámec PSR-7,
+    které nejsou součástí PSR specifikace. Tyto přidané metody byly původně vloženy do jedné třídy s PSR metodami, ale nebyly obsaženy
+    v žádném interface, Slim Response objekt implementuje PSR Message a Response a žádné svoje rozhraní!
+    - pomocné informační metody isXXX ze Slim Response přesunuty do objektu ResponseStatus, Response je parametr těchto metod
+- ResponseSender - upraven podle změn Response (malinko)
+
+- Request
+    - rozdělen na RequestPsr - obsahuje metody PSR-7 interface a na Request a RequestInterface - ten obsahuje přidané metody,
+    které nejsou součástí PSR specifikace. Stejně jako  Response - tyto přidané metody byly původně vloženy do jedné třídy s PSR metodami, ale nebyly obsaženy
+    v žádném interface, Slim Request objekt implementuje PSR Message a Request a žádné svoje rozhraní!
+    - pomocné informační metody isXXX ze Slim Request přesunuty do objektu RequestStatus, Request je parametr těchto metod

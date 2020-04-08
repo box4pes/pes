@@ -1,0 +1,6 @@
+routr->name
+objekt uRL - helper- paraametry: request, pattern, parametry pattern - z requestu vezme method a vyrobí base url, doplní do pattern parametry a vrací string
+selector -> změnit na Prefixes, SelectorItem ->Prefix
+router - Route přijímá : method, pattern a callable nebo middleware
+nebo
+udělat middleware router - router přijímá: method, pat tern a middleware a M Router jde do namespace Middleware?

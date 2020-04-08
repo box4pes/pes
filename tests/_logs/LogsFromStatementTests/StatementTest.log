@@ -1,0 +1,20 @@
+[info] [2020-03-25 19:06:10] Logger start. Log file: _logs/LogsFromStatementTests/StatementTest.log.
+[debug] Vytvořen database handler Handler pes (11), name pes, host localhost.
+[debug] Handler pes (11) prepare(SELECT name, surname FROM person WHERE number=:number, ). Vytvořen Statement (3).
+[debug] Statement (3) bindParam(:number, 1, 2, , )
+[debug] Statement (3) execute().
+[debug] Statement (3) execute()
+[debug] Statement (3) setFetchMode(1048584, Person)
+[debug] Statement (3) fetch(, 0, 0)
+[debug] Handler pes (11) prepare(SELECT name, surname FROM person WHERE number=:number, ). Vytvořen Statement (4).
+[debug] Statement (4) bindParam(:number, 2, 2, , )
+[debug] Statement (4) execute().
+[debug] Statement (4) execute()
+[debug] Statement (4) setFetchMode(1048584, Person)
+[debug] Statement (4) fetch(, 0, 0)
+[debug] Handler pes (11) prepare(SELECT name, surname FROM person WHERE number=:number, ). Vytvořen Statement (5).
+[debug] Statement (5) bindParam(:number, 3, 2, , )
+[debug] Statement (5) execute().
+[debug] Statement (5) execute()
+[debug] Statement (5) setFetchMode(1048584, Person)
+[debug] Statement (5) fetch(, 0, 0)
