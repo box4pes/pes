@@ -27,8 +27,9 @@ class ViewFactory implements viewFactoryInterface {
 
     private $rendererContainer;
 
-    public function __construct(ContainerInterface $templateRendererContainer=null) {
-        $this->rendererContainer = $templateRendererContainer;
+    public function setRendererContainer(ContainerInterface $rendererContainer): viewFactoryInterface {
+        $this->rendererContainer = $rendererContainer;
+        return $this;
     }
 
     /**

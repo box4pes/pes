@@ -134,6 +134,8 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
             $dependency = $parameter->getClass();  // vrací ReflectionClass závislosti (ta má vlastost ->name, která obsahuje typ uvedený u proměnné v parametru konstruktoru - obvykle interface
             if (isset($dependency)) {
                 // get dependency resolved
+                assert(false, "Dodělat, pokud autowire kontejner je delegate kontejner, volá se konkrétní kontejner a pokud ten služby nnemá definovynou vyhodí exceptionn - "
+                        . "jenže nepochopitelnou.");
                 $dependencies[] = $this->get($dependency->name);  // poždáám službu kontejneru se jménem třídy závislosti
             } else {
                 // nepodařilo se vytvořit instanci - typicky není type hint u proměnné nebo parametr je skalár nebo callback

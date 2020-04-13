@@ -19,5 +19,5 @@ use Pes\View\Recorder\RecorderProviderInterface;
  * @author pes2704
  */
 interface TemplateRendererContainerInterface extends ContainerInterface {
-    public static function setRecorderProvider(RecorderProviderInterface $recorderProvider);
+    public function setRecorderProvider(RecorderProviderInterface $recorderProvider);
 }

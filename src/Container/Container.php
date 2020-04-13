@@ -250,10 +250,10 @@ class Container implements ContainerSettingsAwareInterface {
                     if (class_exists($realName)) {
                         $this->aliases[$serviceName] = $realName;
                     } else {
-                        throw new Exception\NotFoundException("Nelze provést autowire k interface $serviceName. Definice třídy $realName nebyla nalezena.");
+                        throw new Exception\NotFoundException("Pokus použít automaticky generované jméno třídy $realName k interface $serviceName selhal. Definice třídy $realName nebyla nalezena.");
                     }
                 } else {
-                    throw new Exception\NotFoundException("Nelze provést autowire k požadovanému jménu interface $serviceName. Definice interface $serviceName nebyla nalezena.");
+                    throw new Exception\NotFoundException("Pokus použít automaticky generované jméno třídy k požadovanému jménu interface $serviceName selhal. Definice interface $serviceName nebyla nalezena.");
                 }
             } else {
                 $realName = $serviceName;
