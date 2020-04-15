@@ -157,9 +157,10 @@ class View implements ViewInterface {
         try {
             $str = $this->getString();
         } catch (\Throwable $e) {
-            user_error(' Výjimka pri vykonávání metody __toString: '.$e->getMessage().' in: '.$e->getFile().' on line: '.$e->getLine().'.'
-            .PHP_EOL.str_replace('\n', PHP_EOL, $e->getTraceAsString()), E_USER_ERROR);
-            $str = '';
+
+            trigger_error("Výjimka ".get_class($e)." při vykonávání metody __toString objektu ".get_class($this).". ".
+                    "Exception in: ".$e->getFile()." on line: ".$e->getLine().". ".$e->getMessage()."."
+                     .PHP_EOL.str_replace('\n', PHP_EOL, $e->getTraceAsString()), E_USER_ERROR);
         }
         return $str;
     }
