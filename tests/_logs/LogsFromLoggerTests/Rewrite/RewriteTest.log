@@ -1,5 +1,0 @@
-[info] [2020-03-25 19:06:10] Logger start. Log file: _logs/LogsFromLoggerTests/Rewrite/RewriteTest.log.
-[alert] Jeden řádek.
-[critical] Dva řádky. Tohle je první.
-    A tohle druhý.
-[debug] Interpolovaná zpráva z testu FileLoggerTest::testGetInstanceAndLog v čase 1585159570.

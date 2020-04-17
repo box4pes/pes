@@ -9,10 +9,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-namespace Pes\View\Renderer\Exception;
+namespace Pes\View\Template\Exception;
 
 /**
- * Description of RendererException
+ * Description of NoTemplateFileException
  *
  * @author pes2704
  */

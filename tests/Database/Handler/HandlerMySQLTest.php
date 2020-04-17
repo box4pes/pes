@@ -92,7 +92,7 @@ class HandlerMySQLTest extends TestCase {
         $dbh->exec('INSERT INTO person (number, name, surname) VALUES (3, "Cyril","'.self::TESTOVACI_STRING.'")');
 
         // nastaví logger pro použití v testech
-        $baseLogsDir="_logs/";
+        $baseLogsDir="../Tests_logs/";
         $dir = 'LogsFromHandlerTests/';
         $file = get_called_class().'.log';
             // base

@@ -23,13 +23,8 @@ class FileTemplateRendererAbstract {
      *
      * @param FileTemplateInterface $fileTemplate
      * @return string|bool vrací FALSE při neúspěchu
-     * @throws NoTemplateFileException Pokud soubor neexistuje nebo ho nelze číst
      */
     protected function getTemplateFileContent(FileTemplateInterface $fileTemplate) {
-        if (is_readable($fileTemplate->getTemplateFilename())) {   //200mikrosec
-            return \file_get_contents($this->template->getTemplateFilename());   //file_get_contents vrací FALSE při neúspěchu a E_WARNING, pokud neex soubor
-        } else {
-            throw new NoTemplateFileException('Nepodařilo se nalézt soubor "'.$fileTemplate->getTemplateFilename().'". Soubor neexistuje nebo jej nelze číst.');
-        }
+        return $fileTemplate->getTemplateString();
     }
 }

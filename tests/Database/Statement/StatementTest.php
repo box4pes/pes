@@ -58,7 +58,7 @@ class StatementTest extends TestCase {
 //        $this->logger = new NullLogger();
 //        $this->attributesProviderDefault = new AttributesProviderDefault($this->logger);
 
-        $baseLogsDir="_logs/";
+        $baseLogsDir="../Tests_logs/";
         FileLogger::setBaseLogsDirectory($baseLogsDir);
     }
 

@@ -21,8 +21,7 @@
       </whitelist>
     </filter>
     <logging>
-        <log type="junit" target="Test_reports/phpunit-log.xml" logIncompleteSkipped="false"/>
-        <log type="testdox-html" target="Test_reports/phpunit-log.html"/>
-        <log type="testdox-text" target="Test_reports/phpunit-log.txt"/>
+        <log type="testdox-html" target="../Test_reports/phpunit-log.html"/>
+        <log type="testdox-text" target="../Test_reports/phpunit-log.txt"/>
     </logging>
 </phpunit>

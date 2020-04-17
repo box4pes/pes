@@ -10,7 +10,7 @@
  */
 
 namespace Pes\View\Template;
-
+use Pes\View\Template\Exception\NoTemplateFileException;
 /**
  * PhpTemplate.
  *
@@ -22,12 +22,13 @@ abstract class FileTemplateAbstract implements FileTemplateInterface {
 
     /**
      * Konstruktor - název souboru s template - název souboru včetně přípony.
+     *
      * @param type $templateFileName
-     * @param RecorderProviderInterface $recorderProvider
+     * @throws NoTemplateFileException Pokud soubor neexistuje nebo ho nelze číst
      */
     public function __construct($templateFileName) {
         if (!is_readable($templateFileName)) {
-            throw new \UnexpectedValueException('Neexistuje nebo není čitelný soubor '.$templateFileName.'.');
+            throw new NoTemplateFileException('Neexistuje nebo není čitelný soubor '.$templateFileName.'.');
         }
         $this->templateFileName = $templateFileName;
     }

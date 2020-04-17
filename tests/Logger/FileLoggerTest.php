@@ -14,7 +14,7 @@ class FileLoggerTest extends TestCase {
     }
 
     public function testGetInstanceAndLog() {
-        $baseLogsDir="_logs/";
+        $baseLogsDir="../Tests_logs/";
         $dirRew = 'LogsFromLoggerTests/Rewrite';
         $fileRew = 'RewriteTest.log';
         $dirRewDel = 'LogsFromLoggerTests/RewriteAndDelete';
