@@ -45,6 +45,6 @@ interface RouterInterface extends MiddlewareInterface {
      * Vrací request použitý při posledním routování.
      * @return ServerRequestInterface
      */
-    public function getRequest(): ServerRequestInterface;
+    public function getMatchedRequest(): ServerRequestInterface;
 
 }

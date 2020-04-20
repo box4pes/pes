@@ -46,21 +46,21 @@ class RedirectResponse {
 
     /**
      * Tato metosda je vhodná pro použití při přesměrování na GET request po POST requestu při používání REST API.
-     * Tato metoda vytvoří response se zadaným status kódem 303 a přidanou hlavičkou "Location:" a zadanou url.
+     * Tato metoda vytvoří response se zadaným status kódem 303 a hlavičkou "Location:" se zadanou url.
+     * Na status kód 303 má klient reagovat zaslání GET požadavku na stejnou adresu.
      *
      * 303 See Other
      * The server sent this response to direct the client to get the requested resource at another URI with a GET request.
-     *
+     * Excerpt from RFC-2616:
+     * Note: Many pre-HTTP/1.1 user agents do not understand the 303 status. When interoperability with such clients is a concern, the 302 status code may be used instead, since most user agents react to a 302 response as described here for 303.
+     * V případě potíží se status kódem 303 lze použít ::withRedirect() s default kódem 302, takový redirect však nevede k odeslání GET requestu.
      *
      * @param ResponseInterface $response
      * @param string $url
      * @return ResponseInterface
      */
     public static function withPostRedirectGet(ResponseInterface $response, $url) {
-        // Excerpt from RFC-2616:
-        // Note: Many pre-HTTP/1.1 user agents do not understand the 303 status. When interoperability with such clients is a concern, the 302 status code may be used instead, since most user agents react to a 302 response as described here for 303.
-        $responseWithRedirect = $response->withHeader('Location', (string)$url);
-        return $responseWithRedirect->withStatus(303);
+        return self::withRedirect($response, $url, 303);
     }
 }
 // 303 See Other
