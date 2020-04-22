@@ -16,5 +16,5 @@ namespace Pes\View\Template\Exception;
  *
  * @author pes2704
  */
-class NoTemplateFileException extends \RuntimeException implements RendererExceptionInterface {
+class NoTemplateFileException extends \RuntimeException implements TemplateExceptionInterface {
 }
