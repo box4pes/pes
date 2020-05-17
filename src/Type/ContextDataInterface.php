@@ -32,10 +32,11 @@ interface ContextDataInterface extends  \IteratorAggregate, \Traversable, \Array
     public function exchangeData($data): \ContextDataInterface;
 
     /**
-     *
-     * @param type $appendedData
+     * Metoda přidá data z pole nebo \ArrayObject zadaného jako parametr.
+     * @param mixed $appendedData array nebo \ArrayObject
+     * @return \ContextDataInterface
      */
-    public function appendData($appendedData);
+    public function appendData($appendedData): \ContextDataInterface ;
 
     /**
      *

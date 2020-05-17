@@ -43,7 +43,9 @@ class RequestParams implements RequestParamsInterface {
         } elseif (is_object($postParams) && property_exists($postParams, $key)) {
             $result = $postParams->$key;
         } elseif (isset($getParams[$key])) {
-            $result = $getParams[$key];
+            $getParams[$key];
+        } else {
+            $result = $default;
         }
 
         return $result;

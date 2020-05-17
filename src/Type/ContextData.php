@@ -33,7 +33,7 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
     private $status;
 
     /**
-     * Třífa je wrapper pro ArrayObject. Tato třída přijímá data pouze buď jako pole nebo jako ArrayObject.
+     * Třífa je wrapper pro ArrayObject. Tato třída přijímá data buď jako pole nebo jako ArrayObject.
      * Zaznamenává užití dat - t.j. čtení, zápis dat pokud se s objektem pracuje jako s polem
      * (např. $x = $data['jmeno']  $data['jmeno'] = $y) a dotazy na existenci dat (např. isset($data['jmeno']))
      *
@@ -86,6 +86,12 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
         return $e;
     }
 
+    /**
+     * {@inheritdoc}
+     * @param mixed $appendedData array nebo \ArrayObject
+     * @return \ContextDataInterface
+     * @throws UnexpectedValueException
+     */
     public function exchangeData($data): \ContextDataInterface {
         if (is_array($data)) {
             $ret = parent::exchangeArray($data);
@@ -98,10 +104,12 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
     }
 
     /**
-     * (@inheritdoc)
+     * {@inheritdoc}
+     * @param mixed $appendedData array nebo \ArrayObject
+     * @return \ContextDataInterface
      * @throws UnexpectedValueException
      */
-    public function appendData($appendedData) {
+    public function appendData($appendedData): \ContextDataInterface  {
         if (is_array($appendedData)) {
             parent::exchangeArray(array_merge($this->getArrayCopy(), $appendedData));
         } elseif ($appendedData instanceof \ArrayObject) {

@@ -1,5 +1,6 @@
 {
     "name": "pes/pes",
+    "type": "library",
     "description": "Psí framework.",
     "license": "MIT",
     "keywords": ["pes", "framework"],
@@ -9,7 +10,7 @@
             "email": "svoboda@grafia.cz"
         }
     ],
-    "version": "1.20.32",
+    "version": "1.20.33",
     "require": {
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",
