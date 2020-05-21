@@ -166,9 +166,6 @@ class Router implements RouterInterface, LoggerAwareInterface {
     }
 
     private function callMatchedRouteAction() {
-        // jako první prvek pole matches vloží $request -> první parametr předaný volané action callable routy je pak $request
-        // užití v callable: function(ServerRequestInterface $request, $uid) { ... }
-        $this->matches[0] = $this->matchedRequest;
 
         $action = $this->matchedRoute->getAction();
 
@@ -177,10 +174,15 @@ class Router implements RouterInterface, LoggerAwareInterface {
 
         if ($this->logger) {
             $this->logBefore($action);
-            $ret = call_user_func_array($action, $this->matches);
+        }
+        
+        // jako první prvek pole matches vloží $request -> první parametr předaný volané action callable routy je pak $request
+        // užití v callable: function(ServerRequestInterface $request, $uid) { ... }
+        $this->matches[0] = $this->matchedRequest;
+        $ret = call_user_func_array($action, $this->matches);
+
+        if ($this->logger) {
             $this->logAfter($ret);
-        } else {
-            $ret = call_user_func_array($action, $this->matches);
         }
         return $ret;
     }
