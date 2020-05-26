@@ -76,6 +76,16 @@ class Registry implements RegistryInterface {
     }
 
     public function getRoutedSegment($prefix, $httpMethod): \Traversable {
+        if (!array_key_exists($prefix, $this->actions)) {
+            user_error("Requested prefix not exists: '$prefix'.", E_USER_NOTICE);
+            return new \ArrayIterator([]);
+        } else {
+            try {
+                $httpMethod = ($this->methodsEnum)($action->getResource()->getHttpMethod());
+            } catch (TypeExceptionInterface $e) {
+                throw new ActionHttpMethodNotValid("Passed action HTTP method {$httpMethod} is not valid.", 0, $e);
+            }
+        }
         return new \ArrayIterator($this->actions[$prefix][$httpMethod]);
     }
 
