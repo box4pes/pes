@@ -71,7 +71,7 @@ class Registry implements RegistryInterface {
         }
     }
 
-    public function getAction($prefix, $httpMethod, $urlPattern): \Pes\Action\ActionInterface {
+    public function getAction($prefix, $httpMethod, $urlPattern): ActionInterface {
         $this->actions[$prefix][$httpMethod][$urlPattern];
     }
 

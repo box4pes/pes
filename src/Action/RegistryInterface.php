@@ -14,6 +14,6 @@ namespace Pes\Action;
  */
 interface RegistryInterface {
     public function register($prefix, ActionInterface $action): void;
-    public function getAction($urlPattern): ActionInterface;
+    public function getAction($prefix, $httpMethod, $urlPattern): ActionInterface;
     public function getRoutedSegment($prefix, $httpMethod): \Traversable;
 }
