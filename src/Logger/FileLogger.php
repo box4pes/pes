@@ -92,8 +92,8 @@ class FileLogger extends AbstractLogger {
                 throw new \InvalidArgumentException('Nelze vytvořit '.__CLASS__.' pro soubor: '.$fullLogFileName.', nepodařilo se soubor vytvořit.');
             }
             $loggerInstance = new self($handle, $fullLogFileName);
-            $loggerInstance->info("[{time}] Logger start. Log file: {fullLogFileName}.",
-                ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName]);
+            $loggerInstance->info("[{time}] Logger start. Log file: {fullLogFileName}. Mode '{mode}'.",
+                ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName, 'mode'=>$mode]);
             self::$instances[$fullLogFileName] = $loggerInstance;
         }
         return self::$instances[$fullLogFileName];
@@ -110,10 +110,10 @@ class FileLogger extends AbstractLogger {
      * Víceřádková zpráva je uložena do více řádek logu tak, že první řádka obsahuje prefix v hranatých závorkách a další řádky jsou zleva odsazeny.
      *
      * Příklad:
-     * volání logger->log('POZOR!', 'Toto je hlášení o chybě '.PHP_EOL.'v souboru file na řádku line.', ['file=>'Ukázka.ext', 'line'=>159]
+     * volání logger->log('error', 'Toto je hlášení o chybě '.PHP_EOL.'v souboru file na řádku line.', ['file=>'Ukázka.ext', 'line'=>159]
      * vytvoří záznam:
      * <pre>
-     * [POZOR!] Toto je hlášení o chybě
+     * [error] Toto je hlášení o chybě
      *     v souboru Ukázka.ext na řádku 159.
      * </pre>
      *

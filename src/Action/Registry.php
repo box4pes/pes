@@ -4,7 +4,7 @@ namespace Pes\Action;
 
 use Pes\Action\Exception\ActionHttpMethodNotValid;
 use Pes\Action\Exception\ActionUrlPatternNotValid;
-use Pes\Action\Exception\WrongName;
+use Pes\Action\Exception\ActionUrlPatternDuplicate;
 use Pes\Action\Exception\DuplicateName;
 
 use Pes\Router\MethodEnum;
@@ -23,15 +23,11 @@ use Pes\Router\Exception\WrongPatternFormatException;
  *
  * @author pes2704
  */
-class Registry implements RegistryInterface, \IteratorAggregate {
+class Registry implements RegistryInterface {
 
     private $methodsEnum;
     private $urlPatternValidator;
 
-    /**
-     * @var Action array of
-     */
-    private $namedActions;
     /**
      * @var Action array of
      */
@@ -42,9 +38,10 @@ class Registry implements RegistryInterface, \IteratorAggregate {
         $this->urlPatternValidator = $urlPatternValidator;
     }
 
+    const SEPARATOR = '->';
+
     /**
      *
-     * @param type $name
      * @param \Pes\Action\ActionInterface $action
      * @return void
      * @throws WrongName
@@ -52,7 +49,7 @@ class Registry implements RegistryInterface, \IteratorAggregate {
      * @throws ActionHttpMethodNotValid
      * @throws ActionUrlPatternNotValid
      */
-    public function register(ActionInterface $action): void {
+    public function register($prefix, ActionInterface $action): void {
 
         try {
             $httpMethod = ($this->methodsEnum)($action->getResource()->getHttpMethod());
@@ -67,11 +64,19 @@ class Registry implements RegistryInterface, \IteratorAggregate {
             throw new ActionUrlPatternNotValid("Passed action URL pattern $urlPattern is not valid.", 0, $e);
         }
 
-        $this->actions[] = $action;
+        if (array_key_exists($urlPattern, $this->actions)) {
+            throw new ActionUrlPatternDuplicate("Duplicitní url pattern '$urlPattern'.");
+        } else {
+            $this->actions[$prefix][$httpMethod][$urlPattern] = $action;
+        }
     }
 
-    public function getIterator(): \Traversable {
-        return new \ArrayIterator($this->actions);
+    public function getAction($prefix, $httpMethod, $urlPattern): \Pes\Action\ActionInterface {
+        $this->actions[$prefix][$httpMethod][$urlPattern];
+    }
+
+    public function getRoutedSegment($prefix, $httpMethod): \Traversable {
+        return new \ArrayIterator($this->actions[$prefix][$httpMethod]);
     }
 
 }

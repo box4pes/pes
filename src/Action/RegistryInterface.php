@@ -13,5 +13,7 @@ namespace Pes\Action;
  * @author pes2704
  */
 interface RegistryInterface {
-    public function register(ActionInterface $action): void;
+    public function register($prefix, ActionInterface $action): void;
+    public function getAction($urlPattern): ActionInterface;
+    public function getRoutedSegment($prefix, $httpMethod): \Traversable;
 }

@@ -48,6 +48,18 @@ abstract class Enum {
 
     private $constants;
 
+    private $externalClassName;
+
+    /**
+     * Konstruktor má nepoviný parametr - jméno třídy obsahující definice konstant. To lze požít pro vytvoření typu Enum ze třídy, kterou nelze použít jako potomka
+     * abstract class Enum. To může být případ objektu z jiné knihovny apod.
+     * 
+     * @param type $externalClassName
+     */
+    public function __construct($externalClassName=null) {
+        $this->externalClassName = $externalClassName;
+    }
+
     public function __invoke($value) {
         $this->setConstants();
         $key = array_search($value, $this->constants);
@@ -75,7 +87,11 @@ abstract class Enum {
      */
     private function setConstants() {
         if (!isset($this->constants)) {
-            $reflexCls = new \ReflectionClass(get_called_class());
+            if (isset($this->externalClassName)) {
+                $reflexCls = new \ReflectionClass($this->externalClassName);
+            } else {
+                $reflexCls = new \ReflectionClass(get_called_class());
+            }
             $this->constants = $reflexCls->getConstants();
         }
     }
