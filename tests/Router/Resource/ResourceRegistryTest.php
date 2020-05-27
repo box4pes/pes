@@ -40,32 +40,20 @@ class ResourceRegistryTest extends TestCase {
         $this->registry->register('pref2', $resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
     }
 
-    public function testRegister() {
-
-        $segment = $this->registry->getRoutedSegment('pref1', 'POST');
-        $this->assertIsIterable($segment);
-        $this->assertCount(2, $segment);
-
-    }
-
-    public function testGetRoutedSegment() {
-        $segment = $this->registry->getRoutedSegment('pref2', 'GET');
-        $this->assertIsIterable($segment);
-        $this->assertCount(1, $segment);
-
-        $segment = $this->registry->getRoutedSegment('pref2', 'POST');
+    public function testCreateRoutedSegment() {
+        $segment = $this->registry->createRoutedSegment('pref2');
         $this->assertIsIterable($segment);
         $this->assertCount(1, $segment);
     }
 
-    public function testGetRoutedSegmentWithInvalidPrefix() {
+    public function testCreateRoutedSegmentWithInvalidPrefix() {
         $this->expectException(PHPUnit\Framework\Error\Notice::class);
         $segment = $this->registry->getRoutedSegment('non', 'POST');
         $this->assertIsIterable($segment);
         $this->assertCount(0,  $segment);
     }
 
-    public function testGetRoutedSegmentWithInvalidMethod() {
+    public function testCreateRoutedSegmentWithInvalidMethod() {
         $this->expectException(PHPUnit\Framework\Error\Notice::class);
         $segment = $this->registry->getRoutedSegment('pref2', 'PUSH');
         $this->assertIsIterable($segment);

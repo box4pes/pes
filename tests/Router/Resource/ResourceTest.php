@@ -46,7 +46,65 @@ class ResourceTest extends TestCase {
           'Tady není doděláno.'
         );
     }
+    /**
+     *
+     */
+    public function testSetUrlPattern() {
+        $route = new Route(new UrlPatternValidator());
 
+        $route->setUrlPattern('/');
+        $route->setUrlPattern('/kuk/');
+        $route->setUrlPattern('/kuk/:id/');
+        $this->assertTrue(true);   // vždy splněno - testuji jen, že nenastala výjimka
+    }
+
+    public function testExceptionEmptyPattern() {
+        $route = new Route(new UrlPatternValidator());
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Chybný formát pattern.');  // testuje, message obsahuje řetězec
+        $route->setUrlPattern('');
+    }
+
+    public function testExceptionMissingLeftSlash() {
+        $route = new Route(new UrlPatternValidator());
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Chybný formát pattern.');  // testuje, message obsahuje řetězec
+        $route->setUrlPattern('kuk/');
+    }
+
+//    public function testExceptionMissingRightSlash() {
+//        $route = new Route(new UrlPatternValidator());
+//        $this->expectException(\UnexpectedValueException::class);
+//        $this->expectExceptionMessage('Chybný formát pattern.');  // testuje, message obsahuje řetězec
+//        $route->setUrlPattern('/kuk');
+//    }
+
+    public function testExceptionParemeterInFirstSection() {
+        $route = new Route(new UrlPatternValidator());
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Chybný formát pattern.');  // testuje, message obsahuje řetězec
+        $route->setUrlPattern('/:id/');
+    }
+
+    public function testSetGetUrlPattern() {
+        $route = new Route(new UrlPatternValidator());
+        $route->setUrlPattern('/trdlo/');
+        $this->assertEquals('/trdlo/', $route->getUrlPattern());
+    }
+
+    public function testGetPatternPreg() {
+        $route = new Route(new UrlPatternValidator());
+        $route->setUrlPattern('/');
+        $patternPreg = $route->getPatternPreg();
+        $this->assertEquals("@^/$@D", $route->getPatternPreg());
+        $route->setUrlPattern('/trdlo/');
+        $patternPreg = $route->getPatternPreg();
+        $this->assertEquals("@^/trdlo/$@D", $route->getPatternPreg());
+        $route->setUrlPattern('/trdlo/:id/');
+        $patternPreg = $route->getPatternPreg();
+        $this->assertEquals("@^/trdlo/([a-zA-Z0-9\-\_]+)/$@D", $route->getPatternPreg());
+    }
+    
     public function withUrlPatternException() {
         $this->markTestIncomplete(
           'Tady není doděláno.'

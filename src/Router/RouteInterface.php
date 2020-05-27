@@ -11,6 +11,8 @@
 
 namespace Pes\Router;
 
+use Pes\Router\Resource\ResourceInterface;
+
 /**
  *
  * @author pes2704
@@ -18,14 +20,9 @@ namespace Pes\Router;
 interface RouteInterface {
 
     /**
-     * @return string Description
+     * @return ResourceInterface
      */
-    public function getMethod();
-
-    /**
-     * @return string Vrací zadaný urlPattern
-     */
-    public function getUrlPattern();
+    public function getResource(): ResourceInterface;
 
     /**
      * @return string Vrací regulární výraz vytvořený z parametru urlPattern
@@ -39,19 +36,15 @@ interface RouteInterface {
 
     /**
      *
-     * @param string $method
+     * @param ResourceInterface $resource
+     * @return \Pes\Router\RouteInterface
      */
-    public function setMethod($method): RouteInterface;
-
-    /**
-     *
-     * @param string $urlPattern
-     */
-    public function setUrlPattern($urlPattern): RouteInterface;
+    public function setResource(ResourceInterface $resource): RouteInterface;
 
     /**
      *
      * @param callable $action
+     * @return \Pes\Router\RouteInterface
      */
     public function setAction(callable $action): RouteInterface;
 

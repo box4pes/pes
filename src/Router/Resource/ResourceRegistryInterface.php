@@ -14,6 +14,17 @@ namespace Pes\Router\Resource;
  */
 interface ResourceRegistryInterface {
     public function register($prefix, ResourceInterface $resource): void;
-    public function bindAction($prefix, $httpMethod, callable $action): void;
-    public function getRoutedSegment($prefix, $httpMethod): \Traversable;
+    public function hasPrefix($prefix): bool;
+    public function hasHttpMethod($prefix, $httpMethod): bool;
+    public function hasUrlPattern($prefix, $httpMethod, $urlPattern): bool;
+    
+    /**
+     *
+     * @param type $prefix
+     * @param type $httpMethod
+     * @param type $urlPattern
+     * @return \Pes\Router\Resource\ResourceInterface|null
+     */
+    public function getResource($prefix, $httpMethod, $urlPattern): ?ResourceInterface;
+
 }

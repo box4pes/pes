@@ -26,11 +26,10 @@ interface RouterInterface extends MiddlewareInterface {
 
     /**
      *
-     * @param ResourceInterface $resource
-     * @param callable $action
-     * @param type $name
+     * @param \Pes\Router\RouteInterface $route
+     * @return void
      */
-    public function addRoute(ResourceInterface $resource, callable $action, $name='');
+    public function addRoute(RouteInterface $route): void ;
     public function route(ServerRequestInterface $request);
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
 

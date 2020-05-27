@@ -2,6 +2,8 @@
 
 namespace Pes\Router;
 
+use Pes\Router\Resource\ResourceInterface;
+
 /**
  * Description of Route
  *
@@ -10,19 +12,9 @@ namespace Pes\Router;
 class Route implements RouteInterface {
 
     /**
-     * @var UrlPatternValidator
+     * @var ResourceInterface
      */
-    private $urlPatternValidator;
-
-    /**
-     * @var string
-     */
-    private $method;
-
-    /**
-     * @var string
-     */
-    private $urlPattern;
+    private $resource;
 
     /**
      * @var string
@@ -34,25 +26,8 @@ class Route implements RouteInterface {
      */
     private $action;
 
-    /**
-     * @var string
-     */
-    private $name;
-
-    public function __construct(UrlPatternValidator $urlPatternValidator) {
-        $this->urlPatternValidator = $urlPatternValidator;
-    }
-
-    public function getMethod() {
-        return $this->method;
-    }
-
-    /**
-     *
-     * @return string Vrací zadaný urlPattern
-     */
-    public function getUrlPattern() {
-        return $this->urlPattern;
+    public function getResource(): ResourceInterface {
+        return $this->resource;
     }
 
     /**
@@ -65,40 +40,23 @@ class Route implements RouteInterface {
 
     /**
      * @return callable Vrací spustitelnou akci routy.
-     * @return callable
      */
     public function getAction() {
         return $this->action;
     }
 
     /**
-     * Přijímá hodnoty výčtového typu MethodEnum. V případě neexistující hodnoty vyhodí objekt MethodEnum svoji výjimku.
      *
-     * @param string $method Existující hodnota výčtového typu MethodEnum.
+     * @param ResourceInterface $resource
      * @return \Pes\Router\RouteInterface
      */
-    public function setMethod($method): RouteInterface {
-        $this->method = (new MethodEnum())($method);
-        return $this;
-    }
-
-    /**
-     * Nastaví pattern routy. Kontroluje přípustný formát pattern a v případě chybného formátu vyhodí výjimnku.
-     * Pattern routy začíná i končí znakem '/' a může obsahovat segmenty oddělené znakem '/'. Pattern, který nemá segmenty je '/'.
-     * Jednotlivé segmenty jsou dvojího druhu:
-     *
-     * @param string $urlPattern
-     * @return \Pes\Router\RouteInterface
-     * @throws \UnexpectedValueException Chybný formát pattern...
-     */
-    public function setUrlPattern($urlPattern): RouteInterface {    // 50 microsec
-        $this->urlPatternValidator->validate($urlPattern);
-        $this->urlPattern = $urlPattern;
+    public function setResource(ResourceInterface $resource): RouteInterface {
+        $this->resource = $resource;
         // konvertuje route url na regulární výraz - obalí pattern routy znaky začátku a konce regulárního výrazu
         // a nahradí části začínající : výrazem ([a-zA-Z0-9\-\_]+)
         // Příklad: url "/node/:id/add/" kovertuje na regulární výraz "@^/node/([a-zA-Z0-9\-\_]+)/add/$@D"
         // když není nastaveno /u -> neumí utf8 jen ascii a tedy neumí písmenka s diakritikou
-        $this->patternPreg = "@^" . preg_replace('/\\\:[a-zA-Z0-9\_\-]+/u', '([a-zA-Z0-9\-\_]+)', preg_quote($this->urlPattern)) . "$@D";
+        $this->patternPreg = "@^" . preg_replace('/\\\:[a-zA-Z0-9\_\-]+/u', '([a-zA-Z0-9\-\_]+)', preg_quote($this->resource->getUrlPattern())) . "$@D";
         return $this;
     }
 

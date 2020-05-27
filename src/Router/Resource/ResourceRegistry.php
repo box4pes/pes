@@ -2,15 +2,7 @@
 
 namespace Pes\Router\Resource;
 
-use Pes\Router\Resource\Exception\ResourceHttpMethodNotValid;
-use Pes\Router\Resource\Exception\ResourceUrlPatternNotValid;
-use Pes\Router\Resource\Exception\ResourceUrlPatternDuplicate;
-use Pes\Router\Resource\Exception\ResourcePatternAndPrefixMismatch;
-
-use Pes\Router\MethodEnum;
-use Pes\Type\Exception\TypeExceptionInterface;
-use Pes\Router\UrlPatternValidator;
-use Pes\Router\Exception\WrongPatternFormatException;
+use Pes\Router\Exception\RouteRegistrySegmentPrefixNotFoundException;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -30,50 +22,37 @@ class ResourceRegistry implements ResourceRegistryInterface {
      */
     private $resources=[];
 
-
-    const SEPARATOR = '->';
-
     /**
      *
      * @param type $prefix
      * @param \Pes\Router\Resource\ResourceInterface $resource
      * @return void
-     * @throws ResourceHttpMethodNotValid
-     * @throws ResourceUrlPatternNotValid
-     * @throws ResourceUrlPatternDuplicate
      */
     public function register($prefix, ResourceInterface $resource): void {
-
         $httpMethod = $resource->getHttpMethod();
-
         $urlPattern = $resource->getUrlPattern();
-
-        if (array_key_exists($prefix, $this->resources) AND array_key_exists($urlPattern, $this->resources[$prefix])) {
-            throw new ResourceUrlPatternDuplicate("Duplicitní url pattern '$urlPattern'.");
-        } else {
-            $this->resources[$prefix][$httpMethod][] = $resource;
-        }
+        $this->resources[$prefix][$httpMethod][$urlPattern] = $resource;
     }
-    public function bindAction($prefix, $httpMethod, callable $action): void {
-        if (!array_key_exists($prefix, $this->resources)) {
-
-        } elseif (!array_key_exists($httpMethod, $this->resources[$prefix])){
-
-        }
-
-
-                ;
-    }
-    public function getRoutedSegment($prefix, $httpMethod): \Traversable {
-        if (!array_key_exists($prefix, $this->resources)) {
-            user_error("No resources with requested prefix: '$prefix'.", E_USER_NOTICE);
-            return new \ArrayIterator([]);
-        } elseif (!array_key_exists($httpMethod, $this->resources[$prefix])) {
-            user_error("No resources with requested HTTP method: '$prefix'.", E_USER_NOTICE);
-            return new \ArrayIterator([]);
-        } else {
-            return new \ArrayIterator($this->resources[$prefix][$httpMethod]);
-        }
+    public function hasPrefix($prefix): bool {
+        return array_key_exists($prefix, $this->resources);
     }
 
+    public function hasHttpMethod($prefix, $httpMethod): bool {
+        return $this->hasPrefix($prefix) AND array_key_exists($httpMethod, $this->resources[$prefix]);
+    }
+
+    public function hasUrlPattern($prefix, $httpMethod, $urlPattern): bool {
+        return $this->hasPrefix($prefix) AND $this->hasHttpMethod($prefix, $httpMethod) AND array_key_exists($urlPattern, $this->resources[$prefix][$httpMethod]);
+    }
+
+    /**
+     *
+     * @param string $prefix
+     * @param string $httpMethod
+     * @param string $urlPattern
+     * @return \Pes\Router\Resource\ResourceInterface|null
+     */
+    public function getResource($prefix, $httpMethod, $urlPattern): ?ResourceInterface {
+        return isset($this->resources[$prefix][$httpMethod][$urlPattern]) ? $this->resources[$prefix][$httpMethod][$urlPattern] : null;
+    }
 }

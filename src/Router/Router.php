@@ -49,35 +49,20 @@ class Router implements RouterInterface, LoggerAwareInterface {
      */
     private $matchedRequest;
 
-    private $urlPatternValidator;
-
-    public function __construct(UrlPatternValidator $urlPatternValidator) {
-        $this->urlPatternValidator = $urlPatternValidator;
-    }
-
     public function setLogger(LoggerInterface $logger) {
         $this->logger = $logger;
     }
 
     /**
      *
-     * @param ResourceInterface $resource
-     * @param callable $action
-     * @param type $name
+     * @param \Pes\Router\RouteInterface $route
      */
-    public function addRoute(ResourceInterface $resource, callable $action, $name=''){
-        $method = $resource->getHttpMethod();
-        $urlPattern = $resource->getUrlPattern();
-        $route = (new Route($this->urlPatternValidator))->setMethod($method)->setUrlPattern($urlPattern)->setAction($action);
-
+    public function addRoute(RouteInterface $route): void {
         // přidání routy do pole rout - první index pole je metoda, druhý index pole je druhý znak url
         //  - očekávám, že druhý znak pattern bude stejný -> selže, pokud pattern začíná parametrem (první znak je dvojtečka),
         // například /:id/ (pak url je /2/ nebo /1234/ atd.) - takový pattern je nesmyslný pro REST
         // Pokud pattern (a url) je /, pak index je /
-        $this->routes[$method][ $urlPattern[1] ?? '/' ][] = $route;
-        if ($name) {
-            $this->named[$name] = $route;
-        }
+        $this->routes[$resource->getHttpMethod()][ $resource->getUrlPattern()[1] ?? '/' ][] = $route;
     }
 
     /**
@@ -153,7 +138,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
                 if(preg_match($route->getPatternPreg(), $restUri, $matches)) {
                     if ($this->logger) {
                         $this->logger->debug("Router: Hledání route pro request s hodnotou requestUri $restUri získanou z atributu ".AppFactory::URI_INFO_ATTRIBUTE_NAME);
-                        $this->logger->debug("Router: Nalezena route - method: {method}, urlPattern: {url}", ['method'=>$route->getMethod(), 'url'=>$route->getUrlPattern()]);
+                        $this->logger->debug("Router: Nalezena route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource(), 'url'=>$route->getUrlPattern()]);
                     }
                     $this->matchedRoute = $route;
                     $this->matches = $matches;
@@ -175,7 +160,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
         if ($this->logger) {
             $this->logBefore($action);
         }
-        
+
         // jako první prvek pole matches vloží $request -> první parametr předaný volané action callable routy je pak $request
         // užití v callable: function(ServerRequestInterface $request, $uid) { ... }
         $this->matches[0] = $this->matchedRequest;

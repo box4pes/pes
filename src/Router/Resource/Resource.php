@@ -35,6 +35,12 @@ class Resource implements ResourceInterface {
         $this->urlPatternValidator = $urlPatternValidator;
     }
 
+    /**
+     *
+     * @param type $httpMethod
+     * @return \Pes\Router\Resource\ResourceInterface
+     * @throws ResourceHttpMethodNotValid
+     */
     public function withHttpMethod($httpMethod): ResourceInterface {
         try {
             $httpMethodValue = ($this->methodsEnum)($httpMethod);
@@ -46,6 +52,14 @@ class Resource implements ResourceInterface {
         return $cloned;
     }
 
+    /**
+     * Vrací nový objekt Resource s nastavenou pattern. Kontroluje přípustný formát pattern a v případě chybného formátu vyhodí výjimnku.
+     * Pattern musí začínat i končit znakem '/' a může obsahovat segmenty oddělené znakem '/'. Pattern, který nemá segmenty je '/'.
+     *
+     * @param string $urlPattern
+     * @return \Pes\Router\Resource\ResourceInterface
+     * @throws ResourceUrlPatternNotValid
+     */
     public function withUrlPattern($urlPattern): ResourceInterface {
         try {
             $this->urlPatternValidator->validate($urlPattern);
