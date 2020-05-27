@@ -28,9 +28,8 @@ class Action implements ActionInterface {
      */
     private $actionCallable;
 
-    public function __construct(ResourceInterface $resource, callable $actionCallable) {
+    public function __construct(ResourceInterface $resource) {
         $this->resource = $resource;
-        $this->actionCallable = $actionCallable;
     }
 
     public function getResource(): ResourceInterface {
@@ -41,4 +40,7 @@ class Action implements ActionInterface {
         return $this->actionCallable;
     }
 
+    public function setActionCallable(callable $actionCallable) {
+        $this->actionCallable = $actionCallable;
+    }
 }

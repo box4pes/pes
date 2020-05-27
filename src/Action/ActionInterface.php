@@ -16,5 +16,6 @@ interface ActionInterface {
 
     public function getResource(): ResourceInterface;
     public function getActionCallable();
+    public function setActionCallable();
 
 }
