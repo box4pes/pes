@@ -6,7 +6,16 @@
  * and open the template in the editor.
  */
 
-namespace Pes\Action;
+namespace Pes\Router\Resource;
+
+use Pes\Router\Resource\Exception\ResourceHttpMethodNotValid;
+use Pes\Router\Resource\Exception\ResourceUrlPatternNotValid;
+use Pes\Router\Resource\Exception\ResourcePathParameterDoesNotMatch;
+
+use Pes\Router\MethodEnum;
+use Pes\Type\Exception\TypeExceptionInterface;
+use Pes\Router\UrlPatternValidator;
+use Pes\Router\Exception\WrongPatternFormatException;
 
 /**
  * Description of Resource
@@ -15,12 +24,37 @@ namespace Pes\Action;
  */
 class Resource implements ResourceInterface {
 
+    private $methodsEnum;
+    private $urlPatternValidator;
+
     private $httpMethod;
     private $urlPattern;
 
-    public function __construct($httpMethod, $urlPattern) {
-        $this->httpMethod = $httpMethod;
-        $this->urlPattern =$urlPattern;
+    public function __construct(MethodEnum $methodEnum, UrlPatternValidator $urlPatternValidator) {
+        $this->methodsEnum = $methodEnum;
+        $this->urlPatternValidator = $urlPatternValidator;
+    }
+
+    public function withHttpMethod($httpMethod): ResourceInterface {
+        try {
+            $httpMethodValue = ($this->methodsEnum)($httpMethod);
+        } catch (TypeExceptionInterface $e) {
+            throw new ResourceHttpMethodNotValid("Passed HTTP method {$httpMethod} is not valid.", 0, $e);
+        }
+        $cloned = clone $this;
+        $cloned->httpMethod = $httpMethodValue;
+        return $cloned;
+    }
+
+    public function withUrlPattern($urlPattern): ResourceInterface {
+        try {
+            $this->urlPatternValidator->validate($urlPattern);
+        } catch (WrongPatternFormatException $e) {
+            throw new ResourceUrlPatternNotValid("Passed URL pattern $urlPattern is not valid.", 0, $e);
+        }
+        $cloned = clone $this;
+        $cloned->urlPattern = $urlPattern;
+        return $cloned;
     }
 
     public function getHttpMethod() {
@@ -44,9 +78,9 @@ class Resource implements ResourceInterface {
         foreach ($pathParams as $key => $value) {
             $pattern = str_replace(':'.$key, $value, $pattern, $replaced);
             if ($replaced==0) {
-                throw new ActionPathParameterDoesNotMatch("Parameter not found in route pattern. Parameter: '$key'. Pattern: '$pattern'.");
+                throw new ResourcePathParameterDoesNotMatch("Parameter not found in route pattern. Parameter: '$key'. Replaced pattern: '$pattern'.");
             } elseif ($replaced>1) {
-                throw new ActionPathParameterDoesNotMatch("Duplicate parameter in route pattern. Parameter: '$key'. Pattern: '$pattern'.");
+                throw new ResourcePathParameterDoesNotMatch("Duplicate parameter in route pattern. Parameter: '$key'. Replaced pattern: '$pattern'.");
             }
         }
         return $this->filterPath($pattern);

@@ -6,13 +6,13 @@
  * and open the template in the editor.
  */
 
-namespace Pes\Action\Exception;
+namespace Pes\Router\Resource\Exception;
 
 /**
  * Description of ActionUrlPatternNotValid
  *
  * @author pes2704
  */
-class ActionUrlPatternNotValid extends \UnexpectedValueException implements ActionExceptionInterface {
+class ResourceUrlPatternDuplicate extends \UnexpectedValueException implements ResourceExceptionInterface {
     //put your code here
 }

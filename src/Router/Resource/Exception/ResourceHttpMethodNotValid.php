@@ -6,13 +6,13 @@
  * and open the template in the editor.
  */
 
-namespace Pes\Action\Exception;
+namespace Pes\Router\Resource\Exception;
 
 /**
  * Description of ActionHttpMethodNotValid
  *
  * @author pes2704
  */
-class ActionHttpMethodNotValid extends \UnexpectedValueException implements ActionExceptionInterface {
+class ResourceHttpMethodNotValid extends \UnexpectedValueException implements ResourceExceptionInterface {
     //put your code here
 }

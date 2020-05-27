@@ -6,14 +6,14 @@
  * and open the template in the editor.
  */
 
-namespace Pes\Action;
+namespace Pes\Router\Resource;
 
 /**
  *
  * @author pes2704
  */
-interface RegistryInterface {
-    public function register($prefix, ActionInterface $action): void;
-    public function getAction($prefix, $httpMethod, $urlPattern): ActionInterface;
+interface ResourceRegistryInterface {
+    public function register($prefix, ResourceInterface $resource): void;
+    public function bindAction($prefix, $httpMethod, callable $action): void;
     public function getRoutedSegment($prefix, $httpMethod): \Traversable;
 }

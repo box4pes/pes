@@ -6,13 +6,17 @@
  * and open the template in the editor.
  */
 
-namespace Pes\Action;
+namespace Pes\Router\Resource;
 
 /**
  *
  * @author pes2704
  */
 interface ResourceInterface {
+    
+    public function withHttpMethod($httpMethod): ResourceInterface;
+
+    public function withUrlPattern($urlPattern): ResourceInterface;
 
     public function getHttpMethod();
 
