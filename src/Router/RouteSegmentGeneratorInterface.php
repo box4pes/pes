@@ -13,7 +13,5 @@ namespace Pes\Router;
  * @author pes2704
  */
 interface RouteSegmentGeneratorInterface {
-    public function bindAction($httpMethod, $urlPattern, callable $action): void;
-    public function addSegmentRoutes(RouterInterface $router): void;
-
+    public function addRouteForAction($prefix, $httpMethod, $urlPattern, callable $action): void;
 }

@@ -34,8 +34,6 @@ class RouteTest extends TestCase {
         $this->assertInstanceOf(ResourceInterface::class, $route->getResource());
     }
 
-
-
     public function testSetGetAction() {
         $route = new Route();
         $route->setAction(function() {return "Action!";});
@@ -43,4 +41,14 @@ class RouteTest extends TestCase {
         $this->assertEquals("Action!", $action());
     }
 
+    public function testGetPatternPreg() {
+        $route = new Route();
+        $resource = (new Resource(new MethodEnum(), new UrlPatternValidator()))->withHttpMethod(MethodEnum::GET);
+        $route->setResource($resource->withUrlPattern('/'));
+        $this->assertEquals("@^/$@D", $route->getPatternPreg());
+        $route->setResource($resource->withUrlPattern('/trdlo/'));
+        $this->assertEquals("@^/trdlo/$@D", $route->getPatternPreg());
+        $route->setResource($resource->withUrlPattern('/trdlo/:id/'));
+        $this->assertEquals("@^/trdlo/([a-zA-Z0-9\-\_]+)/$@D", $route->getPatternPreg());
+    }
 }

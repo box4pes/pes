@@ -18,16 +18,30 @@ use Pes\Router\Exception\RoutedSegmentResourceNotFoundException;
  *
  * @author pes2704
  */
-class RouteSegmentGenerator implements RouteSegmentGeneratorInterface {
+class RouteSegmentGenerator implements RouteSegmentGeneratorInterface, \IteratorAggregate {
 
     private $resourceRegistry;
+    /**
+     *
+     * @var RouteInterface
+     */
     private $routes = [];
 
     public function __construct(ResourceRegistryInterface $resourceRegistry) {
         $this->resourceRegistry = $resourceRegistry;
     }
 
-    public function bindAction($prefix, $httpMethod, $urlPattern, callable $action): void {
+    /**
+     * 
+     * @param type $prefix
+     * @param type $httpMethod
+     * @param type $urlPattern
+     * @param callable $action
+     * @return void
+     * @throws RoutedSegmentPrefixNotFoundException
+     * @throws RoutedSegmentResourceNotFoundException
+     */
+    public function addRouteForAction($prefix, $httpMethod, $urlPattern, callable $action): void {
         if (!$this->resourceRegistry->hasPrefix($prefix)) {
             throw new RoutedSegmentPrefixNotFoundException("No resources with requested prefix: '$prefix'.");
         } elseif (!$this->resourceRegistry->hasHttpMethod($prefix, $httpMethod)) {
@@ -35,13 +49,13 @@ class RouteSegmentGenerator implements RouteSegmentGeneratorInterface {
         } elseif (!$this->resourceRegistry->hasUrlPattern($prefix, $httpMethod, $urlPattern)) {
             throw new RoutedSegmentResourceNotFoundException("No resource with requested url pattern: '$urlPattern'.");
         } else {
-            $this->routes[] = (new Route())->setResource($this->resourceRegistry->getResource($prefix, $httpMethod, $urlPattern))->setAction($action);
+            $this->routes[] = (new Route())
+                    ->setResource($this->resourceRegistry->getResource($prefix, $httpMethod, $urlPattern))
+                    ->setAction($action);
         }
     }
 
-    public function addSegmentRoutes(RouterInterface $router): void {
-        foreach ($this->routes as $route) {
-            $router->addRoute($route);
-        }
+    public function getIterator(): \Traversable {
+        return new \ArrayIterator($this->routes);
     }
 }

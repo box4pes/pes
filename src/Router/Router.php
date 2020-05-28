@@ -64,6 +64,14 @@ class Router implements RouterInterface, LoggerAwareInterface {
         // Pokud pattern (a url) je /, pak index je /
         $this->routes[$resource->getHttpMethod()][ $resource->getUrlPattern()[1] ?? '/' ][] = $route;
     }
+//     * Musí provést nejprve routování - vyhledání routy podle requestu a volání její akce a následně
+//     * v případě že volaná akce vrátila request
+    public function exchangeRoutes(\Traversable $routes): void {
+        $this->routes = [];
+        foreach ($routes as $route) {
+            $this->addRoute($route);
+        }
+    }
 
     /**
      * Vrací objekt Route, který byl použit při posledním routování.
@@ -104,8 +112,12 @@ class Router implements RouterInterface, LoggerAwareInterface {
     }
 
     /**
-     * Vybere objekt Route podle http metody a urlPattern rout. Pokud nalezne odpovídající route, vykoná action routy a vrací návratovou hodnotu
-     * vrácenou action routy. Pokud nenalezne odpovídající route, volá request handler - předá requestke zpracování další vrstvě middleware.
+     * Implmentuje Middleware interface. Tato implementace nejprve provede routovánmí a jen v případě nenalezení routy nebo pokud
+     * akce routy nevrátila response, volá request handler.
+     *
+     * Vybere objekt Route podle http metody a urlPattern rout. Pokud nalezne odpovídající route, vykoná action routy. Pokud akce routy vrátila response,
+     * vrací tento response - návratovou hodnotu vrácenou action routy. Pokud nenalezne odpovídající route nebo akce routy nevrátila response,
+     * volá request handler - předá request ke zpracování další vrstvě middleware.
      *
      * Pokud nalezne odpovídající route:
      * - Předanému parametru metody - objektu ServerRequestInterface přidá atribut je jménem 'route', do kterého vloží použitý objekt Route

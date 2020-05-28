@@ -25,12 +25,35 @@ use Pes\Action\ResourceInterface;
 interface RouterInterface extends MiddlewareInterface {
 
     /**
+     * Přidá routu do seznamu rout připravených pro routování.
      *
      * @param \Pes\Router\RouteInterface $route
      * @return void
      */
     public function addRoute(RouteInterface $route): void ;
+
+    /**
+     * Vymění celý seznam rout připravených pro routování.
+     *
+     * @param \Traversable $routes
+     * @return void
+     */
+    public function exchangeRoutes(\Traversable $routes): void;
+
+    /**
+     * Provede routování - vyhledá routu podle requestu a volá její akci.
+     * @param ServerRequestInterface $request
+     */
     public function route(ServerRequestInterface $request);
+
+    /**
+     * Implemenuje Middleware interface, Vlatní rotování - vyhledání routy podle requestu a volání její akce může kombinovat
+     * s voláním request handleru.
+     *
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
 
     /**

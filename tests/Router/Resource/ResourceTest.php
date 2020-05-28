@@ -9,6 +9,8 @@ use Pes\Router\UrlPatternValidator;
 use Pes\Router\Resource\Exception\ResourceHttpMethodNotValid;
 use Pes\Router\Resource\Exception\ResourcePathParameterDoesNotMatch;
 
+use Pes\Router\Resource\Exception\ResourceUrlPatternNotValid;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -42,69 +44,44 @@ class ResourceTest extends TestCase {
     }
 
     public function withUrlPattern() {
-        $this->markTestIncomplete(
-          'Tady není doděláno.'
-        );
+        $resource = $this->resource->withUrlPattern('/trdlo/:id/ruka/:lp/');
+        $this->assertEquals('/trdlo/:id/ruka/:lp/', $resource->getUrlPattern());
     }
     /**
      *
      */
     public function testSetUrlPattern() {
-        $route = new Route(new UrlPatternValidator());
-
-        $route->setUrlPattern('/');
-        $route->setUrlPattern('/kuk/');
-        $route->setUrlPattern('/kuk/:id/');
+        $this->resource->withUrlPattern('/');
+        $this->resource->withUrlPattern('/kuk/');
+        $this->resource->withUrlPattern('/kuk/:id/');
         $this->assertTrue(true);   // vždy splněno - testuji jen, že nenastala výjimka
     }
 
     public function testExceptionEmptyPattern() {
-        $route = new Route(new UrlPatternValidator());
-        $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage('Chybný formát pattern.');  // testuje, message obsahuje řetězec
-        $route->setUrlPattern('');
+        $this->expectException(ResourceUrlPatternNotValid::class);
+        $this->expectExceptionMessage(" URL pattern ");
+        $this->resource->withUrlPattern('');
     }
 
     public function testExceptionMissingLeftSlash() {
-        $route = new Route(new UrlPatternValidator());
-        $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage('Chybný formát pattern.');  // testuje, message obsahuje řetězec
-        $route->setUrlPattern('kuk/');
+        $this->expectException(ResourceUrlPatternNotValid::class);
+        $this->expectExceptionMessage(" URL pattern ");
+        $this->resource->withUrlPattern('kuk/');
     }
-
-//    public function testExceptionMissingRightSlash() {
-//        $route = new Route(new UrlPatternValidator());
-//        $this->expectException(\UnexpectedValueException::class);
-//        $this->expectExceptionMessage('Chybný formát pattern.');  // testuje, message obsahuje řetězec
-//        $route->setUrlPattern('/kuk');
-//    }
 
     public function testExceptionParemeterInFirstSection() {
-        $route = new Route(new UrlPatternValidator());
         $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage('Chybný formát pattern.');  // testuje, message obsahuje řetězec
-        $route->setUrlPattern('/:id/');
+        $this->expectExceptionMessage(" URL pattern ");  // testuje, message obsahuje řetězec
+        $this->resource->withUrlPattern('/:id/');
     }
 
-    public function testSetGetUrlPattern() {
-        $route = new Route(new UrlPatternValidator());
-        $route->setUrlPattern('/trdlo/');
-        $this->assertEquals('/trdlo/', $route->getUrlPattern());
+    public function testWithGetUrlPattern() {
+        $resource = $this->resource->withUrlPattern('/trdlo/');
+        $this->assertEquals('/trdlo/', $resource->getUrlPattern());
     }
 
-    public function testGetPatternPreg() {
-        $route = new Route(new UrlPatternValidator());
-        $route->setUrlPattern('/');
-        $patternPreg = $route->getPatternPreg();
-        $this->assertEquals("@^/$@D", $route->getPatternPreg());
-        $route->setUrlPattern('/trdlo/');
-        $patternPreg = $route->getPatternPreg();
-        $this->assertEquals("@^/trdlo/$@D", $route->getPatternPreg());
-        $route->setUrlPattern('/trdlo/:id/');
-        $patternPreg = $route->getPatternPreg();
-        $this->assertEquals("@^/trdlo/([a-zA-Z0-9\-\_]+)/$@D", $route->getPatternPreg());
-    }
-    
+
+
     public function withUrlPatternException() {
         $this->markTestIncomplete(
           'Tady není doděláno.'

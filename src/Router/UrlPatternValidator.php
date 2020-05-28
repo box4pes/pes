@@ -19,16 +19,13 @@ use Pes\Router\Exception\WrongPatternFormatException;
 class UrlPatternValidator implements ValidatorInterface {
     public function validate($urlPattern): void {
         if ($urlPattern == '') {
-            throw new WrongPatternFormatException("Chybný formát pattern. Pattern routy nesmí být prázdný řetězec.");
+            throw new WrongPatternFormatException("Wrong pattern. Pattern must not be empty.");
         }
         if ($urlPattern[0] != '/') {
-            throw new WrongPatternFormatException("Chybný formát pattern. Pattern routy musí začínat znakem '/'. Zadán pattern: $urlPattern");
+            throw new WrongPatternFormatException("Wrong pattern '$urlPattern'. First character of pattern must be '/'.");
         }
-//        if ($urlPattern[-1] != '/') {
-//            throw new WrongPatternFormatException("Chybný formát pattern. Pattern routy musí končit znakem '/'. Zadán pattern: $urlPattern");
-//        }
         if (($urlPattern[1] ?? '') == ':') {
-            throw new WrongPatternFormatException("Chybný formát pattern. Pattern routy nesmí na první pozici zleva obsahovat parametr. Zadán pattern: $urlPattern");
+            throw new WrongPatternFormatException("Wrong pattern '$urlPattern'. First segment of pattern must not contain parameter.");
         }
     }
 }
