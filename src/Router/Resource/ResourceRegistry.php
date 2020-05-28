@@ -33,6 +33,7 @@ class ResourceRegistry implements ResourceRegistryInterface {
         $urlPattern = $resource->getUrlPattern();
         $this->resources[$prefix][$httpMethod][$urlPattern] = $resource;
     }
+
     public function hasPrefix($prefix): bool {
         return array_key_exists($prefix, $this->resources);
     }

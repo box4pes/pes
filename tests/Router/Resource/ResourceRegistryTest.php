@@ -40,25 +40,18 @@ class ResourceRegistryTest extends TestCase {
         $this->registry->register('pref2', $resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
     }
 
-    public function testCreateRoutedSegment() {
-        $segment = $this->registry->createRoutedSegment('pref2');
-        $this->assertIsIterable($segment);
-        $this->assertCount(1, $segment);
+    public function testHasPrefix() {
+        $this->assertTrue($this->registry->hasPrefix('pref1'));
+        $this->assertFalse($this->registry->hasPrefix('non'));
     }
 
-    public function testCreateRoutedSegmentWithInvalidPrefix() {
-        $this->expectException(PHPUnit\Framework\Error\Notice::class);
-        $segment = $this->registry->getRoutedSegment('non', 'POST');
-        $this->assertIsIterable($segment);
-        $this->assertCount(0,  $segment);
+    public function testHasHttpMethod() {
+        $this->assertTrue($this->registry->hasHttpMethod('pref1', 'POST'));
+        $this->assertFalse($this->registry->hasHttpMethod('pref1', 'GET'));
     }
 
-    public function testCreateRoutedSegmentWithInvalidMethod() {
-        $this->expectException(PHPUnit\Framework\Error\Notice::class);
-        $segment = $this->registry->getRoutedSegment('pref2', 'PUSH');
-        $this->assertIsIterable($segment);
-        $this->assertCount(0, $segment);
+    public function testHasUrlPattern() {
+        $this->assertTrue($this->registry->hasUrlPattern('pref1', 'POST', '/trdlo/:id/ruka/:lp/'));
+        $this->assertFalse($this->registry->hasUrlPattern('pref1', 'POST', '/qqqtrdlo/:id/ruka/:lp/'));
     }
-
-
 }
