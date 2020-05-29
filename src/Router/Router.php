@@ -144,7 +144,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
                 if(preg_match($route->getPatternPreg(), $restUri, $matches)) {
                     if ($this->logger) {
                         $this->logger->debug("Router: Hledání route pro request s hodnotou requestUri $restUri získanou z atributu ".AppFactory::URI_INFO_ATTRIBUTE_NAME);
-                        $this->logger->debug("Router: Nalezena route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource(), 'url'=>$route->getUrlPattern()]);
+                        $this->logger->debug("Router: Nalezena route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource()->getHttpMethod(), 'url'=>$route->getResource()->getUrlPattern()]);
                     }
                     $this->matchedRoute = $route;
                     $this->matches = $matches;
