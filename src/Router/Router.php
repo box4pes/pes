@@ -27,12 +27,6 @@ class Router implements RouterInterface, LoggerAwareInterface {
     private $routes = array();
 
     /**
-     * Objekty Route indexované podle jména routy
-     * @var Route array of
-     */
-    private $named = array();
-
-    /**
      * @var Route
      */
     private $matchedRoute;
@@ -62,10 +56,10 @@ class Router implements RouterInterface, LoggerAwareInterface {
         //  - očekávám, že druhý znak pattern bude stejný -> selže, pokud pattern začíná parametrem (první znak je dvojtečka),
         // například /:id/ (pak url je /2/ nebo /1234/ atd.) - takový pattern je nesmyslný pro REST
         // Pokud pattern (a url) je /, pak index je /
+        $resource = $route->getResource();
         $this->routes[$resource->getHttpMethod()][ $resource->getUrlPattern()[1] ?? '/' ][] = $route;
     }
-//     * Musí provést nejprve routování - vyhledání routy podle requestu a volání její akce a následně
-//     * v případě že volaná akce vrátila request
+
     public function exchangeRoutes(\Traversable $routes): void {
         $this->routes = [];
         foreach ($routes as $route) {

@@ -10,7 +10,7 @@
             "email": "svoboda@grafia.cz"
         }
     ],
-    "version": "1.20.38",
+    "version": "1.20.39",
     "require": {
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",
