@@ -3,6 +3,7 @@ use PHPUnit\Framework\TestCase;
 
 use Pes\Router\Resource\ResourceRegistry;
 use Pes\Router\Resource\Resource;
+use Pes\Router\Resource\ResourceInterface;
 
 use Pes\Router\Resource\Exception\ResourceHttpMethodNotValid;
 use Pes\Router\Resource\Exception\ResourceUrlPatternNotValid;
@@ -34,24 +35,35 @@ class ResourceRegistryTest extends TestCase {
         $this->registry = new ResourceRegistry();
         $resource = new Resource(new MethodEnum(), new UrlPatternValidator());
 
-        $this->registry->register('pref1', $resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/ruka/:lp/'));
-        $this->registry->register('pref1', $resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
-        $this->registry->register('pref2', $resource->withHttpMethod('GET')->withUrlPattern('/trdlo/:id/ruka/:lp/'));
-        $this->registry->register('pref2', $resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
-    }
-
-    public function testHasPrefix() {
-        $this->assertTrue($this->registry->hasPrefix('pref1'));
-        $this->assertFalse($this->registry->hasPrefix('non'));
+        $this->registry->register($resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/ruka/:lp/'));
+        $this->registry->register($resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
+        $this->registry->register($resource->withHttpMethod('GET')->withUrlPattern('/trdlo/:id/ruka/:lp/'));
+        $this->registry->register($resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
     }
 
     public function testHasHttpMethod() {
-        $this->assertTrue($this->registry->hasHttpMethod('pref1', 'POST'));
-        $this->assertFalse($this->registry->hasHttpMethod('pref1', 'GET'));
+        $this->assertTrue($this->registry->hasHttpMethod('POST'));
+        $this->assertTrue($this->registry->hasHttpMethod('GET'));
+        $this->assertFalse($this->registry->hasHttpMethod('PUSH'));
     }
 
     public function testHasUrlPattern() {
-        $this->assertTrue($this->registry->hasUrlPattern('pref1', 'POST', '/trdlo/:id/ruka/:lp/'));
-        $this->assertFalse($this->registry->hasUrlPattern('pref1', 'POST', '/qqqtrdlo/:id/ruka/:lp/'));
+        $this->assertTrue($this->registry->hasUrlPattern('POST', '/trdlo/:id/ruka/:lp/'));
+        $this->assertFalse($this->registry->hasUrlPattern('POST', '/qqqtrdlo/:id/ruka/:lp/'));
+    }
+
+    public function testGetResource() {
+        $this->assertInstanceOf(ResourceInterface::class, $this->registry->getResource('POST', '/trdlo/:id/ruka/:lp/'));
+        $this->assertInstanceOf(ResourceInterface::class, $this->registry->getResource('POST', '/trdlo/:id/noha/:lp/'));
+        $this->assertInstanceOf(ResourceInterface::class, $this->registry->getResource('GET', '/trdlo/:id/ruka/:lp/'));
+        $this->assertInstanceOf(ResourceInterface::class, $this->registry->getResource('POST', '/trdlo/:id/noha/:lp/'));
+
+        $this->assertInstanceOf(ResourceInterface::class, $this->registry->getResource('POST', '/trdlo/:qq/ruka/:ee/'));
+        $this->assertInstanceOf(ResourceInterface::class, $this->registry->getResource('POST', '/trdlo/:rr/noha/:tt/'));
+        $this->assertInstanceOf(ResourceInterface::class, $this->registry->getResource('GET', '/trdlo/:qq/ruka/:ggggggg/'));
+        $this->assertInstanceOf(ResourceInterface::class, $this->registry->getResource('POST', '/trdlo/:hkjhkjh/noha/:l/'));
+
+        $this->assertNull($this->registry->getResource('PUSH', '/trdlo/:id/noha/:lp/'));
+        $this->assertNull($this->registry->getResource('GET', '/trdlooo/:id/ruka/:lp/'));
     }
 }

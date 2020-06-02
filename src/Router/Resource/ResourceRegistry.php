@@ -24,36 +24,37 @@ class ResourceRegistry implements ResourceRegistryInterface {
 
     /**
      *
-     * @param type $prefix
      * @param \Pes\Router\Resource\ResourceInterface $resource
      * @return void
      */
-    public function register($prefix, ResourceInterface $resource): void {
+    public function register(ResourceInterface $resource): void {
         $httpMethod = $resource->getHttpMethod();
         $urlPattern = $resource->getUrlPattern();
-        $this->resources[$prefix][$httpMethod][$urlPattern] = $resource;
+        $this->resources[$httpMethod][$this->canonicalize($urlPattern)] = $resource;
     }
 
-    public function hasPrefix($prefix): bool {
-        return array_key_exists($prefix, $this->resources);
+    public function hasHttpMethod($httpMethod): bool {
+        return array_key_exists($httpMethod, $this->resources);
     }
 
-    public function hasHttpMethod($prefix, $httpMethod): bool {
-        return $this->hasPrefix($prefix) AND array_key_exists($httpMethod, $this->resources[$prefix]);
-    }
-
-    public function hasUrlPattern($prefix, $httpMethod, $urlPattern): bool {
-        return $this->hasPrefix($prefix) AND $this->hasHttpMethod($prefix, $httpMethod) AND array_key_exists($urlPattern, $this->resources[$prefix][$httpMethod]);
+    public function hasUrlPattern($httpMethod, $urlPattern): bool {
+        return $this->hasHttpMethod($httpMethod) AND array_key_exists($this->canonicalize($urlPattern), $this->resources[$httpMethod]);
     }
 
     /**
      *
-     * @param string $prefix
      * @param string $httpMethod
      * @param string $urlPattern
      * @return \Pes\Router\Resource\ResourceInterface|null
      */
-    public function getResource($prefix, $httpMethod, $urlPattern): ?ResourceInterface {
-        return isset($this->resources[$prefix][$httpMethod][$urlPattern]) ? $this->resources[$prefix][$httpMethod][$urlPattern] : null;
+    public function getResource($httpMethod, $urlPattern): ?ResourceInterface {
+        $canonPattern = $this->canonicalize($urlPattern);
+        return isset($this->resources[$httpMethod][$canonPattern]) ? $this->resources[$httpMethod][$canonPattern] : null;
+    }
+
+    private function canonicalize($urlPattern) {
+        // zamění parametry v pattern za :
+        return preg_replace('/\\\:[a-zA-Z0-9\_\-]+/u', ':', preg_quote($urlPattern));
+
     }
 }
