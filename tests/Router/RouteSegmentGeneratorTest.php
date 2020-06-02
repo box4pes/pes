@@ -34,17 +34,17 @@ class RouteSegmentGeneratorTest extends TestCase {
         $this->registry = new ResourceRegistry();
         $resource = new Resource(new MethodEnum(), new UrlPatternValidator());
 
-        $this->registry->register('pref1', $resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/ruka/:lp/'));
-        $this->registry->register('pref1', $resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
-        $this->registry->register('pref2', $resource->withHttpMethod('GET')->withUrlPattern('/trdlo/:id/ruka/:lp/'));
-        $this->registry->register('pref2', $resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
+        $this->registry->register($resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/ruka/:lp/'));
+        $this->registry->register($resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
+        $this->registry->register( $resource->withHttpMethod('GET')->withUrlPattern('/trdlo/:id/ruka/:lp/'));
+        $this->registry->register($resource->withHttpMethod('POST')->withUrlPattern('/trdlo/:id/noha/:lp/'));
     }
 
     public function testAddRouteForActionAndIterator() {
         $generator = new RouteSegmentGenerator($this->registry);
         $this->assertCount(0, $generator->getIterator());
-        $generator->addRouteForAction('pref1', 'POST', '/trdlo/:id/ruka/:lp/', function() {return '/trdlo/:id/ruka/:lp/';});
-        $generator->addRouteForAction('pref1', 'POST', '/trdlo/:id/ruka/:lp/', function() {return '/trdlo/:id/noha/:lp/';});
+        $generator->addRouteForAction('POST', '/trdlo/:id/ruka/:lp/', function() {return '/trdlo/:id/ruka/:lp/';});
+        $generator->addRouteForAction('POST', '/trdlo/:id/ruka/:lp/', function() {return '/trdlo/:id/noha/:lp/';});
         $this->assertCount(2, $generator->getIterator());
         foreach ($generator as $route) {
             $this->assertInstanceOf(RouteInterface::class, $route);
@@ -54,23 +54,17 @@ class RouteSegmentGeneratorTest extends TestCase {
         }
     }
 
-    public function testRoutedSegmentPrefixNotFoundExceptionWrongPrefix() {
-        $generator = new RouteSegmentGenerator($this->registry);
-        $this->expectException(RoutedSegmentPrefixNotFoundException::class);
-        $generator->addRouteForAction('non', 'POST', '/trdlo/:id/ruka/:lp/', function() {return '/trdlo/:id/ruka/:lp/';});
-    }
-
     public function testRoutedSegmentResourceNotFoundExceptionWrongMethod() {
         $generator = new RouteSegmentGenerator($this->registry);
         $this->expectException(RoutedSegmentResourceNotFoundException::class);
         $this->expectExceptionMessage("requested HTTP method");
-        $generator->addRouteForAction('pref1', 'PUK', '/trdlo/:id/ruka/:lp/', function() {return '/trdlo/:id/ruka/:lp/';});
+        $generator->addRouteForAction('PUK', '/trdlo/:id/ruka/:lp/', function() {return '/trdlo/:id/ruka/:lp/';});
     }
 
     public function testRoutedSegmentResourceNotFoundExceptionWrongPattern() {
         $generator = new RouteSegmentGenerator($this->registry);
         $this->expectException(RoutedSegmentResourceNotFoundException::class);
         $this->expectExceptionMessage("requested url pattern");
-        $generator->addRouteForAction('pref1', 'POST', '/qqqtrdlo/:id/ruka/:lp/', function() {return '/trdlo/:id/ruka/:lp/';});
+        $generator->addRouteForAction('POST', '/qqqtrdlo/:id/ruka/:lp/', function() {return '/trdlo/:id/ruka/:lp/';});
     }
 }

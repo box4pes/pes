@@ -13,5 +13,5 @@ namespace Pes\Router;
  * @author pes2704
  */
 interface RouteSegmentGeneratorInterface {
-    public function addRouteForAction($prefix, $httpMethod, $urlPattern, callable $action): void;
+    public function addRouteForAction($httpMethod, $urlPattern, callable $action): void;
 }

@@ -10,7 +10,6 @@ namespace Pes\Router;
 
 use Pes\Router\Resource\ResourceRegistryInterface;
 
-use Pes\Router\Exception\RoutedSegmentPrefixNotFoundException;
 use Pes\Router\Exception\RoutedSegmentResourceNotFoundException;
 
 /**
@@ -32,8 +31,7 @@ class RouteSegmentGenerator implements RouteSegmentGeneratorInterface, \Iterator
     }
 
     /**
-     * 
-     * @param type $prefix
+     *
      * @param type $httpMethod
      * @param type $urlPattern
      * @param callable $action
@@ -41,16 +39,14 @@ class RouteSegmentGenerator implements RouteSegmentGeneratorInterface, \Iterator
      * @throws RoutedSegmentPrefixNotFoundException
      * @throws RoutedSegmentResourceNotFoundException
      */
-    public function addRouteForAction($prefix, $httpMethod, $urlPattern, callable $action): void {
-        if (!$this->resourceRegistry->hasPrefix($prefix)) {
-            throw new RoutedSegmentPrefixNotFoundException("No resources with requested prefix: '$prefix'.");
-        } elseif (!$this->resourceRegistry->hasHttpMethod($prefix, $httpMethod)) {
+    public function addRouteForAction($httpMethod, $urlPattern, callable $action): void {
+        if (!$this->resourceRegistry->hasHttpMethod($httpMethod)) {
             throw new RoutedSegmentResourceNotFoundException("No resource with requested HTTP method: '$httpMethod'.");
-        } elseif (!$this->resourceRegistry->hasUrlPattern($prefix, $httpMethod, $urlPattern)) {
+        } elseif (!$this->resourceRegistry->hasUrlPattern($httpMethod, $urlPattern)) {
             throw new RoutedSegmentResourceNotFoundException("No resource with requested url pattern: '$urlPattern'.");
         } else {
             $this->routes[] = (new Route())
-                    ->setResource($this->resourceRegistry->getResource($prefix, $httpMethod, $urlPattern))
+                    ->setResource($this->resourceRegistry->getResource($httpMethod, $urlPattern))
                     ->setAction($action);
         }
     }
