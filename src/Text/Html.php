@@ -23,6 +23,7 @@ namespace Pes\Text;
 class Html {
 
     const FILTER_DELIMITER = "|";
+    const EOL = self::EOL;
 
     /**
      * Metoda použije postupně zleva jednotlivé filtry uvedené jako posloupnost názvů filtrů oddělených znakem FILTER_DELIMITER.
@@ -215,7 +216,11 @@ class Html {
      */
     public static function tag($name, array $attributes=[], $innerHtml='') {
         if ($name) {
-            $html = "<$name ".self::attributes($attributes).">".PHP_EOL.$innerHtml.PHP_EOL."</$name>";
+            if (is_array($innerHtml)) {
+                $html = "<$name ".self::attributes($attributes).">".self::EOL.implode(self::EOL, $innerHtml).self::EOL."</$name>";
+            } else {
+                $html = "<$name ".self::attributes($attributes).">".self::EOL.$innerHtml.self::EOL."</$name>";
+            }
         }
         return $html ?? '';
     }
