@@ -23,11 +23,12 @@ use Pes\Validator\Exception\NotSerialisableException;
 class IsSerializableValidator implements ValidatorInterface {
 
     public function validate($param): void {
-        if (
+        if (!(
                 is_callable($param)
                 OR is_resource($param)
                 OR !(is_object($param))
                 OR (is_object($param) AND $param instanceof \Serializable)
+             )
             )  {
                 throw new NotSerialisableException();
             }

@@ -20,12 +20,20 @@ class IsSerializableValidatorTest extends TestCase {
 
     public function testIsValid() {
         $validator = new IsSerializableValidator();
-        $validator->validate('asdfghjkl');
-        $validator->validate(321321);
-        $validator->validate([1,2,3,4]);
-        $validator->validate(FALSE);
-        $validator->validate(NULL);
+        $this->assertNull($validator->validate('asdfghjkl'));
+        $this->assertNull($validator->validate(321321));
+        $this->assertNull($validator->validate([1,2,3,4]));
+        $this->assertNull($validator->validate(FALSE));
+        $this->assertNull($validator->validate(NULL));
+        $this->assertNull($validator->validate(new SerializableClassForTest()));
+    }
+
+    /**
+     * @expectedException Pes\Validator\Exception\NotSerialisableException
+     */
+    public function testNotSerialisableException() {
+        $validator = new IsSerializableValidator();
         $validator->validate(new stdClass());
-        $validator->validate(new SerializableClassForTest());
+
     }
 }

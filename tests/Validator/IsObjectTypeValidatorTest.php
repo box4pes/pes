@@ -1,23 +1,20 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Collection\MapCollection;
 use Pes\Validator\IsObjectTypeValidator;
 use Pes\Validator\Exception\NotValidTypeException;
+use Pes\Validator\Exception\TypeNameNotAStringException;
+use Pes\Validator\Exception\TypeNotExistsException;
 
-interface InterfaceForIsTypeValidatorTest {
 
-}
+interface InterfaceForIsTypeValidatorTest {}
 
-class ObjectForIsTypeValidatorTest {
+class ObjectForIsTypeValidatorTest {}
 
-}
-class InterfacedObjectForIsTypeValidatorTest implements InterfaceForIsTypeValidatorTest {
+class InterfacedObjectForIsTypeValidatorTest implements InterfaceForIsTypeValidatorTest {}
 
-}
-class AnotherObjectForIsTypeValidatorTest {
+class AnotherObjectForIsTypeValidatorTest {}
 
-}
 /**
  * Description of IndexedCollectionTest
  *
@@ -25,20 +22,22 @@ class AnotherObjectForIsTypeValidatorTest {
  */
 class IsObjectTypeValidatorTest extends TestCase {
 
-    public function testConstructor() {
-        try {
-            $validator = new IsObjectTypeValidator('Blabla');   // Vyhodí výjimku
-        } catch (\InvalidArgumentException $uve) {
-            $this->assertStringStartsWith('Nenalezen zadaný typ (interface nebo class)', $uve->getMessage());
-        }
-        try {
-            $validator = new IsObjectTypeValidator(188);   // Vyhodí výjimku
-        } catch (\InvalidArgumentException $uve) {
-            $this->assertStringStartsWith('Jméno typu musí být zadáno jako string.', $uve->getMessage());
-        }
+    /**
+     * @expectedException Pes\Validator\Exception\TypeNotExistsException
+     */
+    public function testTypeNotExistsException() {
+            $validator = new IsObjectTypeValidator('Blabla');
+    }
+    /**
+     * @expectedException Pes\Validator\Exception\TypeNameNotAStringException
+     */
+    public function testTypeNameNotAStringException() {
+        $validator = new IsObjectTypeValidator(188);
+    }
 
-        $validator = new IsObjectTypeValidator('InterfaceForIsTypeValidatorTest');
-        $validator = new IsObjectTypeValidator('ObjectForIsTypeValidatorTest');
+    public function testCorrectConstruct() {
+        $this->assertInstanceOf(IsObjectTypeValidator::class, new IsObjectTypeValidator('InterfaceForIsTypeValidatorTest'));
+        $this->assertInstanceOf(IsObjectTypeValidator::class, new IsObjectTypeValidator('ObjectForIsTypeValidatorTest'));
     }
 
     /**
@@ -46,16 +45,16 @@ class IsObjectTypeValidatorTest extends TestCase {
      */
     public function testIsValidClass() {
         $validator = new IsObjectTypeValidator('ObjectForIsTypeValidatorTest');
-        $validator->validate(new ObjectForIsTypeValidatorTest());
+        $this->assertNull($validator->validate(new ObjectForIsTypeValidatorTest()));
     }
 
     public function testIsValidInterface() {
         $validator = new IsObjectTypeValidator('InterfaceForIsTypeValidatorTest');
-        $validator->validate(new InterfacedObjectForIsTypeValidatorTest());
+        $this->assertNull($validator->validate(new InterfacedObjectForIsTypeValidatorTest()));
     }
 
     /**
-     * @expectedException NotValidTypeException
+     * @expectedException Pes\Validator\Exception\NotValidTypeException
      */
     public function testInvalidInterface() {
         $validator = new IsObjectTypeValidator('InterfaceForIsTypeValidatorTest');
@@ -63,7 +62,7 @@ class IsObjectTypeValidatorTest extends TestCase {
     }
 
     /**
-     * @expectedException NotValidTypeException
+     * @expectedException Pes\Validator\Exception\NotValidTypeException
      */
     public function testInvalidClass() {
         $validator = new IsObjectTypeValidator('ObjectForIsTypeValidatorTest');

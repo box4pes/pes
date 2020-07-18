@@ -32,18 +32,16 @@ class Message {
     private static $translations =
             [
             // pes
-                "Není překlad pro message: {text}" =>
-                [
-
-                ],
-                "Není nastaveno povinné locale třídy Message. Použijte volání metody Message::setAppLocale()." =>
-                [
-
-                ],
+                "Není překlad pro message: {text}" => [],
+                "Message: Není nastaveno povinné locale metodou setAppLocale()." => [],
+                "Message: Není překlad pro message: {text} a nastavený jazyk {jazyk}." => []
             ];
 
     /**
-     * Přijímá kód locale. Akceptuje krátkou i dlouhou verzi (např. 'cs' i 'cs-CZ', 'en' i 'en-US', ale pro potřeby třídy používá vždy jen krátkou verzi.
+     * Přijímá kód locale. Akceptuje krátkou i dlouhou verzi (např. 'cs' i 'cs-CZ', 'en' i 'en-US', ale pro nastavení atributu appLocale používá vždy jen krátkou verzi, tedy jazyk
+     * (první část zadaného parametru - npř. je 'en' nebo 'cs').
+     *
+     * Interně používá PHP třídu Locale. Locale potřebuje mít povoleno rozšíření intl (viz php.ini).
      *
      * @param string $appLocale
      */
@@ -67,10 +65,13 @@ class Message {
 
 
     /**
+     * Vyhledá šablonu překladu k textu zadanému jako parametr. Nalezenou šablonu převede s použitím Pes\Text\Template::interpolate() metody.
+     * Překlady tedy mohou být zadány jako přímý text nebo mohou používat spaceholdery, které doplněny vždy při překladu v této metodě. Hodnoty, kterými
+     * budou nahrazeny spaceholdery je možno zadat jako nepovinný parametr $context.
      *
-     * @param type $text
-     * @param array $context
-     * @param string $messageLocale
+     *
+     * @param type $text Text
+     * @param array $context Pole hodnot pro náhradu spaceholderů
      * @return string
      */
     public static function t($text, array $context = []) {
@@ -79,27 +80,37 @@ class Message {
                         if (array_key_exists(self::$appLocale, self::$translations[$text])) {
                             $template =  self::$translations[$text][self::$appLocale];
                         } else {
+                            if (self::$internalErrorWarning) {
+                                self::$internalErrorWarning = false;   //není třeba psát dokola a navíc by zde došlo k zacyklení metody t
+                                if (self::$logger) {
+                                    self::$logger->warning("Message: Není překlad pro message: {text} a nastavený jazyk {jazyk}.", ['text'=>$text, 'jazyk'=>self::$appLocale]);
+                                }
+                                user_error(Message::t("Message: Není překlad pro message: {text} a nastavený jazyk {jazyk}.", ['text'=>$text, 'jazyk'=>self::$appLocale]), E_USER_NOTICE);
+                            }
                             $template = $text;
+                            self::$internalErrorWarning = true;
                         }
                     } else {
                         if (self::$internalErrorWarning) {
-                            self::$internalErrorWarning = false;   //neí třeba psát dokola a navíc by zde došlo k zacyklení metody t
-                            user_error(Message::t("Není nastaveno povinné locale třídy Message. Použijte volání metody Message::setAppLocale()."), E_USER_WARNING);
+                            self::$internalErrorWarning = false;   //není třeba psát dokola a navíc by zde došlo k zacyklení metody t
                             if (self::$logger) {
-                                self::$logger->warning("Message: Není nastaveno povinné locale aplikace.");
+                                self::$logger->warning("Message: Není nastaveno povinné locale metodou setAppLocale().");
                             }
+                            user_error(Message::t("Message: Není nastaveno povinné locale metodou setAppLocale()."), E_USER_WARNING);
                         }
                         $template = $text;
+                        self::$internalErrorWarning = true;
                     }
                 } else {
                     if (self::$internalErrorWarning) {
-                        self::$internalErrorWarning = false;   //neí třeba psát dokola a navíc by zde došlo k zacyklení metody t
-                        user_error(Message::t("Message: Není překlad pro message: {text}", ['text'=>$text]), E_USER_NOTICE);
+                        self::$internalErrorWarning = false;   //není třeba psát dokola a navíc by zde došlo k zacyklení metody t
                         if (self::$logger) {
                             self::$logger->notice("Message: Není překlad pro message: {text}", ['text'=>$text]);
                         }
+                        user_error(Message::t("Message: Není překlad pro message: {text}", ['text'=>$text]), E_USER_NOTICE);
                     }
                     $template = $text;
+                    self::$internalErrorWarning = true;
                 }
 
         return Template::interpolate($template, $context);

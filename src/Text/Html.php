@@ -23,7 +23,7 @@ namespace Pes\Text;
 class Html {
 
     const FILTER_DELIMITER = "|";
-    const EOL = self::EOL;
+    const EOL = PHP_EOL;
 
     /**
      * Metoda použije postupně zleva jednotlivé filtry uvedené jako posloupnost názvů filtrů oddělených znakem FILTER_DELIMITER.

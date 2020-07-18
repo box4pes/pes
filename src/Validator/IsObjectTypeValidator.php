@@ -2,6 +2,9 @@
 namespace Pes\Validator;
 
 use Pes\Validator\Exception\NotValidTypeException;
+use Pes\Validator\Exception\TypeNotExistsException;
+use Pes\Validator\Exception\TypeNameNotAStringException;
+
 /**
  * Description of IsTypeValidator
  *
@@ -22,10 +25,10 @@ class IsObjectTypeValidator implements ValidatorInterface {
             } elseif (class_exists($type)) {
                 $this->type = $type;
             } else {
-                throw new \InvalidArgumentException('Nenalezen zadaný typ (interface nebo class): '.$type);
+                throw new TypeNotExistsException('Nenalezen zadaný typ (interface nebo class): '.$type);
             }
         } else {
-            throw new \InvalidArgumentException("Jméno typu musí být zadáno jako string.");
+            throw new TypeNameNotAStringException("Jméno typu musí být zadáno jako string.");
         }
     }
 

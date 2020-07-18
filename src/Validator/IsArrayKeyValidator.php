@@ -14,7 +14,7 @@ namespace Pes\Validator;
 use Pes\Validator\Exception\NotArrayKeyException;
 
 /**
- * IsStringValidator ověřuje jestli parametr je string nebo integer (přetypovatelný na string.
+ * IsStringValidator ověřuje jestli parametr je string nebo integer (přetypovatelný na string).
  *
  * @author pes2704
  */
