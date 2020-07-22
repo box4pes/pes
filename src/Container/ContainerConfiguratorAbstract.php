@@ -53,19 +53,19 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
         }
         foreach ($services as $key=>$definition) {
             if (array_key_exists($key, $aliases)) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno služby $definition již bylo použito pro alias.");
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno služby $key již bylo použito pro alias.");
             }
             $container->set($key, $definition);
         }
         foreach ($servicesOverrides as $key=>$definition) {
             if (array_key_exists($key, $aliases) OR array_key_exists($key, $services)) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno služby $definition již bylo použito pro alias.");
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno služby $key již bylo použito pro alias.");
             }
             $container->setOverride($key, $definition);
         }
         foreach ($factories as $key=>$definition) {
             if (array_key_exists($key, $aliases) OR array_key_exists($key, $services) OR array_key_exists($key, $servicesOverrides)) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno factory $definition již bylo použito pro alias nebo službu.");
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno factory $key již bylo použito pro alias nebo službu.");
             }
             $container->factory($key, $definition);
         }
