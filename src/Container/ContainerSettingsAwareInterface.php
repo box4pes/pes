@@ -20,7 +20,7 @@ use Psr\Container\ContainerInterface;
 interface ContainerSettingsAwareInterface extends ContainerInterface {
 
     /**
-     * Nastaví kontejneru vlastnost jméno. Tato metoda slouží pouze pro ladění - umožňuje udžet si přehled, ve kterém konteneru se hledá služba
+     * Nastaví kontejneru vlastnost jméno. Tato metoda slouží pouze pro ladění a generování textů výjimek - umožňuje udžet si přehled, ve kterém konteneru se hledá služba
      * i v případě použití více zanořených delegete kontejnerů
      * @param string $containerName
      */
