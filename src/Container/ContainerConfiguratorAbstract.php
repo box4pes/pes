@@ -38,7 +38,7 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
             throw new \UnexpectedValueException("Metoda getServicesDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
         }
         $servicesOverrides = $this->getServicesOverrideDefinitions();
-        if (!(is_array($services) OR $services instanceof \Traversable)) {
+        if (!(is_array($servicesOverrides) OR $servicesOverrides instanceof \Traversable)) {
             throw new \UnexpectedValueException("Metoda getServicesOverrideDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
         }
         $factories = $this->getFactoriesDefinitions();
