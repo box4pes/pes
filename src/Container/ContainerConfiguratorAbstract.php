@@ -37,6 +37,10 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
         if (!(is_array($services) OR $services instanceof \Traversable)) {
             throw new \UnexpectedValueException("Metoda getServicesDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
         }
+        $servicesOverrides = $this->getServicesOverrideDefinitions();
+        if (!(is_array($services) OR $services instanceof \Traversable)) {
+            throw new \UnexpectedValueException("Metoda getServicesOverrideDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
+        }
         $factories = $this->getFactoriesDefinitions();
         if (!(is_array($factories) OR $factories instanceof \Traversable)) {
             throw new \UnexpectedValueException("Metoda getFactoriesDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
@@ -53,8 +57,14 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
             }
             $container->set($key, $definition);
         }
-        foreach ($factories as $key=>$definition) {
+        foreach ($servicesOverrides as $key=>$definition) {
             if (array_key_exists($key, $aliases) OR array_key_exists($key, $services)) {
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno služby $definition již bylo použito pro alias.");
+            }
+            $container->setOverride($key, $definition);
+        }
+        foreach ($factories as $key=>$definition) {
+            if (array_key_exists($key, $aliases) OR array_key_exists($key, $services) OR array_key_exists($key, $servicesOverrides)) {
                 throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno factory $definition již bylo použito pro alias nebo službu.");
             }
             $container->factory($key, $definition);

@@ -32,12 +32,31 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
     public function lock();
 
     /**
-     * Nastaví službu. Služba při prvním volání vytvoří instatnci objektu a při dalších voláních vrací vždy tuto instanci.
+     * Nastaví službu. Služba při prvním volání vytvoří instanci objektu a při dalších voláních vrací vždy tuto instanci.
+     * Metoda set() nastavuje služby s unikátním jménem v rámci celého sestaveného kontejneru, tedy v rámci delegujícího kontejneru i všech delegátů.
+     * Nelze definovat službu stejného jména v delegujícím kontejneru i v delegátovi, takové vlání set() vyhodí výjimku.
+     *
+     * Služby nastavené metodou set() je možno volat i z delegujících kontejnerů, teda jako služby delegáta.
+     *
      * @param string $serviceName
      * @param mixed $service Closure nebo hodnota
      * @return ContainerSettingsAwareInterface
      */
     public function set($serviceName, $service) : ContainerSettingsAwareInterface;
+
+    /**
+     * Nastaví službu tak, že služba přetíží případnou službu stejného jména v kterémkoli delegátovi konfigurovaného kontejneru (ve vnořených kontejnerech).
+     * Služba při prvním volání vytvoří instanci objektu a při dalších voláních vrací vždy tuto instanci.
+     * Metoda setOverride() nastavuje služby s jménem, které bude použito v právě konfigurováném kontejneru a případně v dalších delegujících kontejnerech (obalujících),
+     * přetíží tedy případnou služby stejného jména v kterémkoli delegátovi (ve vnořeném kontejneru).
+     *
+     * Služby nastavené metodou setOverride() je možno volat i z delegujících kontejnerů, teda jako služby delegáta.
+     *
+     * @param type $serviceName
+     * @param type $service
+     * @return \Pes\Container\ContainerSettingsAwareInterface
+     */
+    public function setOverride($serviceName, $service) : ContainerSettingsAwareInterface;
 
     /**
      * Nastaví factory. Factory při každém volání vytváří objekt znovu.

@@ -31,6 +31,12 @@ interface ContainerConfiguratorInterface {
     public function getServicesDefinitions();
 
     /**
+     * Vrací pole definic služeb kontejneru. Služby kontejneru vracejí při opakovaném volání vždy stejnou instanci proměnné. a je možno je definovat
+     * duplicitně v rámci celého kenteneru složeného z delegátů.
+     */
+    public function getServicesOverrideDefinitions();
+
+    /**
      * Vrací pole definic továren kontejneru. Továrna kontegneru je zvláštní služba, továrny vracejí při opakovaném volání vždy novou instanci proměnné.
      */
     public function getFactoriesDefinitions();

@@ -93,12 +93,15 @@ class Container implements ContainerSettingsAwareInterface {
     /**
      * Nastaví definici služby s daným jménem. Služba je volaná metodou get() kontejneru a vrací hodnotu.
      * Služba definovaná metodou set() generuje hodnotu pouze jednou, při prvním volání metody kontejneru get(), další volání metody get() vrací
-     * identickou hodnotu. Pokud služba generuje objekt, každé volání get() vrací stejnou instanci objektu.
+     * tutéž hodnotu. Pokud služba generuje objekt, každé volání get() vrací stejnou instanci objektu.
      * Služba musí být Closure nebo přímo zadaná hodnota. Generování hodnoty zadanou službou probíhá až v okamžiku volání metody get().
      * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jed tedy o lazy load generování hodnoty.
      *
-     * <b>Předefinování služby:</b> Při opakovaném volání metody set() se stejným jménem služby dojde k předefinování služby. Pokud již byla vytvořena instance objektu vraceného službou,
-     * je tato instance odstraněna (unset) a při dalším volání služby vzniknen nová instance. Jedná se tak o potenciálně chybovou situaci, odstranění objektu může způsobit řadu efektů.
+     * <b>Předefinování služby:</b> Při opakovaném volání metody set() se stejným jménem služby dojde k vyhození výjimky. Nelze ani definovat metodou set()
+     * službu, která již byla definována v delegátovi. Stejnou službu nelze ani dodatečně dodefinovat do delgáta, ovšem to proto, že kontejner, který je použit jako delegát,
+     * je v takovém okamžiku uzamčen. Duplicitní volání služby se stejným jménem v různých delegujících a delegátech má za následek, že z různých kontejnerů jsou volány různé služby a vznikají
+     * tak různé objekty, respektive objekty stejného typu, ale ve více instancích, přestože jsou definovány metodou set(). To je potenciálně nebezpečná situace a proto
+     * je duplicitní nastevení služby metodou set() zakázáno.
      *
      * <b>Uzamčený kontejner:</b> Pokud byl kontejner uzamčen voláním metody lock(), nelze mu již nastavovat žádné služby, volání metody set() zamčeného kontejneru vyvolá výjimku. Pozor: kontejner
      * je vždy automaticky uzamčen, pokud byl použit jako delegate kontejner, tedy v okamžiku, kdy je předán jako parametr konstruktoru delegujícího kontejneru.
@@ -113,14 +116,32 @@ class Container implements ContainerSettingsAwareInterface {
         if ($this->locked) {
             throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru.");
         }
+        if ($this->has($serviceName)) {
+            $cName = $this->containerName ?? "";
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nakonfigurována.");
+        }
         if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
             $cName = $this->containerName ?? "";
             throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName je obsažena v delegate kontejneru.");
         }
-        // smaž instanci při předefinování služby
-        if (isset($this->instances[$serviceName])) {
-            unset($this->instances[$serviceName]);
-        }
+        $this->setOverride($serviceName, $service);
+        return $this;
+    }
+
+    /**
+     * Nastaví službu tak, že služba přetíží případnou službu stejného jména v kterémkoli delegátovi konfigurovaného kontejneru (ve vnořených kontejnerech).
+     * Služba definovaná metodou setOverride() - stejně jako u metody set() - generuje hodnotu pouze jednou, při prvním volání metody kontejneru get(), další volání metody get() vrací
+     * tutéž hodnotu. Pokud služba generuje objekt, každé volání get() vrací stejnou instanci objektu.
+     * Metoda setOverride() nastavuje služby s jménem, které bude použito v právě konfigurováném kontejneru a případně v dalších delegujících kontejnerech (obalujících),
+     * přetíží tedy případnou služby stejného jména v kterémkoli delegátovi (ve vnořeném kontejneru).
+     *
+     * Služby nastavené metodou setOverride() je možno volat i z delegujících kontejnerů, teda jako služby delegáta.
+     *
+     * @param type $serviceName
+     * @param \Closure $service
+     * @return \Pes\Container\ContainerSettingsAwareInterface
+     */
+    public function setOverride($serviceName, $service): \Pes\Container\ContainerSettingsAwareInterface {
         if ($service instanceof \Closure) {
             $this->generators[$serviceName] = function() use ($serviceName, $service) {
                         // ještě není instance?
@@ -138,6 +159,17 @@ class Container implements ContainerSettingsAwareInterface {
         return $this;
     }
 
+    /**
+     * Odstraní hodnotu (např, objekt) vytvořenou při předcházejecím volání metody get() se zadaným jménem služby.
+     * Pokud již byla vytvořena instance objektu vraceného službou a tato instance byla odstraněna metodou reset(), pak při dalším volání služby get() vznikne
+     * nová instance.
+     *
+     * Metoda je vhodná pro reset objektů, jejichž instancování závisí na kontextu nebo na stavu aplikace a tento kontext nebo stav se změnil a je třeba
+     * výjimečně vytvořit novou instaci, ačkolijinak opkovaná volání get() vrecejí instanci stejnou. Typicky jse o objekty vytvořené s užitím bezpečnostního kontextu,
+     *
+     * @param type $serviceName
+     * @return \Pes\Container\ContainerSettingsAwareInterface
+     */
     public function reset($serviceName)  : ContainerSettingsAwareInterface{
         if (isset($this->instances[$serviceName] )) {
             unset($this->instances[$serviceName] );
