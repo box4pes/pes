@@ -3,6 +3,8 @@ use \PHPUnit\Framework\TestCase;
 
 use Pes\Container\ContainerConfiguratorAbstract;
 use Pes\Container\Container;
+use Pes\Container\Exception\LockedContainerException;
+
 use Psr\Container\ContainerInterface;
 
 class ContainerConfiguratorTestOuterConfigurator extends ContainerConfiguratorAbstract {
@@ -31,14 +33,25 @@ class ContainerConfiguratorTestDelegateConfigurator extends ContainerConfigurato
 class ContainerConfiguratorTest extends TestCase {
     public function testCreate() {
         $delegate = new Container();
+        $delegate = (new ContainerConfiguratorTestDelegateConfigurator())->configure($delegate);
         $outer = new Container($delegate);
         $outer = (new ContainerConfiguratorTestOuterConfigurator())->configure($outer);
-        $delegate = (new ContainerConfiguratorTestDelegateConfigurator())->configure($delegate);
         $this->assertTrue($delegate instanceof ContainerInterface);
         $this->assertTrue($outer instanceof ContainerInterface);
         $this->assertEquals("factory", $outer->get("factory"));
         $this->assertEquals("service", $delegate->get("service"));
         $this->assertEquals("service", $outer->get("service"));
+
+    }
+
+    /**
+     * @expectedException Pes\Container\Exception\LockedContainerException
+     */
+    public function testLockedContainerException() {
+        $delegate = new Container();
+        $outer = new Container($delegate);
+        $outer = (new ContainerConfiguratorTestOuterConfigurator())->configure($outer);
+        $delegate = (new ContainerConfiguratorTestDelegateConfigurator())->configure($delegate);
 
     }
 }

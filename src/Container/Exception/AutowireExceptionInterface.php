@@ -15,5 +15,5 @@ namespace Pes\Container\Exception;
  * Interface slouží k odchycení (catch) výjimek autowire kontejneru
  * @author pes2704
  */
-interface AutowireExceptionInterface extends \Psr\Container\ContainerExceptionInterface{
+interface AutowireExceptionInterface extends ContainerExceptionInterface {
 }

@@ -168,9 +168,8 @@ class ContainerTest extends TestCase {
      * Testuje vytvoření vnořených kontejnerů a funkčnost has(), set() pro existující a neexistující služby
      */
     public function testDelegateHasAndGet() {
-        $delegate = new Container();
+        $delegate = (new ContainerTestDelegateConfigurator())->configure(new Container());
         $outer = (new ContainerTestOuterConfigurator())->configure(new Container($delegate));
-        $delegate = (new ContainerTestDelegateConfigurator())->configure($delegate);
 
         $this->assertTrue($delegate->has("delegateValue"));
         $this->assertTrue($delegate->has("delegateService"));
@@ -204,9 +203,8 @@ class ContainerTest extends TestCase {
      * testuje zda service vrací opakvaně identický objekt a factory pokaždé nový
      */
     public function testServiceSingletonBehavior() {
-        $delegate = new Container();
+        $delegate = (new ContainerTestDelegateConfigurator())->configure(new Container());
         $outer = (new ContainerTestOuterConfigurator())->configure(new Container($delegate));
-        $delegate = (new ContainerTestDelegateConfigurator())->configure($delegate);
         $factoryResult = $outer->get("outerFactory");
         $serviceResult = $outer->get("delegateService");
         $this->assertEquals(new stdClass(), $factoryResult);

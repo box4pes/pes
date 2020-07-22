@@ -17,5 +17,5 @@ namespace Pes\Container\Exception;
  *
  * @author pes2704
  */
-interface ContainerExceptionInterface extends Psr\Container\ContainerExceptionInterface {}
+interface ContainerExceptionInterface extends \Psr\Container\ContainerExceptionInterface {}
 

@@ -18,13 +18,18 @@ use Psr\Container\ContainerInterface;
  * @author pes2704
  */
 interface ContainerSettingsAwareInterface extends ContainerInterface {
-    
+
     /**
      * Nastaví kontejneru vlastnost jméno. Tato metoda slouží pouze pro ladění - umožňuje udžet si přehled, ve kterém konteneru se hledá služba
      * i v případě použití více zanořených delegete kontejnerů
      * @param string $containerName
      */
     public function setContainerName($containerName);
+
+    /**
+     * Volání metody MUSÍ znemožnit používání metody set().
+     */
+    public function lock();
 
     /**
      * Nastaví službu. Služba při prvním volání vytvoří instatnci objektu a při dalších voláních vrací vždy tuto instanci.

@@ -11,13 +11,11 @@
 
 namespace Pes\Container\Exception;
 
-use Psr\Container\NotFoundExceptionInterface;
-
 /**
  * Description of UnableToSetServiceException
  *
  * @author pes2704
  */
-class UnableToSetServiceException extends \LogicException implements NotFoundExceptionInterface {
+class UnableToSetServiceException extends \LogicException implements ContainerExceptionInterface {
     //put your code here
 }
