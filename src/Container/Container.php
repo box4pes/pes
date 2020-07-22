@@ -116,13 +116,13 @@ class Container implements ContainerSettingsAwareInterface {
         if ($this->locked) {
             throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru.");
         }
-        if ($this->has($serviceName)) {
-            $cName = $this->containerName ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nakonfigurována.");
-        }
         if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
             $cName = $this->containerName ?? "";
             throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName je obsažena v delegate kontejneru.");
+        }
+        if ($this->has($serviceName)) {
+            $cName = $this->containerName ?? "";
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nakonfigurována.");
         }
         $this->setOverride($serviceName, $service);
         return $this;
