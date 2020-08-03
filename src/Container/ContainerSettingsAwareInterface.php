@@ -24,12 +24,12 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
      * i v případě použití více zanořených delegete kontejnerů
      * @param string $containerName
      */
-    public function addContainerInfo($containerName);
+    public function addContainerInfo($containerName): ContainerSettingsAwareInterface;
 
     /**
      * Volání metody MUSÍ znemožnit používání metody set().
      */
-    public function lock();
+    public function lock(): ContainerSettingsAwareInterface;
 
     /**
      * Nastaví službu. Služba při prvním volání vytvoří instanci objektu a při dalších voláních vrací vždy tuto instanci.

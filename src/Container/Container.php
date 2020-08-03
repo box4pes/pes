@@ -83,12 +83,14 @@ class Container implements ContainerSettingsAwareInterface {
      * i v případě použití více zanořených delegete kontejnerů
      * @param string $containerInfo
      */
-    public function addContainerInfo($containerInfo) {
+    public function addContainerInfo($containerInfo): ContainerSettingsAwareInterface {
         $this->containerInfo = $this->containerInfo.$containerInfo;
+        return $this;
     }
 
-    public function lock() {
+    public function lock(): ContainerSettingsAwareInterface {
         $this->locked = true;
+        return $this;
     }
 
     /**

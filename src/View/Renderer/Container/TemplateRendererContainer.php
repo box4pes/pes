@@ -61,6 +61,7 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
         if (!class_exists($className, TRUE)) {
             throw new RendererNotExistsException("Neexistuje požadovaná třída default rendereru: $className v kontejneru ".__CLASS__.".");
         }
+        // zrušeno pro konzistentní chování s has()
 //        if (!is_subclass_of($className, RendererInterface)) {   //proběhne autoload - pro neexistující třídu chyba
 //            throw new RendererNotExistsException("Požadovaná třída default rendereru: $className v kontejneru ".__CLASS__.".není typu ".RendererInterface::class);
 //        }
