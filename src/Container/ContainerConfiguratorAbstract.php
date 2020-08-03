@@ -46,7 +46,7 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
             throw new \UnexpectedValueException("Metoda getFactoriesDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
         }
 
-        $container->setContainerName('Configured by '.get_called_class());
+        $container->addContainerInfo('Configured by '.get_called_class());
 
         foreach ($aliases as $alias=>$realName) {
             $container->alias($alias, $realName);

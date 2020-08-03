@@ -24,7 +24,7 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
      * i v případě použití více zanořených delegete kontejnerů
      * @param string $containerName
      */
-    public function setContainerName($containerName);
+    public function addContainerInfo($containerName);
 
     /**
      * Volání metody MUSÍ znemožnit používání metody set().

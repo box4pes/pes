@@ -37,6 +37,7 @@ class Date
      * @return Date
      */
     public static function createFromCzechStringDate($retezecDatum=false) {
+        // preg_replace('/\s+/', '', $string)
         $retezecDatum=trim($retezecDatum);
 //        $regex_pattern="^([1-9]|0[0-9]|1[0-9]|2[0-9]|3[0-1])\.( [1-9]|[1-9]|1[0-2]|0[1-9])\.( [1-2][0-9]{3}|[1-2][0-9]{3})";
 //        if (ereg($regex_pattern, $retezecDatum, $regs) && checkdate($regs[2],$regs[1],$regs[3]))   // SVOBODA This function has been DEPRECATED as of PHP 5.3.0. Relying on this feature is highly discouraged.
