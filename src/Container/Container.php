@@ -117,7 +117,7 @@ class Container implements ContainerSettingsAwareInterface {
      */
     public function set($serviceName, $service) : ContainerSettingsAwareInterface {
         if ($this->locked) {
-            throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru.");
+            throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru. Kontener je uzamčen automaticky, když byl použit jako delegát.");
         }
         if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
             $cName = $this->containerInfo ?? "";
