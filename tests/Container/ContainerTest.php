@@ -23,6 +23,8 @@ class ContainerDuplicateServiceKAliasFactory extends ContainerConfiguratorAbstra
     }
     public function getServicesDefinitions() {return ['dbNick' => 'duplikátnínick'];
     }
+    public function getServicesOverrideDefinitions() {return [];
+    }
     public function getFactoriesDefinitions() {return [];
     }
 }
@@ -33,6 +35,8 @@ class ContainerDuplicateFactoryKAliasFactory extends ContainerConfiguratorAbstra
     }
     public function getServicesDefinitions() {return [];
     }
+    public function getServicesOverrideDefinitions() {return [];
+    }
     public function getFactoriesDefinitions() {return ['dbType' => function() { return new stdClass();} ];
     }
 }
@@ -42,6 +46,8 @@ class ContainerDuplicateFactoryKServiceFactory extends ContainerConfiguratorAbst
     public function getAliases() {return [];
     }
     public function getServicesDefinitions() {return ['servisníobjekt' => function() { return new stdClass();} ];
+    }
+    public function getServicesOverrideDefinitions() {return [];
     }
     public function getFactoriesDefinitions() {return ['servisníobjekt' => function() { return new stdClass();} ];
     }
@@ -62,6 +68,9 @@ class ContainerTestOuterConfigurator extends ContainerConfiguratorAbstract {
     public function getServicesDefinitions() {
         return [];
     }
+    public function getServicesOverrideDefinitions() {
+        return [];
+    }
 }
 
 class ContainerTestDelegateConfigurator extends ContainerConfiguratorAbstract {
@@ -78,6 +87,9 @@ class ContainerTestDelegateConfigurator extends ContainerConfiguratorAbstract {
                 return new stdClass();
             }
         ];
+    }
+    public function getServicesOverrideDefinitions() {
+        return [];
     }
 }
 
@@ -104,6 +116,9 @@ class ContainerTestDefinitionsConfigurator extends ContainerConfiguratorAbstract
                 return new Handler($c->get(Account::class), $c->get(ConnectionInfo::class), $dsnProvider, $optionsProvider, $attributesProviderDefault, $c->get(NullLogger::class));
             }
         ];
+    }
+    public function getServicesOverrideDefinitions() {
+        return [];
     }
     public function getFactoriesDefinitions() {
         return [];
@@ -133,6 +148,9 @@ class ContainerTestSettingsConfigurator extends ContainerConfiguratorAbstract {
 
         'TESTOVACI_STRING' => "Cyrilekoěščřžýáíéúů",
         ];
+    }
+    public function getServicesOverrideDefinitions() {
+        return [];
     }
     public function getFactoriesDefinitions() {
         return [];

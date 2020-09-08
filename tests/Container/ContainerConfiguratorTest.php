@@ -14,6 +14,8 @@ class ContainerConfiguratorTestOuterConfigurator extends ContainerConfiguratorAb
     }
     public function getServicesDefinitions() {return [];
     }
+    public function getServicesOverrideDefinitions() {return [];
+    }
 }
 
 class ContainerConfiguratorTestDelegateConfigurator extends ContainerConfiguratorAbstract {
@@ -22,6 +24,8 @@ class ContainerConfiguratorTestDelegateConfigurator extends ContainerConfigurato
     public function getFactoriesDefinitions() {return [];
     }
     public function getServicesDefinitions() {return ["service" => "service"];
+    }
+    public function getServicesOverrideDefinitions() {return [];
     }
 }
 

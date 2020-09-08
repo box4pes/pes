@@ -20,7 +20,6 @@ class AutowiringContainerTestSettingsConfigurator extends ContainerConfiguratorA
     public function getAliases() {
         return [];
     }
-
     public function getServicesDefinitions() {
         return [
             'DB_TYPE' => Pes\Database\Handler\DbTypeEnum::MySQL,
@@ -38,6 +37,9 @@ class AutowiringContainerTestSettingsConfigurator extends ContainerConfiguratorA
             'NAME' => 'pes_tester',
             'PASSWORD' => 'pes_tester',
         ];
+    }
+    public function getServicesOverrideDefinitions() {
+        return [];
     }
     public function getFactoriesDefinitions() {
         return [];
@@ -68,7 +70,9 @@ class AutowiringContainerTestDefinitionsConfigurator extends ContainerConfigurat
     public function getServicesDefinitions() {
         return [];
     }
-
+    public function getServicesOverrideDefinitions() {
+        return [];
+    }
     public function getFactoriesDefinitions() {
         return [];
     }
