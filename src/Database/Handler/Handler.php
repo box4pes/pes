@@ -193,6 +193,10 @@ class Handler extends \PDO implements HandlerInterface {
             @$str2 .= '#'.$i.' '.$trace['file'].', line '.$trace['line'].': '.$trace['class'].$trace['type'].$trace['function']
                  .'('.\implode(',', array_map('self::varPrint', $trace['args'])).')'.\PHP_EOL;
             $i++;
+            // pokud jsou parametry handleru injektovány z kontejneru, pak výpis proměnných nad úroveň #1 vypisuje obsah kontejneru - log je obrovský
+            if ($i>1) {
+                break;       #0 je PDO exception, #1 je Handler exception - to stačí
+            }
         }
 
         self::$safeExceptionHandlerLogger->critical('Chyba při instancování db handleru. '.$exception->getMessage().\PHP_EOL.\PHP_EOL.'Trace string:'.\PHP_EOL.$exception->getTraceAsString().\PHP_EOL.$str2);
