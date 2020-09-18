@@ -22,6 +22,14 @@ class Manipulator {
     }
 
     /**
+     *
+     * @return \PDO
+     */
+    public function getHandler(): \PDO {
+        return $this->handler;
+    }
+
+    /**
      * Vytvoří kopii databázové tabulky. Pokud neexistuje zdrojová tabulka nebo existuje cílová tabulka již před kopírováním vyhodí výjimku.
      * Do nové tabulky kopíruje strukturu, data, indexy a triggery.
      *
