@@ -1,6 +1,7 @@
 <?php
 namespace Pes\Database\Manipulator;
 
+use Pes\Database\Handler\HandlerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -11,12 +12,12 @@ use Psr\Log\LoggerInterface;
 class Manipulator {
 
     /**
-     * @var \PDO
+     * @var HandlerInterface
      */
     private $handler;
     private $logger;
 
-    public function __construct(\PDO $handler, LoggerInterface $logger) {
+    public function __construct(HandlerInterface $handler, LoggerInterface $logger) {
         $this->handler = $handler;
         $this->logger = $logger;
     }
@@ -85,7 +86,7 @@ class Manipulator {
             FROM information_schema.TABLES
             WHERE (TABLE_SCHEMA = :db_name) AND (TABLE_NAME = :table_name)"
         );
-        $dbName = $dbh->getDsn()->getDbName();  // musím udělat proměnnou - předává se do bindParam referencí
+        $dbName = $dbh->getSchemaName();  // musím udělat proměnnou - předává se do bindParam referencí
         $stmt->bindParam(':db_name', $dbName, \PDO::PARAM_STR);
         $stmt->bindParam(':table_name', $tableName, \PDO::PARAM_STR);
 
