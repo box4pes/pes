@@ -82,7 +82,7 @@ class Manipulator {
     public function tableExists($tableName) {
         $dbh = $this->handler;
         $nameChunks = explode(".", $tableName);
-        switch ($nameChunks) {
+        switch (count($nameChunks)) {
             case 1:
                 $dbName = $dbh->getSchemaName();  // musím udělat proměnnou - předává se do bindParam referencí
                 break;
