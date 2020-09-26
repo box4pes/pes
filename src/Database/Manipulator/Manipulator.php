@@ -81,12 +81,25 @@ class Manipulator {
      */
     public function tableExists($tableName) {
         $dbh = $this->handler;
+        $nameChunks = explode(".", $tableName);
+        switch ($nameChunks) {
+            case 1:
+                $dbName = $dbh->getSchemaName();  // musím udělat proměnnou - předává se do bindParam referencí
+                break;
+            case 2:
+                $dbName = $nameChunks[0];
+                $tableName = $nameChunks[1];
+                break;
+            default:
+                throw new UnexpectedValueException("Zadané jméno tabulky musí být ve tvaru jednoho slova nebo dvou slov spojených tečkou. Jméno $tableName neumím zpracovat.");
+                break;
+        }
+
         $stmt = $dbh->prepare(
             "SELECT table_name
             FROM information_schema.TABLES
             WHERE (TABLE_SCHEMA = :db_name) AND (TABLE_NAME = :table_name)"
         );
-        $dbName = $dbh->getSchemaName();  // musím udělat proměnnou - předává se do bindParam referencí
         $stmt->bindParam(':db_name', $dbName, \PDO::PARAM_STR);
         $stmt->bindParam(':table_name', $tableName, \PDO::PARAM_STR);
 
