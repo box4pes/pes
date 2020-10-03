@@ -73,12 +73,12 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface, PhpTemplateFu
      * Obsah souboru template se vykoná jako php skript, kód obsažený v souboru se vykonává uvnitř metody rendereru, proto jsou pro něj dostupné
      * všechny metody rendereru, například metoda insert() nebo repeat().</p>
      * <p>Příklad: Soubory šablon jsou vkládány použitím php příkazu include takto: <code><?php include sablona.php; ?></code> nebo voláním metody insert template objektu takto:
-     * <code><?= $this->insert("contents/main/main.php", $data) ?></code> a repeat takto: <code><?= $this->insert("contents/main/repeated_fragment.php", $data) ?></code>.</p>
+     * <code><?= $this->insert("contents/main/main.php", $data) ?></code> a repeat takto: <code><?= $this->repeat("contents/main/repeated_fragment.php", $data) ?></code>.</p>
      * <p>Data jsou metodě, ve které (lokálně) proběhne vykonání kódu šablony a tedy i volání volání metod insert() nebo repeat() předána pomocí parametru se jménem $context. Pokud je proměnná $context typu array nebo
      * je iterovatelná is_iterable() jsou její prvky extrahovány do lokálních proměnných a ty jsou pak dostupné v kódu šablony. Proměnná $context je navíc vždy lokální
      * proměnnou v první úrovni šablony je vždy spolu s extrahovanými proměnnými dostupná. V šabloně první úrovně je dostupná vždy a pokud v metodě insert() nebo repeat() předám jako
      * data tuto proměnou - tedy předám proměnnou $context např. takto: <code><?= $this->insert("contents/main/repeated_fragment.php", $context) ?></code>
-     * je pak stejná proměnná $context dostupná i v příslušné podřízené šabloně. Kontextová data je takto možno řízeně předávat do dalších úrovní šablon.
+     * je pak stejná proměnná $context dostupná i v příslušné podřízené šabloně. Kontextová data je takto možno řízeně předávat nezměněna do dalších úrovní šablon.
      * <p>Renderer dále nabízí použití pomocných metod pro transformaci textu definovaných v PhpTemplateFunctionsTrait. Tyto metody jsou obdobně dostupné z kódu
      * šablony voláním <code><?= $this->esc() ?></code> a podobně.<úp>
      *
@@ -147,8 +147,9 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface, PhpTemplateFu
         }
 
         ## extrahování - iterable ve foreach (zrušeno extrahování array funkcí extract($data))
-        # - extrahuje jen prvky s indexy, které nejsou integer (s jinými čísly nepočítám, is_numeric() funguje, ale je cca 0,5ms pomalejší)
-        # - probede trim() jména proměnné pro případ náhodnýcg mezer před či za jménem v řetězci (lehce se to stane)
+        # - extrahuje jen prvky kontextu s indexy, které nejsou integer (s jinými čísly nepočítám, is_numeric() funguje, ale je cca 0,5ms pomalejší) -
+        #   jde o obranu před "neasociativními" prvky v poli kontext
+        # - provede trim() jména proměnné pro případ náhodných mezer před či za jménem v řetězci (lehce se to stane)
         ##
         if ($context AND (is_array($context) OR $context instanceof \Traversable)) {
             foreach ($context as $extractedVarName___=>$extractedVarValue___) {
@@ -157,7 +158,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface, PhpTemplateFu
                     if ($extractedVarValue___ instanceof \Closure) {
                         $$extractedVarName___ = $extractedVarValue___();     // Closure zavolám (kontejner)
                     } else {
-                        $$extractedVarName___ = $extractedVarValue___;
+                        $$extractedVarName___ = (string) $extractedVarValue___;
                     }
                     if (isset($bagForMethodVars___->variableUsageRecorder)) {
                         $bagForMethodVars___->variableUsageRecorder->addContextVar($extractedVarName___, $extractedVarValue___);
