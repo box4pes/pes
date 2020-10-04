@@ -158,7 +158,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface, PhpTemplateFu
                     if ($extractedVarValue___ instanceof \Closure) {
                         $$extractedVarName___ = $extractedVarValue___();     // Closure zavolám (kontejner)
                     } else {
-                        $$extractedVarName___ = (string) $extractedVarValue___;
+                        $$extractedVarName___ = $extractedVarValue___;
                     }
                     if (isset($bagForMethodVars___->variableUsageRecorder)) {
                         $bagForMethodVars___->variableUsageRecorder->addContextVar($extractedVarName___, $extractedVarValue___);
