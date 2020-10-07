@@ -54,6 +54,10 @@ interface ViewInterface {
      */
     public function setRendererName($rendererName): ViewInterface;
 
+    public function setFallbackRenderer(RendererInterface $renderer): ViewInterface;
+
+    public function setFallbackRendererName($fallbackRendererName): ViewInterface;
+
     /**
      * Nastaví template objekt pro renderování. Tato template bude použita metodou render().
      *

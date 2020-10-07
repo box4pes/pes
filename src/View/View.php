@@ -99,6 +99,13 @@ class View implements ViewInterface {
         return $this;
     }
 
+    public function setFallbackRenderer(RendererInterface $renderer): ViewInterface {
+        $this->fallbackRenderer = $renderer;
+    }
+
+    public function setFallbackRendererName($fallbackRendererName): ViewInterface {
+        $this->fallbackRendererName = $fallbackRendererName;
+    }
 
     /**
      * Nastaví template objekt pro renderování. Tato template bude použita metodou render().
@@ -110,14 +117,6 @@ class View implements ViewInterface {
         return $this;
     }
 
-    public function setFallbackRenderer(RendererInterface $renderer): ViewInterface {
-        $this->fallbackRenderer = $renderer;
-    }
-
-    public function setFallbackRendererName($fallbackRendererName): ViewInterface {
-        $this->fallbackRendererName = $fallbackRendererName;
-    }
-    
     /**
      * Renderuje data s použitím případné template a vytvoří obsah.
      *
