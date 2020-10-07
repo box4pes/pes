@@ -141,20 +141,8 @@ class View implements ViewInterface {
      * @return string
      */
     public function getString($data=NULL) {
-        if ($this->template) {
-            $renderer = $this->rendererContainer->get($this->template->getDefaultRendererService());
-        } else {
-
-        }
-
-
         $renderer = $this->resolveRenderer();
-        if ($this->renderer instanceof TemplateRendererInterface) {
-            if ($this->template) {
-                $this->renderer->setTemplate($this->template);
-            }
-        }
-        return $this->renderer->render($data ?? $this->data);
+        return $renderer->render($data ?? $this->data);
     }
 
     /**
