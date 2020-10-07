@@ -101,10 +101,12 @@ class View implements ViewInterface {
 
     public function setFallbackRenderer(RendererInterface $renderer): ViewInterface {
         $this->fallbackRenderer = $renderer;
+        return $this;
     }
 
     public function setFallbackRendererName($fallbackRendererName): ViewInterface {
         $this->fallbackRendererName = $fallbackRendererName;
+        return $this;
     }
 
     /**
