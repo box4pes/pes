@@ -41,19 +41,24 @@ class View implements ViewInterface {
      */
     protected $renderer;
 
-    protected $data;
-
     /**
-     * @var TemplateInterface
+     * @var RendererInterface
      */
-    protected $template;
+    protected $fallbackRenderer;
+
+    protected $rendererName;
 
     /**
      * @var ContainerInterface
      */
     protected $rendererContainer;
 
-    protected $rendererName;
+    /**
+     * @var TemplateInterface
+     */
+    protected $template;
+
+    protected $data;
 
     /**
      * Lze nastavit data pro renderování. Tato data budou použita metodou render().
@@ -103,18 +108,22 @@ class View implements ViewInterface {
         return $this;
     }
 
+    public function setFallbackRenderer(RendererInterface $renderer): ViewInterface {
+
+    }
+
     /**
      * Renderuje data s použitím případné template a vytvoří obsah.
      *
      * Renderuje data:
      * <ol>
-     * <li>Data zadaná jako parametr.</l>
+     * <li>Data zadaná jako parametr metody.</l>
      * <li>Pokud parameter data není zadán, renderuje data zadaná metodou setData (view->setData($data)).</li>
      * </ol>
      *
      * Použije renderer:
      * <ol>
-     * <li>renderer nastavenž metodou View->setRendererName()</li>
+     * <li>renderer nastavený metodou View->setRendererName()</li>
      * <li>pokud je nastavena template, použije renderer z renderer kontejneru (RendererContainer) se jménem service získanou z template
      * metodou template->getDefaultRendererService()</li>
      * <li>fallback: pokud není zadán renderer, použije se fallback renderer pro získání alespoň nějakého výstupu. Jméno třídy fallback rendereru je definováno jako
@@ -132,9 +141,18 @@ class View implements ViewInterface {
      * @return string
      */
     public function getString($data=NULL) {
-        $this->resolveRenderer();
+        if ($this->template) {
+            $renderer = $this->rendererContainer->get($this->template->getDefaultRendererService());
+        } else {
+
+        }
+
+
+        $renderer = $this->resolveRenderer();
         if ($this->renderer instanceof TemplateRendererInterface) {
-            $this->renderer->setTemplate($this->template);
+            if ($this->template) {
+                $this->renderer->setTemplate($this->template);
+            }
         }
         return $this->renderer->render($data ?? $this->data);
     }
@@ -168,38 +186,88 @@ class View implements ViewInterface {
     ##### private methods ###########################
 
     private function resolveRenderer() {
-        if (!isset($this->renderer)) {
+        if (isset($this->template)) {
+            if (isset($this->renderer)) {
+                $renderer = $this->renderer;
+            } elseif (isset($this->rendererName)) {
+                $renderer = $this->getRendererByName($this->rendererName);
+            } else {
+                $renderer = $this->getDefaultTemplateRenderer($this->template);
+            }
+            $this->setRendererTemplate($renderer, $this->template);
+        } elseif (isset($this->renderer)) {
+            $renderer = $this->renderer;
+        } elseif (isset($this->rendererName)) {
+            $renderer = $this->getRendererByName($this->rendererName);
+        } else {
+            $renderer = $this->getFallbackRendereAndTemplate();
+        }
+        return $renderer;
+    }
+
+    private function getRendererByName($rendererName) {
+        if (!isset($this->rendererContainer)) {
+            throw new LogicException("Nelze získat renderer podle jména rendereru, není zadán renderer kontejner.");
+        } else {
+            return $this->rendererContainer->get($rendererName);
+        }
+    }
+
+    private function getDefaultTemplateRenderer(TemplateInterface $template) {
+        if (!isset($this->rendererContainer)) {
+            throw new LogicException("Nelze získat renderer jako default renderer šablony, není zadán renderer kontejner.");
+        } else {
+            return $this->rendererContainer->get($template->getDefaultRendererService());
+        }
+    }
+
+    private function setRendererTemplate(RendererInterface $renderer, TemplateInterface $template=null) {
+        if ($renderer instanceof TemplateRendererInterface) {
+            if ($template) {
+                $this->checkRendererTemplateCompatibility($renderer, $template);
+                $renderer->setTemplate($template);
+            }
+        }
+    }
+
+    private function resolveRendererOld() {
+        if (isset($this->renderer)) {
+            $renderer = $this->renderer;
+        } else {
             if (isset($this->rendererName)) {
-                $this->renderer = $this->rendererContainer->get($this->rendererName);
+                $renderer = $this->rendererContainer->get($this->rendererName);
+                // pokud je renderer i $this->template a renderer je typu TemplateRendererInterface, předá se $this->template resolvovanému rendereru - je třeba ověřit kompatibilitu
                 if ($this->template) {
-                    $this->checkRendererTemplateConsistency($this->renderer, $this->template);
+                    $this->checkRendererTemplateCompatibility($renderer, $this->template);
                 }
             } elseif ($this->template) {
-                $this->renderer = $this->rendererContainer->get($this->template->getDefaultRendererService());
+                $renderer = $this->rendererContainer->get($this->template->getDefaultRendererService());
             } else {
-                $this->useFallbackRendereAndTemplate();   // vytváří user error
+                $renderer = $this->useFallbackRendereAndTemplate();   // vytváří user error
             }
+        }
+        return $renderer;
+    }
+
+    private function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template) {
+        $templateDefaultRendererClass = $template->getDefaultRendererService();
+        if ( !($renderer instanceof $templateDefaultRendererClass)) {
+            throw new BadRendererForTemplateException(
+                    "Template ".get_called_class($template)." vyžaduje renderer typu $templateDefaultRendererClass. "
+                    . "Zadaný renderer ".get_called_class($renderer)." nelze použít pro renderování template.");
         }
     }
 
-    private function checkRendererTemplateConsistency(RendererInterface $renderer, TemplateInterface $template) {
-        if (isset($template)) {
-            if ( !($renderer instanceof $templateDefaultRendererClass)) {
-                throw new BadRendererForTemplateException(
-                        "Template ".get_called_class($template)." vyžaduje renderer typu ".$template->getDefaultRendererService().". "
-                        . "Zadaný renderer ".get_called_class($renderer)." nelze použít pro renderování template.");
-            }
-        }
-    }
-
-    private function useFallbackRendereAndTemplate() {
-        $containerClass = isset($this->rendererContainer) ? get_class($this->rendererContainer) : 'null';
-        $templateClass = isset($this->template) ? get_class($this->template) : 'null';
+    private function getFallbackRendereAndTemplate() {
+        $rendererName = $this->rendererName ?? 'undefined';
+        $containerClass = isset($this->rendererContainer) ? get_class($this->rendererContainer) : 'renderer container is not set';
+        $templateClass = isset($this->template) ? get_class($this->template) : 'undefined';
         user_error("Nepodařilo se získat renderer, je použit fallback renderer a fallback template. "
-                . " Renderer name: {$this->rendererName},"
+                . " Renderer name: {$rendererName},"
                 . " renderer container: $containerClass,"
                 . " template: {$templateClass}", E_USER_NOTICE);
-        $this->renderer = new FallbackRenderer();
-        $this->template = new FallbackTemplate();
+        $renderer = new FallbackRenderer();
+        $renderer->setTemplate(new FallbackTemplate());
+        return $renderer;
     }
 }
