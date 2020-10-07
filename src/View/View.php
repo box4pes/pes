@@ -41,12 +41,14 @@ class View implements ViewInterface {
      */
     protected $renderer;
 
+    protected $rendererName;
+
     /**
      * @var RendererInterface
      */
     protected $fallbackRenderer;
 
-    protected $rendererName;
+    protected $fallbackRendererName;
 
     /**
      * @var ContainerInterface
@@ -109,9 +111,13 @@ class View implements ViewInterface {
     }
 
     public function setFallbackRenderer(RendererInterface $renderer): ViewInterface {
-
+        $this->fallbackRenderer = $renderer;
     }
 
+    public function setFallbackRendererName($fallbackRendererName): ViewInterface {
+        $this->fallbackRendererName = $fallbackRendererName;
+    }
+    
     /**
      * Renderuje data s použitím případné template a vytvoří obsah.
      *
@@ -187,6 +193,10 @@ class View implements ViewInterface {
             $renderer = $this->renderer;
         } elseif (isset($this->rendererName)) {
             $renderer = $this->getRendererByName($this->rendererName);
+        } elseif (isset($this->fallbackRenderer)) {
+            $renderer = $this->fallbackRenderer;
+        } elseif (isset($this->fallbackRendererName)) {
+            $renderer = $this->getRendererByName($this->fallbackRendererName);
         } else {
             $renderer = $this->getFallbackRendereAndTemplate();
         }
