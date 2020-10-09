@@ -88,6 +88,10 @@ class Container implements ContainerSettingsAwareInterface {
         return $this;
     }
 
+    /**
+     * Metoda uzamkne kontener, pokud byl kontejner uzamčen voláním metody lock(), nelze mu již nastavovat žádné služby.
+     * @return \Pes\Container\ContainerSettingsAwareInterface
+     */
     public function lock(): ContainerSettingsAwareInterface {
         $this->locked = true;
         return $this;

@@ -27,7 +27,8 @@ abstract class FileTemplateAbstract implements FileTemplateInterface {
      * @throws NoTemplateFileException Pokud soubor neexistuje nebo ho nelze číst
      */
     public function __construct($templateFileName) {
-        if (!is_readable($templateFileName)) {
+        // is_readable - volá interní php funkci stat() a ta cachuje výsledek volání - manuál:     Note: The results of this function are cached. See clearstatcache() for more details.
+        if (!is_($templateFileName)) {
             throw new NoTemplateFileException('Neexistuje nebo není čitelný soubor '.$templateFileName.'.');
         }
         $this->templateFileName = $templateFileName;

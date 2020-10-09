@@ -11,6 +11,8 @@
 
 namespace Pes\Container;
 
+use Pes\Container\Exception\UnableToSetServiceException;
+
 /**
  * Description of ContainerConfiguratorAbstract
  *
@@ -29,6 +31,10 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
      */
     public function configure(ContainerSettingsAwareInterface $container) : ContainerSettingsAwareInterface {
 
+        $params = $this->getParams();
+        if (!(is_array($params) OR $params instanceof \Traversable)) {
+            throw new \UnexpectedValueException("Metoda getParams() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
+        }
         $aliases = $this->getAliases();
         if (!(is_array($aliases) OR $aliases instanceof \Traversable)) {
             throw new \UnexpectedValueException("Metoda getAliases() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
@@ -48,26 +54,32 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
 
         $container->addContainerInfo('Configured by '.get_called_class());
 
+        foreach ($params as $name=>$definition) {
+            try {
+                $container->set($name, $definition);
+            } catch(UnableToSetServiceException $uExc) {
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno služby kontejneru lze použít pouze jednou. Jméno služby $name již bylo použito.", 0, $uExc);
+            }
+        }
         foreach ($aliases as $alias=>$realName) {
             $container->alias($alias, $realName);
         }
-        foreach ($services as $key=>$definition) {
-            if (array_key_exists($key, $aliases)) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno služby $key již bylo použito pro alias.");
+        foreach ($services as $name=>$definition) {
+            try {
+                $container->set($name, $definition);
+            } catch(UnableToSetServiceException $uExc) {
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno služby kontejneru lze použít pouze jednou. Jméno služby $name již bylo použito.", 0, $uExc);
             }
-            $container->set($key, $definition);
         }
-        foreach ($servicesOverrides as $key=>$definition) {
-            if (array_key_exists($key, $aliases) OR array_key_exists($key, $services)) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno služby $key již bylo použito pro alias.");
-            }
-            $container->setOverride($key, $definition);
+        foreach ($servicesOverrides as $name=>$definition) {
+            $container->set($name, $definition);
         }
-        foreach ($factories as $key=>$definition) {
-            if (array_key_exists($key, $aliases) OR array_key_exists($key, $services) OR array_key_exists($key, $servicesOverrides)) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno alias, služby nebo factory lze použít pouze jednou. Jméno factory $key již bylo použito pro alias nebo službu.");
+        foreach ($factories as $name=>$definition) {
+            try {
+                $container->set($name, $definition);
+            } catch(UnableToSetServiceException $uExc) {
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno služby kontejneru lze použít pouze jednou. Jméno služby $name již bylo použito.", 0, $uExc);
             }
-            $container->factory($key, $definition);
         }
         return $container;
     }

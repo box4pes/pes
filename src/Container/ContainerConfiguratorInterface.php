@@ -26,6 +26,16 @@ interface ContainerConfiguratorInterface {
     public function configure(ContainerSettingsAwareInterface $container) : ContainerSettingsAwareInterface;
 
     /**
+     * Vrací pole parametrů - hodnot nezávislých na službách kontejneru
+     */
+    public function getParams();
+
+    /**
+     * Vrací pole aliasů ke skutečným jménům služeb.
+     */
+    public function getAliases();
+
+    /**
      * Vrací pole definic služeb kontejneru. Služby kontejneru vracejí při opakovaném volání vždy stejnou instanci proměnné.
      */
     public function getServicesDefinitions();
@@ -40,10 +50,4 @@ interface ContainerConfiguratorInterface {
      * Vrací pole definic továren kontejneru. Továrna kontegneru je zvláštní služba, továrny vracejí při opakovaném volání vždy novou instanci proměnné.
      */
     public function getFactoriesDefinitions();
-
-    /**
-     * Vrací pole aliasů ke skutečným jménům služeb.
-     */
-    public function getAliases();
-
 }
