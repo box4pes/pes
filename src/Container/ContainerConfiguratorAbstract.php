@@ -72,7 +72,7 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
             }
         }
         foreach ($servicesOverrides as $name=>$definition) {
-            $container->set($name, $definition);
+            $container->setOverride($name, $definition);
         }
         foreach ($factories as $name=>$definition) {
             try {
