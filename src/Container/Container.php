@@ -84,7 +84,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @param string $containerInfo
      */
     public function addContainerInfo($containerInfo): ContainerSettingsAwareInterface {
-        $this->containerInfo = ($this->containerInfo.' & ' ?? '').$containerInfo;
+        $this->containerInfo = ($this->containerInfo ? $this->containerInfo.' & ' : '').$containerInfo;
         return $this;
     }
 
