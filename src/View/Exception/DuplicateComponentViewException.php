@@ -9,10 +9,10 @@
 namespace Pes\View\Exception;
 
 /**
- * Description of BadRendererForTemplateException
+ * Description of DuplicateComponentViewException
  *
  * @author pes2704
  */
-class BadRendererForTemplateException extends \UnexpectedValueException implements ViewException {
+class DuplicateComponentViewException extends \LogicException implements ViewException {
     //put your code here
 }

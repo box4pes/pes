@@ -15,7 +15,7 @@ class CompositeView extends View implements CompositeViewInterface {
 
     /**
      *
-     * @var ViewInterface in \SplObjectStorage
+     * @var \SplObjectStorage
      */
     private $componentViews;
 
@@ -34,7 +34,12 @@ class CompositeView extends View implements CompositeViewInterface {
      * @return \Pes\View\CompositeViewInterface
      */
     public function appendComponentView(ViewInterface $componentView, $name): CompositeViewInterface {
-        $this->componentViews->attach($componentView, $name);
+        if ($this->componentViews->contains($componentView)) {
+            $usedWithName = $this->componentViews->offsetGet($componentView);
+            throw new Exception\DuplicateComponentViewException("Konponentní objekt view se jménem $name nelze přidat, již je v kompozitním view použito. Kompozitní view musí být různé objekty.");
+        } else {
+            $this->componentViews->attach($componentView, $name);
+        }
         return $this;
     }
 
