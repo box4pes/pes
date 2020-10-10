@@ -76,7 +76,7 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
         }
         foreach ($factories as $name=>$definition) {
             try {
-                $container->set($name, $definition);
+                $container->factory($name, $definition);
             } catch(UnableToSetServiceException $uExc) {
                 throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno služby kontejneru lze použít pouze jednou. Jméno služby $name již bylo použito.", 0, $uExc);
             }
