@@ -36,7 +36,7 @@ class CompositeView extends View implements CompositeViewInterface {
     public function appendComponentView(ViewInterface $componentView, $name): CompositeViewInterface {
         if ($this->componentViews->contains($componentView)) {
             $usedWithName = $this->componentViews->offsetGet($componentView);
-            $cls = get_called_class($componentView);
+            $cls = get_class($componentView);
             throw new Exception\DuplicateComponentViewException("Konponentní objekt view se jménem $name nelze přidat, v kompozitním view již je přidán identický objekt. Jednotlivá kompozitní view musí být různé objekty.");
         } else {
             $this->componentViews->attach($componentView, $name);
