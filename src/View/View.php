@@ -19,7 +19,7 @@ use Pes\View\Template\TemplateInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * use použit jako definice fallback rendereru - použit pro renderování, pokud nebyla zadána žádná template a tedy není znám default renderer.
+ * use použit jako definice fallback rendereru - použit pro renderování, pokud nebyl získán žádný uživatelsky zadaný renderer.
  */
 use Pes\View\Renderer\ImplodeRenderer as FallbackRenderer;
 use Pes\View\Template\ImplodeTemplate as FallbackTemplate;
@@ -110,11 +110,12 @@ class View implements ViewInterface {
     }
 
     /**
-     * Nastaví template objekt pro renderování. Tato template bude použita metodou render().
+     * Nastaví template objekt pro renderování. Tato template bude použita metodou render(). Pokud parametr template je null, dojde k použití dalších
+     * možností při resolvování rendereru - vit resolveRenderer().
      * @param TemplateInterface $template
      * @return \Pes\View\ViewInterface
      */
-    public function setTemplate(TemplateInterface $template): ViewInterface {
+    public function setTemplate(TemplateInterface $template = null): ViewInterface {
         $this->template = $template;
         return $this;
     }
@@ -124,17 +125,30 @@ class View implements ViewInterface {
      *
      * Renderuje data:
      * <ol>
-     * <li>Data zadaná jako parametr metody.</l>
+     * <li>Data zadaná jako parametr metody.</li>
      * <li>Pokud parameter data není zadán, renderuje data zadaná metodou setData (view->setData($data)).</li>
      * </ol>
      *
-     * Použije renderer:
-     * <ol>
-     * <li>renderer nastavený metodou View->setRendererName()</li>
-     * <li>pokud je nastavena template, použije renderer z renderer kontejneru (RendererContainer) se jménem service získanou z template
-     * metodou template->getDefaultRendererService()</li>
-     * <li>fallback: pokud není zadán renderer, použije se fallback renderer pro získání alespoň nějakého výstupu. Jméno třídy fallback rendereru je definováno jako
+     * Použije renderer vybraný v závislosti na kombinaci nastavených template, renderer, renderer name, fallback renderer:
+     * <ul>
+     * <li>Je template - template se renderuje rendererem získaným v tomto pořadí:
+     *  <ul>
+     *    <li>rendererem zadaným metodou setRenderer()</li>
+     *    <li>rendererem získaným z renderer kontejneru podle jména zadaného metodou setRendererName() </li>
+     *    <li>default rendererem šablony získaným z renderer kontejneru podle jména poskytnutého metodou template getDefaultRendererService()</li>
+     *  </ul>
+     * </li>
+     * <li>Není template - renderuje rendererem získaným v tomto pořadí:
+     *  <ul>
+     *    <li>rendererem zadaným metodou setRenderer()</li>
+     *    <li>rendererem získaným z renderer kontejneru podle rendererName metodou setRendererName() </li>
+     *    <li>rendererem zadaným metodou setFallbackRenderer()</li>
+     *    <li>rendererem získaným z renderer kontejneru podle jména zadaného metodou setFallbackRendererName()</li>
+     *    <li>fallback rendererem získaným privátní metodou getFallbackRendereAndTemplate() pro získání alespoň nějakého výstupu. Jméno třídy fallback rendereru je definováno jako
      * alias FallbackRenderer v příkazu use uvedeném v třídě View.</li>
+     *  </ul>
+     * </li>
+     * </ul>
      * </ol>
      *
      * Použití:
