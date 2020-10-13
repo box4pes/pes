@@ -158,10 +158,9 @@ class View implements ViewInterface {
      *
      * - Pro renderování bez template je samozřejmě nutné nastavit renderer metodou setRenderer() vždy.
      *
-     * @param mixed $data
      * @return string
      */
-    public function getString($data=NULL) {
+    public function getString() {
         $renderer = $this->resolveRenderer();
         return $renderer->render($data ?? $this->data);
     }

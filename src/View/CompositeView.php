@@ -34,6 +34,7 @@ class CompositeView extends View implements CompositeViewInterface {
      * @return \Pes\View\CompositeViewInterface
      */
     public function appendComponentView(ViewInterface $componentView, $name): CompositeViewInterface {
+        // použití SplObjectStorage umožňuje hlídat duplicitní přidání shodného objektu - riziko je velké např. při nesprávném použití kontejneru pro vytváření view objektů
         if ($this->componentViews->contains($componentView)) {
             $usedWithName = $this->componentViews->offsetGet($componentView);
             $cls = get_class($componentView);
@@ -60,7 +61,6 @@ class CompositeView extends View implements CompositeViewInterface {
      * composer rendereru vždy pod jménem proměnné, se kterým byl component renderer přidán. Nakonec renderuje
      * compose renderer. Při renderování compose rendereru použije data zadaná jako parametr, pokud nebyla zadána, data zadaná metodou setData($data).
      *
-     * @param mixed $data
      * @return string
      */
     public function getString($data=NULL) {
@@ -72,11 +72,12 @@ class CompositeView extends View implements CompositeViewInterface {
             }
         }
         // $composeViewData se musí spojit se správnými daty už tady. Buď s $data, pokud byla zadána nebo $this->data.
+        // 	 * <p>Merges the elements of one or more arrays together so that the values of one are appended to the end of the previous one. It returns the resulting array.</p><p>If the input arrays have the same string keys, then the later value for that key will overwrite the previous one. If, however, the arrays contain numeric keys, the later value will <i>not</i> overwrite the original value, but will be appended.</p><p>Values in the input arrays with numeric keys will be renumbered with incrementing keys starting from zero in the result array.</p>
         if($this->data) {
             $data = array_merge($data ?? $this->data, $composeViewData);
         } else {
             $data = $composeViewData;
         }
-        return parent::getString($data);
+        return parent::getString();
     }
 }

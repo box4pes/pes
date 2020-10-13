@@ -24,7 +24,7 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
  *
  * @author pes2704
  */
-class PhpTemplateRenderer implements PhpTemplateRendererInterface, PhpTemplateFunctionsInterface, RendererRecordableInterface {
+class PhpTemplateRenderer implements PhpTemplateRendererInterface {
 
     use PhpTemplateFunctionsTrait;
 
