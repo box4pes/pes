@@ -66,7 +66,7 @@ class CompositeView extends View implements CompositeViewInterface {
     public function getString($data=NULL) {
 
         $composeViewData = array();
-        if (count($this->componentViews)>0) {
+        if ($this->componentViews->count()>0) {
             foreach ($this->componentViews as $componentView) {
                 $composeViewData[$this->componentViews->getInfo()] = $componentView->getString();
             }
