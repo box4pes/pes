@@ -17,7 +17,7 @@ class CompositeView extends View implements CompositeViewInterface {
      *
      * @var \SplObjectStorage
      */
-    private $componentViews;
+    public $componentViews;
 
     public function __construct() {
         $this->componentViews = new \SplObjectStorage();
@@ -65,19 +65,14 @@ class CompositeView extends View implements CompositeViewInterface {
      */
     public function getString($data=NULL) {
 
-        $composeViewData = array();
+        if (!isset($data)) {
+            $data = $this->data;
+        }
         if ($this->componentViews->count()>0) {
             foreach ($this->componentViews as $componentView) {
-                $composeViewData[$this->componentViews->getInfo()] = $componentView->getString();
+                $data[$this->componentViews->getInfo()] = $componentView->getString();
             }
         }
-        // $composeViewData se musí spojit se správnými daty už tady. Buď s $data, pokud byla zadána nebo $this->data.
-        // 	 * <p>Merges the elements of one or more arrays together so that the values of one are appended to the end of the previous one. It returns the resulting array.</p><p>If the input arrays have the same string keys, then the later value for that key will overwrite the previous one. If, however, the arrays contain numeric keys, the later value will <i>not</i> overwrite the original value, but will be appended.</p><p>Values in the input arrays with numeric keys will be renumbered with incrementing keys starting from zero in the result array.</p>
-        if($this->data) {
-            $data = array_merge($data ?? $this->data, $composeViewData);
-        } else {
-            $data = $composeViewData;
-        }
-        return parent::getString();
+        return parent::getString($data);
     }
 }
