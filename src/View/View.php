@@ -160,7 +160,7 @@ class View implements ViewInterface {
      *
      * @return string
      */
-    public function getString() {
+    public function getString($data=NULL) {
         $renderer = $this->resolveRenderer();
         return $renderer->render($data ?? $this->data);
     }
