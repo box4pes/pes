@@ -2,6 +2,8 @@
 namespace Pes\Database\Manipulator;
 
 use Pes\Database\Handler\HandlerInterface;
+use Pes\Database\Statement\StatementInterface;
+
 use Psr\Log\LoggerInterface;
 
 /**
@@ -24,9 +26,9 @@ class Manipulator {
 
     /**
      *
-     * @return \PDO
+     * @return HandlerInterface
      */
-    public function getHandler(): \PDO {
+    public function getHandler(): HandlerInterface {
         return $this->handler;
     }
 
@@ -122,7 +124,7 @@ class Manipulator {
      * @throws \RuntimeException Pokud nelze přečíst zadaný soubor.
      * @throws \UnexpectedValueException Výjimka při vykonávání transakce.
      */
-    public function executeQuery($sql) {
+    public function exec($sql) {
         if (!$sql) {
             throw new \LogicException('Zadaný SQL řetězec je prázdný.');
         }
@@ -149,6 +151,36 @@ class Manipulator {
         return $succ ? TRUE : FALSE;
     }
 
+    public function query($sql): StatementInterface {
+        if (!$sql) {
+            throw new \LogicException('Zadaný SQL řetězec je prázdný.');
+        }
+        $queries = \explode(';', \trim($sql));
+        if ($queries === false) {
+            throw new \LogicException("Příkazy SQL musí být oddělené středníkem. Nenalezen žádný příkaz oddělený středníkem v zadaném stringu.");
+        }
+        if ($c = count($queries)) {
+            throw new \LogicException("Touto metodou lze vykonat pouze jeden SQL příkaz. Nalezeno $c příkazů oddělených středníkem v zadaném stringu.");
+        }
+        $dbhTransact = $this->handler;
+        if ($dbhTransact->inTransaction()) {
+            throw new \LogicException('Nelze volat tuto metodu uprostřed spuštěné databázové transakce.');
+        }
+        try {
+            $dbhTransact->beginTransaction();
+                if ($query[0]) {
+                    $this->logger->info($query[0]);
+                    $statement = $dbhTransact->query($query[0]);
+                }
+            $this->logger->info('Commit.');
+            $succ = $dbhTransact->commit();
+        } catch(\Exception $e) {
+            $this->logger->error('Rollback: '.$e->getMessage());
+            $dbhTransact->rollBack();
+            throw new \RuntimeException($e);
+        }
+        return $statement;
+    }
 
     public function findAllRows($tablename) {
         $query = "SELECT *
