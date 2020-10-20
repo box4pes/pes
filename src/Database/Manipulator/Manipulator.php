@@ -167,11 +167,11 @@ class Manipulator {
             $dbhTransact->beginTransaction();
             foreach ($queries as $query) {
                 if (trim($query)) {
-                    if (isset($statement)) {
+                    if (isset($stat)) {
                         throw new \LogicException("Touto metodou lze vykonat pouze jeden SQL příkaz. Nalezen druhý příkaz oddělený středníkem v zadaném stringu.");
                     }
                     $this->logger->info($query);
-                    $statement = $dbhTransact->query($query);
+                    $stat = $dbhTransact->query($query);
                 }
             }
             $this->logger->info('Commit.');
@@ -181,7 +181,7 @@ class Manipulator {
             $dbhTransact->rollBack();
             throw new \RuntimeException($e);
         }
-        return $statement;
+        return $stat;
     }
 
     public function findAllRows($tablename) {
