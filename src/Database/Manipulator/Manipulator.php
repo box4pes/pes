@@ -159,9 +159,6 @@ class Manipulator {
         if ($queries === false) {
             throw new \LogicException("Příkazy SQL musí být oddělené středníkem. Nenalezen žádný příkaz oddělený středníkem v zadaném stringu.");
         }
-        if ($c = count($queries)) {
-            throw new \LogicException("Touto metodou lze vykonat pouze jeden SQL příkaz. Nalezeno $c příkazů oddělených středníkem v zadaném stringu.");
-        }
         $dbhTransact = $this->handler;
         if ($dbhTransact->inTransaction()) {
             throw new \LogicException('Nelze volat tuto metodu uprostřed spuštěné databázové transakce.');
@@ -169,7 +166,7 @@ class Manipulator {
         try {
             $dbhTransact->beginTransaction();
             foreach ($queries as $query) {
-                if ($query) {
+                if (trim($query)) {
                     if ($statement) {
                         throw new \LogicException("Touto metodou lze vykonat pouze jeden SQL příkaz. Nalezen druhý příkaz oddělený středníkem v zadaném stringu.");
                     }
