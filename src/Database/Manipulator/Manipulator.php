@@ -168,10 +168,15 @@ class Manipulator {
         }
         try {
             $dbhTransact->beginTransaction();
-                if ($query[0]) {
-                    $this->logger->info($query[0]);
-                    $statement = $dbhTransact->query($query[0]);
+            foreach ($queries as $query) {
+                if ($query) {
+                    if ($statement) {
+                        throw new \LogicException("Touto metodou lze vykonat pouze jeden SQL příkaz. Nalezen druhý příkaz oddělený středníkem v zadaném stringu.");
+                    }
+                    $this->logger->info($query);
+                    $statement = $dbhTransact->query($query);
                 }
+            }
             $this->logger->info('Commit.');
             $succ = $dbhTransact->commit();
         } catch(\Exception $e) {
