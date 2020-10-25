@@ -12,7 +12,7 @@
 // Cesta ke složce, kde bootastrap očekává soubory BootstrapSet.php a AutoloaderSet.php.
 // Hodnota je relativní cesta ke kořenovému skriptu aplikace.
 if (!defined("PES_BOOTSTRAP_SETINGS_PATH")) {
-    define("PES_BOOTSTRAP_SETINGS_PATH", "Bootstrap/");
+    define("PES_BOOTSTRAP_SETINGS_PATH", "bootstrap/");
 }
 
 

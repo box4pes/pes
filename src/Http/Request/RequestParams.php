@@ -48,7 +48,7 @@ class RequestParams implements RequestParamsInterface {
             $result = $default;
         }
 
-        return $result;
+        return $result ?? null;
     }
 
     /**
