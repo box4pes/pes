@@ -50,24 +50,21 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
             if (!class_exists($className, TRUE)) {
                 return false;
             }
-//            if (!is_subclass_of($className, RendererInterface)) {   //proběhne autoload - pro neexistující třídu chyba
-//                    return false;
-//            }
+            if (!is_subclass_of($className, RendererInterface::class)) {   //proběhne autoload - pro neexistující třídu chyba
+                    return false;
+            }
         }
         return true;
 ;
     }
     private function create($className) {
-        if (!class_exists($className, TRUE)) {
+        if ($this->has($className)) {
+            $renderer = new $className();
+            if ($renderer instanceof RendererRecordableInterface AND isset(self::$recorderProvider)) {
+                $renderer->setRecorderProvider(self::$recorderProvider);
+            }
+        } else {
             throw new RendererNotExistsException("Neexistuje požadovaná třída default rendereru: $className v kontejneru ".__CLASS__.".");
-        }
-        // zrušeno pro konzistentní chování s has()
-//        if (!is_subclass_of($className, RendererInterface)) {   //proběhne autoload - pro neexistující třídu chyba
-//            throw new RendererNotExistsException("Požadovaná třída default rendereru: $className v kontejneru ".__CLASS__.".není typu ".RendererInterface::class);
-//        }
-        $renderer = new $className();
-        if ($renderer instanceof RendererRecordableInterface AND isset(self::$recorderProvider)) {
-            $renderer->setRecorderProvider(self::$recorderProvider);
         }
         return $renderer;
     }
