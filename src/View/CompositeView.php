@@ -19,9 +19,6 @@ class CompositeView extends View implements CompositeViewInterface {
      */
     public $componentViews;
 
-    public function __construct() {
-        $this->componentViews = new \SplObjectStorage();
-    }
 
     /**
      * Metoda pro přidání komponentních view. Při renderování kompozitního view budou renderována komponentní view a vygenerovaný výsledek bude vložen
@@ -35,6 +32,9 @@ class CompositeView extends View implements CompositeViewInterface {
      */
     public function appendComponentView(ViewInterface $componentView, $name): CompositeViewInterface {
         // použití SplObjectStorage umožňuje hlídat duplicitní přidání shodného objektu - riziko je velké např. při nesprávném použití kontejneru pro vytváření view objektů
+        if (!isset($this->componentViews)) {
+            $this->componentViews = new \SplObjectStorage();
+        }
         if ($this->componentViews->contains($componentView)) {
             $usedWithName = $this->componentViews->offsetGet($componentView);
             $cls = get_class($componentView);
@@ -68,7 +68,7 @@ class CompositeView extends View implements CompositeViewInterface {
         if (!isset($data)) {
             $data = $this->data;
         }
-        if ($this->componentViews->count()>0) {
+        if ($this->componentViews AND $this->componentViews->count()>0) {
             foreach ($this->componentViews as $componentView) {
                 $data[$this->componentViews->getInfo()] = $componentView->getString();
             }
