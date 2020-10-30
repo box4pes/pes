@@ -17,7 +17,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 use Psr\Container\ContainerInterface;
-use Pes\Application\UriInfoInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  *
@@ -50,6 +50,25 @@ interface AppInterface {
      * @return AppInterface
      */
     public function setAppContainer(ContainerInterface $appContainer): AppInterface;
+
+    /**
+     * Je nastaven logger?
+     * @return bool
+     */
+    public function hasLogger(): bool;
+
+    /**
+     * Vrací nastavený logger.
+     * @return LoggerInterface|null
+     */
+    public function getLogger(): ?LoggerInterface;
+
+    /**
+     * Nastaví logger.
+     * @param LoggerInterface $logger
+     * @return \Pes\Application\AppMiddlewareInterface
+     */
+    public function setLogger(LoggerInterface $logger): AppMiddlewareInterface;
 
     /**
      * Vykoná middleware.

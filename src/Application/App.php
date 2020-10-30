@@ -19,6 +19,7 @@ use Psr\Http\Message\ResponseInterface;
 
 
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 use Pes\Http\Factory\BodyFactory;
 
@@ -45,18 +46,26 @@ class App implements AppInterface {
      */
     protected $appContainer;
 
-
+    /**
+     * {@inheritdoc}
+     * @return ServerRequestInterface
+     */
     public function getServerRequest(): ServerRequestInterface {
         return $this->serverRequest;
     }
 
+    /**
+     * {@inheritdoc}
+     * @param ServerRequestInterface $appRequest
+     * @return \Pes\Application\AppInterface
+     */
     public function setServerRequest(ServerRequestInterface $appRequest): AppInterface {
         $this->serverRequest = $appRequest;
         return $this;
     }
 
     /**
-     * Kontejner aplikace - kontejner poskytující služby společné pro celou aplikaci nebo jediný kontejner použtý v aplikaci
+     * {@inheritdoc}
      * @return ContainerInterface
      */
     public function getAppContainer() {
@@ -64,12 +73,38 @@ class App implements AppInterface {
     }
 
     /**
-     * Kontejner aplikace - kontejner poskytující služby společné pro celou aplikaci nebo jediný kontejner použtý v aplikaci
+     * {@inheritdoc}
      * @param ContainerInterface $appContainer
      * @return AppInterface
      */
     public function setAppContainer(ContainerInterface $appContainer): AppInterface {
         $this->appContainer = $appContainer;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return bool
+     */
+    public function hasLogger(): bool {
+        return isset($this->logger);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return LoggerInterface|null
+     */
+    public function getLogger(): ?LoggerInterface {
+        return $this->logger;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @param LoggerInterface $logger
+     * @return \Pes\Middleware\AppMiddlewareInterface
+     */
+    public function setLogger(LoggerInterface $logger): AppMiddlewareInterface {
+        $this->logger = $logger;
         return $this;
     }
 

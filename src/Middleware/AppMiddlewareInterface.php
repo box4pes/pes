@@ -21,8 +21,38 @@ use Psr\Log\LoggerInterface;
  * @author pes2704
  */
 interface AppMiddlewareInterface extends MiddlewareInterface {
+
+    /**
+     * Vrací aplikaci nastavenou metodou setApp().
+     * @return AppInterface
+     */
     public function getApp(): AppInterface;
+
+    /**
+     * Nastaví aplikaci. Metoda musí být volána vždy při spuštění middleware v aplikaci. Přidání zajistí funkčnost metody getApp() a dostupnost
+     * aplikace a jejích metod v těle middleware.
+     *
+     * @param AppInterface $app
+     * @return \Pes\Middleware\AppMiddlewareInterface
+     */
     public function setApp(AppInterface $app): AppMiddlewareInterface;
-    public function getLogger(): LoggerInterface;
+
+    /**
+     * Je nastaven logger?
+     * @return bool
+     */
+    public function hasLogger(): bool;
+
+    /**
+     * Vrací nastavený logger.
+     * @return LoggerInterface|null
+     */
+    public function getLogger(): ?LoggerInterface;
+
+    /**
+     * Nastaví logger.
+     * @param LoggerInterface $logger
+     * @return \Pes\Middleware\AppMiddlewareInterface
+     */
     public function setLogger(LoggerInterface $logger): AppMiddlewareInterface;
 }

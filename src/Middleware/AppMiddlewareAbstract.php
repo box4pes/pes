@@ -33,19 +33,45 @@ abstract class AppMiddlewareAbstract implements AppMiddlewareInterface {
      */
     protected $logger;
 
+    /**
+     * {@inheritdoc}
+     * @return AppInterface
+     */
     public function getApp(): AppInterface {
         return $this->app;
     }
 
+    /**
+     * {@inheritdoc}
+     * @param AppInterface $app
+     * @return \Pes\Middleware\AppMiddlewareInterface
+     */
     public function setApp(AppInterface $app): AppMiddlewareInterface {
         $this->app = $app;
         return $this;
     }
 
-    public function getLogger(): LoggerInterface {
+    /**
+     * {@inheritdoc}
+     * @return bool
+     */
+    public function hasLogger(): bool {
+        return isset($this->logger);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return LoggerInterface|null
+     */
+    public function getLogger(): ?LoggerInterface {
         return $this->logger;
     }
 
+    /**
+     * {@inheritdoc}
+     * @param LoggerInterface $logger
+     * @return \Pes\Middleware\AppMiddlewareInterface
+     */
     public function setLogger(LoggerInterface $logger): AppMiddlewareInterface {
         $this->logger = $logger;
         return $this;
