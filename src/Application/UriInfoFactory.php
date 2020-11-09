@@ -70,7 +70,8 @@ class UriInfoFactory implements UriInfoFactoryInterface {
         $ex = explode('/', $scriptName);
         array_shift($ex);
         array_pop($ex);
-        $rootRelativePath = '/'.implode('/', $ex).'/';
+        $impl = implode('/', $ex);
+        $rootRelativePath = $impl ? '/'.$impl.'/' : '/';
         return $rootRelativePath;
     }
 
