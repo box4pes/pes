@@ -23,11 +23,11 @@ use Pes\Dom\Node\NodeInterface;
  *
  * @author pes2704
  */
-class ViewFactory implements viewFactoryInterface {
+class ViewFactory implements ViewFactoryInterface {
 
     private $rendererContainer;
 
-    public function setRendererContainer(ContainerInterface $rendererContainer): viewFactoryInterface {
+    public function setRendererContainer(ContainerInterface $rendererContainer): ViewFactoryInterface {
         $this->rendererContainer = $rendererContainer;
         return $this;
     }

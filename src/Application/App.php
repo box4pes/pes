@@ -40,6 +40,12 @@ class App implements AppInterface {
      */
     protected $uriInfo;
 
+    /**
+     *
+     * @var LoggerInterface
+     */
+    protected $logger;
+
 
     /**
      * @var ContainerInterface
