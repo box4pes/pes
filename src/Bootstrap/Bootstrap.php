@@ -86,6 +86,6 @@ include "SetCzechZone.php";
 // error reporting, error handlery, exception handlery
 include "SetErrorHandling.php";
 // Asserce (zend.assertions´) a expektace (assert.exception) nastavované podle stroje, na kterém kód běží - dáno globálními proměnnými
-include "SetAssertionsExpectations.php";
+// include "SetAssertionsExpectations.php";
 
 unset($bootstrapLogger);
