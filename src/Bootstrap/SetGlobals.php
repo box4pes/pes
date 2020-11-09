@@ -61,8 +61,6 @@ if (defined('PES_FORCE_PRODUCTION')) {
 
 if (defined('PES_PRODUCTION_MACHINE_HOST_NAME') AND  strpos(strtolower(gethostname()), strtolower(PES_PRODUCTION_MACHINE_HOST_NAME))===0) {
         define('PES_RUNNING_ON_PRODUCTION_HOST', \true);
-        define('PES_PRODUCTION', 'production mode by hostname');
-        define('PES_DEVELOPMENT', FALSE);
 } else {
         define('PES_RUNNING_ON_PRODUCTION_HOST', \FALSE);
 }
