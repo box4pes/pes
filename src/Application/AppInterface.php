@@ -18,6 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Pes\Middleware\AppMiddlewareInterface;
 
 /**
  *
