@@ -57,7 +57,7 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
      * @return \Pes\Middleware\SelectorInterface
      */
     public function addItemsArray(array $items): SelectorInterface {
-        foreach ($this->items as $prefix=>$stack) {
+        foreach ($items as $prefix=>$stack) {
             $this->addItem($prefix, $stack);
         }
         return $this;

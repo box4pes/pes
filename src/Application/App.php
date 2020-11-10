@@ -21,6 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
+use Pes\Middleware\AppMiddlewareInterface;
 use Pes\Http\Factory\BodyFactory;
 
 /**
@@ -125,6 +126,9 @@ class App implements AppInterface {
      * @return ResponseInterface Http response
      */
     public function run(MiddlewareInterface $middleware, RequestHandlerInterface $fallbackHandler): ResponseInterface {
+        if ($middleware instanceof AppMiddlewareInterface) {
+            $middleware->setApp($this);
+        }
         $response = $middleware->process($this->serverRequest, $fallbackHandler);
 
         /**
