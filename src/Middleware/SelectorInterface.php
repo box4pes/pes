@@ -18,7 +18,7 @@ use Psr\Http\Server\MiddlewareInterface;
  * @author pes2704
  */
 interface SelectorInterface extends MiddlewareInterface {
-    
+
     /**
      * Přijímá prefix a přiřazenou definici zásbníku middleware. Definice zásobníku middleware je:
      *  nebo pole Callable
@@ -33,6 +33,7 @@ interface SelectorInterface extends MiddlewareInterface {
      * @param type $stack Definice zásobníku Middelware.
      * @param \Pes\Middleware\callable $resolver
      */
-    public function addItem($prefix, $stack, callable $resolver=NULL);
+    public function addItem($prefix, $stack, callable $resolver=NULL): SelectorInterface;
 
+    public function addItemsArray(array $items): SelectorInterface;
 }
