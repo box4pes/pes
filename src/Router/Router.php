@@ -179,7 +179,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
     }
 
     private function logBefore($action) {
-        $this->logger->debug("Router: Volá se {actionType} s parametry {parameters}", ['actionType'=> $this->getDebugType($action), 'parameters'=>print_r($this->matches, TRUE)]);
+        $this->logger->debug("Router: Volá se {actionType} s parametry {parameters}", ['actionType'=> $this->getDebugType($action), 'parameters'=> $this->inlinePrintR($this->matches)]);
     }
 
     private function logAfter($ret) {
@@ -194,5 +194,9 @@ class Router implements RouterInterface, LoggerAwareInterface {
         $type = gettype($var);
         $debugType = $type=='object' ? $type.': '.get_class($var) : $type;
         return $debugType;
+    }
+
+    private function inlinePrintR($var) {
+        return str_replace(PHP_EOL, '', print_r($var, TRUE));
     }
 }
