@@ -79,25 +79,41 @@ class Html {
     }
 
     /**
-     * Jednoznakové předložky a spojky pro český text. Metoda vloží mezi jednoznakové předložky nebo spojky a následující slovo nedělitelnou mezeru.
-     * Jednoznakové předložky a spojky jsou: k, s, v, z, o, u, i, a.
+     * Nedělitelné mezery pro český text. Zamezí zalamování textu za jednoznakovou předložky, spojkou a mezi čísly datumu pro český text.
+     * <ul>
+     * <li>Metoda vloží mezi jednoznakové předložky nebo spojky a následující slovo nedělitelnou mezeru.
+     * Jednoznakové předložky a spojky jsou: k, s, v, z, o, u, i, a.</li>
+     * <li>Metoda vloží mezi číslo zakončené tečkou a další číslo nedělitelnou mezeru</li>
+     * <ul>
      *
      * @param type $text
      * @return type
      */
-    public static function mono($text='') {
-        return preg_replace('|(\s[ksvzouiaKSVZOUIA])\s|', '$1&nbsp;', trim($text));
+    public function mono($text='') {
+        $patterns = [
+            '/(\s[ksvzouiaKSVZOUIA])\s/',
+            '/(\d{1})\.\s(\d{1})/'
+        ];
+        $replacements = [
+           '$1&nbsp;',
+             '$1.&nbsp;$2'
+        ];
+        return preg_replace($patterns, $replacements, trim($text));
     }
 
     /**
-     * Převede text s dvakrát odřádkovanými odstavci na html paragrafy (<p></p>)
-     * Vstupní text obalí na začátku a na konci otevíracím tagem <p> a koncovým tagem </p>,
-     * výskyty dvou odřádkování uvnitř textu chápe jako konec odstavce a z každého takto odděleného úseku textu vytvoří paragraf.
+     * Převede text s dvakrát odřádkovanými odstavci na html paragrafy (tagy p). Umožňuje zadat atributy vytvážených tagů p (např. class pro styly).
+     *
+     * Ze všech úseků textu vytvoří html paragrafy, vloží tyto úseky jako obsah tagu p.
+     * Výskyty dvou odřádkování uvnitř textu chápe jako konec úseku a z každého takto odděleného úseku textu vytvoří paragraf.
      * Jednoho odřádkování v textu si nijak nevšímá, váš vstupní text můžete jedním odřádkováním zalamovat libovolně, např. proto, aby byl vidět ve vašem editoru.
-     * Chcete-li skutečně vytvořit odstavec, použijte dvojí odřádkování.
+     * Chcete-li skutečně vytvořit odstavec, použijte v textu dvojí odřádkování.
+     *
+     * Vytvářené tagy p mohu být vytvářeny s atributy. Atributy jsou zadány nepoviným parametrem $attributes ve formě asociativního pole. Viz metoda attributes().
      *
      * Metoda nijak nemění jakékoli html značky (tagy) ani žádné viditelné znaky v textu, naopak mění odřádkování (CR, LF alias \r, \n) a whitespaces (mezery, tabelátory ad.).
-     * @param type $text
+     * @param string $text Vstupní text
+     * @param array $attributes Nepoviný parametr. Atributy vytvářených tagů p zadané jako asociativní pole. Viz metoda attributes().
      * @return string
      */
     public static function p($text='', $attributes=[]) {
@@ -147,42 +163,14 @@ class Html {
         return $safe_text;
     }
 
-    public static function removeDiacritics($text) {
-        // i pro multi-byte (napr. UTF-8)
-        $prevodni_tabulka = Array(
-          'ä'=>'a',  'Ä'=>'A',  'á'=>'a',  'Á'=>'A',
-          'à'=>'a',  'À'=>'A',  'ã'=>'a',  'Ã'=>'A',
-          'â'=>'a',  'Â'=>'A',  'č'=>'c',  'Č'=>'C',
-          'ć'=>'c',  'Ć'=>'C',  'ď'=>'d',  'Ď'=>'D',
-          'ě'=>'e',  'Ě'=>'E',  'é'=>'e',  'É'=>'E',
-          'ë'=>'e',  'Ë'=>'E',  'è'=>'e',  'È'=>'E',
-          'ê'=>'e',  'Ê'=>'E',  'í'=>'i',  'Í'=>'I',
-          'ï'=>'i',  'Ï'=>'I',  'ì'=>'i',  'Ì'=>'I',
-          'î'=>'i',  'Î'=>'I',  'ľ'=>'l',  'Ľ'=>'L',
-          'ĺ'=>'l',  'Ĺ'=>'L',  'ń'=>'n',  'Ń'=>'N',
-          'ň'=>'n',  'Ň'=>'N',  'ñ'=>'n',  'Ñ'=>'N',
-          'ó'=>'o',  'Ó'=>'O',  'ö'=>'o',  'Ö'=>'O',
-          'ô'=>'o',  'Ô'=>'O',  'ò'=>'o',  'Ò'=>'O',
-          'õ'=>'o',  'Õ'=>'O',  'ő'=>'o',  'Ő'=>'O',
-          'ř'=>'r',  'Ř'=>'R',  'ŕ'=>'r',  'Ŕ'=>'R',
-          'š'=>'s',  'Š'=>'S',  'ś'=>'s',  'Ś'=>'S',
-          'ť'=>'t',  'Ť'=>'T',  'ú'=>'u',  'Ú'=>'U',
-          'ů'=>'u',  'Ů'=>'U',  'ü'=>'u',  'Ü'=>'U',
-          'ù'=>'u',  'Ù'=>'U',  'ũ'=>'u',  'Ũ'=>'U',
-          'û'=>'u',  'Û'=>'U',  'ý'=>'y',  'Ý'=>'Y',
-          'ž'=>'z',  'Ž'=>'Z',  'ź'=>'z',  'Ź'=>'Z'
-        );
-
-        return strtr($text, $prevodni_tabulka);
-    }
-
     /**
-     * Metoda generuje textovou reprezentaci atributů html tagu z dataných jako asocitivní pole.
+     * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako asociativní pole.
+     *
      * Podle typu hodnoty atributu:
      * <ul>
-     * <li>Atributy s logickou hodnotou uvede jen jako jméno parametru</li>
+     * <li>Atributy s logickou hodnotou uvede jen jako jméno parametru (standard html nikoli xml)</li>
      * <li>Atributy s hodnotou typu array jako dvojici jméno="řetězec hodnot oddělených mezerou", řetězec hodnot vytvoří zřetězením hodnot v poli oddělených mezerou a obalí uvozovkami</li>
-     * <li>Ostatní atributy jako dvojici jméno="hodnota" s tím, že hodnotup rvku obalí uvozovkami.</li>
+     * <li>Ostatní atributy jako dvojici jméno="hodnota" s tím, že hodnotu prvku přčevede na string a obalí uvozovkami.</li>
      * </ul>
      * Pokud je hodnota atributu řetězec, který obsahuje uvozovky, výsledné html bude chybné. Hodnota atributu je vždy obalena uvozovkami.
      * Výsledný navrácený řetězec začíná mezerou a atributy v řetězci jsou odděleny mezerami.
@@ -207,7 +195,7 @@ class Html {
     }
 
     /**
-     * Genuruje html kód párového tagu.
+     * Generuje html kód párového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
      * @param array $attributes Asociativní pole. Viz metoda attributes().
@@ -226,10 +214,11 @@ class Html {
     }
 
     /**
-     * Genuruje html kód párového tagu.
+     * Generuje html kód nepárového tagu.
      *
-     * @param string $name
-     * @param array $attributes
+     * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
+     * @param array $attributes Asociativní pole. Viz metoda attributes().
+     * @return string
      */
     public static function tagNopair($name, array $attributes=[]) {
         if ($name) {

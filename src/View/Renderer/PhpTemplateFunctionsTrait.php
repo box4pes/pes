@@ -78,25 +78,41 @@ trait PhpTemplateFunctionsTrait {
     }
 
     /**
-     * Jednoznakové předložky a spojky pro český text. Metoda vloží mezi jednoznakové předložky nebo spojky a následující slovo nedělitelnou mezeru.
-     * Jednoznakové předložky a spojky jsou: k, s, v, z, o, u, i, a.
+     * Nedělitelné mezery pro český text. Zamezí zalamování textu za jednoznakovou předložky, spojkou a mezi čísly datumu pro český text.
+     * <ul>
+     * <li>Metoda vloží mezi jednoznakové předložky nebo spojky a následující slovo nedělitelnou mezeru.
+     * Jednoznakové předložky a spojky jsou: k, s, v, z, o, u, i, a.</li>
+     * <li>Metoda vloží mezi číslo zakončené tečkou a další číslo nedělitelnou mezeru</li>
+     * <ul>
      *
      * @param type $text
      * @return type
      */
     public function mono($text='') {
-        return preg_replace('|(\s[ksvzouiaKSVZOUIA])\s|', '$1&nbsp;', trim($text));
+        $patterns = [
+            '/(\s[ksvzouiaKSVZOUIA])\s/',
+            '/(\d{1})\.\s(\d{1})/'
+        ];
+        $replacements = [
+           '$1&nbsp;',
+             '$1.&nbsp;$2'
+        ];
+        return preg_replace($patterns, $replacements, trim($text));
     }
 
     /**
-     * Převede text s dvakrát odřádkovanými odstavci na html paragrafy (<p></p>)
-     * Vstupní text obalí na začátku a na konci otevíracím tagem <p> a koncovým tagem </p>,
-     * Výskyty dvou odřádkování uvnitř textu chápe jako konec odstavce a z každého takto odděleného úseku textu vytvoří paragraf.
+     * Převede text s dvakrát odřádkovanými odstavci na html paragrafy (tagy p). Umožňuje zadat atributy vytvážených tagů p (např. class pro styly).
+     *
+     * Ze všech úseků textu vytvoří html paragrafy, vloží tyto úseky jako obsah tagu p.
+     * Výskyty dvou odřádkování uvnitř textu chápe jako konec úseku a z každého takto odděleného úseku textu vytvoří paragraf.
      * Jednoho odřádkování v textu si nijak nevšímá, váš vstupní text můžete jedním odřádkováním zalamovat libovolně, např. proto, aby byl vidět ve vašem editoru.
-     * Chcete-li skutečně vytvořit odstavec, použijte dvojí odřádkování.
+     * Chcete-li skutečně vytvořit odstavec, použijte v textu dvojí odřádkování.
+     *
+     * Vytvářené tagy p mohu být vytvářeny s atributy. Atributy jsou zadány nepoviným parametrem $attributes ve formě asociativního pole. Viz metoda attributes().
      *
      * Metoda nijak nemění jakékoli html značky (tagy) ani žádné viditelné znaky v textu, naopak mění odřádkování (CR, LF alias \r, \n) a whitespaces (mezery, tabelátory ad.).
-     * @param type $text
+     * @param string $text Vstupní text
+     * @param array $attributes Nepoviný parametr. Atributy vytvářených tagů p zadané jako asociativní pole. Viz metoda attributes().
      * @return string
      */
     public function p($text='', $attributes=[]) {
@@ -148,14 +164,19 @@ trait PhpTemplateFunctionsTrait {
 
     /**
      * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako asociativní pole.
-     * - Atributy s logickou hodnotou: generuje pro hodnotu TRUE jen jméno parametru, pro hodnotu FALSE nic
-     * - ostatní atributy: generuje dvojici jméno="hodnota" s tím, že hodnotu prvku obalí uvozovkami. Výsledný
-     * řetězec začíná mezerou a atributy v řetězci jsou odděleny mezerami.
+     *
+     * Podle typu hodnoty atributu:
+     * <ul>
+     * <li>Atributy s logickou hodnotou uvede jen jako jméno parametru (standard html nikoli xml)</li>
+     * <li>Atributy s hodnotou typu array jako dvojici jméno="řetězec hodnot oddělených mezerou", řetězec hodnot vytvoří zřetězením hodnot v poli oddělených mezerou a obalí uvozovkami</li>
+     * <li>Ostatní atributy jako dvojici jméno="hodnota" s tím, že hodnotu prvku přčevede na string a obalí uvozovkami.</li>
+     * </ul>
+     * Pokud je hodnota atributu řetězec, který obsahuje uvozovky, výsledné html bude chybné. Hodnota atributu je vždy obalena uvozovkami.
+     * Výsledný navrácený řetězec začíná mezerou a atributy v řetězci jsou odděleny mezerami.
      *
      * Příklad:
-     * ['class'=>'ui item alert', 'readonly'=>TRUE, ] převede na: class="ui item alert" readonly
-     * ['class'=>'ui item ok', 'readonly'=>FALSE, ] převede na: class="ui item ok"
-     *
+     * ['id'=>'alert', 'class'=>['ui', 'item', 'alert'], 'readonly'=>TRUE, data-info=>'a neni b'] převede na: id="alert" class="ui item alert" readonly data-info="a neni b".
+     * Víceslovné řetězce (typicky class) lze tedy zadávat jako pole nebo víceslovný řetězec.
      * @param array $attributesArray Asocitivní pole
      * @return string
      */
@@ -173,7 +194,7 @@ trait PhpTemplateFunctionsTrait {
     }
 
     /**
-     * Genuruje html kód párového tagu.
+     * Generuje html kód párového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
      * @param array $attributes Asociativní pole. Viz metoda attributes().
@@ -188,7 +209,7 @@ trait PhpTemplateFunctionsTrait {
     }
 
     /**
-     * Genuruje html kód nepárového tagu.
+     * Generuje html kód nepárového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
      * @param array $attributes Asociativní pole. Viz metoda attributes().
