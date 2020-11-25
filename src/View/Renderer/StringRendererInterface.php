@@ -12,6 +12,6 @@ namespace Pes\View\Renderer;
  *
  * @author pes2704
  */
-interface StringRendererInterface {
+interface StringRendererInterface extends RendererInterface {
     //put your code here
 }
