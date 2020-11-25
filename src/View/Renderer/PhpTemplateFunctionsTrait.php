@@ -133,7 +133,7 @@ trait PhpTemplateFunctionsTrait {
         // Složí text z kousků obalených počátečním a koncovým <p>
         $text = '';
         foreach ( $chunks as $chunk ) {
-            $text .= $this->tag("p", $attributes, trim($chunk));  // původně bylo $text .= '<p>' . trim($chunk, "\n") . "</p>\n";
+            $text .= $this->tag("p", $attributes, trim($chunk)).PHP_EOL;  // původně bylo $text .= '<p>' . trim($chunk, "\n") . "</p>\n";
         }
         // Under certain strange conditions it could create a P of entirely whitespace.
         $text = preg_replace('|<p>\s*</p>|', '', $text);
