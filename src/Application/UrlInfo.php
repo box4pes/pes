@@ -28,7 +28,7 @@ class UrlInfo implements UriInfoInterface {
      */
     protected $restUri;
 
-    protected $rootRelativePath;
+    protected $rootAbsolutePath;
 
     protected $workingPath;
 
@@ -69,7 +69,7 @@ class UrlInfo implements UriInfoInterface {
     }
 
     public function getRootAbsolutePath() {
-        return $this->rootRelativePath;
+        return $this->rootAbsolutePath;
     }
 
     public function getWorkingPath() {
@@ -77,7 +77,7 @@ class UrlInfo implements UriInfoInterface {
     }
 
     public function setRootAbsolutePath($rootAbsolutePath) {
-        $this->rootRelativePath = $rootAbsolutePath;
+        $this->rootAbsolutePath = $rootAbsolutePath;
         return $this;
     }
 
