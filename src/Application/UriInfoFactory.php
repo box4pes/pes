@@ -22,21 +22,26 @@ use Psr\Http\Message\ServerRequestInterface;
 class UriInfoFactory implements UriInfoFactoryInterface {
     public function create(Environment $environment, ServerRequestInterface $request) {
         // subdomain path a rest uri
+
+        // subdomain path a rest uri
         $requestScriptName = parse_url($environment->get('SCRIPT_NAME'), PHP_URL_PATH);
         $requestScriptDir = dirname($requestScriptName);
 
         $requestUri = $request->getUri()->getPath();
+
         $subDomainPath = '';
         $virtualPath = $requestUri;
         if (stripos($requestUri, $requestScriptName) === 0) {
-            $subDomainPath = $requestScriptName.'/';
+            $subDomainPath = $requestScriptName;
         } elseif ($requestScriptDir !== '/' && stripos($requestUri, $requestScriptDir) === 0) {
-            $subDomainPath = $requestScriptDir.'/';
+            $subDomainPath = $requestScriptDir;
         }
 
         if ($subDomainPath) {
-            $virtualPath = trim(substr($requestUri, strlen($subDomainPath)), '/');
+            $virtualPath = '/'.ltrim(substr($requestUri, strlen($subDomainPath)), '/');
         }
+
+//        $virtualPath = $virtualPath ? $virtualPath : '/';
 
         // objekt UrlInfo atribut s názvem self::URL_INFO_ATTRIBUTE_NAME do requestu a request do app
         $urlInfo = new UrlInfo();
