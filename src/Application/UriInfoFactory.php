@@ -35,14 +35,14 @@ class UriInfoFactory implements UriInfoFactoryInterface {
         }
 
         if ($subDomainPath) {
-            $virtualPath = '/'.trim(substr($requestUri, strlen($subDomainPath)), '/');
+            $virtualPath = trim(substr($requestUri, strlen($subDomainPath)), '/');
         }
 
         // objekt UrlInfo atribut s názvem self::URL_INFO_ATTRIBUTE_NAME do requestu a request do app
         $urlInfo = new UrlInfo();
         $urlInfo->setSubdomainPath($subDomainPath);
         $urlInfo->setRestUri($virtualPath);
-        $urlInfo->setRootRelativePath($this->rootAbsolutePath($environment));
+        $urlInfo->setRootAbsolutePath($this->rootAbsolutePath($environment));
         $urlInfo->setWorkingPath($this->workingPath());
         return $urlInfo;
     }

@@ -68,7 +68,7 @@ class UrlInfo implements UriInfoInterface {
         return $this;
     }
 
-    public function getRootRelativePath() {
+    public function getRootAbsolutePath() {
         return $this->rootRelativePath;
     }
 
@@ -76,7 +76,7 @@ class UrlInfo implements UriInfoInterface {
         return $this->workingPath;
     }
 
-    public function setRootRelativePath($rootAbsolutePath) {
+    public function setRootAbsolutePath($rootAbsolutePath) {
         $this->rootRelativePath = $rootAbsolutePath;
         return $this;
     }

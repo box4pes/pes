@@ -44,11 +44,11 @@ interface UriInfoInterface {
      */
     public function setRestUri($restUri): UriInfoInterface;
 
-    public function getRootRelativePath();
+    public function getRootAbsolutePath();
 
     public function getWorkingPath();
 
-    public function setRootRelativePath($rootRelativePath);
+    public function setRootAbsolutePath($rootRelativePath);
 
     public function setWorkingPath($workingPath);
 }
