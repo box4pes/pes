@@ -38,7 +38,7 @@ class UriInfoFactory implements UriInfoFactoryInterface {
         }
 
         if ($subDomainPath) {
-            $virtualPath = '/'.ltrim(substr($requestUri, strlen($subDomainPath)), '/');
+            $virtualPath = ltrim(substr($requestUri, strlen($subDomainPath)), '/');
         }
 
 //        $virtualPath = $virtualPath ? $virtualPath : '/';
