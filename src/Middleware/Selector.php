@@ -84,7 +84,10 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
                 $middleware = $item->getMiddleware($this->app);
                 if($this->logger) {
                     $type = gettype($middleware);
-                    $this->logger->debug("Selector: Pro REST uri $restUri byl nalezen prefix {$item->getPrefix()} vybrán middleware typu $type.".($type==="object" ? "Objekt je třídy ".get_class($middleware)."." : ""));
+                    if ($type==="object") {
+                        $type = get_class($middleware);
+                    }
+                    $this->logger->debug("Selector: Pro REST uri $restUri byl nalezen prefix {$item->getPrefix()} vybrán middleware typu $type.");
                 }
                 return $middleware->process($request, $handler);
             }

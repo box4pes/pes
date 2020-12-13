@@ -29,19 +29,21 @@ class UriInfoFactory implements UriInfoFactoryInterface {
 
         $requestUri = $request->getUri()->getPath();
 
-        $subDomainPath = '';
-        $virtualPath = $requestUri;
         if (stripos($requestUri, $requestScriptName) === 0) {
             $subDomainPath = $requestScriptName;
         } elseif ($requestScriptDir !== '/' && stripos($requestUri, $requestScriptDir) === 0) {
             $subDomainPath = $requestScriptDir;
+        } else {
+            $subDomainPath = '';
         }
 
         if ($subDomainPath) {
-            $virtualPath = ltrim(substr($requestUri, strlen($subDomainPath)), '/');
+            $virtualPath = substr($requestUri, strlen($subDomainPath));
+        } else {
+            $virtualPath = $requestUri;
         }
 
-        $virtualPath = $virtualPath ? $virtualPath : '/';
+        $virtualPath = '/'.ltrim($virtualPath, '/');
 
         // objekt UrlInfo atribut s názvem self::URL_INFO_ATTRIBUTE_NAME do requestu a request do app
         $urlInfo = new UrlInfo();
