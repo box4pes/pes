@@ -89,6 +89,13 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
                 return $middleware->process($request, $handler);
             }
         }
+        if($this->logger) {
+            foreach($this->items as  $item) {
+                $pref[] = "'".$item->getPrefix()."'";
+            }
+            $prefs = implode(", ", $pref);
+            $this->logger->warning("Selector: Pro REST uri $restUri nebyl nalezen žádný prefix. Prefixy: $prefs.");
+        }
         return $handler->handle($request);
     }
 }
