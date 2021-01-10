@@ -18,5 +18,5 @@ use Pes\View\Template\NodeTemplateInterface;
  * @author pes2704
  */
 interface NodeRendererInterface extends TemplateRendererInterface {
-
+    public function setSeparator($separator);
 }

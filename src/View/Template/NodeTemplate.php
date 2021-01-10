@@ -33,9 +33,9 @@ class NodeTemplate implements NodeTemplateInterface {
      * @param mixed $data template může data použít pro vytvoření Node.
      * @return NodeInterface
      */
-    public function getNode($data=null): NodeInterface {
+    public function getNode($data=null, $classMap=null): NodeInterface {
         $callable = $this->nodeCallable;
-        return $callable($data);
+        return $callable($data, $classMap);
     }
 
     /**

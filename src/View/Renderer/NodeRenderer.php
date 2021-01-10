@@ -3,6 +3,7 @@
 namespace Pes\View\Renderer;
 
 use Pes\View\Renderer\Exception\UnsupportedTemplateException;
+use Pes\View\Renderer\ClassMap\ClassMapInterface;
 
 use Pes\View\Template\TemplateInterface;
 use Pes\Dom\Node\NodeInterface;
@@ -30,10 +31,20 @@ class NodeRenderer implements NodeRendererInterface, RendererRecordableInterface
     private $recorderProvider;
 
     /**
-     * Přijímá separátor, string, který bude  vložen vždy mezi jendnotlivé vyrenderované nody (tagy). Defaultní hodnota je PHP_EOL, t.j. odřádkování.
-     * @param string $separator
+     *
+     * @var ClassMapInterface
      */
-    public function __construct($separator=self::SEPARATOR) {
+    protected $classMap;
+
+    /**
+     *
+     * @param ClassMapInterface $menuClassMap
+     */
+    public function __construct(ClassMapInterface $menuClassMap=NULL) {
+        $this->classMap = $menuClassMap;
+    }
+
+    public function setSeparator($separator) {
         $this->separator = $separator;
     }
 
@@ -56,7 +67,7 @@ class NodeRenderer implements NodeRendererInterface, RendererRecordableInterface
      * @return string
      */
     public function render( $data=NULL) {
-        return $this->renderNode($this->template->getNode($data));
+        return $this->renderNode($this->template->getNode($data, $this->classMap));
     }
 
     /**
