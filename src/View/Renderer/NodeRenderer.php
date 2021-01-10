@@ -38,7 +38,7 @@ class NodeRenderer implements NodeRendererInterface, RendererRecordableInterface
     }
 
     public function setTemplate(TemplateInterface $template) {
-        if ($template->getDefaultRendererService() !== NodeTemplate::class) {
+        if ($template->getDefaultRendererService() !== NodeRenderer::class) {
             throw new UnsupportedTemplateException("Renderer ". get_called_class()." nepodporuje renderování template typu ". get_class($this->template));
         }
         $this->template = $template;
