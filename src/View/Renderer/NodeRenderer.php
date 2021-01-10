@@ -57,7 +57,7 @@ class NodeRenderer implements NodeRendererInterface, RendererRecordableInterface
     public function render( $data=NULL) {
         assert(!isset($data), 'Není implementováno zpracování dat. Data se nijak nezpracovávají!! ');
 
-        return $this->renderNode($this->template->getNode());
+        return $this->renderNode($this->template->getNode($data));
     }
 
     /**

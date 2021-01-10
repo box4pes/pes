@@ -22,14 +22,17 @@ use Pes\Dom\Node\NodeInterface;
  */
 class NodeTemplate implements NodeTemplateInterface {
 
-    protected $node;
+    protected $nodeCallable;
 
-    public function __construct(NodeInterface $node) {
-        $this->node = $node;
+    public function __construct(callable $node) {
+        $this->nodeCallable = $node;
     }
 
-    public function getNode(): NodeInterface {
-        return $this->node;
+    public function getNode($data=null): NodeInterface {
+        if (is_callable($this->nodeCallable)) {
+
+        }
+        return $this->nodeCallable($data);
     }
 
     /**

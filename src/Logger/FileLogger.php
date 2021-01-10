@@ -92,7 +92,7 @@ class FileLogger extends AbstractLogger {
                 throw new \InvalidArgumentException('Nelze vytvořit '.__CLASS__.' pro soubor: '.$fullLogFileName.', nepodařilo se soubor vytvořit.');
             }
             $loggerInstance = new self($handle, $fullLogFileName);
-            $loggerInstance->info("[{time}] Logger start. Log file: {fullLogFileName}. Mode '{mode}'.",
+            $loggerInstance->debug("[{time}] Logger start. Log file: {fullLogFileName}. Mode '{mode}'.",
                 ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName, 'mode'=>$mode]);
             self::$instances[$fullLogFileName] = $loggerInstance;
         }
