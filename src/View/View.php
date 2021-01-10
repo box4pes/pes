@@ -227,7 +227,7 @@ class View implements ViewInterface {
 
     private function getDefaultTemplateRenderer(TemplateInterface $template) {
         if (!isset($this->rendererContainer)) {
-            throw new LogicException("Nelze získat renderer jako default renderer šablony, není zadán renderer kontejner.");
+            throw new \LogicException("Nelze získat renderer jako default renderer šablony, není zadán renderer kontejner.");
         } else {
             return $this->rendererContainer->get($template->getDefaultRendererService());
         }
