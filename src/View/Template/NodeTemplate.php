@@ -28,11 +28,14 @@ class NodeTemplate implements NodeTemplateInterface {
         $this->nodeCallable = $node;
     }
 
+    /**
+     *
+     * @param mixed $data template může data použít pro vytvoření Node.
+     * @return NodeInterface
+     */
     public function getNode($data=null): NodeInterface {
-        if (is_callable($this->nodeCallable)) {
-
-        }
-        return $this->nodeCallable($data);
+        $callable = $this->nodeCallable;
+        return $callable($data);
     }
 
     /**

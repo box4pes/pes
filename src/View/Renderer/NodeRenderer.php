@@ -50,13 +50,12 @@ class NodeRenderer implements NodeRendererInterface, RendererRecordableInterface
     }
 
     /**
-     * Data se nijak nezpracovávají!!
-     * @param type $data
+     * Data se předávají do template, template může data použít pro vytvoření Node.
+     *
+     * @param mixed $data
      * @return string
      */
     public function render( $data=NULL) {
-        assert(!isset($data), 'Není implementováno zpracování dat. Data se nijak nezpracovávají!! ');
-
         return $this->renderNode($this->template->getNode($data));
     }
 
