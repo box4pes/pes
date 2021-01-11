@@ -13,6 +13,7 @@ namespace Pes\View\Template;
 
 use Pes\View\Renderer\NodeRenderer as DefaultRenderer;
 
+use Pes\View\NodeFactory\NodeFactoryInterface;
 use Pes\Dom\Node\NodeInterface;
 
 /**
@@ -22,10 +23,10 @@ use Pes\Dom\Node\NodeInterface;
  */
 class NodeTemplate implements NodeTemplateInterface {
 
-    protected $nodeCallable;
+    protected $nodeFactory;
 
-    public function __construct(callable $node) {
-        $this->nodeCallable = $node;
+    public function __construct(NodeFactoryInterface $nodeFactory) {
+        $this->nodeFactory = $nodeFactory;
     }
 
     /**
@@ -33,9 +34,8 @@ class NodeTemplate implements NodeTemplateInterface {
      * @param mixed $data template může data použít pro vytvoření Node.
      * @return NodeInterface
      */
-    public function getNode($data=null, $classMap=null): NodeInterface {
-        $callable = $this->nodeCallable;
-        return $callable($data, $classMap);
+    public function getNode($classMap=null): NodeInterface {
+        return $this->nodeFactory->create();
     }
 
     /**

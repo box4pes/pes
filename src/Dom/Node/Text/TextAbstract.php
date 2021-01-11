@@ -21,22 +21,20 @@ use Pes\Dom\Node\Attributes\NullAttributes;
  * @author pes2704
  */
 abstract class TextAbstract extends NodeAbstract implements TextInterface {
-    
+
     protected function __construct() {
-        $this->name = '#text';        
+        $this->name = '#text';
         $this->attributes = new NullAttributes();
     }
     
-    abstract public function getText();
-    
     /**
-     * 
+     *
      * @return AttributesInterface
      */
     public function getAttributesNode() {
         return $this->attributes;
-    }    
-    
+    }
+
     public function addChild(NodeInterface $node=NULL) {
         if ($node) {
             throw new \LogicException('Nelze přidat potomka, text node nemůže mít potomky.');

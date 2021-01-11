@@ -11,25 +11,25 @@ class Text extends TextAbstract implements TextInterface {
 
     /**
      * @var string Textový obsah elementu
-     */    
+     */
     private $text;
-    
+
     /**
-     * 
-     * Přijímá text, který použije jako textový obsah node.
-     * @param string $text Textový obsah elementu.
+     *
+     * Přijímá string nebo objekt převeditelný na string, který použije jako textový obsah node.
+     * @param string|stringable $text Textový obsah elementu.
      */
     public function __construct($text) {
         parent::__construct();
         $this->text = $text;
     }
-    
+
     /**
      * (@inheritdoc)
-     * Vrací textový obsah node, tedy text zadaný v konstruktoru.
+     * Převede parametr konstruktoru na text (string) a ten vrací textový obsah node.
      * @return string
      */
     public function getText() {
-        return $this->text;
-    } 
+        return (string) $this->text;
+    }
 }
