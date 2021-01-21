@@ -238,7 +238,11 @@ class View implements ViewInterface {
     protected function setRendererTemplate(RendererInterface $renderer, TemplateInterface $template=null) {
         if ($renderer instanceof TemplateRendererInterface) {
             if ($template) {
-                $this->checkRendererTemplateCompatibility($renderer, $template);
+                if (!$this->checkRendererTemplateCompatibility($renderer, $this->template)) {
+                    throw new BadRendererForTemplateException(
+                            "Template ".get_class($template)." vyžaduje renderer typu $templateDefaultRendererClass. "
+                            . "Zadaný renderer ".get_class($renderer)." nelze použít pro renderování template.");
+                }
                 $renderer->setTemplate($template);
             }
         }
@@ -252,7 +256,11 @@ class View implements ViewInterface {
                 $renderer = $this->rendererContainer->get($this->rendererName);
                 // pokud je renderer i $this->template a renderer je typu TemplateRendererInterface, předá se $this->template resolvovanému rendereru - je třeba ověřit kompatibilitu
                 if ($this->template) {
-                    $this->checkRendererTemplateCompatibility($renderer, $this->template);
+                    if (!$this->checkRendererTemplateCompatibility($renderer, $this->template)) {
+                        throw new BadRendererForTemplateException(
+                                "Template ".get_class($template)." vyžaduje renderer typu $templateDefaultRendererClass. "
+                                . "Zadaný renderer ".get_class($renderer)." nelze použít pro renderování template.");
+                    }
                 }
             } elseif ($this->template) {
                 $renderer = $this->rendererContainer->get($this->template->getDefaultRendererService());
@@ -263,13 +271,9 @@ class View implements ViewInterface {
         return $renderer;
     }
 
-    protected function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template) {
+    protected function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template): bool {
         $templateDefaultRendererClass = $template->getDefaultRendererService();
-        if ( !($renderer instanceof $templateDefaultRendererClass)) {
-            throw new BadRendererForTemplateException(
-                    "Template ".get_class($template)." vyžaduje renderer typu $templateDefaultRendererClass. "
-                    . "Zadaný renderer ".get_class($renderer)." nelze použít pro renderování template.");
-        }
+        return ($renderer instanceof $templateDefaultRendererClass);
     }
 
     protected function getFallbackRendereWithTemplate(): RendererInterface {
