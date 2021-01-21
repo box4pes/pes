@@ -267,8 +267,8 @@ class View implements ViewInterface {
         $templateDefaultRendererClass = $template->getDefaultRendererService();
         if ( !($renderer instanceof $templateDefaultRendererClass)) {
             throw new BadRendererForTemplateException(
-                    "Template ".get_called_class($template)." vyžaduje renderer typu $templateDefaultRendererClass. "
-                    . "Zadaný renderer ".get_called_class($renderer)." nelze použít pro renderování template.");
+                    "Template ".get_class($template)." vyžaduje renderer typu $templateDefaultRendererClass. "
+                    . "Zadaný renderer ".get_class($renderer)." nelze použít pro renderování template.");
         }
     }
 
