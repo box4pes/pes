@@ -121,6 +121,42 @@ class View implements ViewInterface {
     }
 
     /**
+     * @return string
+     */
+    public function getString($data=NULL) {
+        $renderer = $this->resolveRenderer();
+        return $renderer->render($data ?? $this->data);
+    }
+
+    /**
+     * Metoda umožňuje použít objekt view přímo jako proměnnou (proměnou v šabloně) pro další view.
+     *
+     * Interně volá metodu třídy View->getString(). Pokud je třeba renderovat nějaká data, je nutné je zadat metodou setData($data).
+     *
+     * Protože v PHP nesmí při vykonávání magické metodu __toString dojít k výjimce, volání getString je v try-cath bloku a případná výjimka
+     * je převedena na E_USER_ERROR.
+     * To obvykle vede na Fatal error, ale nezobrazí se zavádějící hlášení o výjimce v metodě __toString s řádkem chyby, kterým je řádek v templatě,
+     * ve které došlo k pokusu o renderování nějakého view, který byl použit jako proměnná.
+     *
+     * Pokud je potřebné vyhazovat výjimky z důvodu jejich zachycování nebo pro ladění, je třeba volat přímo metodu View->getString().
+     *
+     * @return string
+     */
+    public function __toString() {
+        try {
+            $str = $this->getString();
+        } catch (\Throwable $e) {
+
+            trigger_error("Výjimka ".get_class($e)." při vykonávání metody __toString objektu ".get_class($this).". ".
+                    "Exception in: ".$e->getFile()." on line: ".$e->getLine().". ".$e->getMessage()."."
+                     .PHP_EOL.str_replace('\n', PHP_EOL, $e->getTraceAsString()), E_USER_ERROR);
+        }
+        return $str;
+    }
+
+    ##### private methods ###########################
+
+    /**
      * Renderuje data s použitím případné template a vytvoří obsah.
      *
      * Renderuje data:
@@ -158,42 +194,8 @@ class View implements ViewInterface {
      *
      * - Pro renderování bez template je samozřejmě nutné nastavit renderer metodou setRenderer() vždy.
      *
-     * @return string
      */
-    public function getString($data=NULL) {
-        $renderer = $this->resolveRenderer();
-        return $renderer->render($data ?? $this->data);
-    }
-
-    /**
-     * Metoda umožňuje použít objekt view přímo jako proměnnou (proměnou v šabloně) pro další view.
-     *
-     * Interně volá metodu třídy View->getString(). Pokud je třeba renderovat nějaká data, je nutné je zadat metodou setData($data).
-     *
-     * Protože v PHP nesmí při vykonávání magické metodu __toString dojít k výjimce, volání getString je v try-cath bloku a případná výjimka
-     * je převedena na E_USER_ERROR.
-     * To obvykle vede na Fatal error, ale nezobrazí se zavádějící hlášení o výjimce v metodě __toString s řádkem chyby, kterým je řádek v templatě,
-     * ve které došlo k pokusu o renderování nějakého view, který byl použit jako proměnná.
-     *
-     * Pokud je potřebné vyhazovat výjimky z důvodu jejich zachycování nebo pro ladění, je třeba volat přímo metodu View->getString().
-     *
-     * @return string
-     */
-    public function __toString() {
-        try {
-            $str = $this->getString();
-        } catch (\Throwable $e) {
-
-            trigger_error("Výjimka ".get_class($e)." při vykonávání metody __toString objektu ".get_class($this).". ".
-                    "Exception in: ".$e->getFile()." on line: ".$e->getLine().". ".$e->getMessage()."."
-                     .PHP_EOL.str_replace('\n', PHP_EOL, $e->getTraceAsString()), E_USER_ERROR);
-        }
-        return $str;
-    }
-
-    ##### private methods ###########################
-
-    private function resolveRenderer() {
+    protected function resolveRenderer(): RendererInterface {
         if (isset($this->template)) {
             if (isset($this->renderer)) {
                 $renderer = $this->renderer;
@@ -212,12 +214,12 @@ class View implements ViewInterface {
         } elseif (isset($this->fallbackRendererName)) {
             $renderer = $this->getRendererByName($this->fallbackRendererName);
         } else {
-            $renderer = $this->getFallbackRendereAndTemplate();
+            $renderer = $this->getFallbackRendereWithTemplate();
         }
         return $renderer;
     }
 
-    private function getRendererByName($rendererName) {
+    protected function getRendererByName($rendererName): RendererInterface {
         if (!isset($this->rendererContainer)) {
             throw new LogicException("Nelze získat renderer podle jména rendereru, není zadán renderer kontejner.");
         } else {
@@ -225,7 +227,7 @@ class View implements ViewInterface {
         }
     }
 
-    private function getDefaultTemplateRenderer(TemplateInterface $template) {
+    protected function getDefaultTemplateRenderer(TemplateInterface $template): RendererInterface {
         if (!isset($this->rendererContainer)) {
             throw new \LogicException("Nelze získat renderer jako default renderer šablony, není zadán renderer kontejner.");
         } else {
@@ -233,7 +235,7 @@ class View implements ViewInterface {
         }
     }
 
-    private function setRendererTemplate(RendererInterface $renderer, TemplateInterface $template=null) {
+    protected function setRendererTemplate(RendererInterface $renderer, TemplateInterface $template=null) {
         if ($renderer instanceof TemplateRendererInterface) {
             if ($template) {
                 $this->checkRendererTemplateCompatibility($renderer, $template);
@@ -261,7 +263,7 @@ class View implements ViewInterface {
         return $renderer;
     }
 
-    private function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template) {
+    protected function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template) {
         $templateDefaultRendererClass = $template->getDefaultRendererService();
         if ( !($renderer instanceof $templateDefaultRendererClass)) {
             throw new BadRendererForTemplateException(
@@ -270,7 +272,7 @@ class View implements ViewInterface {
         }
     }
 
-    private function getFallbackRendereAndTemplate() {
+    protected function getFallbackRendereWithTemplate(): RendererInterface {
         $rendererName = $this->rendererName ?? 'undefined';
         $containerClass = isset($this->rendererContainer) ? get_class($this->rendererContainer) : 'renderer container is not set';
         $templateClass = isset($this->template) ? get_class($this->template) : 'undefined';
