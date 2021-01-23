@@ -26,10 +26,6 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
  */
 class PhpTemplateRenderer implements PhpTemplateRendererInterface {
 
-    use PhpTemplateFunctionsTrait;
-
-    const FILTER_DELIMITER = '|';
-
     private $template;
 
     /**

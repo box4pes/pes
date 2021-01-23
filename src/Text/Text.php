@@ -1,48 +1,44 @@
 <?php
 
 /*
- * Copyright (C) 2017 pes2704
- *
- * This is no software. This is quirky text and you may do anything with it, if you like doing
- * anything with quirky texts. This text is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 
-namespace Pes\View\Renderer;
+namespace Pes\Text;
 
 /**
- * PhpTemplateTrait obsahuje metody, tzv. filtry, které lze volat v html/php šablonách uvením php kódu $this->metoda(), jsou určeny
- * pro tvůrce šablony a slouží jako pomocné metody pro generování textu z šablony. Obvykle se takovým metodám v template systémech
- * říká filtry.
- *
- * Zde se využívá skutečnosti, že v okamžiku renderování šablony se šablona provádí jako php kód příkazem include
- * uvnitř metody PhpTemplate->protectedIncludeScope() a v tu chvíli jsou z kódu šablony viditelné a spustitelné
- * všechny metody objektu PhpTemplate.
+ * Obsahuje statické metody, které jsou určeny jako pomocné metody pro transformování textu.
+ * Obvykle se takovým metodám v template systémech říká filtry. Obsahuje jednotlivé filtry a metodu filter(),
+ * která umožňuje setavit složený filtr.
  *
  * @author pes2704
  */
-trait PhpTemplateFunctionsTrait {
+class Text implements TextInterface {
+
+    const FILTER_DELIMITER = "|";
+    const EOL = PHP_EOL;
 
     /**
      * Metoda použije postupně zleva jednotlivé filtry uvedené jako posloupnost názvů filtrů oddělených znakem FILTER_DELIMITER.
      *
      * Příklad:
-     * Pro FILTER_DELIMITER = '|' volání $this->(e|mono|p, 'Text, který bude filtrován.') způsobí postupné volání filtru (metody)
+     * Pro FILTER_DELIMITER = '|' volání self::filter(e|mono|p, 'Text, který bude filtrován.') způsobí postupné volání filtru (metody)
      * e(), mono(), p(). Ekvivalentně zápisu:
      * <pre>
-     * $this->p($this->mono($this->e('Text, který bude filtrován.')));
+     * self::p(self::mono(self::e('Text, který bude filtrován.')));
      * </pre>
      *
      * @param type $filters
      * @param type $text
      * @return type
      */
-    public function filter($filters='', $text='') {
+    public static function filter($filters='', $text='') {
         $names = explode(self::FILTER_DELIMITER, $filters);
         foreach ($names as $name) {
-            if (method_exists($this, $name)) {
-                $text = $this->$name($text);
+            if (array_key_exists($name, get_class_methods(self::class))) {
+                $text = self::$name($text);
             }
         }
         return $text;
@@ -54,8 +50,8 @@ trait PhpTemplateFunctionsTrait {
      * @param type $text
      * @return type
      */
-    public function e($text='') {
-        return $this->esc($text);
+    public static function e($text='') {
+        return self::esc($text);
     }
 
     /**
@@ -67,13 +63,13 @@ trait PhpTemplateFunctionsTrait {
      * Tato místa nelze nikdy dokonale ošetřit.
      *
      * Tato metoda escapuje i html entity, které byly v opravovaném textu, např. pokud text obsahuje "mluví o&nbsp;všem" vznikne "mluví o&amp;nbsp;všem".
-     * pozor tedy také na pořadí filtrovacích metod: $this->filter('e|mono', 'v neděli'); je v pořádku, zatímco $this->filter('mono|e', 'v neděli');
+     * pozor tedy také na pořadí filtrovacích metod: self::filter('e|mono', 'v neděli'); je v pořádku, zatímco self::filter('mono|e', 'v neděli');
      * oescapuje i &nbsp; vytvořené filtrem "mono".
      *
      * @param type $text
      * @return type
      */
-    public function esc($text='') {
+    public static function esc($text='') {
         return htmlspecialchars($text);
     }
 
@@ -115,7 +111,7 @@ trait PhpTemplateFunctionsTrait {
      * @param array $attributes Nepoviný parametr. Atributy vytvářených tagů p zadané jako asociativní pole. Viz metoda attributes().
      * @return string
      */
-    public function p($text='', $attributes=[]) {
+    public static function p($text='', $attributes=[]) {
         // kopie z https://core.trac.wordpress.org/browser/trunk/src/wp-includes/formatting.php
         //
         if ( trim($text) === '' )
@@ -133,7 +129,7 @@ trait PhpTemplateFunctionsTrait {
         // Složí text z kousků obalených počátečním a koncovým <p>
         $text = '';
         foreach ( $chunks as $chunk ) {
-            $text .= $this->tag("p", $attributes, trim($chunk)).PHP_EOL;  // původně bylo $text .= '<p>' . trim($chunk, "\n") . "</p>\n";
+            $text .= self::tag("p", $attributes, trim($chunk)).self::EOL;  // původně bylo $text .= '<p>' . trim($chunk, "\n") . "</p>\n";
         }
         // Under certain strange conditions it could create a P of entirely whitespace.
         $text = preg_replace('|<p>\s*</p>|', '', $text);
@@ -146,79 +142,19 @@ trait PhpTemplateFunctionsTrait {
      * @param type $text
      * @return type
      */
-    public function nl2br($text='') {
+    public static function nl2br($text='') {
         return str_replace(array("\r\n", "\r", "\n"), "<br />", $text);
     }
 
     /**
-     * Escapuje retězec, který obsahuje javascript, který má být vložen jako inline javarcript do atributu onclick, onblur atd.
+     * Escapuje retězec, který obsahuje javascript, který má být vložen jako inline javascript do atributu onclick, onblur atd.
      *
      * @param string $text
      */
-    public function esc_js($text='') {
+    public static function esc_js($text='') {
         $safe_text = htmlspecialchars( $text, ENT_COMPAT );   // konvertuje &"<> na &xxx kódy (ENT_COMPAT Will convert double-quotes and leave single-quotes alone.)
         $safe_text = preg_replace( '/&#(x)?0*(?(1)27|39);?/i', "'", stripslashes( $safe_text ) );  // stripslashes odstraní escapovací zpětná lomítka (vždy jedno), preg vymění &#x27; a &#039; (oboje apostrofy) za apostrof
 
         return $safe_text;
-    }
-
-    /**
-     * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako asociativní pole.
-     *
-     * Podle typu hodnoty atributu:
-     * <ul>
-     * <li>Atributy s logickou hodnotou uvede jen jako jméno parametru (standard html nikoli xml)</li>
-     * <li>Atributy s hodnotou typu array jako dvojici jméno="řetězec hodnot oddělených mezerou", řetězec hodnot vytvoří zřetězením hodnot v poli oddělených mezerou a obalí uvozovkami</li>
-     * <li>Ostatní atributy jako dvojici jméno="hodnota" s tím, že hodnotu prvku přčevede na string a obalí uvozovkami.</li>
-     * </ul>
-     * Pokud je hodnota atributu řetězec, který obsahuje uvozovky, výsledné html bude chybné. Hodnota atributu je vždy obalena uvozovkami.
-     * Výsledný navrácený řetězec začíná mezerou a atributy v řetězci jsou odděleny mezerami.
-     *
-     * Příklad:
-     * ['id'=>'alert', 'class'=>['ui', 'item', 'alert'], 'readonly'=>TRUE, data-info=>'a neni b'] převede na: id="alert" class="ui item alert" readonly data-info="a neni b".
-     * Víceslovné řetězce (typicky class) lze tedy zadávat jako pole nebo víceslovný řetězec.
-     * @param array $attributesArray Asocitivní pole
-     * @return string
-     */
-    public function attributes($attributesArray=[]) {
-        foreach ($attributesArray as $type => $value) {
-            if (is_bool($value)) {
-                if ($value) {
-                    $attr[] = $type;
-                }
-            } else {
-                $attr[] = $type.'="'.$value.'"';
-            }
-        }
-        return isset($attr) ? ' '.implode(' ',$attr) : '';
-    }
-
-    /**
-     * Generuje html kód párového tagu.
-     *
-     * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
-     * @param array $attributes Asociativní pole. Viz metoda attributes().
-     * @param string $innerHtml Text, bude bez úprav vložen jako textový obsah tagu
-     * @return string
-     */
-    public function tag($name, array $attributes=[], $innerHtml='') {
-        if ($name) {
-            $html = "<$name ".$this->attributes($attributes).">".PHP_EOL.$innerHtml.PHP_EOL."</$name>";
-        }
-        return $html ?? '';
-    }
-
-    /**
-     * Generuje html kód nepárového tagu.
-     *
-     * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
-     * @param array $attributes Asociativní pole. Viz metoda attributes().
-     * @return string
-     */
-    public function tagNopair($name, array $attributes=[]) {
-        if ($name) {
-            $html = "<$name ".self::attributes($attributes)." />";
-        }
-        return $html ?? '';
     }
 }
