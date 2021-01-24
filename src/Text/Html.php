@@ -20,6 +20,8 @@ namespace Pes\Text;
  */
 class Html implements HtmlInterface {
 
+    const EOL = PHP_EOL;
+
     /**
      * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako asociativní pole.
      *

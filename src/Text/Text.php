@@ -18,7 +18,6 @@ namespace Pes\Text;
 class Text implements TextInterface {
 
     const FILTER_DELIMITER = "|";
-    const EOL = PHP_EOL;
 
     /**
      * Metoda použije postupně zleva jednotlivé filtry uvedené jako posloupnost názvů filtrů oddělených znakem FILTER_DELIMITER.
