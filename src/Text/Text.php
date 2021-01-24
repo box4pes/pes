@@ -83,7 +83,7 @@ class Text implements TextInterface {
      * @param type $text
      * @return type
      */
-    public function mono($text='') {
+    public static function mono($text='') {
         $patterns = [
             '/(\s[ksvzouiaKSVZOUIA])\s/',
             '/(\d{1})\.\s(\d{1})/'
