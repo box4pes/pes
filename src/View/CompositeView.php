@@ -63,16 +63,17 @@ class CompositeView extends View implements CompositeViewInterface {
      *
      * @return string
      */
-    public function getString($data=NULL) {
+    public function getString() {
 
-        if (!isset($data)) {
-            $data = $this->data;
+        $data = [];
+        foreach ($this->data as $key => $value) {
+            $data[$key] = $value;
         }
         if ($this->componentViews AND $this->componentViews->count()>0) {
             foreach ($this->componentViews as $componentView) {
                 $data[$this->componentViews->getInfo()] = $componentView->getString();
             }
         }
-        return parent::getString($data);
+        return parent::getString();
     }
 }

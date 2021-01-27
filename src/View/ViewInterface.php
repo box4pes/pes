@@ -23,10 +23,9 @@ interface ViewInterface {
 
     /**
      * Vytvoří textový obsah.
-     * @param type $data
      * @return string
      */
-    public function getString($data=NULL);
+    public function getString();
 
     public function __toString();
 
@@ -67,11 +66,11 @@ interface ViewInterface {
     public function setTemplate(TemplateInterface $template): ViewInterface;
 
     /**
-     * Lze nastavit data pro renderování. Tato data budou použita metodou render().
+     * Lze nastavit data pro renderování. Tato data budou použita metodou render($data).
      *
-     * @param type $data
+     * @param iterable $data
      * @return ViewInterface
      */
-    public function setData($data): ViewInterface;
+    public function setData(iterable $data): ViewInterface;
 }
 

@@ -64,10 +64,11 @@ class View implements ViewInterface {
 
     /**
      * Lze nastavit data pro renderování. Tato data budou použita metodou render().
-     * @param type $data
+     *
+     * @param iterable $data
      * @return ViewInterface
      */
-    public function setData($data=NULL): ViewInterface {
+    public function setData(iterable $data): ViewInterface {
         $this->data = $data;
         return $this;
     }
@@ -123,9 +124,9 @@ class View implements ViewInterface {
     /**
      * @return string
      */
-    public function getString($data=NULL) {
+    public function getString() {
         $renderer = $this->resolveRenderer();
-        return $renderer->render($data ?? $this->data);
+        return $renderer->render($this->data);
     }
 
     /**
