@@ -9,11 +9,6 @@ namespace Pes\View;
 class CompositeView extends View implements CompositeViewInterface {
 
     /**
-     * @var RendererInterface
-     */
-    protected $renderer;
-
-    /**
      *
      * @var \SplObjectStorage
      */
@@ -74,6 +69,7 @@ class CompositeView extends View implements CompositeViewInterface {
                 $data[$this->componentViews->getInfo()] = $componentView->getString();
             }
         }
+        $this->data = $data;
         return parent::getString();
     }
 }
