@@ -13,7 +13,7 @@ namespace Pes\View;
 
 use Pes\View\Renderer\RendererInterface;
 use Pes\View\Renderer\TemplateRendererInterface;
-use Pes\View\Renderer\Container\TemplateRendererContainer;
+use Pes\View\Renderer\RendererModelAwareInterface;
 use Pes\View\Template\TemplateInterface;
 
 use Psr\Container\ContainerInterface;
@@ -78,6 +78,15 @@ class View implements ViewInterface {
     /**
      * {@inheritdoc}
      *
+     * @param type $viewModel
+     * @return ViewInterface
+     */
+    public function setViewModel($viewModel): ViewInterface {
+        $this->viewModel = $viewModel;
+    }
+    /**
+     * {@inheritdoc}
+     *
      * @param RendererInterface $renderer
      * @return \Pes\View\ViewInterface
      */
@@ -128,6 +137,9 @@ class View implements ViewInterface {
      */
     public function getString() {
         $renderer = $this->resolveRenderer();
+        if ($renderer instanceof RendererModelAwareInterface AND isset($this->viewModel)) {
+            $renderer->setViewModel($this->viewModel);
+        }
         return $renderer->render($this->data);
     }
 

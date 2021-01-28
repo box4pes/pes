@@ -74,11 +74,9 @@ interface ViewInterface {
     public function setData(iterable $data): ViewInterface;
 
     /**
-     * Nastaví objekt - view model. View model bude použit, pokud renderer získaný protected metodou resolveREndere() bude typu
+     * Nastaví objekt - view model pro renderování. View model bude použit, pokud renderer získaný protected metodou resolveREndere() bude typu RendererModelAwareInterface.
+
      */
-    public function setViewModel($viewModel) {
-
-
-}
+    public function setViewModel($viewModel): ViewInterface;
 }
 
