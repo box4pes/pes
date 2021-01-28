@@ -66,11 +66,19 @@ interface ViewInterface {
     public function setTemplate(TemplateInterface $template): ViewInterface;
 
     /**
-     * Lze nastavit data pro renderování. Tato data budou použita metodou render($data).
+     * Lze nastavit iterable data pro renderování. Tato data budou použita metodou render().
      *
      * @param iterable $data
      * @return ViewInterface
      */
     public function setData(iterable $data): ViewInterface;
+
+    /**
+     * Nastaví objekt - view model. View model bude použit, pokud renderer získaný protected metodou resolveREndere() bude typu
+     */
+    public function setViewModel($viewModel) {
+
+
+}
 }
 

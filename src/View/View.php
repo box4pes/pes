@@ -62,6 +62,8 @@ class View implements ViewInterface {
 
     protected $data;
 
+    protected $viewModel;
+
     /**
      * Lze nastavit data pro renderování. Tato data budou použita metodou render().
      *
