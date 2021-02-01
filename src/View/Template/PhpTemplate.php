@@ -20,11 +20,22 @@ use Pes\View\Renderer\PhpTemplateRenderer as DefaultRenderer;
  */
 class PhpTemplate extends FileTemplateAbstract implements PhpTemplateInterface {
 
+    private $sharedData = [];
+
     /**
      * Vrací jméno třídy PhpTemplateRenderer.
      * @return string
      */
     public function getDefaultRendererService() {
         return DefaultRenderer::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param iterable $sharedData
+     */
+    public function setSharedData(iterable $sharedData) {
+        $this->sharedData = $sharedData;
     }
 }

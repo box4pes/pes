@@ -2,7 +2,7 @@
 
 namespace Pes\View\Renderer;
 
-use Pes\View\Template\TemplateInterface;
+use Pes\View\Template\PhpTemplateInterface;
 use Pes\View\Recorder\RecorderProviderInterface;
 use Pes\View\Renderer\Exception\UnsupportedTemplateException;
 
@@ -26,14 +26,18 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
  */
 class PhpTemplateRenderer implements PhpTemplateRendererInterface {
 
+    /**
+     * @var PhpTemplateInterface
+     */
     private $template;
-
-    private $sharedData = [];
 
     /**
      * @var RecorderProviderInterface
      */
     private $recorderProvider;
+
+    private $sharedData;
+
 
     /**
      * Pro record info
@@ -41,20 +45,11 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      */
     private $templateFileNamesStack = [];
 
-    public function setTemplate(TemplateInterface $template) {
+    public function setTemplate(PhpTemplateInterface $template) {
         if ($template->getDefaultRendererService() !== PhpTemplateRenderer::class) {
             throw new UnsupportedTemplateException("Renderer ". get_called_class()." nepodporuje renderování template typu ". get_class($this->template));
         }
         $this->template = $template;
-    }
-
-    /**
-     * {@inheritdoc}
-     * 
-     * @param iterable $sharedData
-     */
-    public function setSharedData(iterable $sharedData) {
-        $this->sharedData = $sharedData;
     }
 
     /**
@@ -103,6 +98,8 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
         //        $this->catchTemplateVars($this->templateFileName);
 
         $templateFilename = $this->template->getTemplateFilename();
+        $this->sharedData = $this->template->getSharedData();
+
         return $this->includeToProtectedScope($templateFilename, $data);
     }
 

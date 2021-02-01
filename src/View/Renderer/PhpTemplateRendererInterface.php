@@ -17,11 +17,4 @@ namespace Pes\View\Renderer;
  */
 interface PhpTemplateRendererInterface extends TemplateRendererInterface, PhpTemplateFunctionsInterface, RendererRecordableInterface {
 
-    /**
-     * Nastaví data sdílená všemi šablonami. Tato data jsou extrahována vždy při renderování každé šablony. Při opakovaném renderování šablony jsou opakovaně extrahována, extrahované proměnné
-     * nejsou sdílení, jsou vždy v lokálním kontextu.
-     * 
-     * @param iterable $sharedDate
-     */
-    public function setSharedData(iterable $sharedDate);
 }

@@ -16,5 +16,17 @@ namespace Pes\View\Template;
  * @author pes2704
  */
 interface PhpTemplateInterface extends TemplateInterface {
-    //put your code here
+
+    /**
+     * Nastaví data sdílená všemi šablonami. Tato data jsou extrahována vždy při renderování každé šablony. Při opakovaném renderování šablony jsou opakovaně extrahována, extrahované proměnné
+     * nejsou sdílení, jsou vždy v lokálním kontextu.
+     *
+     * @param iterable $sharedData
+     */
+    public function setSharedData(iterable $sharedData);
+
+    /**
+     * @return iterable
+     */
+    public function getSharedData();
 }
