@@ -25,7 +25,7 @@ interface PhpTemplateFunctionsInterface {
      * @param type $data
      * @param type $emptyDataTemplateFilename
      */
-    public function insert($templateFilename, $data=[], $emptyDataTemplateFilename='');
+    public function insert($templateFilename, iterable $data=[], $emptyDataTemplateFilename='');
 
     /**
      * <p>Pokud jsou zadána data iteruje data, při každé iteraci vloží šablonu a renderuje ji s použitím jedné položky těchto dat.</p><p>
@@ -43,7 +43,7 @@ interface PhpTemplateFunctionsInterface {
      * @param type $data
      * @param type $emptyDataTemplateFilename
      */
-    public function repeat($templateFilename, $data=[], $variableName, $emptyDataTemplateFilename='');
+    public function repeat($templateFilename, iterable $data=[], $variableName, $emptyDataTemplateFilename='');
 
 
 }

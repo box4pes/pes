@@ -28,6 +28,8 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
 
     private $template;
 
+    private $sharedData = [];
+
     /**
      * @var RecorderProviderInterface
      */
@@ -47,6 +49,15 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
     }
 
     /**
+     * {@inheritdoc}
+     * 
+     * @param iterable $sharedData
+     */
+    public function setSharedData(iterable $sharedData) {
+        $this->sharedData = $sharedData;
+    }
+
+    /**
      * Proměnná nastavována v protectedIncludeScope k užití pro metody insert() a další
      * @var VariablesUsageRecorderInterface
      */
@@ -63,7 +74,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
 
     /**
      *
-     * Renderuje soubor šablony včetně vnořených šablon. Poskytuje metody pro vnořivání šablon a pomocné metody pro transformaci textu.
+     * Renderuje soubor šablony včetně vnořených šablon. Poskytuje metody pro vnořivání šablon.
      *
      * <p>Vložené soubory jsou vkládány pomocí php příkazu include nebo voláním metod rendereru insert() a repeat() v kódu template.
      * Obsah souboru template se vykoná jako php skript, kód obsažený v souboru se vykonává uvnitř metody rendereru, proto jsou pro něj dostupné
@@ -71,12 +82,10 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * <p>Příklad: Soubory šablon jsou vkládány použitím php příkazu include takto: <code><?php include sablona.php; ?></code> nebo voláním metody insert template objektu takto:
      * <code><?= $this->insert("contents/main/main.php", $data) ?></code> a repeat takto: <code><?= $this->repeat("contents/main/repeated_fragment.php", $data) ?></code>.</p>
      * <p>Data jsou metodě, ve které (lokálně) proběhne vykonání kódu šablony a tedy i volání volání metod insert() nebo repeat() předána pomocí parametru se jménem $context. Pokud je proměnná $context typu array nebo
-     * je iterovatelná is_iterable() jsou její prvky extrahovány do lokálních proměnných a ty jsou pak dostupné v kódu šablony. Proměnná $context je navíc vždy lokální
+     * je array nebo implementuje \Traversable jsou její prvky extrahovány do lokálních proměnných a ty jsou pak dostupné v kódu šablony. Proměnná $context je navíc vždy lokální
      * proměnnou v první úrovni šablony je vždy spolu s extrahovanými proměnnými dostupná. V šabloně první úrovně je dostupná vždy a pokud v metodě insert() nebo repeat() předám jako
      * data tuto proměnou - tedy předám proměnnou $context např. takto: <code><?= $this->insert("contents/main/repeated_fragment.php", $context) ?></code>
      * je pak stejná proměnná $context dostupná i v příslušné podřízené šabloně. Kontextová data je takto možno řízeně předávat nezměněna do dalších úrovní šablon.
-     * <p>Renderer dále nabízí použití pomocných metod pro transformaci textu definovaných v PhpTemplateFunctionsTrait. Tyto metody jsou obdobně dostupné z kódu
-     * šablony voláním <code><?= $this->esc() ?></code> a podobně.<úp>
      *
      * @throws \Throwable <p>Znovu vyhodí Error nebo Exception, pokud vznikla někde při vykonávání kódu template. Před vyhozením takové chyby nebo výjimky
      * nejprve odešle na výstup obsah výstupního bufferu (všech úrovní bufferu), který do něj byl zapsán předtím, než chyba nebo výjimka vznikla.</p>
@@ -147,23 +156,34 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
         #   jde o obranu před "neasociativními" prvky v poli kontext
         # - provede trim() jména proměnné pro případ náhodných mezer před či za jménem v řetězci (lehce se to stane)
         ##
-        if ($context AND (is_array($context) OR $context instanceof \Traversable)) {
-            foreach ($context as $extractedVarName___=>$extractedVarValue___) {
-                if ($extractedVarName___ !== (int) $extractedVarName___) {      // ne integer index
-                    $extractedVarName___ = trim($extractedVarName___);
-                    if ($extractedVarValue___ instanceof \Closure) {
-                        $$extractedVarName___ = $extractedVarValue___();     // Closure zavolám (kontejner)
-                    } else {
-                        $$extractedVarName___ = $extractedVarValue___;
-                    }
-                    if (isset($bagForMethodVars___->variableUsageRecorder)) {
-                        $bagForMethodVars___->variableUsageRecorder->addContextVar($extractedVarName___, $extractedVarValue___);
-                    }
+        foreach ($context as $extractedVarName___=>$extractedVarValue___) {
+            if ($extractedVarName___ !== (int) $extractedVarName___) {      // ne integer index
+                $extractedVarName___ = trim($extractedVarName___);
+                if ($extractedVarValue___ instanceof \Closure) {
+                    $$extractedVarName___ = $extractedVarValue___();     // Closure zavolám (kontejner)
+                } else {
+                    $$extractedVarName___ = $extractedVarValue___;
+                }
+                if (isset($bagForMethodVars___->variableUsageRecorder)) {
+                    $bagForMethodVars___->variableUsageRecorder->addContextVar($extractedVarName___, $extractedVarValue___);
                 }
             }
-            unset($extractedVarName___);
-            unset($extractedVarValue___);
         }
+        foreach ($this->sharedData as $extractedVarName___=>$extractedVarValue___) {
+            if ($extractedVarName___ !== (int) $extractedVarName___) {      // ne integer index
+                $extractedVarName___ = trim($extractedVarName___);
+                if ($extractedVarValue___ instanceof \Closure) {
+                    $$extractedVarName___ = $extractedVarValue___();     // Closure zavolám (kontejner)
+                } else {
+                    $$extractedVarName___ = $extractedVarValue___;
+                }
+                if (isset($bagForMethodVars___->variableUsageRecorder)) {
+                    $bagForMethodVars___->variableUsageRecorder->addContextVar($extractedVarName___, $extractedVarValue___);
+                }
+            }
+        }
+        unset($extractedVarName___);
+        unset($extractedVarValue___);
 
         ## include šablony
         try {
@@ -210,7 +230,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * @param type $emptyDataTemplateFilename
      * @return type
      */
-    public function insert($templateFilename, $data=[], $emptyDataTemplateFilename='') {
+    public function insert($templateFilename, iterable $data=[], $emptyDataTemplateFilename='') {
         if ($data OR !$emptyDataTemplateFilename) {
             $ret = $this->includeToProtectedScope($templateFilename, $data);
         } else {
@@ -228,7 +248,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * @param type $emptyDataTemplateFilename
      * @return string
      */
-    public function repeat($templateFilename, $data=[], $variableName='repeatItem', $emptyDataTemplateFilename='') {
+    public function repeat($templateFilename, iterable $data=[], $variableName='repeatItem', $emptyDataTemplateFilename='') {
         if ($data) {
             foreach ($data as $item) {
                 if (is_array($item) OR $item instanceof \Traversable) {  // nečíselný klíč = položka ascociativní
