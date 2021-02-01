@@ -38,4 +38,8 @@ class PhpTemplate extends FileTemplateAbstract implements PhpTemplateInterface {
     public function setSharedData(iterable $sharedData) {
         $this->sharedData = $sharedData;
     }
+
+    public function getSharedData(): iterable {
+        return $this->sharedData;
+    }
 }

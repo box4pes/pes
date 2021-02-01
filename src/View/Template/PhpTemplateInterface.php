@@ -28,5 +28,5 @@ interface PhpTemplateInterface extends TemplateInterface {
     /**
      * @return iterable
      */
-    public function getSharedData();
+    public function getSharedData(): iterable;
 }
