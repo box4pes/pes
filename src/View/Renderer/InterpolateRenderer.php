@@ -11,7 +11,7 @@
 
 namespace Pes\View\Renderer;
 
-use Pes\View\Template\TemplateInterface;
+use Pes\View\Template\FileTemplateInterface;
 use Pes\View\Renderer\Exception\UnsupportedTemplateException;
 
 /**
@@ -19,12 +19,12 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
  *
  * @author pes2704
  */
-class InterpolateRenderer extends FileTemplateRendererAbstract implements InterpolateRendererInterface {
+class InterpolateRenderer implements InterpolateRendererInterface {
 
     private $template;
 
 
-    public function setTemplate(TemplateInterface $template) {
+    public function setTemplate(FileTemplateInterface $template) {
         if ($template->getDefaultRendererService() !== InterpolateRenderer::class) {
             throw new UnsupportedTemplateException("Renderer ". get_called_class()." nepodporuje renderování template typu ". get_class($this->template));
         }
@@ -65,5 +65,14 @@ class InterpolateRenderer extends FileTemplateRendererAbstract implements Interp
         } else {
             return '';
         }
+    }
+
+    /**
+     *
+     * @param FileTemplateInterface $fileTemplate
+     * @return string|bool vrací FALSE při neúspěchu
+     */
+    protected function getTemplateFileContent(FileTemplateInterface $fileTemplate) {
+        return $fileTemplate->getTemplateString();
     }
 }
