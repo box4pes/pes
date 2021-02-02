@@ -47,18 +47,22 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
 
     public function has($className): bool {
         if (!isset(self::$renderers[$className])) {
-            if (!class_exists($className, TRUE)) {
-                return false;
-            }
-            if (!is_subclass_of($className, RendererInterface::class)) {   //proběhne autoload - pro neexistující třídu chyba
-                    return false;
-            }
+            return $this->existRendererClass($className);
         }
         return true;
-;
     }
+
+    private function existRendererClass($className) {
+        if ($className AND class_exists($className, TRUE)) {
+            if (is_subclass_of($className, RendererInterface::class)) {   //proběhne autoload - pro neexistující třídu chyba
+                    return true;
+            }
+        }
+        return false;
+    }
+
     private function create($className) {
-        if ($this->has($className)) {
+        if ($this->existRendererClass($className)) {
             $renderer = new $className();
             if ($renderer instanceof RendererRecordableInterface AND isset(self::$recorderProvider)) {
                 $renderer->setRecorderProvider(self::$recorderProvider);
