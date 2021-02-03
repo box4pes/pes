@@ -2,7 +2,7 @@
 
 namespace Pes\View\Renderer;
 
-use Pes\View\Template\PhpTemplateInterface;
+use Pes\View\Template\TemplateInterface;
 use Pes\View\Recorder\RecorderProviderInterface;
 use Pes\View\Renderer\Exception\UnsupportedTemplateException;
 
@@ -45,7 +45,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      */
     private $templateFileNamesStack = [];
 
-    public function setTemplate(PhpTemplateInterface $template) {
+    public function setTemplate(TemplateInterface $template) {
         if ($template->getDefaultRendererService() !== PhpTemplateRenderer::class) {
             throw new UnsupportedTemplateException("Renderer ". get_called_class()." nepodporuje renderování template typu ". get_class($this->template));
         }
