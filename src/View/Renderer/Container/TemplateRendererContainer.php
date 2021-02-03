@@ -15,8 +15,7 @@ use Pes\View\Recorder\RecorderProviderInterface;
 use Pes\View\Renderer\RendererInterface;
 use Pes\View\Renderer\RendererRecordableInterface;
 use Pes\View\Renderer\Container\Exception\RendererNotExistsException;
-use Pes\View\Template\TemplateInterface;
-
+use Pes\View\Renderer\Container\Exception\ClassIsNotARendererException
 /**
  * Description of RenderersContainer
  *
@@ -56,6 +55,8 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
         if ($className AND class_exists($className, TRUE)) {
             if (is_subclass_of($className, RendererInterface::class)) {   //proběhne autoload - pro neexistující třídu chyba
                     return true;
+            } else {
+                throw new ClassIsNotARendererException("požadovaná třída '$className' není typu ".RendererInterface::class.".");
             }
         }
         return false;

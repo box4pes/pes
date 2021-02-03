@@ -19,8 +19,7 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
  *
  * @author pes2704
  */
-//class InterpolateRenderer implements InterpolateRendererInterface {
-class InterpolateRenderer {
+class InterpolateRenderer implements InterpolateRendererInterface {
 
     private $template;
 
