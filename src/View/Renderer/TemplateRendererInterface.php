@@ -11,12 +11,12 @@
 
 namespace Pes\View\Renderer;
 
-use Pes\View\Template\PhpTemplateInterface;
+use Pes\View\Template\TemplateInterface;
 
 /**
  *
  * @author pes2704
  */
 interface TemplateRendererInterface extends RendererInterface {
-    public function setTemplate(PhpTemplateInterface $template);
+    public function setTemplate(TemplateInterface $template);
 }
