@@ -23,10 +23,13 @@ use Pes\View\Renderer\Container\Exception\ClassIsNotARendererInterfaceException;
  */
 class TemplateRendererContainer implements TemplateRendererContainerInterface {
 
-    private static $renderers;
+    private static $renderers = [];
 
-    private static $failed;
+    private static $failed = [];
 
+    /**
+     * @var RecorderProviderInterface
+     */
     private static $recorderProvider;
 
     /**
@@ -60,7 +63,7 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
         if (array_key_exists($className, self::$failed)) {
             return false;
         }
-        if (!class_exists($className, TRUE)) {
+        if (!class_exists($className, self::$failed)) {
             self::$failed[$className] = true;
             return false;
         }
