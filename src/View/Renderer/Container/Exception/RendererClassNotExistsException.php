@@ -16,5 +16,5 @@ namespace Pes\View\Renderer\Container\Exception;
  *
  * @author pes2704
  */
-class RendererNotExistsException extends \UnexpectedValueException implements RendererContainerExceptionInterface {
+class RendererClassNotExistsException extends \UnexpectedValueException implements RendererContainerExceptionInterface {
 }

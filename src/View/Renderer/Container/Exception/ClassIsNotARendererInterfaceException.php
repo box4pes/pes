@@ -16,5 +16,5 @@ namespace Pes\View\Renderer\Container\Exception;
  *
  * @author pes2704
  */
-class ClassIsNotARendererException extends \LogicException implements RendererContainerExceptionInterface {
+class ClassIsNotARendererInterfaceException extends \LogicException implements RendererContainerExceptionInterface {
 }

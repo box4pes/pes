@@ -14,8 +14,8 @@ namespace Pes\View\Renderer\Container;
 use Pes\View\Recorder\RecorderProviderInterface;
 use Pes\View\Renderer\RendererInterface;
 use Pes\View\Renderer\RendererRecordableInterface;
-use Pes\View\Renderer\Container\Exception\RendererNotExistsException;
-use Pes\View\Renderer\Container\Exception\ClassIsNotARendererException;
+use Pes\View\Renderer\Container\Exception\RendererClassNotExistsException;
+use Pes\View\Renderer\Container\Exception\ClassIsNotARendererInterfaceException;
 /**
  * Description of RenderersContainer
  *
@@ -57,13 +57,13 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
                 if (is_subclass_of($className, RendererInterface::class)) {   //proběhne autoload - pro neexistující třídu chyba
                     return true;
                 } else {
-                    throw new ClassIsNotARendererException("požadovaná třída '$className' není typu ".RendererInterface::class.".");
+                    throw new ClassIsNotARendererInterfaceException("požadovaná třída '$className' není typu ".RendererInterface::class.".");
                 }
             } else {
-                throw new RendererNotExistsException("Neexistuje požadovaná třída default rendereru: '$className' v kontejneru ".__CLASS__.".");
+                throw new RendererClassNotExistsException("Neexistuje požadovaná třída default rendereru: '$className' v kontejneru ".__CLASS__.".");
             }
         } else {
-            throw new RendererNotExistsException("Zadán prázdný název třády rendereru v kontejneru ".__CLASS__.".");
+            throw new RendererClassNotExistsException("Zadán prázdný název třády rendereru v kontejneru ".__CLASS__.".");
         }
         return false;
     }
