@@ -22,8 +22,7 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
 class InterpolateRenderer implements InterpolateRendererInterface {
 
     private $template;
-
-
+ 
     public function setTemplate(FileTemplateInterface $template) {
         if ($template->getDefaultRendererService() !== InterpolateRenderer::class) {
             throw new UnsupportedTemplateException("Renderer ". get_called_class()." nepodporuje renderování template typu ". get_class($this->template));
