@@ -11,8 +11,6 @@
 
 namespace Pes\View\Renderer;
 
-use Pes\View\Template\InterpolateTemplateInterface;
-
 /**
  *
  * @author pes2704
