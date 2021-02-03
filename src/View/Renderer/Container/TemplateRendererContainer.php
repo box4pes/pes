@@ -57,7 +57,7 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
         if (!$className) {
             throw new RendererClassNotExistsException("Zadán prázdný název třády rendereru v kontejneru ".__CLASS__.".");
         }
-        if (array_key_exists($className, self::$failed))
+        if (array_key_exists($className, self::$failed)) {
             return false;
         }
         if (!class_exists($className, TRUE)) {
