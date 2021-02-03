@@ -25,6 +25,8 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
 
     private static $renderers;
 
+    private static $failed;
+
     private static $recorderProvider;
 
     /**
@@ -52,20 +54,20 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
     }
 
     private function existRendererClass($className) {
-        if ($className) {
-            if (class_exists($className, TRUE)) {
-                if (is_subclass_of($className, RendererInterface::class)) {   //proběhne autoload - pro neexistující třídu chyba
-                    return true;
-                } else {
-                    throw new ClassIsNotARendererInterfaceException("požadovaná třída '$className' není typu ".RendererInterface::class.".");
-                }
-            } else {
-                throw new RendererClassNotExistsException("Neexistuje požadovaná třída default rendereru: '$className' v kontejneru ".__CLASS__.".");
-            }
-        } else {
+        if (!$className) {
             throw new RendererClassNotExistsException("Zadán prázdný název třády rendereru v kontejneru ".__CLASS__.".");
         }
-        return false;
+        if (array_key_exists($className, self::$failed))
+            return false;
+        }
+        if (!class_exists($className, TRUE)) {
+            self::$failed[$className];
+            return false;
+        }
+        if (!is_subclass_of($className, RendererInterface::class)) {   //proběhne autoload - pro neexistující třídu chyba
+            throw new ClassIsNotARendererInterfaceException("požadovaná třída '$className' není typu ".RendererInterface::class.".");
+        }
+        return true;
     }
 
     private function create($className) {
