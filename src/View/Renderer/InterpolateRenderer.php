@@ -12,6 +12,7 @@
 namespace Pes\View\Renderer;
 
 use Pes\View\Template\TemplateInterface;
+use Pes\View\Template\InterpolateTemplateInterface;
 use Pes\View\Renderer\Exception\UnsupportedTemplateException;
 
 /**
@@ -21,6 +22,9 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
  */
 class InterpolateRenderer implements InterpolateRendererInterface {
 
+    /**
+     * @var InterpolateTemplateInterface
+     */
     private $template;
 
     public function setTemplate(TemplateInterface $template) {
@@ -40,7 +44,7 @@ class InterpolateRenderer implements InterpolateRendererInterface {
      * @throws NoTemplateFileException
      */
     public function render(iterable $data=NULL) {
-        $text = $this->getTemplateFileContent($this->template);
+        $text = $this->template->getTemplateString();
         if ($text) {
             if (isset($data)) {
             $replace = [];
@@ -64,14 +68,5 @@ class InterpolateRenderer implements InterpolateRendererInterface {
         } else {
             return '';
         }
-    }
-
-    /**
-     *
-     * @param FileTemplateInterface $fileTemplate
-     * @return string|bool vrací FALSE při neúspěchu
-     */
-    protected function getTemplateFileContent(FileTemplateInterface $fileTemplate) {
-        return $fileTemplate->getTemplateString();
     }
 }
