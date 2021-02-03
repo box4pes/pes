@@ -61,7 +61,7 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
             return false;
         }
         if (!class_exists($className, TRUE)) {
-            self::$failed[$className];
+            self::$failed[$className] = true;
             return false;
         }
         if (!is_subclass_of($className, RendererInterface::class)) {   //proběhne autoload - pro neexistující třídu chyba
