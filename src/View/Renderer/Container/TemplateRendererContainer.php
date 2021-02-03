@@ -15,7 +15,7 @@ use Pes\View\Recorder\RecorderProviderInterface;
 use Pes\View\Renderer\RendererInterface;
 use Pes\View\Renderer\RendererRecordableInterface;
 use Pes\View\Renderer\Container\Exception\RendererNotExistsException;
-use Pes\View\Renderer\Container\Exception\ClassIsNotARendererException
+use Pes\View\Renderer\Container\Exception\ClassIsNotARendererException;
 /**
  * Description of RenderersContainer
  *
