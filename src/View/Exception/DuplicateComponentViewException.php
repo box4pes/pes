@@ -13,6 +13,6 @@ namespace Pes\View\Exception;
  *
  * @author pes2704
  */
-class DuplicateComponentViewException extends \LogicException implements ViewException {
+class DuplicateComponentViewException extends \LogicException implements ViewExceptionInterface {
     //put your code here
 }

@@ -25,7 +25,7 @@ use Pes\View\Renderer\ImplodeRenderer as FallbackRenderer;
 use Pes\View\Template\ImplodeTemplate as FallbackTemplate;
 
 use Pes\View\Exception\{
-    BadRendererForTemplateException
+    BadRendererForTemplateException, NoViewmodelViewException
 };
 
 /**
@@ -133,14 +133,25 @@ class View implements ViewInterface {
     }
 
     /**
+     * Nalezne vhodný renderer pomocí metody resolveRenderer(), pokud je renderer typu RendererModelAwareInterface nastaví rendereru viewModel nastavený metodou setViewModel()
+     * a renderuje bez použití dat nastavených metodou setData(), pokud renderer není typu RendererModelAwareInterface, renderuje s použitím dat nastavených metodou setData().
+     *
+     * Pokud je renderer typu RendererModelAwareInterface a view nemá nastaven viewModel metodou setViewModel() vyhofí výjimku.
+     *
      * @return string
      */
     public function getString() {
         $renderer = $this->resolveRenderer();
-        if ($renderer instanceof RendererModelAwareInterface AND isset($this->viewModel)) {
+        if ($renderer instanceof RendererModelAwareInterface) {
+            if(!isset($this->viewModel)) {
+                throw new NoViewmodelViewException("Není nastaven view model. Nalezený renderer ". get_class($renderer)." je typu RendererModelAwareInterface a vyžasuje nastavení view modelu.");
+            }
             $renderer->setViewModel($this->viewModel);
+            $str = $renderer->render();
+        } else {
+            $str = $renderer->render($this->data);
         }
-        return $renderer->render($this->data);
+        return $str;
     }
 
     /**

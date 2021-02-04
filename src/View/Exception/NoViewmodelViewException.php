@@ -9,10 +9,10 @@
 namespace Pes\View\Exception;
 
 /**
- * Description of BadRendererForTemplateException
+ * Description of NoViewModeForModelAwareRendererlViewException
  *
  * @author pes2704
  */
-class BadRendererForTemplateException extends \UnexpectedValueException implements ViewExceptionInterface {
+class NoViewmodelViewException implements ViewExceptionInterface {
     //put your code here
 }

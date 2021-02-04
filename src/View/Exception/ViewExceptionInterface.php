@@ -12,6 +12,6 @@ namespace Pes\View\Exception;
  *
  * @author pes2704
  */
-interface ViewException {
+interface ViewExceptionInterface {
     //put your code here
 }
