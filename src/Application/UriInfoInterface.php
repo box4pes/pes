@@ -38,6 +38,12 @@ interface UriInfoInterface {
     public function getRestUri();
 
     /**
+     * Úplná Relativní adresa zdroje. Obsahuje spojenou relativní adresu subdomény (subdomain path) a část url path odpovídající REST resource identifikátoru.
+     * @return string
+     */
+    public function getUri();
+
+    /**
      * Část url path odpovídající REST resource identifikátoru - část url, která již nemá předobraz v adresářové struktuře, následuje za subdomain path
      * @param string $restUri
      * @return UrlInfoInterface
