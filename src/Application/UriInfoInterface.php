@@ -19,65 +19,87 @@ namespace Pes\Application;
 interface UriInfoInterface {
 
     /**
-     * Část url path odpovídající subdoméně - relativní uri kořenového skriptu aplikace vzhledem ke keřeni dokumentů (document root) - odpovídá poadresáři adresáře document root. Je to absolutní cesta (začíná '/').
+     * Část uri odpovídající subdoméně - relativní uri kořenového skriptu aplikace vzhledem ke kořeni dokumentů (document root). Pokud request path obsahuje i jméno souboru, toto uri obsahuje i toto jméno souboru.
+     * Je to absolutní cesta (začíná '/').
      *
      * @return string
      */
-    public function getSubdomainUri();
+    public function getSubdomainUri(): string;
 
     /**
-     * Část url path odpovídající subdoméně - relativní uri kořenového skriptu aplikace vzhledem ke keřeni dokumentů (document root) - odpovídá poadresáři adresáře document root. Je to absolutní cesta (začíná '/').
+     * Část url path odpovídající subdoméně - relativní uri kořenového skriptu aplikace vzhledem ke keřeni dokumentů (document root) - odpovídá poadresáři adresáře document root.
+     * Je to absolutní cesta (začíná '/').
      *
+     * @return string
+     */
+    public function getSubdomainPath(): string;
+    /**
+     * Část url path odpovídající REST resource identifikátoru - část url, která již nemá předobraz v adresářové struktuře, následuje za subdomain path.
+     * Je to absolutní cesta (začíná '/').
+     *
+     * @return string
+     */
+    public function getRestUri(): string;
+
+    /**
+     * Úplné URI zdroje (resource uri). Relativní adresa zdroje. Obsahuje spojenou relativní adresu subdomény (subdomain path) a část url path odpovídající REST resource identifikátoru.
+     * Je to absolutní cesta (začíná '/').
+     *
+     * @return string
+     */
+    public function getUri(): string;
+
+    /**
+     * Absolutní cesta ke kořenovému adresáři skriptu. Začíná i končí '/'.
+     *
+     * @return string
+     */
+    public function getRootAbsolutePath(): string;
+
+    /**
+     * RelaTivní cesta k aktuálnímu pracovnímu adresáři.
+     *
+     * @return string
+     */
+    public function getWorkingPath(): string;
+
+    /**
+     * Část uri odpovídající subdoméně - relativní uri kořenového skriptu aplikace vzhledem ke kořeni dokumentů (document root). Pokud request path obsahuje i jméno souboru, toto uri obsahuje i toto jméno souboru.
+     * Je to absolutní cesta (začíná '/').     *
      * @param string $subdomainPath
      * @return UrlInfoInterface
      */
-    public function setSubdomainUri($subdomainPath): UriInfoInterface;
+    public function setSubdomainUri(string $subdomainPath): UriInfoInterface;
 
     /**
-     * Část url path odpovídající REST resource identifikátoru - část url, která již nemá předobraz v adresářové struktuře, následuje za subdomain path. Je to absolutní cesta (začíná '/').
+     * Část url path odpovídající subdoméně - relativní uri kořenového skriptu aplikace vzhledem ke keřeni dokumentů (document root) - odpovídá poadresáři adresáře document root.
+     * Je to absolutní cesta (začíná '/').
      *
-     * @return string
+     * @param string $subdomainPath
+     * @return UriInfoInterface
      */
-    public function getRestUri();
+    public function setSubdomainPath(string $subdomainPath): UriInfoInterface;
+
+
 
     /**
-     * Úplné URI zdroje (resource uri). Relativní adresa zdroje. Obsahuje spojenou relativní adresu subdomény (subdomain path) a část url path odpovídající REST resource identifikátoru. Je to absolutní cesta (začíná '/').
-     *
-     * @return string
-     */
-    public function getUri();
-
-    /**
-     * Část url path odpovídající REST resource identifikátoru - část url, která již nemá předobraz v adresářové struktuře, následuje za subdomain path. Je to absolutní cesta (začíná '/').
+     * Část url path odpovídající REST resource identifikátoru - část url, která již nemá předobraz v adresářové struktuře, následuje za subdomain path.
+     * Je to absolutní cesta (začíná '/').
      *
      * @param string $restUri
      * @return UrlInfoInterface
      */
-    public function setRestUri($restUri): UriInfoInterface;
-
-    /**
-     * Absolutní cesta ke kořenovému adresáři skriptu. Začíná i končí '/'.
-     *
-     * @return string
-     */
-    public function getRootAbsolutePath();
-
-    /**
-     * RelaTivní cesta k aktuálnímu pracovnímu adresáři.
-     *
-     * @return string
-     */
-    public function getWorkingPath();
+    public function setRestUri(string $restUri): UriInfoInterface;
 
     /**
      * Absolutní cesta ke kořenovému adresáři skriptu. Začíná i končí '/'.
      *
      */
-    public function setRootAbsolutePath($rootRelativePath);
+    public function setRootAbsolutePath(string $rootRelativePath);
 
     /**
      * RelaTivní cesta k aktuálnímu pracovnímu adresáři.
      *
      */
-    public function setWorkingPath($workingPath);
+    public function setWorkingPath(string $workingPath);
 }

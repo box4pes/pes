@@ -48,6 +48,7 @@ class UriInfoFactory implements UriInfoFactoryInterface {
         // objekt UrlInfo atribut s názvem self::URL_INFO_ATTRIBUTE_NAME do requestu a request do app
         $urlInfo = new UrlInfo();
         $urlInfo->setSubdomainUri($subDomainPath);
+        $urlInfo->setSubdomainPath($requestScriptDir);
         $urlInfo->setRestUri($virtualPath);
         $urlInfo->setRootAbsolutePath($this->rootAbsolutePath($environment));
         $urlInfo->setWorkingPath($this->workingPath());

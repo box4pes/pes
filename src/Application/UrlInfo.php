@@ -21,6 +21,10 @@ class UrlInfo implements UriInfoInterface {
     /**
      * @var string
      */
+    protected $subdomainUri;
+    /**
+     * @var string
+     */
     protected $subdomainPath;
 
     /**
@@ -37,8 +41,18 @@ class UrlInfo implements UriInfoInterface {
      * @return string
      */
     public function getSubdomainUri() {
+        return $this->subdomainUri;
+    }
+
+    public function getSubdomainPath(): string {
         return $this->subdomainPath;
     }
+
+    public function setSubdomainPath(string $subdomainPath): UriInfoInterface {
+        $this->subdomainPath = $subdomainPath;
+        return $this;
+    }
+
 
     /**
      * {@inheritdoc}
@@ -69,7 +83,7 @@ class UrlInfo implements UriInfoInterface {
      * @return string
      */
     public function getUri() {
-        return $this->getSubdomainUri().ltrim($this->restUri);
+        return $this->getRootAbsolutePath().ltrim($this->restUri);
     }
 
     /**
@@ -79,7 +93,7 @@ class UrlInfo implements UriInfoInterface {
      * @return UriInfoInterface
      */
     public function setSubdomainUri($basePath): UriInfoInterface {
-        $this->subdomainPath = $basePath;
+        $this->subdomainUri = $basePath;
         return $this;
     }
 
