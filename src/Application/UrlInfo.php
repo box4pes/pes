@@ -89,7 +89,7 @@ class UrlInfo implements UriInfoInterface {
      * @return string
      */
     public function getUri(): string {
-        return $this->rootAbsolutePath.ltrim($this->restUri);
+        return $this->rootAbsolutePath.ltrim($this->restUri, "/");
     }
 
     /**
