@@ -32,33 +32,39 @@ class UrlInfo implements UriInfoInterface {
      */
     protected $restUri;
 
+    /**
+     * @var string
+     */
     protected $rootAbsolutePath;
 
+    /**
+     * @var string
+     */
     protected $workingPath;
 
     /**
      * {@inheritdoc}
+     *
      * @return string
      */
-    public function getSubdomainUri() {
+    public function getSubdomainUri(): string {
         return $this->subdomainUri;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
     public function getSubdomainPath(): string {
         return $this->subdomainPath;
     }
-
-    public function setSubdomainPath(string $subdomainPath): UriInfoInterface {
-        $this->subdomainPath = $subdomainPath;
-        return $this;
-    }
-
 
     /**
      * {@inheritdoc}
      * @return string
      */
-    public function getRootAbsolutePath() {
+    public function getRootAbsolutePath(): string {
         return $this->rootAbsolutePath;
     }
 
@@ -66,7 +72,7 @@ class UrlInfo implements UriInfoInterface {
      * {@inheritdoc}
      * @return string
      */
-    public function getWorkingPath() {
+    public function getWorkingPath(): string {
         return $this->workingPath;
     }
 
@@ -74,7 +80,7 @@ class UrlInfo implements UriInfoInterface {
      * {@inheritdoc}
      * @return string
      */
-    public function getRestUri() {
+    public function getRestUri(): string {
         return $this->restUri;
     }
 
@@ -82,8 +88,8 @@ class UrlInfo implements UriInfoInterface {
      * {@inheritdoc}
      * @return string
      */
-    public function getUri() {
-        return $this->getRootAbsolutePath().ltrim($this->restUri);
+    public function getUri(): string {
+        return $this->rootAbsolutePath.ltrim($this->restUri);
     }
 
     /**
@@ -100,10 +106,21 @@ class UrlInfo implements UriInfoInterface {
     /**
      * {@inheritdoc}
      *
+     * @param string $subdomainPath
+     * @return UriInfoInterface
+     */
+    public function setSubdomainPath(string $subdomainPath): UriInfoInterface {
+        $this->subdomainPath = $subdomainPath;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
      * @param string $restUri
      * @return UrlInfoInterface
      */
-    public function setRestUri($restUri): UriInfoInterface {
+    public function setRestUri(string $restUri): UriInfoInterface {
         $this->restUri = $restUri;
         return $this;
     }
@@ -114,7 +131,7 @@ class UrlInfo implements UriInfoInterface {
      * @param type $rootAbsolutePath
      * @return $this
      */
-    public function setRootAbsolutePath($rootAbsolutePath) {
+    public function setRootAbsolutePath(string $rootAbsolutePath): UriInfoInterface {
         $this->rootAbsolutePath = $rootAbsolutePath;
         return $this;
     }
@@ -125,7 +142,7 @@ class UrlInfo implements UriInfoInterface {
      * @param type $workingPath
      * @return $this
      */
-    public function setWorkingPath($workingPath) {
+    public function setWorkingPath(string $workingPath): UriInfoInterface {
         $this->workingPath = $workingPath;
         return $this;
     }
