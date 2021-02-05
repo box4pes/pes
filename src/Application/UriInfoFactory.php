@@ -43,7 +43,7 @@ class UriInfoFactory implements UriInfoFactoryInterface {
             $virtualPath = $requestUri;
         }
 
-        $virtualPath = '/'.ltrim($virtualPath, '/');
+        $virtualPath = ltrim($virtualPath, '/');
 
         // objekt UrlInfo atribut s názvem self::URL_INFO_ATTRIBUTE_NAME do requestu a request do app
         $urlInfo = new UrlInfo();

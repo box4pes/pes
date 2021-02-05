@@ -121,12 +121,12 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
     /**
      * Parametr je proměnná se jménem $context - viz doc k renderTemplate.
      *
-     * @param type $context
+     * @param string $templateFileName
+     * @param iterable $context
      * @return type
-     * @throws \InvalidArgumentException
      * @throws \Throwable
      */
-    private function includeToProtectedScope($templateFileName, $context) {
+    private function includeToProtectedScope($templateFileName, iterable $context) {
         // v kontextu se nesmí použít jméno $bagForMethodVars___, $extractedVarName___, $extractedVarValue___
         $bagForMethodVars___ = new \stdClass();
 

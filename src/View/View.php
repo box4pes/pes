@@ -144,7 +144,7 @@ class View implements ViewInterface {
         $renderer = $this->resolveRenderer();
         if ($renderer instanceof RendererModelAwareInterface) {
             if(!isset($this->viewModel)) {
-                throw new NoViewmodelViewException("Není nastaven view model. Nalezený renderer ". get_class($renderer)." je typu RendererModelAwareInterface a vyžasuje nastavení view modelu.");
+                throw new NoViewmodelViewException("Není nastaven view model. Nalezený renderer ". get_class($renderer)." je typu RendererModelAwareInterface a vyžaduje nastavení view modelu.");
             }
             $renderer->setViewModel($this->viewModel);
             $str = $renderer->render();
