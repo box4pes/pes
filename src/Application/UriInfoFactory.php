@@ -47,7 +47,7 @@ class UriInfoFactory implements UriInfoFactoryInterface {
 
         // objekt UrlInfo atribut s názvem self::URL_INFO_ATTRIBUTE_NAME do requestu a request do app
         $urlInfo = new UrlInfo();
-        $urlInfo->setSubdomainPath($subDomainPath);
+        $urlInfo->setSubdomainUri($subDomainPath);
         $urlInfo->setRestUri($virtualPath);
         $urlInfo->setRootAbsolutePath($this->rootAbsolutePath($environment));
         $urlInfo->setWorkingPath($this->workingPath());
@@ -55,7 +55,7 @@ class UriInfoFactory implements UriInfoFactoryInterface {
     }
 
     /**
-     * RelaTivní cesta k pracovnímu adresáři skriptu
+     * RelaTivní cesta k aktuálnímu pracovnímu adresáři.
      * @return string
      */
     private function workingPath() {
@@ -68,7 +68,7 @@ class UriInfoFactory implements UriInfoFactoryInterface {
     }
 
     /**
-     * Relativní cesTa ke kořenovému adresáři skriptu
+     * Absolutní cesta ke kořenovému adresáři skriptu. Začíná i končí '/'.
      * @param Environment $environment
      * @return string
      */
