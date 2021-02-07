@@ -60,7 +60,7 @@ class View implements ViewInterface {
      */
     protected $template;
 
-    protected $data;
+    protected $data = [];
 
     protected $viewModel;
 
