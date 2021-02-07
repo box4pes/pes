@@ -16,6 +16,8 @@ namespace Pes\View\Template;
  * @author pes2704
  */
 interface ImplodeTemplateInterface extends TemplateInterface {
-    public function getSeparator();
 
+    const SEPARATOR = PHP_EOL;
+
+    public function getSeparator();
 }

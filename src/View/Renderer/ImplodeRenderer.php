@@ -12,6 +12,7 @@
 namespace Pes\View\Renderer;
 
 use Pes\View\Template\TemplateInterface;
+use Pes\View\Template\ImplodeTemplateInterface;
 use Pes\View\Renderer\Exception\UnsupportedTemplateException;
 
 /**
@@ -43,7 +44,11 @@ class ImplodeRenderer implements ImplodeRendererInterface {
      * @throws \UnexpectedValueException
      */
     public function render(iterable $data=NULL) {
-        $separator = $this->template->getSeparator();
+        if (isset($this->template)) {
+            $separator = $this->template->getSeparator();
+        } else {
+            $separator = ImplodeTemplateInterface::SEPARATOR;
+        }
         if ($data) {
             if (is_array($data)) {
                 $str = implode($separator, $data);
