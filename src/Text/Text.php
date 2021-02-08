@@ -96,46 +96,6 @@ class Text implements TextInterface {
     }
 
     /**
-     * Převede text s dvakrát odřádkovanými odstavci na html paragrafy (tagy p). Umožňuje zadat atributy vytvážených tagů p (např. class pro styly).
-     *
-     * Ze všech úseků textu vytvoří html paragrafy, vloží tyto úseky jako obsah tagu p.
-     * Výskyty dvou odřádkování uvnitř textu chápe jako konec úseku a z každého takto odděleného úseku textu vytvoří paragraf.
-     * Jednoho odřádkování v textu si nijak nevšímá, váš vstupní text můžete jedním odřádkováním zalamovat libovolně, např. proto, aby byl vidět ve vašem editoru.
-     * Chcete-li skutečně vytvořit odstavec, použijte v textu dvojí odřádkování.
-     *
-     * Vytvářené tagy p mohu být vytvářeny s atributy. Atributy jsou zadány nepoviným parametrem $attributes ve formě asociativního pole. Viz metoda attributes().
-     *
-     * Metoda nijak nemění jakékoli html značky (tagy) ani žádné viditelné znaky v textu, naopak mění odřádkování (CR, LF alias \r, \n) a whitespaces (mezery, tabelátory ad.).
-     * @param string $text Vstupní text
-     * @param array $attributes Nepoviný parametr. Atributy vytvářených tagů p zadané jako asociativní pole. Viz metoda attributes().
-     * @return string
-     */
-    public static function p($text='', $attributes=[]) {
-        // kopie z https://core.trac.wordpress.org/browser/trunk/src/wp-includes/formatting.php
-        //
-        if ( trim($text) === '' )
-        return '';
-
-        // Just to make things a little easier, pad the end.
-//        $text = $text . "\n";
-        // Standardizuje odřádkování na \n
-        $text = str_replace(array("\r\n", "\r"), "\n", $text);
-        // Odstraní více než dvě odřádkování za sebou
-        $text = preg_replace("/\n\n+/", "\n\n", $text);
-        // Rozdělí na kousky, separátor jsou dvě odřádkování (mezi může být libovolný počet whitespaces)
-        $chunks = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);  //PREG_SPLIT_NO_EMPTY - preg_split vrací jen neprázné kousky
-
-        // Složí text z kousků obalených počátečním a koncovým <p>
-        $text = '';
-        foreach ( $chunks as $chunk ) {
-            $text .= self::tag("p", $attributes, trim($chunk)).self::EOL;  // původně bylo $text .= '<p>' . trim($chunk, "\n") . "</p>\n";
-        }
-        // Under certain strange conditions it could create a P of entirely whitespace.
-        $text = preg_replace('|<p>\s*</p>|', '', $text);
-        return $text;
-    }
-
-    /**
      * Převede odřádkování v textu na značku (tag) <br />. Převádí každé odřádkování, vícenásobné odřádkování způsobí vícenásobné vložení značky.
      *
      * @param type $text

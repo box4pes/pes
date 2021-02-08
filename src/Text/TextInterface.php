@@ -68,19 +68,6 @@ interface TextInterface {
     public static function mono($text);
 
     /**
-     * Převede text s dvakrát odřádkovanými odstavci na html paragrafy (<p></p>)
-     * Vstupní text obalí na začátku a na konci otevíracím tagem <p> a koncovým tagem </p>,
-     * Výskyty dvou odřádkování uvnitř textu chápe jako konec odstavce a z každého takto odděleného úseku textu vytvoří paragraf.
-     * Jednoho odřádkování v textu si nijak nevšímá, váš vstupní text můžete jedním odřádkováním zalamovat libovolně, např. proto, aby byl vidět ve vašem editoru.
-     * Chcete-li skutečně vytvořit odstavec, použijte dvojí odřádkování.
-     *
-     * Metoda nijak nemění jakékoli html značky (tagy) ani žádné viditelné znaky v textu, naopak mění odřádkování (CR, LF alias \r, \n) a whitespaces (mezery, tabelátory ad.).
-     * @param type $text
-     * @return string
-     */
-    public static function p($text);
-
-    /**
      * Převede odřádkování v textu na značku (tag) <br />. Převádí každé odřádkování, vícenásobné odřádkování způsobí vícenásobné vložení značky.
      *
      * @param type $text
