@@ -103,7 +103,7 @@ class Statement extends \PDOStatement implements StatementInterface {
             $this->logger->debug($this->getInstanceInfo().' fetch({fetch_style}, {cursor_orientation}, {cursor_offset})',
                     array('fetch_style'=>$fetch_style, 'cursor_orientation'=>$cursor_orientation, 'cursor_offset'=>$cursor_offset));
             if ($result===FALSE) {
-                $this->logger->warning(' Metoda '.__METHOD__.' selhala.');
+                $this->logger->warning(' Metoda '.__METHOD__.' nevrátila žádná data.');
             }
         }
         return $result;
