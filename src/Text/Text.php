@@ -120,11 +120,11 @@ class Text implements TextInterface {
     /**
      *
      * @param bool $condition
-     * @param string $textOnFalse
      * @param string $textOnTrue
+     * @param string $textOnFalse
      * @return string
      */
-    public static function resolve($condition = false, $textOnFalse = '', $textOnTrue = '') {
+    public static function resolve($condition = false, $textOnTrue = '', $textOnFalse = '') {
         if ((bool) $condition) {
             return $textOnTrue;
         } else {
