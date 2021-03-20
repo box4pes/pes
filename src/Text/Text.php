@@ -116,4 +116,19 @@ class Text implements TextInterface {
 
         return $safe_text;
     }
+
+    /**
+     *
+     * @param bool $condition
+     * @param string $textOnFalse
+     * @param string $textOnTrue
+     * @return string
+     */
+    public static function resolve($condition = false, $textOnFalse = '', $textOnTrue = '') {
+        if ((bool) $condition) {
+            return $textOnTrue;
+        } else {
+            return $textOnFalse;
+        }
+    }
 }

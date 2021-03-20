@@ -81,5 +81,13 @@ interface TextInterface {
      * @param string $text
      */
     public static function esc_js($text='');
-
+    
+    /**
+     *
+     * @param bool $condition
+     * @param string $textOnFalse
+     * @param string $textOnTrue
+     * @return string
+     */
+    public static function resolve($condition = false, $textOnFalse = '', $textOnTrue = '');
 }
