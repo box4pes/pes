@@ -104,7 +104,7 @@ class BodyParser implements BodyParserInterface {
             }
 
             if (isset($this->bodyParsers[$mediaType]) === true) {
-                $body = (string)$request->getBody();
+                $body = (string)$request->getParsedBody();
                 $parsed = $this->bodyParsers[$mediaType]($body);
 
                 if (!is_null($parsed) && !is_object($parsed) && !is_array($parsed)) {
