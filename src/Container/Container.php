@@ -125,11 +125,11 @@ class Container implements ContainerSettingsAwareInterface {
         }
         if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName je obsažena v delegate kontejneru.");
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName je obsažena v delegate kontejneru. Kontejner {$this->containerInfo}.");
         }
         if ($this->has($serviceName)) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nakonfigurována.");
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nakonfigurována. Kontejner {$this->containerInfo}.");
         }
         $this->setOverride($serviceName, $service);
         return $this;
@@ -267,7 +267,7 @@ class Container implements ContainerSettingsAwareInterface {
         if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
             return $this->delegateContainer->get($serviceName);
         }
-        throw new Exception\NotFoundException("Volání služby kontejneru get('$serviceName') selhalo. Požadovaná služba kontejneru se jménem: '$serviceName' neexistuje, nebyla nastavena.");
+        throw new Exception\NotFoundException("Volání služby kontejneru get('$serviceName') selhalo. Požadovaná služba kontejneru se jménem: '$serviceName' neexistuje, nebyla nastavena. Kontejner {$this->containerInfo}.");
     }
 
     /**
@@ -294,10 +294,10 @@ class Container implements ContainerSettingsAwareInterface {
                     if (class_exists($realName)) {
                         $this->aliases[$serviceName] = $realName;
                     } else {
-                        throw new Exception\NotFoundException("Pokus použít automaticky generované jméno třídy $realName k interface $serviceName selhal. Definice třídy $realName nebyla nalezena.");
+                        throw new Exception\NotFoundException("Pokus použít automaticky generované jméno třídy $realName k interface $serviceName selhal. Definice třídy $realName nebyla nalezena. Kontejner {$this->containerInfo}.");
                     }
                 } else {
-                    throw new Exception\NotFoundException("Pokus použít automaticky generované jméno třídy k požadovanému jménu interface $serviceName selhal. Definice interface $serviceName nebyla nalezena.");
+                    throw new Exception\NotFoundException("Pokus použít automaticky generované jméno třídy k požadovanému jménu interface $serviceName selhal. Definice interface $serviceName nebyla nalezena. Kontejner {$this->containerInfo}.");
                 }
             } else {
                 $realName = $serviceName;
