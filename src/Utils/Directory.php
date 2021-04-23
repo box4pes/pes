@@ -19,6 +19,17 @@ use Pes\Utils\Exception\CreateDirectoryFailedException;
  * @author pes2704
  */
 class Directory {
+
+    /**
+     * Prijímá seznam cest ke složkám, které je povoleno mazat. Při pokusu o smazání obsahu složky, které není uvedena v seznamu.
+     * Existenci složek uvedených v seznamu nekontroluje.
+     *
+     * @param array $permittedPaths Seznam cest ke složkám, které je povoleno mazat.
+     */
+    public function __construct(array $permittedPaths=[]) {
+        $this->permittedPaths = $permittedPaths;
+    }
+
 ########### PATH A DIRECTORY ################################################
     /**
      * RelaTivní cesta k pracovnímu adresáři skriptu
@@ -74,5 +85,28 @@ class Directory {
             }
         }
     }
+    private $permittedPaths;
 
+    /**
+     * Smaže obsah složky zadané cestou ke složce. Mazat lze pouze soubory ve složkách uvedených v seznamu složek, pokud byl zadán jako parametr konstruktoru.
+     *
+     * Smaže všechny soubory, ke kterým má skript v okamžiku spuštění právo zápisu. Pokud k souboru práva nemá
+     * vznikne chyba s úrovní E_USER_NOTICE.
+     *
+     * @param string $path
+     */
+    public function cleanDirectory($path) {
+        if (in_array($path, $this->permittedPaths)) {
+            foreach (new \FilesystemIterator($path) as $fileInfo){  // FilesystemIterator->current() defaultně vrací SplFileInfo objekt
+                $fullFilename = $path.$fileInfo->getFilename();
+                if (is_writable($fullFilename)) {
+                    @unlink ($fullFilename);
+                } else {
+                    user_error('Skript nemá oprávnění smazat soubor'.$fullFilename, E_USER_NOTICE);
+                }
+            }
+        } else {
+            user_error("neplatný pokus o smazání obsahu složky $path. Cesta kes složce není uvedena v seznamu povolených složek.", E_USER_WARNING);
+        }
+    }
 }
