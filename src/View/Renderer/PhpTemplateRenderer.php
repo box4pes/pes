@@ -227,7 +227,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * @param type $emptyDataTemplateFilename
      * @return type
      */
-    public function insert($templateFilename, iterable $data=[], $emptyDataTemplateFilename='') {
+    public function insert($templateFilename, $data=[], $emptyDataTemplateFilename='') {
         if ($data OR !$emptyDataTemplateFilename) {
             $ret = $this->includeToProtectedScope($templateFilename, $data);
         } else {
@@ -245,7 +245,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * @param type $emptyDataTemplateFilename
      * @return string
      */
-    public function repeat($templateFilename, iterable $data=[], $variableName='repeatItem', $emptyDataTemplateFilename='') {
+    public function repeat($templateFilename, $data=[], $variableName='repeatItem', $emptyDataTemplateFilename='') {
         if ($data) {
             foreach ($data as $item) {
                 if (is_array($item) OR $item instanceof \Traversable) {  // nečíselný klíč = položka ascociativní
