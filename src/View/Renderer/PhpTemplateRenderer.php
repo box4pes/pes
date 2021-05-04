@@ -5,6 +5,7 @@ namespace Pes\View\Renderer;
 use Pes\View\Template\TemplateInterface;
 use Pes\View\Recorder\RecorderProviderInterface;
 use Pes\View\Renderer\Exception\UnsupportedTemplateException;
+use Pes\View\Renderer\Exception\TemplateRenderingException;
 
 /**
  * Renderer - vstupem je html/php šablona, což je spustitelný soubor PHP, výstupem je text.
@@ -193,7 +194,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
             while (ob_get_level() > $this->originObLevel) {
                 ob_end_clean();
             }
-            throw $e;
+            throw new TemplateRenderingException("Nastala výjimka při vykonávání PHP kódu template '$templateFileName'.", 0, $e);
         }
         $ob = ob_get_clean();
 
