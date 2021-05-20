@@ -11,16 +11,13 @@
 
 namespace Pes\View\Renderer;
 
-use Pes\View\Template\TemplateInterface;
-use Pes\View\Renderer\Exception\UnsupportedTemplateException;
-
 /**
- * ImplodeRenderer pouze zřetězí data s použitím separátoru zadaného v konstruktoru, použije php funkci implode().
+ * ImplodeRenderer pouze převede data na řetězec.
  * Má svůj interface. Nemplementuje RendereInterface!!
  *
  * @author pes2704
  */
-class StringRenderer implements StringRendererInterface {
+class StringRenderer implements RendererInterface {
 
     /**
      * Převede data na string.
@@ -28,7 +25,7 @@ class StringRenderer implements StringRendererInterface {
      * @param type $data
      * @return type
      */
-    public function render($data=NULL) {
+    public function render(iterable $data=NULL) {
         if ($data) {
             $str = (string) $data;
         }
