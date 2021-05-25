@@ -41,6 +41,8 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
 
     /**
      * Konstruktor
+     * <p>Pro správné nastavení parametrů session cookie vyžaduje PHP 7.3 a vyšší (pro správné nastavení samesite)</p>
+     *
      * <p><b>Bezpečnostní vazby handleru</b></p>
      * <p>Session data mohou být vázána na klientskou aplikaci (prohlížeč) a případně na IP adresu klienta. Tato třída může používat dva typy vazby:
      * - Vazba na klientskou aplikaci je vazba na signaturu prohlížeče poskytovanou v hlavičce User-Agent.
@@ -53,11 +55,12 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      * <p>Vazba na klientskou aplikaci (prohlížeč) = TRUE</p>
      * <p>Vazba na IP adresu = FALSE</p>
      * <p>Parametry cookie používané pro předávání identifikátoru session:
-     *  - lifetime = 0
-     *  - path = parametr session.cookie_path ze souboru php.ini
-     *  - domain = parametr session.cookie_domain ze souboru php.ini
+     *  - lifetime = 0 - tedy životnost do konce session
+     *  - path = parametr session.cookie_path ze souboru php.ini - ini_get('session.cookie_path')
+     *  - domain = parametr session.cookie_domain ze souboru php.ini - ini_get('session.cookie_domain')
      *  - secure = TRUE, pokud protokol je HTTPS, jinak je FALSE
-     *  - httponly = TRUE</p>
+     *  - httponly = TRUE
+     *  - samesite = 'lax'</p>
      *
      * <p><b>Nastavení parametrů sesion</b></p>
      * <p>Třída vždy použije vlastní nastavení session.cookie_lifetime, session.use_cookies, session.use_only_cookies, nepoužívá nastavení zadané v souboru php.ini</p>
@@ -72,8 +75,8 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      * @param bool $fingerprintBasedAutodestuction Session budoe automaticky smazána při změně prohlížeče nebo IP adresy, pokud byla tvazba nastavena. Session bude nastartována jako nová, výchozí hodnota je TRUE.
      * @param bool $lockToUserAgent Platnost session je vázána na klientskou aplikaci (prohlížeč), pro kterou byla session nastartována, výchozí hodnota je TRUE
      * @param bool $lockToIp Platnost session dat je vázána na IP adresu klienta, lze použít jen v prostředí se stabilními IP adresami, výchozí hodnota je FALSE
-     * @param array $sessionCookieParams Pole parametrů cookie používané pro předávání identifikátoru session ('lifetime', 'path', 'domain', 'secure', 'httponly').
-     *              Lze zadat pole obsahující jen parametry, změněné proti default hodnotám.
+     * @param array $sessionCookieParams Pole parametrů cookie používané pro předávání identifikátoru session. Lze zadat pouze ty parametry, které mění default hodnoty. Přípustné klíče pole jsou?
+     *              'lifetime', 'path', 'domain', 'secure', 'httponly'. Default hodnoty jsou popsány výše.
      * @param integer $sessionIdDurability Průměrný počet použití session dat bez regenerování identifikátoru session
      * @param boolean $manualStartStop Je vyžadováno spuštění a zastavení session voláním metod sessionStart() a sessionFinish(), defaultně FALSE.
      * @param boolean $closeOnShutdown Pokud je TRUE, je funkce session_write_close() zaregistrována jako shutdown funkce (register_shutdown_function()). Pak je
@@ -105,7 +108,8 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
             'path'     => ini_get('session.cookie_path'),
             'domain'   => ini_get('session.cookie_domain'),
             'secure'   => isset($_SERVER['HTTPS']),
-            'httponly' => true
+            'httponly' => true,
+            'samesite' => 'lax',
         ];
         // integer od 0 do 100
         $this->sessionIdDurability = $sessionIdDurability>0 ? ($sessionIdDurability>100 ? 100 : (int) $sessionIdDurability) : 0;
