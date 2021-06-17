@@ -123,35 +123,14 @@ class View implements ViewInterface {
 
     /**
      * Nastaví template objekt pro renderování. Tato template bude použita metodou render(). Pokud parametr template je null, dojde k použití dalších
-     * možností při resolvování rendereru - vit resolveRenderer().
+     * možností při resolvování rendereru - viz resolveRenderer().
+     * 
      * @param TemplateInterface $template
      * @return \Pes\View\ViewInterface
      */
     public function setTemplate(TemplateInterface $template = null): ViewInterface {
         $this->template = $template;
         return $this;
-    }
-
-    /**
-     * Nalezne vhodný renderer pomocí metody resolveRenderer(), pokud je renderer typu RendererModelAwareInterface nastaví rendereru viewModel nastavený metodou setViewModel()
-     * a renderuje bez použití dat nastavených metodou setData(), pokud renderer není typu RendererModelAwareInterface, renderuje s použitím dat nastavených metodou setData().
-     *
-     * Pokud je renderer typu RendererModelAwareInterface a view nemá nastaven viewModel metodou setViewModel() vyhofí výjimku.
-     *
-     * @return string
-     */
-    public function getString() {
-        $renderer = $this->resolveRenderer();
-        if ($renderer instanceof RendererModelAwareInterface) {
-            if(!isset($this->viewModel)) {
-                throw new NoViewmodelViewException("Není nastaven view model. Nalezený renderer ". get_class($renderer)." je typu RendererModelAwareInterface a vyžaduje nastavení view modelu.");
-            }
-            $renderer->setViewModel($this->viewModel);
-            $str = $renderer->render();
-        } else {
-            $str = $renderer->render($this->data);
-        }
-        return $str;
     }
 
     /**
@@ -178,6 +157,30 @@ class View implements ViewInterface {
                      .PHP_EOL.str_replace('\n', PHP_EOL, $e->getTraceAsString()), E_USER_ERROR);
         }
         return $str;
+    }
+
+    /**
+     * Nalezne vhodný renderer pomocí metody resolveRenderer(), pokud je renderer typu RendererModelAwareInterface nastaví rendereru viewModel nastavený metodou setViewModel()
+     * a renderuje bez použití dat nastavených metodou setData(), pokud renderer není typu RendererModelAwareInterface, renderuje s použitím dat nastavených metodou setData().
+     *
+     * Pokud je renderer typu RendererModelAwareInterface a view nemá nastaven viewModel metodou setViewModel() vyhofí výjimku.
+     *
+     * @return string
+     */
+    public function getString() {
+        $this->beforeRenderingHook();
+        $renderer = $this->resolveRenderer();
+
+        if ($renderer instanceof RendererModelAwareInterface) {
+            $renderer->setViewModel($this->viewModel);
+        }
+
+        $str = $renderer->render($this->data);
+        return $str;
+    }
+
+    protected function beforeRenderingHook() {
+
     }
 
     ##### private methods ###########################
@@ -221,7 +224,7 @@ class View implements ViewInterface {
      * - Pro renderování bez template je samozřejmě nutné nastavit renderer metodou setRenderer() vždy.
      *
      */
-    protected function resolveRenderer(): RendererInterface {
+    private function resolveRenderer(): RendererInterface {
         if (isset($this->template)) {
             if (isset($this->renderer)) {
                 $renderer = $this->renderer;
@@ -245,7 +248,7 @@ class View implements ViewInterface {
         return $renderer;
     }
 
-    protected function getRendererByName($rendererName): RendererInterface {
+    private function getRendererByName($rendererName): RendererInterface {
         if (!isset($this->rendererContainer)) {
             throw new LogicException("Nelze získat renderer podle jména rendereru, není zadán renderer kontejner.");
         } else {
@@ -253,7 +256,7 @@ class View implements ViewInterface {
         }
     }
 
-    protected function getDefaultTemplateRenderer(TemplateInterface $template): RendererInterface {
+    private function getDefaultTemplateRenderer(TemplateInterface $template): RendererInterface {
         if (!isset($this->rendererContainer)) {
             throw new \LogicException("Nelze získat renderer jako default renderer šablony, není zadán renderer kontejner.");
         } else {
@@ -261,7 +264,7 @@ class View implements ViewInterface {
         }
     }
 
-    protected function setRendererTemplate(RendererInterface $renderer, TemplateInterface $template=null) {
+    private function setRendererTemplate(RendererInterface $renderer, TemplateInterface $template=null) {
         if ($renderer instanceof TemplateRendererInterface) {
             if ($template) {
                 if (!$this->checkRendererTemplateCompatibility($renderer, $this->template)) {
@@ -297,12 +300,12 @@ class View implements ViewInterface {
         return $renderer;
     }
 
-    protected function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template): bool {
+    private function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template): bool {
         $templateDefaultRendererClass = $template->getDefaultRendererService();
         return ($renderer instanceof $templateDefaultRendererClass);
     }
 
-    protected function getFallbackRendereWithTemplate(): RendererInterface {
+    private function getFallbackRendereWithTemplate(): RendererInterface {
         $rendererName = $this->rendererName ?? 'undefined';
         $containerClass = isset($this->rendererContainer) ? get_class($this->rendererContainer) : 'renderer container is not set';
         $templateClass = isset($this->template) ? get_class($this->template) : 'undefined';
