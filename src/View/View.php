@@ -124,7 +124,7 @@ class View implements ViewInterface {
     /**
      * Nastaví template objekt pro renderování. Tato template bude použita metodou render(). Pokud parametr template je null, dojde k použití dalších
      * možností při resolvování rendereru - viz resolveRenderer().
-     * 
+     *
      * @param TemplateInterface $template
      * @return \Pes\View\ViewInterface
      */
@@ -179,7 +179,7 @@ class View implements ViewInterface {
         return $str;
     }
 
-    protected function beforeRenderingHook() {
+    protected function beforeRenderingHook(): void {
 
     }
 
