@@ -172,13 +172,7 @@ class View implements ViewInterface {
     public function getString() {
         $this->beforeRenderingHook();
         $renderer = $this->resolveRenderer();
-
-        if ($renderer instanceof RendererModelAwareInterface) {
-            $renderer->setViewModel($this->viewModel);
-        }
-
-        $str = $renderer->render($this->data);
-        return $str;
+        return $renderer->render($this->viewModel);
     }
 
     protected function beforeRenderingHook(): void {
