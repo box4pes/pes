@@ -67,13 +67,14 @@ class View implements ViewInterface {
     /**
      * Lze nastavit data pro renderování. Tato data budou použita metodou render().
      *
-     * @param iterable $data
+     * @param iterable $viewModel
      * @return ViewInterface
      */
-    public function setData(iterable $data): ViewInterface {
-        $this->data = $data;
+    public function setData(iterable $viewModel): ViewInterface {
+        $this->viewModel = $viewModel;
         return $this;
     }
+
 
     /**
      * {@inheritdoc}
@@ -187,15 +188,8 @@ class View implements ViewInterface {
     ##### private methods ###########################
 
     /**
-     * Renderuje data s použitím případné template a vytvoří obsah.
      *
-     * Renderuje data:
-     * <ol>
-     * <li>Data zadaná jako parametr metody.</li>
-     * <li>Pokud parameter data není zadán, renderuje data zadaná metodou setData (view->setData($data)).</li>
-     * </ol>
-     *
-     * Použije renderer vybraný v závislosti na kombinaci nastavených template, renderer, renderer name, fallback renderer:
+     * Vybere renderer v závislosti na kombinaci nastavených setTemplate(), setRenderer(), setRendererName(), setFallbackRenderer(), setFallbackRendererName():
      * <ul>
      * <li>Je template - template se renderuje rendererem získaným v tomto pořadí:
      *  <ul>
@@ -219,10 +213,13 @@ class View implements ViewInterface {
      *
      * Použití:
      *
-     * - Výchozí režim je pro renderování template je použití defaultního rendereru definovaného v template.
+     * Pomocí metod setRendererName() a setFallbackRendererName() lze nastavit jméno služby renderer kontejneru (obvykle jméno třídy rendereru) a rendery josu získávána z tohoto kontejneru
+     * (kontejner musí být také nastaven).
+     *
+     * - Výchozí režim je pro renderování template je použití defaultního rendereru definovaného v template. Pokud někdy template chybí, použije se fallback renderer.
      * Defaultní template renderer lze přebít zadáním rendereru metodou setRenderer(). Od okažiku nastavení rendereru jsou všechny template renderovány zadaným rendererem.
      *
-     * - Pro renderování bez template je samozřejmě nutné nastavit renderer metodou setRenderer() vždy.
+     * - Pro renderování bez template je samozřejmě nutné nastavit renderer metodou setRenderer() nebo setRendererName() vždy.
      *
      */
     private function resolveRenderer(): RendererInterface {
