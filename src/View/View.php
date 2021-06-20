@@ -82,6 +82,7 @@ class View implements ViewInterface {
      * @return ViewInterface
      */
     public function setViewModel($viewModel): ViewInterface {
+        assert(false, 'Deprecated!');
         $this->viewModel = $viewModel;
     }
     /**
