@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author pes2704
  */
-interface ContextDataInterface extends  \IteratorAggregate, \Traversable, \ArrayAccess, \Serializable, \Countable {
+interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Serializable, \Countable {
     /**
      *
      */
