@@ -4,6 +4,8 @@ namespace Pes\Type;
 
 use Psr\Log\LoggerInterface;
 
+use Pes\Type\Exception\InvalidDataTypeException;
+
 /**
  * Description of ContextData
  *
@@ -16,13 +18,6 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
     const IS_EXISTING_VALUE = 'isset on existing value';
     const IS_NONEXISTING_VALUE = 'isset on nonexisting value';
 
-
-    /**
-     *
-     * @var \ArrayObject or array
-     */
-    protected $context;
-
     /**
      * @var LoggerInterface
      */
@@ -34,17 +29,19 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
 
     /**
      * Třífa je wrapper pro ArrayObject. Tato třída přijímá data buď jako pole nebo jako ArrayObject.
-     * Zaznamenává užití dat - t.j. čtení, zápis dat pokud se s objektem pracuje jako s polem
-     * (např. $x = $data['jmeno']  $data['jmeno'] = $y) a dotazy na existenci dat (např. isset($data['jmeno']))
+     *
+     * Při nastavení setDebugMode(true) zaznamenává užití dat - t.j. čtení, zápis dat pokud se s objektem pracuje jako s polem
+     * (např. $x = $data['jmeno']  $data['jmeno'] = $y) a dotazy na existenci dat (např. isset($data['jmeno'])).
+     * Užití dat lze zapsat do logu pomocí specializovaného objektu Pes\Type\ContextDataUsage.
      *
      * @param \ArrayObject $data
      * @param int $flags
-     * @param string $iterator_class
-     * @throws UnexpectedValueException
+     * @param string $iterator_class Default ArrayIterator
+     * @throws InvalidDataTypeException
      */
     public function __construct($data = '[]', int $flags = 0, string $iterator_class = "ArrayIterator") {
         if (!(is_array($data) OR $data instanceof \ArrayObject)) {
-            throw new UnexpectedValueException('Argument musí být pole nebo ArrayObject.');
+            throw new InvalidDataTypeException('Data argument pro konstruktor ContextData musí být pole nebo ArrayObject.');
         }
         parent::__construct($data, $flags, $iterator_class);
     }
@@ -90,7 +87,7 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
      * {@inheritdoc}
      * @param mixed $appendedData array nebo \ArrayObject
      * @return \ContextDataInterface
-     * @throws UnexpectedValueException
+     * @throws InvalidDataTypeException
      */
     public function exchangeData($data): \ContextDataInterface {
         if (is_array($data)) {
@@ -98,7 +95,7 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
         } elseif ($data instanceof \ArrayObject) {
             $ret = parent::exchangeArray($data->getArrayCopy());
         } else {
-            throw new UnexpectedValueException('Argument musí být pole nebo ArrayObject.');
+            throw new InvalidDataTypeException('Argument musí být pole nebo ArrayObject.');
         }
         return $ret;
     }
@@ -107,7 +104,7 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
      * {@inheritdoc}
      * @param mixed $appendedData array nebo \ArrayObject
      * @return \ContextDataInterface
-     * @throws UnexpectedValueException
+     * @throws InvalidDataTypeException
      */
     public function appendData($appendedData): \ContextDataInterface  {
         if (is_array($appendedData)) {
@@ -115,7 +112,7 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
         } elseif ($appendedData instanceof \ArrayObject) {
             parent::exchangeArray(array_merge($this->getArrayCopy(), $appendedData->getArrayCopy()));
         } else {
-            throw new UnexpectedValueException('Argument musí být pole nebo ArrayObject.');
+            throw new InvalidDataTypeException('Argument musí být pole nebo ArrayObject.');
         }
         return $this;
     }

@@ -30,19 +30,19 @@ interface ViewInterface {
     public function __toString();
 
     /**
-     * Nastaví renderer. Pokud je nastaven, je použit při renderování přednostně před rendererem z kontejneru nebo default rendererem templaty.
-     * @param RendererInterface $renderer
-     * @return \Pes\View\ViewInterface
-     */
-    public function setRenderer(RendererInterface $renderer): ViewInterface;
-
-    /**
      * Nastaví objekt renderer kontejner.
      *
      * @param ContainerInterface $rendererContainer
      * @return \Pes\View\ViewInterface
      */
     public function setRendererContainer(ContainerInterface $rendererContainer): ViewInterface;
+
+    /**
+     * Nastaví renderer. Pokud je nastaven, je použit při renderování přednostně před rendererem z kontejneru nebo default rendererem templaty.
+     * @param RendererInterface $renderer
+     * @return \Pes\View\ViewInterface
+     */
+    public function setRenderer(RendererInterface $renderer): ViewInterface;
 
     /**
      * Nastaví jméno služby renderer kontejneru, která musí vracet renderer.
@@ -78,5 +78,13 @@ interface ViewInterface {
 
      */
     public function setViewModel($viewModel): ViewInterface;
+
+    /**
+     * Metoda je prázdná a je připravena pro přetížení v objektu potomka. Slouží pro provedení operací, které je třeba provést vždy bezprostředně před zvolením rendereru
+     * (provádí View metoodou resolveRenderer()) voláním metody render rendereru.
+     *
+     * @return void
+     */
+    public function beforeRenderingHook(): void;
 }
 

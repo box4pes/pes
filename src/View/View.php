@@ -11,12 +11,14 @@
 
 namespace Pes\View;
 
+use Psr\Container\ContainerInterface;
+
+use Pes\Type\ContextDataInterface;
+use Pes\Type\ContextData;
+
 use Pes\View\Renderer\RendererInterface;
 use Pes\View\Renderer\TemplateRendererInterface;
-use Pes\View\Renderer\RendererModelAwareInterface;
 use Pes\View\Template\TemplateInterface;
-
-use Psr\Container\ContainerInterface;
 
 /**
  * use použit jako definice fallback rendereru - použit pro renderování, pokud nebyl získán žádný uživatelsky zadaný renderer.
@@ -24,8 +26,9 @@ use Psr\Container\ContainerInterface;
 use Pes\View\Renderer\ImplodeRenderer as FallbackRenderer;
 use Pes\View\Template\ImplodeTemplate as FallbackTemplate;
 
+use Pes\Type\Exception\InvalidDataTypeException;
 use Pes\View\Exception\{
-    BadRendererForTemplateException, NoViewmodelViewException
+    BadRendererForTemplateException, InvalidTypeForSetDataException
 };
 
 /**
@@ -41,6 +44,10 @@ class View implements ViewInterface {
      */
     protected $renderer;
 
+    /**
+     *
+     * @var string
+     */
     protected $rendererName;
 
     /**
@@ -60,32 +67,48 @@ class View implements ViewInterface {
      */
     protected $template;
 
-    protected $data = [];
-
-    protected $viewModel;
+    /**
+     *
+     * @var ContextDataInterface
+     */
+    protected $contextData;
 
     /**
      * Lze nastavit data pro renderování. Tato data budou použita metodou render().
      *
-     * @param iterable $viewModel
+     * @param iterable $contextData
      * @return ViewInterface
      */
-    public function setData(iterable $viewModel): ViewInterface {
-        $this->viewModel = $viewModel;
+    public function setData($contextData): ViewInterface {
+        if ($contextData instanceof ContextDataInterface) {
+            $this->contextData = $contextData;
+        } else {
+            try {
+                $this->contextData = new ContextData($contextData);
+            } catch (InvalidDataTypeException $exc) {
+                throw new InvalidTypeForSetDataException('Data musí být typu ContextDataInterface nebo vhodná data pro konstruktor ContextData.', 0, $exc);
+            }
+
+        }
         return $this;
     }
 
-
     /**
-     * {@inheritdoc}
+     * Deprecated.
      *
      * @param type $viewModel
      * @return ViewInterface
      */
     public function setViewModel($viewModel): ViewInterface {
         assert(false, 'Deprecated!');
-        $this->viewModel = $viewModel;
+        $this->contextData = $viewModel;
     }
+
+    public function setRendererContainer(ContainerInterface $rendererContainer): ViewInterface {
+        $this->rendererContainer = $rendererContainer;
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -97,10 +120,6 @@ class View implements ViewInterface {
         return $this;
     }
 
-    public function setRendererContainer(ContainerInterface $rendererContainer): ViewInterface {
-        $this->rendererContainer = $rendererContainer;
-        return $this;
-    }
 
     /**
      * {@inheritdoc}
@@ -172,10 +191,10 @@ class View implements ViewInterface {
     public function getString() {
         $this->beforeRenderingHook();
         $renderer = $this->resolveRenderer();
-        return $renderer->render($this->viewModel);
+        return $renderer->render($this->contextData->getArrayCopy());  // předává data jako pole
     }
 
-    protected function beforeRenderingHook(): void {
+    public function beforeRenderingHook(): void {
 
     }
 

@@ -9,10 +9,10 @@
 namespace Pes\View\Exception;
 
 /**
- * Description of NoViewModeForModelAwareRendererlViewException
+ * Description of InvalidDataTypeException
  *
  * @author pes2704
  */
-class NoViewmodelViewException implements ViewExceptionInterface {
+class InvalidTypeForSetDataException extends \UnexpectedValueException implements ViewExceptionInterface {
     //put your code here
 }
