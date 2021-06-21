@@ -28,11 +28,58 @@ class ContextDataTest extends TestCase {
     /**
      * vyhození výjimky pro hodnotu, která není povoleného typu
      */
-    public function testExceptionInvalidDataType() {
-        $type = new ContextData();
+    public function testExceptionInvalidDataTypeObjArg() {
         $this->expectException(InvalidDataTypeException::class);
-
+        $type = new ContextData(new \stdClass());
     }
 
+    /**
+     * Vytvoření objektu pro hodnotu, která je povoleného typu
+     */
+    public function testConstructForNoArg() {
+        $type = new ContextData();
+        $this->assertInstanceOf(ContextData::class, $type);
+    }
 
+    /**
+     * Vytvoření objektu pro hodnotu, která je povoleného typu
+     */
+    public function testConstructForArrayArg() {
+        $type = new ContextData([]);
+        $this->assertInstanceOf(ContextData::class, $type);
+    }
+
+    /**
+     * Vytvoření objektu pro hodnotu, která je povoleného typu
+     */
+    public function testConstructForArrayObjectArg() {
+        $type = new ContextData(new \ArrayObject());
+        $this->assertInstanceOf(ContextData::class, $type);
+    }
+
+    /**
+     * Vytvoření objektu pro hodnotu, která je povoleného typu
+     */
+    public function testConstructForNoArg() {
+        $type = new ContextData();
+        $this->assertInstanceOf(ContextData::class, $type);
+    }
+
+    /**
+     * Vytvoření objektu pro hodnotu, která je povoleného typu
+     */
+    public function testExchangeDataForArrayArg() {
+        $type = new ContextData();
+        $type->exchangeData([]);
+        $this->assertInstanceOf(ContextData::class, $type);
+    }
+
+    /**
+     * Vytvoření objektu pro hodnotu, která je povoleného typu
+     */
+    public function testExchangeDataForArrayObjectArg() {
+        $type = new ContextData();
+        $type->exchangeData(new \ArrayObject());
+        $this->assertInstanceOf(ContextData::class, $type);
+    }
 }

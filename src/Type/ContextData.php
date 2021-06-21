@@ -39,7 +39,7 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
      * @param string $iterator_class Default ArrayIterator
      * @throws InvalidDataTypeException
      */
-    public function __construct($data = '[]', int $flags = 0, string $iterator_class = "ArrayIterator") {
+    public function __construct($data = [], int $flags = 0, string $iterator_class = "ArrayIterator") {
         if (!(is_array($data) OR $data instanceof \ArrayObject)) {
             throw new InvalidDataTypeException('Data argument pro konstruktor ContextData musí být pole nebo ArrayObject.');
         }
