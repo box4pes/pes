@@ -69,7 +69,7 @@ class View implements ViewInterface {
 
     /**
      *
-     * @var ContextDataInterface
+     * @var ContextData
      */
     protected $contextData;
 
