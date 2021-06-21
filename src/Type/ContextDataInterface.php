@@ -56,7 +56,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.append.php
 		 * @since PHP 5, PHP 7
 		 */
-		public function append($value): void;
+		public function append($value);
 
 		/**
 		 * Sort the entries by value
@@ -65,7 +65,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.asort.php
 		 * @since PHP 5 >= 5.2.0, PHP 7
 		 */
-		public function asort(): void;
+		public function asort();
 
 		/**
 		 * Exchange the array for another one
@@ -75,7 +75,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.exchangearray.php
 		 * @since PHP 5 >= 5.1.0, PHP 7
 		 */
-		public function exchangeArray($input): array;
+		public function exchangeArray($input);
 
 		/**
 		 * Creates a copy of the ArrayObject
@@ -84,7 +84,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.getarraycopy.php
 		 * @since PHP 5, PHP 7
 		 */
-		public function getArrayCopy(): array;
+		public function getArrayCopy();
 
 		/**
 		 * Gets the behavior flags
@@ -93,7 +93,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.getflags.php
 		 * @since PHP 5 >= 5.1.0, PHP 7
 		 */
-		public function getFlags(): int;
+		public function getFlags();
 
 		/**
 		 * Gets the iterator classname for the ArrayObject
@@ -102,7 +102,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.getiteratorclass.php
 		 * @since PHP 5 >= 5.1.0, PHP 7
 		 */
-		public function getIteratorClass(): string;
+		public function getIteratorClass();
 
 		/**
 		 * Sort the entries by key
@@ -111,7 +111,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.ksort.php
 		 * @since PHP 5 >= 5.2.0, PHP 7
 		 */
-		public function ksort(): void;
+		public function ksort();
 
 		/**
 		 * Sort an array using a case insensitive "natural order" algorithm
@@ -120,7 +120,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.natcasesort.php
 		 * @since PHP 5 >= 5.2.0, PHP 7
 		 */
-		public function natcasesort(): void;
+		public function natcasesort();
 
 		/**
 		 * Sort entries using a "natural order" algorithm
@@ -129,7 +129,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.natsort.php
 		 * @since PHP 5 >= 5.2.0, PHP 7
 		 */
-		public function natsort(): void;
+		public function natsort();
 
 		/**
 		 * Sets the behavior flags
@@ -139,7 +139,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.setflags.php
 		 * @since PHP 5 >= 5.1.0, PHP 7
 		 */
-		public function setFlags(int $flags): void;
+		public function setFlags(int $flags);
 
 		/**
 		 * Sets the iterator classname for the ArrayObject
@@ -149,7 +149,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.setiteratorclass.php
 		 * @since PHP 5 >= 5.1.0, PHP 7
 		 */
-		public function setIteratorClass(string $iterator_class): void;
+		public function setIteratorClass(string $iterator_class);
 
 		/**
 		 * Sort the entries with a user-defined comparison function and maintain key association
@@ -159,7 +159,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.uasort.php
 		 * @since PHP 5 >= 5.2.0, PHP 7
 		 */
-		public function uasort(callable $cmp_function): void;
+		public function uasort(callable $cmp_function);
 
 		/**
 		 * Sort the entries by keys using a user-defined comparison function
@@ -169,6 +169,6 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
 		 * @link http://php.net/manual/en/arrayobject.uksort.php
 		 * @since PHP 5 >= 5.2.0, PHP 7
 		 */
-		public function uksort(callable $cmp_function): void;
+		public function uksort(callable $cmp_function);
 
 }
