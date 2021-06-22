@@ -127,7 +127,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * @return type
      * @throws \Throwable
      */
-    private function includeToProtectedScope($templateFileName, iterable $context) {
+    private function includeToProtectedScope($templateFileName, iterable $context=null) {
         // v kontextu se nesmí použít jméno $bagForMethodVars___, $extractedVarName___, $extractedVarValue___
         $bagForMethodVars___ = new \stdClass();
 
