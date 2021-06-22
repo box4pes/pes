@@ -86,7 +86,7 @@ class View implements ViewInterface {
             try {
                 $this->contextData = new ContextData($contextData);
             } catch (InvalidDataTypeException $exc) {
-                throw new InvalidTypeForSetDataException('Data musí být typu ContextDataInterface nebo vhodná data pro konstruktor ContextData.', 0, $exc);
+                throw new InvalidTypeForSetDataException('Data musí být typu ContextDataInterface nebo vhodná data pro konstruktor ContextData. Dta jsou typu'. gettype($contextData).'.', 0, $exc);
             }
 
         }
