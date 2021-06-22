@@ -101,7 +101,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
         $templateFilename = $this->template->getTemplateFilename();
         $this->sharedData = $this->template->getSharedData();
 
-        return $this->includeToProtectedScope($templateFilename, $data);
+        return $this->includeToProtectedScope($templateFilename, $data ?? []);
     }
 
 ###### rendering methods ####################
@@ -127,7 +127,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * @return type
      * @throws \Throwable
      */
-    private function includeToProtectedScope($templateFileName, iterable $context=[]) {
+    private function includeToProtectedScope($templateFileName, $context) {
         // v kontextu se nesmí použít jméno $bagForMethodVars___, $extractedVarName___, $extractedVarValue___
         $bagForMethodVars___ = new \stdClass();
 
