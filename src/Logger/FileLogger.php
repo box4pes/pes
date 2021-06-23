@@ -110,11 +110,11 @@ class FileLogger extends AbstractLogger {
      * Víceřádková zpráva je uložena do více řádek logu tak, že první řádka obsahuje prefix v hranatých závorkách a další řádky jsou zleva odsazeny.
      *
      * Příklad:
-     * volání logger->log('error', 'Toto je hlášení o chybě '.PHP_EOL.'v souboru file na řádku line.', ['file=>'Ukázka.ext', 'line'=>159]
+     * volání logger->log('error', 'Toto je hlášení o chybě '.PHP_EOL.'v souboru {file} autora {author}.', ['file=>'Ukázka.ext', 'author'=>'Kukačka'] v čase 12:51:33 12.6.2020
      * vytvoří záznam:
      * <pre>
-     * [error] Toto je hlášení o chybě
-     *     v souboru Ukázka.ext na řádku 159.
+     * error | 2020-06-12 12:51:33 | Toto je hlášení o chybě
+     *     v souboru Ukázka.ext autora Kukačka.
      * </pre>
      *
      * @param string $level Prefix záznamu zdůrazněný uzavřením do hranatých závorek
@@ -123,13 +123,14 @@ class FileLogger extends AbstractLogger {
      * @return null
      */
     public function log($level, $message, array $context = array()) {
+        $time = date("Y-m-d H:i:s");
         $completedMessage = isset($context) ? Template::interpolate($message, $context) : $message;
         $completedMessage = preg_replace("/\r\n|\n|\r/", PHP_EOL.self::ODSAZENI, $completedMessage);  //odsazení druhé a dalších řádek víceřádkového message
-        $newString = '['.$level.'] '.$completedMessage.PHP_EOL;
+        $newString = "$level | $time | $completedMessage".PHP_EOL;
         if (is_resource($this->logFileHandle)) {
             fwrite($this->logFileHandle, $newString);
         } else {
-            user_error("Není logger při pokusu o zápis: $message", E_USER_WARNING);
+            user_error("Není handler k douboru logu při pokusu o zápis: $message", E_USER_WARNING);
         }
     }
 

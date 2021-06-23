@@ -42,12 +42,14 @@ function flushOutputBuffer() {
 }
 
 function getExcLogMessage($e) {
+
     if (class_exists('\\Error') AND $e instanceof \Error) {
-        $message = get_class($e)." [$time] {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}";
+        $cls = get_class($e);
     } else {
-        $message = get_class($e)." exception [$time] {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}";
+        $cls = get_class($e)." exception ";
     }
-    return $message;
+    return "$cls {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}";
+;
 }
 
 /**
@@ -62,7 +64,6 @@ function loggingExceptionHandler(\Throwable $e) {
     $development= PES_DEVELOPMENT ? TRUE : FALSE;
 
     $exceptionsLogger = FileLogger::getInstance(PES_BOOTSTRAP_ERROR_LOGS_PATH, 'ExceptionsLogger.log', FileLogger::APPEND_TO_LOG);
-    $time = date("Y-m-d H:i:s");
 
     $exceptionsLogger->critical(getExcLogMessage($e));
     $exceptionsLogger->critical("Previous exception:". getExcLogMessage($e->getPrevious()));
