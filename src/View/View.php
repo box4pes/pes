@@ -288,29 +288,6 @@ class View implements ViewInterface {
         }
     }
 
-    private function resolveRendererOld() {
-        if (isset($this->renderer)) {
-            $renderer = $this->renderer;
-        } else {
-            if (isset($this->rendererName)) {
-                $renderer = $this->rendererContainer->get($this->rendererName);
-                // pokud je renderer i $this->template a renderer je typu TemplateRendererInterface, předá se $this->template resolvovanému rendereru - je třeba ověřit kompatibilitu
-                if ($this->template) {
-                    if (!$this->checkRendererTemplateCompatibility($renderer, $this->template)) {
-                        throw new BadRendererForTemplateException(
-                                "Template ".get_class($template)." vyžaduje renderer typu $templateDefaultRendererClass. "
-                                . "Zadaný renderer ".get_class($renderer)." nelze použít pro renderování template.");
-                    }
-                }
-            } elseif ($this->template) {
-                $renderer = $this->rendererContainer->get($this->template->getDefaultRendererService());
-            } else {
-                $renderer = $this->useFallbackRendereAndTemplate();   // vytváří user error
-            }
-        }
-        return $renderer;
-    }
-
     private function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template): bool {
         $templateDefaultRendererClass = $template->getDefaultRendererService();
         return ($renderer instanceof $templateDefaultRendererClass);

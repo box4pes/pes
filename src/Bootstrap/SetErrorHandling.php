@@ -41,6 +41,15 @@ function flushOutputBuffer() {
     echo $obContent;
 }
 
+function getExcLogMessage($e) {
+    if (class_exists('\\Error') AND $e instanceof \Error) {
+        $message = get_class($e)." [$time] {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}";
+    } else {
+        $message = get_class($e)." exception [$time] {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}";
+    }
+    return $message;
+}
+
 /**
  * Exception handler zachytává všechny výjimky a loguje je jako critical.
  * Následně:
@@ -54,11 +63,9 @@ function loggingExceptionHandler(\Throwable $e) {
 
     $exceptionsLogger = FileLogger::getInstance(PES_BOOTSTRAP_ERROR_LOGS_PATH, 'ExceptionsLogger.log', FileLogger::APPEND_TO_LOG);
     $time = date("Y-m-d H:i:s");
-    if (class_exists('\\Error') AND $e instanceof \Error) {
-        $exceptionsLogger->critical(get_class($e)." [$time] {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}");
-    } else {
-        $exceptionsLogger->critical(get_class($e)." exception [$time] {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}");
-    }
+
+    $exceptionsLogger->critical(getExcLogMessage($e));
+    $exceptionsLogger->critical("Previous exception:". getExcLogMessage($e->getPrevious()));
 
     if ($development) {
 
@@ -76,7 +83,7 @@ function loggingExceptionHandler(\Throwable $e) {
 //            flushOutputBufferAndThrowException ($e, __FUNCTION__);
 //        }
 
-        flushOutputBuffer ();
+        flushOutputBuffer();
         $info = (__FUNCTION__ . 'error handler nebo exception handler').' v Pes\Bootstrap - ';
         throw new Exception("Výjimka zpracována funkcí $info", 0, $e);
 
