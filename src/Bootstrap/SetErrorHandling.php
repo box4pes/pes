@@ -42,7 +42,7 @@ function flushOutputBuffer() {
 }
 
 function getExcLogMessage($e) {
-
+    // v20
     if (class_exists('\\Error') AND $e instanceof \Error) {
         $cls = get_class($e);
     } else {
