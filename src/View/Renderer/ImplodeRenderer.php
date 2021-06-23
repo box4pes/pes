@@ -53,7 +53,7 @@ class ImplodeRenderer implements ImplodeRendererInterface {
             if (is_array($data)) {
                 $str = implode($separator, $data);
             } elseif ($data instanceof \Traversable) {
-                foreach ($array as $value) {
+                foreach ($data as $value) {
                     $arr[] = $value;
                 }
                 $str = implode($separator, $arr);
