@@ -66,7 +66,9 @@ function loggingExceptionHandler(\Throwable $e) {
     $exceptionsLogger = FileLogger::getInstance(PES_BOOTSTRAP_ERROR_LOGS_PATH, 'ExceptionsLogger.log', FileLogger::APPEND_TO_LOG);
 
     $exceptionsLogger->critical(getExcLogMessage($e));
-    $exceptionsLogger->critical("Previous exception:". getExcLogMessage($e->getPrevious()));
+    if($e->getPrevious()) {
+        $exceptionsLogger->critical("Previous exception:". getExcLogMessage());
+    }
 
     if ($development) {
 
