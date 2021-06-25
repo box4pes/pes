@@ -116,9 +116,4 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
         }
         return $this;
     }
-
-    public function assign($name, $value) {
-        $this->offsetSet($name, $value);
-        return $this;
-    }
 }

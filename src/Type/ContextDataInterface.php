@@ -38,11 +38,4 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
      */
     public function appendData($appendedData): \ContextDataInterface ;
 
-    /**
-     *
-     * @param type $name
-     * @param type $value
-     */
-    public function assign($name, $value);
-
 }
