@@ -67,7 +67,7 @@ function loggingExceptionHandler(\Throwable $e) {
 
     $exceptionsLogger->critical(getExcLogMessage($e));
     if($e->getPrevious()) {
-        $exceptionsLogger->critical("Previous exception:". getExcLogMessage());
+        $exceptionsLogger->critical("Previous exception:". getExcLogMessage($e->getPrevious()));
     }
 
     if ($development) {
