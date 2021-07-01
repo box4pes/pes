@@ -17,15 +17,15 @@ class CompositeView extends View implements CompositeViewInterface {
 
     /**
      * Metoda pro přidání komponentních view. Při renderování kompozitního view budou renderována komponentní view a vygenerovaný výsledek bude vložen
-     * do kompozitního view na místo proměnné zadané zde jako jméno.
+     * do kompozitního view na místo proměnné zadané zde jako jméno. Pokud kompozitní view je null, proměnná je nahrazena prázdným retězcem.
      * Jednotlivá komponentní view budou renderována bez předání (nastavení) template a dat, musí mít tedy před renderováním kompozitního view nastavenu šablonu
      * a data pokud je potřebují pro své renderování.
      *
-     * @param \Pes\View\ViewInterface $componentView Komponetní view
+     * @param \Pes\View\ViewInterface $componentView Komponetní view nebo null
      * @param string $name Jméno proměnné v kompozitním view, která má být nahrazena výstupem zadané komponentní view
      * @return \Pes\View\CompositeViewInterface
      */
-    public function appendComponentView(ViewInterface $componentView, $name): CompositeViewInterface {
+    public function appendComponentView(ViewInterface $componentView=null, $name): CompositeViewInterface {
         // použití SplObjectStorage umožňuje hlídat duplicitní přidání shodného objektu - riziko je velké např. při nesprávném použití kontejneru pro vytváření view objektů
         if (!isset($this->componentViews)) {
             $this->componentViews = new \SplObjectStorage();
@@ -35,7 +35,11 @@ class CompositeView extends View implements CompositeViewInterface {
             $cls = get_class($componentView);
             throw new Exception\DuplicateComponentViewException("Komponentní objekt view $cls se jménem $name nelze přidat, v kompozitním view již je přidán identický objekt pod jménem $usedWithName. Jednotlivá kompozitní view musí být různé objekty.");
         } else {
-            $this->componentViews->attach($componentView, $name);
+            if (isset($componentView)) {
+                $this->componentViews->attach($componentView, $name);
+            } else {
+                $this->componentViews->attach(new View(), $name);
+            }
         }
         return $this;
     }
