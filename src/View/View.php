@@ -197,6 +197,7 @@ class View implements ViewInterface {
     public function getString() {
         $this->beforeRenderingHook();
         $renderer = $this->resolveRenderer();
+        $this->getComponets();
         return $renderer->render($this->contextData);  // předává data jako pole
     }
 
