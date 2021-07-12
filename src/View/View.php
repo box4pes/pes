@@ -361,12 +361,11 @@ class View implements ViewInterface {
      *
      * @return string
      */
-    private function getComponets() {
+    private function getComponets(): void {
         if (is_iterable($this->componentViews)) {
             foreach ($this->componentViews as $componentView) {
                 $this->contextData[$this->componentViews->getInfo()] = $componentView->getString();
             }
         }
-        return parent::getString();
     }
 }
