@@ -195,9 +195,14 @@ class View implements ViewInterface {
      * @return string
      */
     public function getString() {
+        // aktivity před renderování - zde může dojít k přidání template, rendereru, dat apod.
         $this->beforeRenderingHook();
-        $renderer = $this->resolveRenderer();
+        // renderování komponentních view - pokud některé views používají stejný renderer (typicky PhpTemplateRenderer), používá se tatáž instance rendereru poskytnutá (singleton)
+        // službou Renderer kontejneru - proto musí být nejdříve renderer použit pro jednotlivé komponenty a potom teprve pro renderování komposit view, resolveRenderer() při použití PhpTemplate
+        // nastaví rendereru jeho template - to mění vnitřní stav rendereru!, renderer není bezstavový
         $this->getComponets();
+        // renderování kompozitu
+        $renderer = $this->resolveRenderer();
         return $renderer->render($this->contextData);  // předává data jako pole
     }
 
