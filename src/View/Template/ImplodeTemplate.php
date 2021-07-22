@@ -21,9 +21,6 @@ use Pes\View\Renderer\ImplodeRenderer as DefaultRenderer;
  */
 class ImplodeTemplate implements ImplodeTemplateInterface {
 
-
-    const SEPARATOR = PHP_EOL;
-
     private $separator;
 
     public function __construct($separator = self::SEPARATOR) {
