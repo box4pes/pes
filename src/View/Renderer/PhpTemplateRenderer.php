@@ -48,7 +48,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
     private $templateFileNamesStack = [];
 
     public function setTemplate(TemplateInterface $template) {
-        if (! $template->getDefaultRendererService() instanceof PhpTemplateRendererInterface) {
+        if (! $template->getDefaultRendererService() instanceof PhpTemplateInterface) {
             throw new UnsupportedTemplateException("Zadaná template typu ". get_class($template)." není instancí ".PhpTemplateInterface::class);
         }
         $this->template = $template;
