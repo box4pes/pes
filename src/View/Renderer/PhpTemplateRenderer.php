@@ -48,7 +48,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
 
     public function setTemplate(TemplateInterface $template) {
         if ($template->getDefaultRendererService() !== PhpTemplateRenderer::class) {
-            throw new UnsupportedTemplateException("Renderer ". get_called_class()." nepodporuje renderování template typu ". get_class($this->template));
+            throw new UnsupportedTemplateException("Renderer ". get_called_class()." nepodporuje renderování template typu ". get_class($template));
         }
         $this->template = $template;
     }
