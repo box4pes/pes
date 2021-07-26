@@ -4,6 +4,7 @@ namespace Pes\Type;
 
 use Psr\Log\LoggerInterface;
 
+use Pes\Type\ContextDataInterface;
 use Pes\Type\Exception\InvalidDataTypeException;
 
 /**
@@ -86,10 +87,10 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
     /**
      * {@inheritdoc}
      * @param mixed $appendedData array nebo \ArrayObject
-     * @return \ContextDataInterface
+     * @return ContextDataInterface
      * @throws InvalidDataTypeException
      */
-    public function exchangeData($data): \ContextDataInterface {
+    public function exchangeData($data): ContextDataInterface {
         if (is_array($data)) {
             $ret = parent::exchangeArray($data);
         } elseif ($data instanceof \ArrayObject) {
@@ -103,10 +104,10 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
     /**
      * {@inheritdoc}
      * @param mixed $appendedData array nebo \ArrayObject
-     * @return \ContextDataInterface
+     * @return ContextDataInterface
      * @throws InvalidDataTypeException
      */
-    public function appendData($appendedData): \ContextDataInterface  {
+    public function appendData($appendedData): ContextDataInterface  {
         if (is_array($appendedData)) {
             parent::exchangeArray(array_merge($this->getArrayCopy(), $appendedData));
         } elseif ($appendedData instanceof \ArrayObject) {
