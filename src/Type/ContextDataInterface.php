@@ -29,13 +29,13 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
      * @param mixed $appendedData array nebo \ArrayObject
      * @return \ContextDataInterface
      */
-    public function exchangeData($data): \ContextDataInterface;
+    public function exchangeData($data): ContextDataInterface;
 
     /**
      * Metoda přidá data z pole nebo \ArrayObject zadaného jako parametr.
      * @param mixed $appendedData array nebo \ArrayObject
      * @return \ContextDataInterface
      */
-    public function appendData($appendedData): \ContextDataInterface ;
+    public function appendData($appendedData): ContextDataInterface ;
 
 }
