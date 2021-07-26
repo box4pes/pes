@@ -314,7 +314,7 @@ class View implements ViewInterface {
 
     private function getRendererByName($rendererName): RendererInterface {
         if (!isset($this->rendererContainer)) {
-            throw new LogicException("Nelze získat renderer podle jména rendereru, není zadán renderer kontejner.");
+            throw new \LogicException("Nelze získat renderer podle jména rendereru, není zadán renderer kontejner.");
         } else {
             return $this->rendererContainer->get($rendererName);
         }
