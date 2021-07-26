@@ -95,16 +95,16 @@ interface ViewInterface {
      *
      * @param ViewInterface $componentView
      * @param string $name
-     * @return CompositeViewInterface
+     * @return ViewInterface
      */
-    public function appendComponentView(ViewInterface $componentView=null, $name): CompositeViewInterface ;
+    public function appendComponentView(ViewInterface $componentView=null, $name): ViewInterface ;
 
 
     /**
      * Metoda pro přidání komponentních view jako pole nebo \Traversable objekt.
      * @param iterable $componentViews
-     * @return \Pes\View\CompositeViewInterface
+     * @return ViewInterface
      */
-    public function appendComponentViews(iterable $componentViews): CompositeViewInterface ;
+    public function appendComponentViews(iterable $componentViews): ViewInterface ;
 }
 

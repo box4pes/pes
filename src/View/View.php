@@ -218,9 +218,9 @@ class View implements ViewInterface {
      *
      * @param \Pes\View\ViewInterface $componentView Komponetní view nebo null
      * @param string $name Jméno proměnné v kompozitním view, která má být nahrazena výstupem zadané komponentní view
-     * @return \Pes\View\CompositeViewInterface
+     * @return ViewInterface
      */
-    public function appendComponentView(ViewInterface $componentView=null, $name): CompositeViewInterface {
+    public function appendComponentView(ViewInterface $componentView, $name): ViewInterface {
         // použití SplObjectStorage umožňuje hlídat duplicitní přidání shodného objektu - riziko je velké např. při nesprávném použití kontejneru pro vytváření view objektů
         if (!isset($this->componentViews)) {
             $this->componentViews = new \SplObjectStorage();
@@ -242,9 +242,9 @@ class View implements ViewInterface {
     /**
      * Metoda pro přidání komponentních view jako pole nebo \Traversable objekt. Interně volá metodu appendComponentView()
      * @param iterable $componentViews
-     * @return \Pes\View\CompositeViewInterface
+     * @return ViewInterface
      */
-    public function appendComponentViews(iterable $componentViews): CompositeViewInterface  {
+    public function appendComponentViews(iterable $componentViews): ViewInterface  {
         foreach ($componentViews as $name => $componentView) {
             $this->appendComponentView($componentView, $name);
         }
