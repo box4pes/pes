@@ -97,7 +97,7 @@ interface ViewInterface {
      * @param string $name
      * @return ViewInterface
      */
-    public function appendComponentView(ViewInterface $componentView=null, $name): ViewInterface ;
+    public function appendComponentView(ViewInterface $componentView, $name): ViewInterface ;
 
 
     /**

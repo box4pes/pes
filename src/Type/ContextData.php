@@ -29,7 +29,7 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
     private $status;
 
     /**
-     * Třífa je wrapper pro ArrayObject. Tato třída přijímá data buď jako pole nebo jako ArrayObject.
+     * Třísa je wrapper pro ArrayObject. Tato třída přijímá data buď jako pole nebo jako ArrayObject.
      *
      * Při nastavení setDebugMode(true) zaznamenává užití dat - t.j. čtení, zápis dat pokud se s objektem pracuje jako s polem
      * (např. $x = $data['jmeno']  $data['jmeno'] = $y) a dotazy na existenci dat (např. isset($data['jmeno'])).
