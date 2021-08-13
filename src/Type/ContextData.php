@@ -117,4 +117,14 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
         }
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     * @param type $index
+     * @param type $defaultValue
+     * @return string
+     */
+    public function getStringValueIfExists($index, $defaultValue=''): string {
+        return (string) $this->offsetExists($index) ? $this->offsetGet($index) : $defaultValue;
+    }
 }
