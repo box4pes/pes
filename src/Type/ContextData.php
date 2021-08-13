@@ -120,11 +120,11 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
 
     /**
      * {@inheritdoc}
-     * @param type $index
-     * @param type $defaultValue
-     * @return string
+     * @param mixed $index
+     * @param mixed $defaultValue
+     * @return mixed|null
      */
-    public function getStringValueIfExists($index, $defaultValue=''): string {
+    public function getContextVariable($index, $defaultValue=null): ?mixed {
         return (string) $this->offsetExists($index) ? $this->offsetGet($index) : $defaultValue;
     }
 }

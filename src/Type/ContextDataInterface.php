@@ -39,12 +39,12 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
     public function appendData($appendedData): ContextDataInterface ;
 
     /**
-     * Metoda vrací hodnotu uloženou se zadaným indexem převedenou na string. Pokud hodnota se zadaným indexem neexistuje, vrací default hodnotu.
+     * Metoda vrací hodnotu uloženou se zadaným indexem. Pokud hodnota se zadaným indexem neexistuje, vrací default hodnotu.
      * Pokud default hodnota nebyla zadána je default hodnotou prázdný řetězec.
      *
-     * @param type $index
-     * @param string $defaultValue
-     * @return string
+     * @param mixed $index
+     * @param mixed $defaultValue
+     * @return mixed|null
      */
-    public function getStringValueIfExists($index, $defaultValue=''): string;
+    public function getContextVariable($index, $defaultValue=null): ?mixed;
 }
