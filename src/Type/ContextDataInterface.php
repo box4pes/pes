@@ -46,5 +46,5 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
      * @param mixed $defaultValue
      * @return mixed|null
      */
-    public function getContextVariable($index, $defaultValue=null): ?mixed;
+    public function getContextVariable($index, $defaultValue=null);
 }
