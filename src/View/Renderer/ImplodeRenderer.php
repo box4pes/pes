@@ -17,11 +17,10 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
 
 /**
  * ImplodeRenderer pouze zřetězí data s použitím separátoru zadaného v konstruktoru, použije php funkci implode().
- * Má svůj interface. Nemplementuje RendereInterface!!
  *
  * @author pes2704
  */
-class ImplodeRenderer implements ImplodeRendererInterface {
+class ImplodeRenderer implements TemplateRendererInterface {
 
     /**
      * @var TemplateInterface
@@ -30,7 +29,7 @@ class ImplodeRenderer implements ImplodeRendererInterface {
 
     public function setTemplate(TemplateInterface $template) {
         if ($template->getDefaultRendererService() !== ImplodeRenderer::class) {
-            throw new UnsupportedTemplateException("Renderer ". get_called_class()." nepodporuje renderování template typu ". get_class($this->template));
+            throw new UnsupportedTemplateException("Renderer ". get_called_class()." nepodporuje renderování template typu ". get_class($template));
         }
         $this->template = $template;
     }
@@ -39,7 +38,7 @@ class ImplodeRenderer implements ImplodeRendererInterface {
      * Zřetězí data jako string složený z hodnot oddělených (slepených) separátorem.
      *
      * @param ImplodeTemplateInterface $template
-     * @param \Traversable $data Array nebo objekt Traversable.
+     * @param iterable $data Array nebo objekt Traversable.
      * @return string
      * @throws \UnexpectedValueException
      */
@@ -50,17 +49,24 @@ class ImplodeRenderer implements ImplodeRendererInterface {
             $separator = ImplodeTemplateInterface::SEPARATOR;
         }
         if ($data) {
-            if (is_array($data)) {
-                $str = implode($separator, $data);
-            } elseif ($data instanceof \Traversable) {
-                foreach ($data as $value) {
-                    $arr[] = $value;
-                }
-                $str = implode($separator, $arr);
+            if (is_array($data) OR $data  instanceof \Traversable) {
+                $str = $this->implodeRcursive($separator, $data);
             } else {
                 throw new \UnexpectedValueException("Data musí být array nebo Traversable.");
             }
         }
         return $str ?? '';
     }
+
+    private function implodeRcursive($separator, $data) {
+        foreach($data as $value) {
+            if(is_array($value) OR $value  instanceof \Traversable) {
+                $arr[] = $this->implodeRcursive($separator, $value);
+            } else {
+                $arr[] = (string) $value;
+            }
+        }
+        return implode( $separator, $arr );
+    }
+
 }

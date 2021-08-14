@@ -60,14 +60,6 @@ class ContextDataTest extends TestCase {
     /**
      * Vytvoření objektu pro hodnotu, která je povoleného typu
      */
-    public function testConstructForNoArg() {
-        $type = new ContextData();
-        $this->assertInstanceOf(ContextData::class, $type);
-    }
-
-    /**
-     * Vytvoření objektu pro hodnotu, která je povoleného typu
-     */
     public function testExchangeDataForArrayArg() {
         $type = new ContextData();
         $type->exchangeData([]);
