@@ -143,8 +143,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
                 // původně: if($httpMethod == $route->getMethod() && preg_match($route->getPattern(), $path, $matches)) {
                 if(preg_match($route->getPatternPreg(), $restUri, $matches)) {
                     if ($this->logger) {
-                        $this->logger->debug("Router: Hledání route pro request s hodnotou requestUri $restUri získanou z atributu ".AppFactory::URI_INFO_ATTRIBUTE_NAME);
-                        $this->logger->debug("Router: Nalezena route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource()->getHttpMethod(), 'url'=>$route->getResource()->getUrlPattern()]);
+                        $this->logger->debug("Router: Request s requestUri $restUri. Nalezena route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource()->getHttpMethod(), 'url'=>$route->getResource()->getUrlPattern()]);
                     }
                     $this->matchedRoute = $route;
                     $this->matches = $matches;
@@ -179,12 +178,12 @@ class Router implements RouterInterface, LoggerAwareInterface {
     }
 
     private function logBefore($action) {
-        $this->logger->debug("Router: Volá se {actionType} s parametry {parameters}", ['actionType'=> $this->getDebugType($action), 'parameters'=> $this->inlinePrintR($this->matches)]);
+        $this->logger->debug("Router: Volá se {actionType} s parametry {parameters}", ['actionType'=> $this->getDebugType($action), 'parameters'=> implode(', ', $this->matches)]);
     }
 
     private function logAfter($ret) {
         if($ret===FALSE) {
-            $this->logger->debug("Router: Akce routy nevrátila návratovou hodnotu.");
+            $this->logger->warning("Router: Akce routy nevrátila návratovou hodnotu.");
         } else {
             $this->logger->debug("Router: Akce routy vrátila: {retType}", ['retType'=> $this->getDebugType($ret)]);
         }
@@ -194,9 +193,5 @@ class Router implements RouterInterface, LoggerAwareInterface {
         $type = gettype($var);
         $debugType = $type=='object' ? $type.': '.get_class($var) : $type;
         return $debugType;
-    }
-
-    private function inlinePrintR($var) {
-        return str_replace(PHP_EOL, '', print_r($var, TRUE));
     }
 }
