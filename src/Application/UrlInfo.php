@@ -98,7 +98,7 @@ class UrlInfo implements UriInfoInterface {
      * @param string $basePath
      * @return UriInfoInterface
      */
-    public function setSubdomainUri($basePath): UriInfoInterface {
+    public function setSubdomainUri(string $basePath): UriInfoInterface {
         $this->subdomainUri = $basePath;
         return $this;
     }

@@ -95,11 +95,11 @@ interface UriInfoInterface {
      * Absolutní cesta ke kořenovému adresáři skriptu. Začíná i končí '/'.
      *
      */
-    public function setRootAbsolutePath(string $rootRelativePath);
+    public function setRootAbsolutePath(string $rootRelativePath): UriInfoInterface;
 
     /**
      * RelaTivní cesta k aktuálnímu pracovnímu adresáři.
      *
      */
-    public function setWorkingPath(string $workingPath);
+    public function setWorkingPath(string $workingPath): UriInfoInterface;
 }
