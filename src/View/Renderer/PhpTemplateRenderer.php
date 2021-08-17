@@ -229,7 +229,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * @param type $emptyDataTemplateFilename
      * @return type
      */
-    public function insert($templateFilename, $data=[], $emptyDataTemplateFilename='') {
+    public function insert($templateFilename, iterable $data=[], $emptyDataTemplateFilename='') {
         if ($data OR !$emptyDataTemplateFilename) {
             $ret = $this->includeToProtectedScope($templateFilename, $data);
         } else {
