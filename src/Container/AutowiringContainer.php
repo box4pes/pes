@@ -39,7 +39,7 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
      * Pokud uspěje vrací TRUE, jinak dojde k vyhození výjimky v metodě, která se pokouší vytvořit factory pomocí autowiringu.
      *
      */
-    public function has($serviceName) {
+    public function has(string $serviceName) {
         $realName = $this->realName($serviceName);
         if(parent::has($realName)) {
             return TRUE;
@@ -58,7 +58,7 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
      * @return mixed Hodnota vracená službou
      * @throws Exception\NotFoundException Služba není definována...
      */
-    public function get($serviceName) {
+    public function get(string $serviceName) {
         // je service/factory definovaná?
         $realName = $this->realName($serviceName);
         if(parent::has($realName)) {

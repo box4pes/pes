@@ -42,7 +42,7 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
      * @param mixed $service Closure nebo hodnota
      * @return ContainerSettingsAwareInterface
      */
-    public function set($serviceName, $service) : ContainerSettingsAwareInterface;
+    public function set(string $serviceName, $service) : ContainerSettingsAwareInterface;
 
     /**
      * Nastaví službu tak, že služba přetíží případnou službu stejného jména v kterémkoli delegátovi konfigurovaného kontejneru (ve vnořených kontejnerech).
@@ -52,11 +52,11 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
      *
      * Služby nastavené metodou setOverride() je možno volat i z delegujících kontejnerů, teda jako služby delegáta.
      *
-     * @param type $serviceName
+     * @param string $serviceName
      * @param type $service
      * @return \Pes\Container\ContainerSettingsAwareInterface
      */
-    public function setOverride($serviceName, $service) : ContainerSettingsAwareInterface;
+    public function setOverride(string $serviceName, $service) : ContainerSettingsAwareInterface;
 
     /**
      * Nastaví factory. Factory při každém volání vytváří objekt znovu.
@@ -64,7 +64,7 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
      * @param mixed $service Closure nebo hodnota
      * @return ContainerSettingsAwareInterface
      */
-    public function factory($factoryName, $service) : ContainerSettingsAwareInterface;
+    public function factory(string $factoryName, $service) : ContainerSettingsAwareInterface;
 
     /**
      * Nastaví alias. Alias je jméno, které je aliasem pro jméno služby ne jméno factory.
@@ -72,13 +72,13 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
      * @param string $name
      * @return ContainerSettingsAwareInterface
      */
-    public function alias($alias, $name) : ContainerSettingsAwareInterface;
+    public function alias(string $alias,string $name) : ContainerSettingsAwareInterface;
 
     /**
      * Smaže instanci objektu vraceného službou. Příští volání služby tak vytvoří nový objekt. Dále se pak služba chová standartně, vrací stále stejný objekt.
-     * @param type $serviceName
+     * @param string $serviceName
      * @return ContainerSettingsAwareInterface
      */
-    public function reset($serviceName)  : ContainerSettingsAwareInterface;
+    public function reset(string $serviceName)  : ContainerSettingsAwareInterface;
 
 }

@@ -119,7 +119,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @throws Exception\LockedContainerException
      * @throws Exception\UnableToSetServiceException
      */
-    public function set($serviceName, $service) : ContainerSettingsAwareInterface {
+    public function set(string $serviceName, $service) : ContainerSettingsAwareInterface {
         if ($this->locked) {
             throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru. Kontener je uzamčen automaticky, když byl použit jako delegát.");
         }
@@ -144,11 +144,11 @@ class Container implements ContainerSettingsAwareInterface {
      *
      * Služby nastavené metodou setOverride() je možno volat i z delegujících kontejnerů, tedy jako služby delegáta.
      *
-     * @param type $serviceName
+     * @param string $serviceName
      * @param \Closure $service
      * @return \Pes\Container\ContainerSettingsAwareInterface
      */
-    public function setOverride($serviceName, $service): \Pes\Container\ContainerSettingsAwareInterface {
+    public function setOverride(string $serviceName, $service): \Pes\Container\ContainerSettingsAwareInterface {
         if ($service instanceof \Closure) {
             $this->generators[$serviceName] = function() use ($serviceName, $service) {
                         // ještě není instance?
@@ -174,10 +174,10 @@ class Container implements ContainerSettingsAwareInterface {
      * Metoda je vhodná pro reset objektů, jejichž instancování závisí na kontextu nebo na stavu aplikace a tento kontext nebo stav se změnil a je třeba
      * výjimečně vytvořit novou instaci, ačkolijinak opkovaná volání get() vrecejí instanci stejnou. Typicky jse o objekty vytvořené s užitím bezpečnostního kontextu,
      *
-     * @param type $serviceName
+     * @param string $serviceName
      * @return \Pes\Container\ContainerSettingsAwareInterface
      */
-    public function reset($serviceName)  : ContainerSettingsAwareInterface{
+    public function reset(string $serviceName)  : ContainerSettingsAwareInterface{
         if (isset($this->instances[$serviceName] )) {
             unset($this->instances[$serviceName] );
         }
@@ -196,7 +196,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @param mixed $service Closure nebo hodnota
      * @return ContainerSettingsAwareInterface
      */
-    public function factory($factoryName, $service) : ContainerSettingsAwareInterface {
+    public function factory(string $factoryName, $service) : ContainerSettingsAwareInterface {
         if ($service instanceof \Closure) {
             $this->generators[$factoryName] = function() use ($factoryName, $service) {
                         return $service($this);
@@ -219,7 +219,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @param string $name
      * @return ContainerSettingsAwareInterface
      */
-    public function alias($alias, $name) : ContainerSettingsAwareInterface {
+    public function alias(string $alias, string $name) : ContainerSettingsAwareInterface {
         $this->aliases[$alias] = $name;
         return $this;
     }
@@ -232,7 +232,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @param string $serviceName Jméno hledané služby
      * @return bool
      */
-    public function has($serviceName) {
+    public function has(string $serviceName) {
         if (isset($this->generators[$serviceName])) {     // pole $this->has obsahuje jen položky definované v této instanci kontejneru
             return TRUE;
         }
@@ -253,7 +253,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @return mixed Návratová hodnota vracená službou.
      * @throws NotFoundException Služba nenalezena
      */
-    public function get($serviceName) {
+    public function get(string $serviceName) {
         if (isset($this->generators[$serviceName])) {
             return $this->generators[$serviceName]();
         }
