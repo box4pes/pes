@@ -85,7 +85,7 @@ class View implements ViewInterface {
      * @param iterable $contextData
      * @return ViewInterface
      */
-    public function setData($contextData): ViewInterface {
+    public function setData(iterable $contextData): ViewInterface {
         if ($contextData instanceof ContextDataInterface) {
             $this->contextData = $contextData;
         } else {
