@@ -50,7 +50,7 @@ class ImplodeRenderer implements TemplateRendererInterface {
         }
         if ($data) {
             if (is_array($data) OR $data  instanceof \Traversable) {
-                $str = $this->implodeRcursive($separator, $data);
+                $str = $this->implodeRecursive($separator, $data);
             } else {
                 throw new \UnexpectedValueException("Data musí být array nebo Traversable.");
             }
@@ -58,10 +58,10 @@ class ImplodeRenderer implements TemplateRendererInterface {
         return $str ?? '';
     }
 
-    private function implodeRcursive($separator, $data) {
+    private function implodeRecursive($separator, $data) {
         foreach($data as $value) {
             if(is_array($value) OR $value  instanceof \Traversable) {
-                $arr[] = $this->implodeRcursive($separator, $value);
+                $arr[] = $this->implodeRecursive($separator, $value);
             } else {
                 $arr[] = (string) $value;
             }

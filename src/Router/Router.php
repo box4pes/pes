@@ -143,7 +143,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
                 // původně: if($httpMethod == $route->getMethod() && preg_match($route->getPattern(), $path, $matches)) {
                 if(preg_match($route->getPatternPreg(), $restUri, $matches)) {
                     if ($this->logger) {
-                        $this->logger->debug("Router: Request s requestUri $restUri. Nalezena route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource()->getHttpMethod(), 'url'=>$route->getResource()->getUrlPattern()]);
+                        $this->logger->debug("Router: restUri $restUri => route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource()->getHttpMethod(), 'url'=>$route->getResource()->getUrlPattern()]);
                     }
                     $this->matchedRoute = $route;
                     $this->matches = $matches;
@@ -184,8 +184,15 @@ class Router implements RouterInterface, LoggerAwareInterface {
     private function logAfter($ret) {
         if($ret===FALSE) {
             $this->logger->warning("Router: Akce routy nevrátila návratovou hodnotu.");
+        } elseif(! $ret instanceof ResponseInterface) {
+            $this->logger->debug("Router: Akce routy nevrátile Response, vrátila: {retType}", ['retType'=> $this->getDebugType($ret)]);
         } else {
-            $this->logger->debug("Router: Akce routy vrátila: {retType}", ['retType'=> $this->getDebugType($ret)]);
+            $this->logger->notice("Router: Akce routy vrátila: {retType}, {status}, {reasonPhrase}",
+                    [
+                        'retType'=> $this->getDebugType($ret),
+                        'status'=>$ret->getStatusCode(),
+                        'reasonPhrase'=>$ret->getReasonPhrase()
+                    ]);
         }
     }
 
