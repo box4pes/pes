@@ -15,16 +15,14 @@ namespace Pes\View\Renderer\ClassMap;
  */
 class ClassMap implements ClassMapInterface {
 
-    const NO_CLASS_SELECTED = 'no-class-selected-in-classmap';
-
     private $classMapArray;
 
     /**
      * Konstruktor, přijímá dvouúrovňové asociativní pole classmap s definicemi css class atributů.
      *
-     * První úroveň odpovídá jednotlivým částem html struktury generované komponentem, lteré jsou renderované samostatným rendererem.
+     * První úroveň odpovídá jednotlivým částem html struktury generované komponentem, které jsou renderované samostatným rendererem.
      *
-     * Druhá úroveň pak obsahuje definece class atributů jednotlivých html elementů v dané čísti html, ty mohou být indexovány libovolně, ale doporučuje se
+     * Druhá úroveň pak obsahuje definice class atributů jednotlivých html elementů v dané čísti html, ty mohou být indexovány libovolně, ale doporučuje se
      * indexovat je systematicky obdobně jako selektory v css.
      *
      * Příklad:
@@ -51,34 +49,35 @@ class ClassMap implements ClassMapInterface {
     }
 
     /**
-     * Vrací defini atributu class.
+     * Vrací defini atributu class. Pokud není atribut pro zadanou část a selektor definován, vrací řetězec "undefined in CLASS", kde CLASS je jméno třídy objektu classmap.
+     * Tento řetězec slouží jen jako poznámka ve výsledném html.
+     *
      * @param string $part Označení části html, obvykle renderované samostatnou metodou renderereru.
      * @param string $selector Selektor definice class atributu pro html elment-
      * @return type
      */
     public function getClass($part, $selector) {
-        return $this->classMapArray[$part][$selector] ?? '';
+        return $this->classMapArray[$part][$selector] ?? "undefined in ". get_class($this);
     }
 
     /**
-     * Podle zadané hodnoty podmínky vrací při splnění podmínky definici atributu class zadanou selektorem $selectorTrue,
-     * při nesplnění podmínky definici class zadanou selektorem $selectorFalse. Selektor $selectorFalse nemusí být zadan, pak při nesplnění podmínky metoda vrací
-     * řetezec zadaný konstantou třídy NO_CLASS_SELECTED. Tento řetězec se pak objeví jako hodnota atributu class a vzhledem k neexistenci takto pojmenované css třídy slouží jen jako poznámka ve výsledném html.
+     * Vrací definici ze zadané části vybranou odle podmínky a selektorů (klíčů).
+     * Testuje zadanou podmínku a Podle zadané hodnoty podmínky vrací
+     * - při splnění podmínky definici atributu class zadanou se selektorem (klíčem) $selectorTrue,
+     * - při nesplnění podmínky definici class zadanou se selektorem (klíčem) $selectorFalse.
      *
      * @param bool $condition Podmínka.
-     * @param string $part Označení části html, obvykle renderované samostatnou metodou renderereru.
-     * @param string $selectorTrue Selektor definice vracený při splnění podmínky.
-     * @param string $selectorFalse Nepovinný. Selektor definice vracený při nesplnění podmínky.
+     * @param string $part Označení části, obvykle skupina definic pro jeden renderer.
+     * @param string $selectorTrue Selektor definice vracené při splnění podmínky.
+     * @param string $selectorFalse Selektor definice vracené při nesplnění podmínky.
      * @return string
      */
-    public function resolveClass($condition, $part, $selectorTrue, $selectorFalse=NULL) {
+    public function resolveClass($condition, $part, $selectorTrue, $selectorFalse) {
         if ($condition) {
             return $this->getClass($part, $selectorTrue);
         } else {
             if (isset($selectorFalse)) {
                 return $this->getClass($part, $selectorFalse);
-            } else {
-                return self::NO_CLASS_SELECTED;
             }
         }
     }
