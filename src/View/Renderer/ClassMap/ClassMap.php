@@ -57,7 +57,7 @@ class ClassMap implements ClassMapInterface {
      * @return type
      */
     public function getClass($part, $selector) {
-        return $this->classMapArray[$part][$selector] ?? "undefined in ". get_class($this);
+        return $this->classMapArray[$part][$selector] ?? "undefined_in_classmap";
     }
 
     /**
