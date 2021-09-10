@@ -14,7 +14,9 @@ namespace Pes\View\Renderer\ClassMap;
 interface ClassMapInterface {
 
     /**
-     * Vrací definici atributu class.
+     * Vrací defini atributu class. Pokud není atribut pro zadanou část a selektor definován, vrací řetězec "undefined in CLASS", kde CLASS je jméno třídy objektu classmap.
+     * Tento řetězec slouží jen jako poznámka ve výsledném html.
+     *
      * @param string $part Označení části html, obvykle renderované samostatnou metodou renderereru.
      * @param string $selector Selektor definice class atributu pro html elment-
      * @return type
@@ -22,15 +24,16 @@ interface ClassMapInterface {
     public function getClass($index, $selector);
 
     /**
-     * Podle zadané hodnoty podmínky vrací při splnění podmínky definici atributu class zadanou selektorem $selectorTrue,
-     * při nesplnění podmínky definici class zadanou selektorem $selectorFalse. Selektor $selectorFalse nemusí být zadan, pak při nesplnění podmínky metoda vrací
-     * řetezec zadaný konstantou třídy NO_CLASS_SELECTED. Tento řetězec se pak objeví jako hodnota atributu class a slouží jen jako poznámka vr výsledném html.
+     * Vrací definici ze zadané části vybranou odle podmínky a selektorů (klíčů).
+     * Testuje zadanou podmínku a Podle zadané hodnoty podmínky vrací
+     * - při splnění podmínky definici atributu class zadanou se selektorem (klíčem) $selectorTrue,
+     * - při nesplnění podmínky definici class zadanou se selektorem (klíčem) $selectorFalse.
      *
      * @param bool $condition Podmínka.
-     * @param string $part Označení části html, obvykle renderované samostatnou metodou renderereru.
-     * @param string $selectorTrue Selektor definice vracený při splnění podmínky.
-     * @param string $selectorFalse Nepovinný. Selektor definice vracený při nesplnění podmínky.
+     * @param string $part Označení části, obvykle skupina definic pro jeden renderer.
+     * @param string $selectorTrue Selektor definice vracené při splnění podmínky.
+     * @param string $selectorFalse Selektor definice vracené při nesplnění podmínky.
      * @return string
      */
-    public function resolveClass($condition, $index, $selectorTrue, $selectorFalse=NULL);
+    public function resolveClass($condition, $index, $selectorTrue, $selectorFalse);
 }
