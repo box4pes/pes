@@ -260,7 +260,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
         } elseif ($emptyDataTemplateFilename) {
                 $pieces[] = $this->includeToProtectedScope($emptyDataTemplateFilename, $item);
         } else {
-            $ret = '...';
+            $ret = '';
         }
         return $ret;
     }
