@@ -323,7 +323,7 @@ class View implements ViewInterface {
     private function getDefaultTemplateRenderer(TemplateInterface $template): RendererInterface {
         $service = $template->getDefaultRendererService();
         if (!isset($this->rendererContainer)) {
-            $cls = get_class($renderer);
+            $cls = get_class($template);
             throw new \LogicException("Nelze získat renderer '$service' jako default renderer šablony '$cls', není zadán renderer kontejner.");
         } else {
             return $this->rendererContainer->get($template->getDefaultRendererService());
