@@ -278,13 +278,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      */
     public function insertConditionally($condition=false, $templateFilename='item', iterable $data=[], $emptyDataTemplateFilename='') {
         if ($condition) {
-            if ($data OR !$emptyDataTemplateFilename) {
-                $ret = $this->includeToProtectedScope($templateFilename, $data);
-            } else {
-                $ret = $this->includeToProtectedScope($emptyDataTemplateFilename, $data);
-            }
-        } else {
-            $ret = '';
+            $ret = $this->insert($templateFilename, $data, $emptyDataTemplateFilename);
         }
         return $ret;
     }
