@@ -71,16 +71,19 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
 
     /**
      *
-     * Renderuje soubor šablony včetně vnořených šablon. Poskytuje metody pro vnořivání šablon.
+     * Renderuje soubor šablony včetně vnořených šablon. Podporuje metody pro vnořování šablon.
      *
      * <p>Vložené soubory jsou vkládány pomocí php příkazu include nebo voláním metod rendereru insert() a repeat() v kódu template.
-     * Obsah souboru template se vykoná jako php skript, kód obsažený v souboru se vykonává uvnitř metody rendereru, proto jsou pro něj dostupné
+     * Obsah souboru template se vykoná jako php kód, kód obsažený v souboru se vykonává uvnitř metody rendereru, proto jsou pro něj dostupné
      * všechny metody rendereru, například metoda insert() nebo repeat().</p>
      * <p>Příklad: Soubory šablon jsou vkládány použitím php příkazu include takto: <code><?php include sablona.php; ?></code> nebo voláním metody insert template objektu takto:
      * <code><?= $this->insert("contents/main/main.php", $data) ?></code> a repeat takto: <code><?= $this->repeat("contents/main/repeated_fragment.php", $data) ?></code>.</p>
-     * <p>Data jsou metodě, ve které (lokálně) proběhne vykonání kódu šablony a tedy i volání volání metod insert() nebo repeat() předána pomocí parametru se jménem $context. Pokud je proměnná $context typu array nebo
-     * je array nebo implementuje \Traversable jsou její prvky extrahovány do lokálních proměnných a ty jsou pak dostupné v kódu šablony. Proměnná $context je navíc vždy lokální
-     * proměnnou v první úrovni šablony je vždy spolu s extrahovanými proměnnými dostupná. V šabloně první úrovně je dostupná vždy a pokud v metodě insert() nebo repeat() předám jako
+     * <p>Data jsou metodě, ve které (lokálně) proběhne vykonání kódu šablony a tedy i volání volání metod insert() nebo repeat().
+     * Data musí být typu iterable, jejich prvky jsou extrahovány do lokálních proměnných a ty jsou pak dostupné v kódu šablony.
+     * Data musí při iterování v cyklu foreach vracet dvojici klíč-hodnota (například asociativní pole). Položky s číselným klíčem nejsou použity (například položky číslovaného pole).
+     * Je to protože klíč je použit pro vytvoření jména lokální proměnné pro šablonu a jména proměnných musí v PHP alespoň začínat písmenem.
+     * Data jsou navíc předána do šablony tak, že v šabloně jsou dostupná celá data v lokální proměnné $context.
+     * V šabloně první úrovně je dostupná vždy a pokud v metodě insert() nebo repeat() předám jako
      * data tuto proměnou - tedy předám proměnnou $context např. takto: <code><?= $this->insert("contents/main/repeated_fragment.php", $context) ?></code>
      * je pak stejná proměnná $context dostupná i v příslušné podřízené šabloně. Kontextová data je takto možno řízeně předávat nezměněna do dalších úrovní šablon.
      *
@@ -265,6 +268,26 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
         return $ret;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @param bool $condition
+     * @param string $templateFilename
+     * @param iterable $data
+     * @param string $emptyDataTemplateFilename
+     */
+    public function insertConditionally($condition=false, $templateFilename='item', iterable $data=[], $emptyDataTemplateFilename='') {
+        if ($condition) {
+            if ($data OR !$emptyDataTemplateFilename) {
+                $ret = $this->includeToProtectedScope($templateFilename, $data);
+            } else {
+                $ret = $this->includeToProtectedScope($emptyDataTemplateFilename, $data);
+            }
+        } else {
+            $ret = '';
+        }
+        return $ret;
+    }
 ############# render error handler ####################################
 
     /**
