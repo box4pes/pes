@@ -159,6 +159,9 @@ class Statement extends \PDOStatement implements StatementInterface {
                         ['input_parameters'=>$input_parameters]);
                 $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
                 $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
+                $errorInfo = $this->errorInfo();
+                $message = " Výpis errorInfo: ".print_r($errorInfo, TRUE);
+                $this->logger->error($message);
             }
             throw new ExecuteException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {

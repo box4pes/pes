@@ -33,7 +33,7 @@ class Config {
         //$xmlObj = simplexml_load_string($xmlStr); použití této metody způsobuje chybu při použití xdebug - error socket
         $this->xml = new \SimpleXMLElement(file_get_contents($this->xmlFullFileName));
         if (!$this->xml) {
-            throw new \RuntimeException("Nevznikl objekt SimpleXMLElement. Pravděpobně chná syntaxe xml v souboru '{$this->xmlFullFileName}'.");
+            throw new \RuntimeException("Nevznikl objekt SimpleXMLElement. Pravděpobně chybná syntaxe xml v souboru '{$this->xmlFullFileName}'.");
         }
     }
 
