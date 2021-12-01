@@ -104,6 +104,8 @@ class Statement extends \PDOStatement implements StatementInterface {
                     array('fetch_style'=>$fetch_style, 'cursor_orientation'=>$cursor_orientation, 'cursor_offset'=>$cursor_offset));
             if ($result===FALSE) {
                 $this->logger->warning(' Metoda '.__METHOD__.' nevrátila žádná data.');
+            } else {
+                $this->logger->debug('Result má {count} prvků.', array( 'count'=>count($result)));
             }
         }
         return $result;
@@ -172,7 +174,6 @@ class Statement extends \PDOStatement implements StatementInterface {
 
         }
         if($this->logger) {
-            $message = $this->getInstanceInfo().' execute({input_parameters})';
             $this->logger->debug($message, array('input_parameters'=>$input_parameters));
             if (!$success) {
                 $message = ' Metoda '.__METHOD__.' selhala.';
