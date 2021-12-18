@@ -173,12 +173,9 @@ class Statement extends \PDOStatement implements StatementInterface {
             }
 
         }
-        if($this->logger) {
-            $this->logger->debug($message, array('input_parameters'=>$input_parameters));
-            if (!$success) {
-                $message = ' Metoda '.__METHOD__.' selhala.';
+        if($this->logger AND !$success) {
+                $message = ' Metoda '.__METHOD__.' selhala bez vyhození výjimky. Není nastaven mod PDO::ERRMODE_EXCEPTION nebo nastala systémová chyba.';
                 $this->logger->warning($message);
-            }
         }
         return $success;
     }
