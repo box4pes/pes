@@ -56,7 +56,7 @@ class ClassMap implements ClassMapInterface {
      * @param string $selector Selektor definice class atributu pro html elment-
      * @return type
      */
-    public function getClass($part, $selector) {
+    public function get($part, $selector) {
         return $this->classMapArray[$part][$selector] ?? "undefined_in_classmap";
     }
 
@@ -72,12 +72,12 @@ class ClassMap implements ClassMapInterface {
      * @param string $selectorFalse Selektor definice vracené při nesplnění podmínky.
      * @return string
      */
-    public function resolveClass($condition, $part, $selectorTrue, $selectorFalse) {
+    public function resolve($condition, $part, $selectorTrue, $selectorFalse) {
         if ($condition) {
-            return $this->getClass($part, $selectorTrue);
+            return $this->get($part, $selectorTrue);
         } else {
             if (isset($selectorFalse)) {
-                return $this->getClass($part, $selectorFalse);
+                return $this->get($part, $selectorFalse);
             }
         }
     }

@@ -21,7 +21,7 @@ interface ClassMapInterface {
      * @param string $selector Selektor definice class atributu pro html elment-
      * @return type
      */
-    public function getClass($index, $selector);
+    public function get($index, $selector);
 
     /**
      * Vrací definici ze zadané části vybranou odle podmínky a selektorů (klíčů).
@@ -35,5 +35,5 @@ interface ClassMapInterface {
      * @param string $selectorFalse Selektor definice vracené při nesplnění podmínky.
      * @return string
      */
-    public function resolveClass($condition, $index, $selectorTrue, $selectorFalse);
+    public function resolve($condition, $index, $selectorTrue, $selectorFalse);
 }
