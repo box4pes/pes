@@ -14,7 +14,7 @@ namespace Pes\Text;
  * @author pes2704
  */
 class FriendlyUrl implements FriendlyUrlInterface {
-    public function friendlyUrlText($sourceText) {
+    public static function friendlyUrlText($sourceText) {
         $url = $sourceText;
         $url = preg_replace('~[^\\pL0-9_]+~u', '-', $url);
         $url = trim($url, "-");
