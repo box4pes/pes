@@ -64,11 +64,14 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
     }
 
     /**
-     * Vybere selector item podle prefixu. Z vybraného item vyzvedne middleware. Middleware je definovaný při přidávání itemu do selektoru.
+     * Vybere selector item podle prefixu. Z vybraného item vyzvedne middleware. Vyzvednutý middleware pak spustí zavoláním metody process tohoto middleware.
+     *
+     * Jednotlivá middleware jsou definována při přidávání selector itemu do selektoru.
+     *
      * Při vyzvednutí middleware z itemu je v případě, že middleware je definován pomocí callable (např. anonymní funkce) tato callable je zavolána.
-     * Pokud byl selektoru zadán jako parametr konstruktoru kontejner, je tento kontejner předán jako parametr při volání tétoo callable. Tak je možné předat kontejner (globální kontejner aplikace) do
+     * Pokud byl selektoru zadán objekt aplikace, je aplikace předána jako parametr při volání této callable. Tak je možné předat aplikaci do
      * jednotlivých middleware.
-     * Vyzvednutý middleware pak spouští zavoláním metody process tohoto middleware.
+     *
      *
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
@@ -81,7 +84,7 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
         $restUri = $uriInfo->getRestUri();
         foreach($this->items as  $item) {
             if(strpos($restUri, $item->getPrefix())===0) {
-                $middleware = $item->getMiddleware($this->app);
+                $middleware = $item->getMiddleware($this->getApp());   // !! předá app do middleware stacku
                 if($this->logger) {
                     $type = gettype($middleware);
                     if ($type==="object") {

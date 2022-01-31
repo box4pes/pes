@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
 abstract class AppMiddlewareAbstract implements AppMiddlewareInterface {
 
     /**
-     * @var ContainerInterface
+     * @var AppInterface
      */
     protected $app;
 
