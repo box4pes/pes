@@ -53,7 +53,7 @@ abstract class Enum {
     /**
      * Konstruktor má nepoviný parametr - jméno třídy obsahující definice konstant. To lze požít pro vytvoření typu Enum ze třídy, kterou nelze použít jako potomka
      * abstract class Enum. To může být případ objektu z jiné knihovny apod.
-     * 
+     *
      * @param type $externalClassName
      */
     public function __construct($externalClassName=null) {
@@ -69,7 +69,7 @@ abstract class Enum {
             if (is_scalar($value)) {
                 throw new ValueNotInEnumException('Value is not in enum '. get_called_class().'. Value: ' . var_export($value, TRUE).'.');
             } else {
-                throw new ValueNotInEnumException('Value is not in enum '. get_called_class()).'. Value type: ' . gettype($value);
+                throw new ValueNotInEnumException('Value is not in enum '. get_called_class().'. Value type: ' . gettype($value));
             }
         }
     }
