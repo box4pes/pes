@@ -79,10 +79,13 @@ class View implements ViewInterface {
      */
     public $componentViews;
 
+    public function getData() {
+        return $this->contextData;
+    }
     /**
      * Lze nastavit data pro renderování. Tato data budou použita metodou render().
      *
-     * @param iterable $contextData
+     * @param iterable $contextData Data typu ContextDataInterface nebo pole nebo ArrayObject
      * @return ViewInterface
      */
     public function setData(iterable $contextData): ViewInterface {

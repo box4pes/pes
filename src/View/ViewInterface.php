@@ -29,6 +29,8 @@ interface ViewInterface {
 
     public function __toString();
 
+    public function getData();
+
     /**
      * Nastaví objekt renderer kontejner.
      *
