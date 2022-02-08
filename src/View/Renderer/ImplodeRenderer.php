@@ -59,6 +59,7 @@ class ImplodeRenderer implements TemplateRendererInterface {
     }
 
     private function implodeRecursive($separator, $data) {
+        $arr = [];
         foreach($data as $value) {
             if(is_array($value) OR $value  instanceof \Traversable) {
                 $arr[] = $this->implodeRecursive($separator, $value);
