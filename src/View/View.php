@@ -253,6 +253,10 @@ class View implements ViewInterface {
         }
         return $this;
     }
+    
+    public function getComponentView($name): ?ViewInterface {
+        return $this->componentViews->offsetExists($name) ? $this->componentViews->offsetGet($name) : null;
+    }
 
     ##### private methods ###########################
 

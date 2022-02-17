@@ -108,5 +108,13 @@ interface ViewInterface {
      * @return ViewInterface
      */
     public function appendComponentViews(iterable $componentViews): ViewInterface ;
+
+    /**
+     * Vrací komponetní view se zadaným jménem nebo null.
+     * 
+     * @param string $name
+     * @return ViewInterface|null
+     */
+    public function getComponentView($name): ?ViewInterface;
 }
 
