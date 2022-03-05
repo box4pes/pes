@@ -75,7 +75,7 @@ class View implements ViewInterface {
 
     /**
      *
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage of View
      */
     public $componentViews;
 
@@ -203,7 +203,7 @@ class View implements ViewInterface {
         // renderování komponentních view - pokud některé views používají stejný renderer (typicky PhpTemplateRenderer), používá se tatáž instance rendereru poskytnutá (singleton)
         // službou Renderer kontejneru - proto musí být nejdříve renderer použit pro jednotlivé komponenty a potom teprve pro renderování komposit view, resolveRenderer() při použití PhpTemplate
         // nastaví rendereru jeho template - to mění vnitřní stav rendereru!, renderer není bezstavový
-        $this->getComponets();
+        $this->renderComponets();
         // renderování kompozitu
         $renderer = $this->resolveRenderer();
         return $renderer->render($this->contextData);  // předává data jako pole
@@ -253,7 +253,7 @@ class View implements ViewInterface {
         }
         return $this;
     }
-    
+
     public function getComponentView($name): ?ViewInterface {
         return $this->componentViews->offsetExists($name) ? $this->componentViews->offsetGet($name) : null;
     }
@@ -375,9 +375,13 @@ class View implements ViewInterface {
      *
      * @return string
      */
-    private function getComponets(): void {
+    private function renderComponets(): void {
         if (is_iterable($this->componentViews)) {
             foreach ($this->componentViews as $componentView) {
+                /** @var SplObjectStorage|InheritDataViewInterface $componentView */
+                if ($componentView instanceof InheritDataInterface) {
+                    $componentView->setData($this->contextData);
+                }
                 $this->contextData[$this->componentViews->getInfo()] = $componentView->getString();
             }
         }
