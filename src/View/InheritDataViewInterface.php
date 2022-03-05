@@ -16,11 +16,12 @@ namespace Pes\View;
  * @author pes2704
  */
 interface InheritDataViewInterface extends ViewInterface {
+
     /**
      * View, který implementuje tento interface automaticky "zdědí" data komponetního view.
      *
-     * Data nastavená metodou setData() nadřazenému, kompozitnímu view jsou bezprostředně před renderováním nastavena metodou setData() tomuto komponentnímu view.
-     * 
+     * Data nastavená metodou setData() nadřazenému, kompozitnímu view jsou bezprostředně před renderováním nastavena metodou inheritData() tomuto komponentnímu view.
+     *
      * @param iterable $data
      * @return ViewInterface
      */

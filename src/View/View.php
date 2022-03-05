@@ -369,9 +369,12 @@ class View implements ViewInterface {
     }
 
     /**
-     * Metoda renderuje všechny vložené component renderery. Výstupní kód z jednotlivých renderování vkládá do kontextu
-     * composer rendereru vždy pod jménem proměnné, se kterým byl component renderer přidán. Nakonec renderuje
-     * compose renderer. Při renderování compose rendereru použije data zadaná jako parametr, pokud nebyla zadána, data zadaná metodou setData($data).
+     * Metoda renderuje všechny vložené component view.
+     *
+     * Výstupní řetězec z jednotlivých renderování vkládá do kontextu
+     * tohoto (composite) view vždy pod jménem proměnné, se kterým byl component view přidán.
+     *
+     * Pokud komponentní view implementuje InheritDataInterface, předá data tohoto (kompozitního) view do komponentu pomocí metody inheritData().
      *
      * @return string
      */
@@ -380,7 +383,7 @@ class View implements ViewInterface {
             foreach ($this->componentViews as $componentView) {
                 /** @var SplObjectStorage|InheritDataViewInterface $componentView */
                 if ($componentView instanceof InheritDataInterface) {
-                    $componentView->setData($this->contextData);
+                    $componentView->inheritData($this->contextData);
                 }
                 $this->contextData[$this->componentViews->getInfo()] = $componentView->getString();
             }
