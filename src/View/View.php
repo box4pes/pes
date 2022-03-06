@@ -16,6 +16,8 @@ use Psr\Container\ContainerInterface;
 use Pes\Type\ContextDataInterface;
 use Pes\Type\ContextData;
 
+use Pes\View\InheritDataViewInterface;
+
 use Pes\View\Renderer\RendererInterface;
 use Pes\View\Renderer\TemplateRendererInterface;
 use Pes\View\Template\TemplateInterface;
@@ -164,56 +166,6 @@ class View implements ViewInterface {
     }
 
     /**
-     * Metoda umožňuje použít objekt view přímo jako proměnnou (proměnou v šabloně) pro další view.
-     *
-     * Interně volá metodu třídy View->getString(). Pokud je třeba renderovat nějaká data, je nutné je zadat metodou setData($data).
-     *
-     * Protože v PHP nesmí při vykonávání magické metodu __toString dojít k výjimce, volání getString je v try-cath bloku a případná výjimka
-     * je převedena na E_USER_ERROR.
-     * To obvykle vede na Fatal error, ale nezobrazí se zavádějící hlášení o výjimce v metodě __toString s řádkem chyby, kterým je řádek v templatě,
-     * ve které došlo k pokusu o renderování nějakého view, který byl použit jako proměnná.
-     *
-     * Pokud je potřebné vyhazovat výjimky z důvodu jejich zachycování nebo pro ladění, je třeba volat přímo metodu View->getString().
-     *
-     * @return string
-     */
-    public function __toString() {
-        try {
-            $str = $this->getString();
-        } catch (\Throwable $e) {
-
-            trigger_error("Výjimka ".get_class($e)." při vykonávání metody __toString objektu ".get_class($this).". ".
-                    "Exception in: ".$e->getFile()." on line: ".$e->getLine().". ".$e->getMessage()."."
-                     .PHP_EOL.str_replace('\n', PHP_EOL, $e->getTraceAsString()), E_USER_ERROR);
-        }
-        return $str;
-    }
-
-    /**
-     * Nalezne vhodný renderer pomocí metody resolveRenderer(), pokud je renderer typu RendererModelAwareInterface nastaví rendereru viewModel nastavený metodou setViewModel()
-     * a renderuje bez použití dat nastavených metodou setData(), pokud renderer není typu RendererModelAwareInterface, renderuje s použitím dat nastavených metodou setData().
-     *
-     * Pokud je renderer typu RendererModelAwareInterface a view nemá nastaven viewModel metodou setViewModel() vyhofí výjimku.
-     *
-     * @return string
-     */
-    public function getString() {
-        // aktivity před renderování - zde může dojít k přidání template, rendereru, dat apod.
-        $this->beforeRenderingHook();
-        // renderování komponentních view - pokud některé views používají stejný renderer (typicky PhpTemplateRenderer), používá se tatáž instance rendereru poskytnutá (singleton)
-        // službou Renderer kontejneru - proto musí být nejdříve renderer použit pro jednotlivé komponenty a potom teprve pro renderování komposit view, resolveRenderer() při použití PhpTemplate
-        // nastaví rendereru jeho template - to mění vnitřní stav rendereru!, renderer není bezstavový
-        $this->renderComponets();
-        // renderování kompozitu
-        $renderer = $this->resolveRenderer();
-        return $renderer->render($this->contextData);  // předává data jako pole
-    }
-
-    public function beforeRenderingHook(): void {
-
-    }
-
-    /**
      * Metoda pro přidání komponentních view. Při renderování kompozitního view budou renderována komponentní view a vygenerovaný výsledek bude vložen
      * do kompozitního view na místo proměnné zadané zde jako jméno. Pokud kompozitní view je null, proměnná je nahrazena prázdným retězcem.
      * Jednotlivá komponentní view budou renderována bez předání (nastavení) template a dat, musí mít tedy před renderováním kompozitního view nastavenu šablonu
@@ -256,6 +208,56 @@ class View implements ViewInterface {
 
     public function getComponentView($name): ?ViewInterface {
         return $this->componentViews->offsetExists($name) ? $this->componentViews->offsetGet($name) : null;
+    }
+
+    /**
+     * Metoda umožňuje použít objekt view přímo jako proměnnou (proměnou v šabloně) pro další view.
+     *
+     * Interně volá metodu třídy View->getString(). Pokud je třeba renderovat nějaká data, je nutné je zadat metodou setData($data).
+     *
+     * Protože v PHP nesmí při vykonávání magické metodu __toString dojít k výjimce, volání getString je v try-cath bloku a případná výjimka
+     * je převedena na E_USER_ERROR.
+     * To obvykle vede na Fatal error, ale nezobrazí se zavádějící hlášení o výjimce v metodě __toString s řádkem chyby, kterým je řádek v templatě,
+     * ve které došlo k pokusu o renderování nějakého view, který byl použit jako proměnná.
+     *
+     * Pokud je potřebné vyhazovat výjimky z důvodu jejich zachycování nebo pro ladění, je třeba volat přímo metodu View->getString().
+     *
+     * @return string
+     */
+    public function __toString() {
+        try {
+            $str = $this->getString();
+        } catch (\Throwable $e) {
+
+            trigger_error("Výjimka ".get_class($e)." při vykonávání metody __toString objektu ".get_class($this).". ".
+                    "Exception in: ".$e->getFile()." on line: ".$e->getLine().". ".$e->getMessage()."."
+                     .PHP_EOL.str_replace('\n', PHP_EOL, $e->getTraceAsString()), E_USER_ERROR);
+        }
+        return $str;
+    }
+
+    /**
+     * Nalezne vhodný renderer pomocí metody resolveRenderer(), pokud je renderer typu RendererModelAwareInterface nastaví rendereru viewModel nastavený metodou setViewModel()
+     * a renderuje bez použití dat nastavených metodou setData(), pokud renderer není typu RendererModelAwareInterface, renderuje s použitím dat nastavených metodou setData().
+     *
+     * Pokud je renderer typu RendererModelAwareInterface a view nemá nastaven viewModel metodou setViewModel() vyhofí výjimku.
+     *
+     * @return string
+     */
+    public function getString() {
+        // aktivity před renderováním - zde může dojít k přidání template, rendereru, dat apod.
+        $this->beforeRenderingHook();
+        // renderování komponentních view - pokud některé views používají stejný renderer (typicky PhpTemplateRenderer), používá se tatáž instance rendereru poskytnutá (singleton)
+        // službou Renderer kontejneru - proto musí být nejdříve renderer použit pro jednotlivé komponenty a potom teprve pro renderování komposit view, resolveRenderer() při použití PhpTemplate
+        // nastaví rendereru jeho template - to mění vnitřní stav rendereru!, renderer není bezstavový
+        $this->renderComponets();
+        // renderování kompozitu
+        $renderer = $this->resolveRenderer();
+        return $renderer->render($this->contextData);  // předává data jako pole
+    }
+
+    public function beforeRenderingHook(): void {
+
     }
 
     ##### private methods ###########################
@@ -382,7 +384,7 @@ class View implements ViewInterface {
         if (is_iterable($this->componentViews)) {
             foreach ($this->componentViews as $componentView) {
                 /** @var SplObjectStorage|InheritDataViewInterface $componentView */
-                if ($componentView instanceof InheritDataInterface) {
+                if ($componentView instanceof InheritDataViewInterface) {
                     $componentView->inheritData($this->contextData);
                 }
                 $this->contextData[$this->componentViews->getInfo()] = $componentView->getString();
