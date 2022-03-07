@@ -28,6 +28,8 @@ use Pes\View\Template\TemplateInterface;
 use Pes\View\Renderer\ImplodeRenderer as FallbackRenderer;
 use Pes\View\Template\ImplodeTemplate as FallbackTemplate;
 
+use ArrayObject;
+
 use Pes\Type\Exception\InvalidDataTypeException;
 use Pes\View\Exception\{
     BadRendererForTemplateException, InvalidTypeForSetDataException
@@ -77,7 +79,7 @@ class View implements ViewInterface {
 
     /**
      *
-     * @var \SplObjectStorage of View
+     * @var ArrayObject of View
      */
     public $componentViews;
 
@@ -176,21 +178,10 @@ class View implements ViewInterface {
      * @return ViewInterface
      */
     public function appendComponentView(ViewInterface $componentView, $name): ViewInterface {
-        // použití SplObjectStorage umožňuje hlídat duplicitní přidání shodného objektu - riziko je velké např. při nesprávném použití kontejneru pro vytváření view objektů
         if (!isset($this->componentViews)) {
-            $this->componentViews = new \SplObjectStorage();
+            $this->componentViews = new ArrayObject();
         }
-        if ($this->componentViews->contains($componentView)) {
-            $usedWithName = $this->componentViews->offsetGet($componentView);
-            $cls = get_class($componentView);
-            throw new Exception\DuplicateComponentViewException("Komponentní objekt view $cls se jménem $name nelze přidat, v kompozitním view již je přidán identický objekt pod jménem $usedWithName. Jednotlivá kompozitní view musí být různé objekty.");
-        } else {
-            if (isset($componentView)) {
-                $this->componentViews->attach($componentView, $name);
-            } else {
-                $this->componentViews->attach(new View(), $name);
-            }
-        }
+        $this->componentViews->offsetSet($name, $componentView);
         return $this;
     }
 
@@ -382,12 +373,12 @@ class View implements ViewInterface {
      */
     private function renderComponets(): void {
         if (is_iterable($this->componentViews)) {
-            foreach ($this->componentViews as $componentView) {
+            foreach ($this->componentViews as $name => $componentView) {
                 /** @var SplObjectStorage|InheritDataViewInterface $componentView */
                 if ($componentView instanceof InheritDataViewInterface) {
                     $componentView->inheritData($this->contextData);
                 }
-                $this->contextData[$this->componentViews->getInfo()] = $componentView->getString();
+                $this->contextData[$name] = $componentView->getString();
             }
         }
     }
