@@ -26,7 +26,7 @@ class FileLogger extends AbstractLogger {
     private $logFileHandle;
 
     const ODSAZENI = "    ";
-    const SLOT = "):::::(";
+    const SLOT = "/[:::::]/";
 
     const REWRITE_LOG = 'w+';
     const APPEND_TO_LOG = 'a+';
