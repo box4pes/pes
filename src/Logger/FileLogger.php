@@ -26,6 +26,7 @@ class FileLogger extends AbstractLogger {
     private $logFileHandle;
 
     const ODSAZENI = "    ";
+    const SLOT = "):::::(";
 
     const REWRITE_LOG = 'w+';
     const APPEND_TO_LOG = 'a+';
@@ -125,7 +126,9 @@ class FileLogger extends AbstractLogger {
     public function log($level, $message, array $context = array()) {
         $time = date("Y-m-d H:i:s");
         $completedMessage = isset($context) ? Template::interpolate($message, $context) : $message;
-        $completedMessage = preg_replace("/\r\n|\n|\r/", PHP_EOL.self::ODSAZENI, $completedMessage);  //odsazení druhé a dalších řádek víceřádkového message
+        $completedMessage = preg_replace("/\r\n|\n|\r/", self::SLOT, $completedMessage);  //slot pro odsazení druhé a dalších řádek víceřádkového message
+        $completedMessage = preg_replace('/[[:cntrl:]]/', '', $completedMessage);  // odstranéí všechny control znaky (občas tam jsou a při čtení chybového hlášení způsobí dojekm, že nastala nějaká podivná chyba)
+        $completedMessage = preg_replace(self::SLOT, PHP_EOL.self::ODSAZENI, $completedMessage);  //odsazení druhé a dalších řádek víceřádkového message
         $newString = "$level | $time | $completedMessage".PHP_EOL;
         if (is_resource($this->logFileHandle)) {
             fwrite($this->logFileHandle, $newString);

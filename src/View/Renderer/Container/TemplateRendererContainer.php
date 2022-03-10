@@ -51,7 +51,10 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
 
     public function has($className): bool {
         if (!isset(self::$renderers[$className])) {
-            return $this->existRendererClass($className);
+            $exists = $this->existRendererClass($className);
+            // při volání class_exists( dojde k autoloadu a pokud je v kódu hledaní třídy chyba,
+            // pak (viz include) pak class_exists() skončí s chybou a návratová hodnota existRendererClass() je null ( není bool)
+            return $exists ?? false;
         }
         return true;
     }
