@@ -87,9 +87,9 @@ function loggingExceptionHandler(\Throwable $e) {
 //        }
 
         flushOutputBuffer();
-        $info = (__FUNCTION__ . 'error handler nebo exception handler').' v Pes\Bootstrap - ';
-        throw new Exception("Výjimka zpracována funkcí $info", 0, $e);
-
+//        $info = (__FUNCTION__ . 'error handler nebo exception handler').' v Pes\Bootstrap - ';
+//        throw new Exception("Výjimka zpracována funkcí $info", 0, $e);
+        throw $e;
     } else {
 //TODO: Umožnit použití custom stránky
         http_response_code(500);
