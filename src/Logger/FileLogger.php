@@ -126,9 +126,13 @@ class FileLogger extends AbstractLogger {
     public function log($level, $message, array $context = array()) {
         $time = date("Y-m-d H:i:s");
         $completedMessage = isset($context) ? Template::interpolate($message, $context) : $message;
-        $completedMessage = preg_replace("/\r\n|\n|\r/", self::SLOT, $completedMessage);  //slot pro odsazení druhé a dalších řádek víceřádkového message
-        $completedMessage = preg_replace('/[[:cntrl:]]/', '', $completedMessage);  // odstranéí všechny control znaky (občas tam jsou a při čtení chybového hlášení způsobí dojekm, že nastala nějaká podivná chyba)
-        $completedMessage = str_replace(self::SLOT, PHP_EOL.self::ODSAZENI, $completedMessage);  //odsazení druhé a dalších řádek víceřádkového message
+        // https://stackoverflow.com/questions/42013372/remove-control-characters-from-string-in-php
+//        \p{Cc} is the unicode character class for control characters. \P{Cc} is the opposite (all that is not a control character).
+//        [^\P{Cc}\r\n] is all that isn't \P{Cc}, \r and \n.
+//        The u modifier ensures that the string and the pattern are read as utf8 strings.
+//        If you want to preserve an other control character, for example the TAB, add it to the negated character class: [^\P{Cc}\r\n\t]
+        $completedMessage = preg_replace('~[^\P{Cc}\r\n]+~u', '', $completedMessage);  // odstranéí všechny control znaky (občas tam jsou a při čtení chybového hlášení způsobí dojekm, že nastala nějaká podivná chyba)
+        $completedMessage = preg_replace("/\r\n|\n|\r/", PHP_EOL.self::ODSAZENI, $completedMessage);  // odsazení druhé a dalších řádek víceřádkového message
         $newString = "$level | $time | $completedMessage".PHP_EOL;
         if (is_resource($this->logFileHandle)) {
             fwrite($this->logFileHandle, $newString);
