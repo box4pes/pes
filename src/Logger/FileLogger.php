@@ -128,7 +128,7 @@ class FileLogger extends AbstractLogger {
         $completedMessage = isset($context) ? Template::interpolate($message, $context) : $message;
         $completedMessage = preg_replace("/\r\n|\n|\r/", self::SLOT, $completedMessage);  //slot pro odsazení druhé a dalších řádek víceřádkového message
         $completedMessage = preg_replace('/[[:cntrl:]]/', '', $completedMessage);  // odstranéí všechny control znaky (občas tam jsou a při čtení chybového hlášení způsobí dojekm, že nastala nějaká podivná chyba)
-        $completedMessage = preg_replace(self::SLOT, PHP_EOL.self::ODSAZENI, $completedMessage);  //odsazení druhé a dalších řádek víceřádkového message
+        $completedMessage = str_replace(self::SLOT, PHP_EOL.self::ODSAZENI, $completedMessage);  //odsazení druhé a dalších řádek víceřádkového message
         $newString = "$level | $time | $completedMessage".PHP_EOL;
         if (is_resource($this->logFileHandle)) {
             fwrite($this->logFileHandle, $newString);
