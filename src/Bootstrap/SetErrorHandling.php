@@ -70,6 +70,10 @@ function loggingExceptionHandler(\Throwable $e) {
         $exceptionsLogger->critical("Previous exception:". getExcLogMessage($e->getPrevious()));
     }
 
+    if (isset($e->xdebug_message)) {
+        $xdebugExceptionsLogger = FileLogger::getInstance(PES_BOOTSTRAP_ERROR_LOGS_PATH, 'XDebugExceptionLogger.log', FileLogger::REWRITE_LOG);
+        $xdebugExceptionsLogger->debug($e->xdebug_message);
+    }
     if ($development) {
 
 //        if (class_exists('\\Error') AND $e instanceof \Error) {
