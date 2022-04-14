@@ -104,8 +104,8 @@ class Container implements ContainerSettingsAwareInterface {
      * Služba musí být Closure nebo přímo zadaná hodnota. Generování hodnoty zadanou službou probíhá až v okamžiku volání metody get().
      * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jed tedy o lazy load generování hodnoty.
      *
-     * <b>Předefinování služby:</b> Při opakovaném volání metody set() se stejným jménem služby dojde k vyhození výjimky. Nelze ani definovat metodou set()
-     * službu, která již byla definována v delegátovi. Stejnou službu nelze ani dodatečně dodefinovat do delgáta, ovšem to proto, že kontejner, který je použit jako delegát,
+     * <b>Předefinování služby:</b> Při opakovaném volání metody set() se stejným jménem služby dojde k vyhození výjimky.
+     * Stejnou službu nelze ani dodatečně dodefinovat do delegáta, ovšem to proto, že kontejner, který je použit jako delegát,
      * je v takovém okamžiku uzamčen. Duplicitní volání služby se stejným jménem v různých delegujících a delegátech má za následek, že z různých kontejnerů jsou volány různé služby a vznikají
      * tak různé objekty, respektive objekty stejného typu, ale ve více instancích, přestože jsou definovány metodou set(). To je potenciálně nebezpečná situace a proto
      * je duplicitní nastevení služby metodou set() zakázáno.
@@ -121,15 +121,12 @@ class Container implements ContainerSettingsAwareInterface {
      */
     public function set(string $serviceName, $service) : ContainerSettingsAwareInterface {
         if ($this->locked) {
-            throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru. Kontener je uzamčen automaticky, když byl použit jako delegát.");
-        }
-        if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName je obsažena v delegate kontejneru. Kontejner {$this->containerInfo}.");
+            throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru $cName. Kontener je uzamčen automaticky, když byl použit jako delegát.");
         }
-        if ($this->has($serviceName)) {
+        if ($this->hasSelf($serviceName)) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nakonfigurována. Kontejner {$this->containerInfo}.");
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nastavena.");
         }
         $this->setOverride($serviceName, $service);
         return $this;
@@ -211,7 +208,8 @@ class Container implements ContainerSettingsAwareInterface {
 
     /**
      * Nastaví alias ke skutečnému jménu služby. Volání služby jménem alias vede na volání služby se skutečným jménem.
-     * Třída nepodporuje víceúrovňové alias (alias k aliasu, který je aliasem ke jménu atd.)
+     * KOntejner umožňuje bastavit více aliasů k jednomu jménu.
+     * Kontejner nepodporuje víceúrovňové alias (alias k aliasu, který je aliasem ke jménu atd.)
      * Alias je aliasem ke službě kontejneru, kde je definován nebo ke službě vnořeného delegate kontejneru.
      * Poznámka: uzamčení kontejneru neomezuje volání metody alias().
      *
@@ -220,6 +218,9 @@ class Container implements ContainerSettingsAwareInterface {
      * @return ContainerSettingsAwareInterface
      */
     public function alias(string $alias, string $name) : ContainerSettingsAwareInterface {
+        if (array_key_exists($alias, $this->aliases)) {
+            throw new UnableToSetAliasException("Nelze nastavit alias $alias v kontejneru $cName. Alias $alias již byl v tomto kontejneru nastaven.");
+        }
         $this->aliases[$alias] = $name;
         return $this;
     }
@@ -227,12 +228,27 @@ class Container implements ContainerSettingsAwareInterface {
 ###############################################
 
     /**
-     * Existuje definice služby?
+     * Existuje definice služby? Zjišťuje, zda je služby definována v tomto objektu kontejneru nhebo v některém delegátovi.
      *
      * @param string $serviceName Jméno hledané služby
      * @return bool
      */
     public function has(string $serviceName) {
+        if ($this->hasSelf($serviceName)) {
+            return TRUE;
+        }
+        if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    /**
+     * Existuje definice služby v tomto obhjektu kontejneru? Neptá se, zda exituje definice v delegátovi
+     * @param string $serviceName
+     * @return boolean
+     */
+    private function hasSelf(string $serviceName) {
         if (isset($this->generators[$serviceName])) {     // pole $this->has obsahuje jen položky definované v této instanci kontejneru
             return TRUE;
         }
@@ -240,10 +256,7 @@ class Container implements ContainerSettingsAwareInterface {
         if (isset($this->generators[$realName])) {
             return TRUE;
         }
-        if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
-            return TRUE;
-        }
-        return FALSE;
+
     }
 
     /**
