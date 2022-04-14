@@ -33,23 +33,23 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
     public function configure(ContainerSettingsAwareInterface $container) : ContainerSettingsAwareInterface {
 
         $params = $this->getParams();
-        if (!($params instanceof iterable)) {
+        if (!is_iterable($params)) {
             throw new \UnexpectedValueException("Metoda getParams() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
         }
         $aliases = $this->getAliases();
-        if (!($aliases instanceof iterable)) {
+        if (!is_iterable($aliases)) {
             throw new \UnexpectedValueException("Metoda getAliases() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
         }
         $services = $this->getServicesDefinitions();
-        if (!($services instanceof iterable)) {
+        if (!is_iterable($services)) {
             throw new \UnexpectedValueException("Metoda getServicesDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
         }
         $servicesOverrides = $this->getServicesOverrideDefinitions();
-        if (!($servicesOverrides instanceof iterable)) {
+        if (!is_iterable($servicesOverrides)) {
             throw new \UnexpectedValueException("Metoda getServicesOverrideDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
         }
         $factories = $this->getFactoriesDefinitions();
-        if (!($factories instanceof iterable)) {
+        if (!is_iterable($factories)) {
             throw new \UnexpectedValueException("Metoda getFactoriesDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
         }
 
