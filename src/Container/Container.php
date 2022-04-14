@@ -219,7 +219,7 @@ class Container implements ContainerSettingsAwareInterface {
      */
     public function alias(string $alias, string $name) : ContainerSettingsAwareInterface {
         if (array_key_exists($alias, $this->aliases)) {
-            throw new UnableToSetAliasException("Nelze nastavit alias $alias v kontejneru $cName. Alias $alias již byl v tomto kontejneru nastaven.");
+            throw new Exception\UnableToSetAliasException("Nelze nastavit alias $alias v kontejneru $cName. Alias $alias již byl v tomto kontejneru nastaven.");
         }
         $this->aliases[$alias] = $name;
         return $this;
