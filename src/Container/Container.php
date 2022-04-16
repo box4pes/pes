@@ -124,9 +124,9 @@ class Container implements ContainerSettingsAwareInterface {
             $cName = $this->containerInfo ?? "";
             throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru $cName. Kontener je uzamčen automaticky, když byl použit jako delegát.");
         }
-        if ($this->hasSelf($serviceName)) {
+        if ($this->has($serviceName)) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nastavena.");
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla nastavena v tomto kontejneru nebo v delagátovi.");
         }
         $this->setOverride($serviceName, $service);
         return $this;
@@ -146,6 +146,14 @@ class Container implements ContainerSettingsAwareInterface {
      * @return \Pes\Container\ContainerSettingsAwareInterface
      */
     public function setOverride(string $serviceName, $service): \Pes\Container\ContainerSettingsAwareInterface {
+        if ($this->locked) {
+            $cName = $this->containerInfo ?? "";
+            throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru $cName. Kontener je uzamčen automaticky, když byl použit jako delegát.");
+        }
+        if ($this->hasSelf($serviceName)) {
+            $cName = $this->containerInfo ?? "";
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nastavena.");
+        }
         if ($service instanceof \Closure) {
             $this->generators[$serviceName] = function() use ($serviceName, $service) {
                         // ještě není instance?
@@ -169,7 +177,8 @@ class Container implements ContainerSettingsAwareInterface {
      * nová instance.
      *
      * Metoda je vhodná pro reset objektů, jejichž instancování závisí na kontextu nebo na stavu aplikace a tento kontext nebo stav se změnil a je třeba
-     * výjimečně vytvořit novou instaci, ačkolijinak opkovaná volání get() vrecejí instanci stejnou. Typicky jse o objekty vytvořené s užitím bezpečnostního kontextu,
+     * výjimečně vytvořit novou instaci, ačkoli jinak opakovaná volání get() vrecejí instanci stejnou. Typicky jse o objekty vytvořené s užitím bezpečnostního kontextu,
+     * kdy po změně bezpečnostního kontextu je nutné objekt vytvořit znovu nový.
      *
      * @param string $serviceName
      * @return \Pes\Container\ContainerSettingsAwareInterface
@@ -187,13 +196,29 @@ class Container implements ContainerSettingsAwareInterface {
      * Pokud služba generuje objekt, každé volání get() vrací novou instanci objektu.
      * Služba musí být Closure nebo přímo zadaná hodnota. Generování hodnoty zadanou službou probíhá až v okamžiku volání metody get().
      * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jedná se o lazy load generování hodnoty.
-     * Poznámka: uzamčení kontejneru neomezuje volání metody factory().
+     *
+     * <b>Předefinování služby:</b> Při opakovaném volání metody set() se stejným jménem služby dojde k vyhození výjimky.
+     * Stejnou službu nelze ani dodatečně dodefinovat do delegáta, ovšem to proto, že kontejner, který je použit jako delegát,
+     * je v takovém okamžiku uzamčen. Duplicitní volání služby se stejným jménem v různých delegujících a delegátech má za následek, že z různých kontejnerů jsou volány různé služby a vznikají
+     * tak různé objekty, respektive objekty stejného typu, ale ve více instancích, přestože jsou definovány metodou set(). To je potenciálně nebezpečná situace a proto
+     * je duplicitní nastevení služby metodou set() zakázáno.
+     *
+     * <b>Uzamčený kontejner:</b> Pokud byl kontejner uzamčen voláním metody lock(), nelze mu již nastavovat žádné služby, volání metody set() zamčeného kontejneru vyvolá výjimku. Pozor: kontejner
+     * je vždy automaticky uzamčen, pokud byl použit jako delegate kontejner, tedy v okamžiku, kdy je předán jako parametr konstruktoru delegujícího kontejneru.
      *
      * @param string $factoryName
      * @param mixed $service Closure nebo hodnota
      * @return ContainerSettingsAwareInterface
      */
     public function factory(string $factoryName, $service) : ContainerSettingsAwareInterface {
+        if ($this->locked) {
+            $cName = $this->containerInfo ?? "";
+            throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru $cName. Kontener je uzamčen automaticky, když byl použit jako delegát.");
+        }
+        if ($this->has($serviceName)) {
+            $cName = $this->containerInfo ?? "";
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla nastavena v tomto kontejneru nebo v delagátovi.");
+        }
         if ($service instanceof \Closure) {
             $this->generators[$factoryName] = function() use ($factoryName, $service) {
                         return $service($this);
@@ -207,10 +232,15 @@ class Container implements ContainerSettingsAwareInterface {
     }
 
     /**
-     * Nastaví alias ke skutečnému jménu služby. Volání služby jménem alias vede na volání služby se skutečným jménem.
-     * KOntejner umožňuje bastavit více aliasů k jednomu jménu.
+     * Nastaví alias ke skutečnému jménu služby. Volání služby jménem alias vede na volání služby se skutečným jménem. Kontejner umožňuje nastavit více aliasů k jednomu jménu.
+     *
+     * <b>"Přetížení služby" pomocí aliasu:</b>
+     * Kontejner umožňuje nastavit stejné alias jméno jako má alias již definovaný v delegátovi, nový alias však může
+     * směřovat na jinou službu než alias již definovaný v delegátovi. Tímto způsobem lze simulovat "přetížení" služby
+     * definované v delegátovi službou definovanou v podřízeném kontejneru.
+     *
      * Kontejner nepodporuje víceúrovňové alias (alias k aliasu, který je aliasem ke jménu atd.)
-     * Alias je aliasem ke službě kontejneru, kde je definován nebo ke službě vnořeného delegate kontejneru.
+     * Alias je aliasem ke službě kontejneru, kde je definován nebo ke službě delegate kontejneru.
      * Poznámka: uzamčení kontejneru neomezuje volání metody alias().
      *
      * @param string $alias
@@ -234,21 +264,6 @@ class Container implements ContainerSettingsAwareInterface {
      * @return bool
      */
     public function has(string $serviceName) {
-        if ($this->hasSelf($serviceName)) {
-            return TRUE;
-        }
-        if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
-            return TRUE;
-        }
-        return FALSE;
-    }
-
-    /**
-     * Existuje definice služby v tomto obhjektu kontejneru? Neptá se, zda exituje definice v delegátovi
-     * @param string $serviceName
-     * @return boolean
-     */
-    private function hasSelf(string $serviceName) {
         if (isset($this->generators[$serviceName])) {     // pole $this->has obsahuje jen položky definované v této instanci kontejneru
             return TRUE;
         }
@@ -256,7 +271,10 @@ class Container implements ContainerSettingsAwareInterface {
         if (isset($this->generators[$realName])) {
             return TRUE;
         }
-
+        if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
+            return TRUE;
+        }
+        return FALSE;
     }
 
     /**

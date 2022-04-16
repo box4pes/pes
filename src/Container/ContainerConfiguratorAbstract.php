@@ -24,8 +24,7 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
     /**
      * (@inheritdoc)
      *
-     * Abstraktní třída, očekává, že potomek implementuje metody rorhraní. Vytvořenému kontejneru jsou nastaveny aliasy, služby a továrny
-     * na hodnoty získané z metod potomka - konfigurátoru.
+     * Abstraktní třída, očekává, že potomek implementuje metody rozhraní. Vytvořenému kontejneru jsou nastaveny parametry, aliasy, služby a továrny získané z metod potomka - konfigurátoru.
      * Při shodě jména služby a továrny je definice služby přepsána definicí továrny.
      *
      * @return ContainerSettingsAwareInterface
@@ -33,25 +32,10 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
     public function configure(ContainerSettingsAwareInterface $container) : ContainerSettingsAwareInterface {
 
         $params = $this->getParams();
-        if (!is_iterable($params)) {
-            throw new \UnexpectedValueException("Metoda getParams() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
-        }
         $aliases = $this->getAliases();
-        if (!is_iterable($aliases)) {
-            throw new \UnexpectedValueException("Metoda getAliases() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
-        }
         $services = $this->getServicesDefinitions();
-        if (!is_iterable($services)) {
-            throw new \UnexpectedValueException("Metoda getServicesDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
-        }
         $servicesOverrides = $this->getServicesOverrideDefinitions();
-        if (!is_iterable($servicesOverrides)) {
-            throw new \UnexpectedValueException("Metoda getServicesOverrideDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
-        }
         $factories = $this->getFactoriesDefinitions();
-        if (!is_iterable($factories)) {
-            throw new \UnexpectedValueException("Metoda getFactoriesDefinitions() konfigurátoru kontejneru ". get_called_class()." nevrátila iterovatelnou hodnotu.");
-        }
 
         $container->addContainerInfo('Configured by '.get_called_class());
 
@@ -59,31 +43,35 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
             try {
                 $container->set($name, $definition);
             } catch(UnableToSetServiceException $uExc) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno lze použít pro konfiguraci kontejneru pouze jednou. Jméno $name již bylo použito pro konfiguraci parametru.", 0, $uExc);
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno $name již bylo použito pro konfiguraci parametru.", 0, $uExc);
             }
         }
         foreach ($aliases as $alias=>$realName) {
             try {
                 $container->alias($alias, $realName);
             } catch(UnableToSetAliasException $uExc) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno lze použít pro konfiguraci kontejneru pouze jednou. Jméno $name již bylo použito pro konfiguraci alias.", 0, $uExc);
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno $alias již bylo použito pro konfiguraci alias.", 0, $uExc);
             }
         }
         foreach ($services as $name=>$definition) {
             try {
                 $container->set($name, $definition);
             } catch(UnableToSetServiceException $uExc) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno lze použít pro konfiguraci kontejneru pouze jednou. Jméno $name již bylo použito pro konfiguraci service.", 0, $uExc);
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno $name již bylo použito pro konfiguraci service v tomto kontejneru nebo v delegátovi.", 0, $uExc);
             }
         }
         foreach ($servicesOverrides as $name=>$definition) {
-            $container->setOverride($name, $definition);
+            try {
+                $container->setOverride($name, $definition);
+            } catch(UnableToSetServiceException $uExc) {
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno $name již bylo použito pro konfiguraci service v tomto kontejneru.", 0, $uExc);
+            }
         }
         foreach ($factories as $name=>$definition) {
             try {
                 $container->factory($name, $definition);
             } catch(UnableToSetServiceException $uExc) {
-                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno lze použít pro konfiguraci kontejneru pouze jednou. Jméno $name již bylo použito pro konfiguraci factory.", 0, $uExc);
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno $name již bylo použito pro konfiguraci factory.", 0, $uExc);
             }
         }
         return $container;

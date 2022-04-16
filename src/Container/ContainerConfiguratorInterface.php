@@ -28,26 +28,26 @@ interface ContainerConfiguratorInterface {
     /**
      * Vrací pole parametrů - hodnot nezávislých na službách kontejneru
      */
-    public function getParams();
+    public function getParams(): iterable;
 
     /**
      * Vrací pole aliasů ke skutečným jménům služeb.
      */
-    public function getAliases();
+    public function getAliases(): iterable;
 
     /**
      * Vrací pole definic služeb kontejneru. Služby kontejneru vracejí při opakovaném volání vždy stejnou instanci proměnné.
      */
-    public function getServicesDefinitions();
+    public function getServicesDefinitions(): iterable;
 
     /**
      * Vrací pole definic služeb kontejneru. Služby kontejneru vracejí při opakovaném volání vždy stejnou instanci proměnné. a je možno je definovat
      * duplicitně v rámci celého kenteneru složeného z delegátů.
      */
-    public function getServicesOverrideDefinitions();
+    public function getServicesOverrideDefinitions(): iterable;
 
     /**
-     * Vrací pole definic továren kontejneru. Továrna kontegneru je zvláštní služba, továrny vracejí při opakovaném volání vždy novou instanci proměnné.
+     * Vrací pole definic továren kontejneru. Továrna kontejneru je zvláštní služba, továrny vracejí při opakovaném volání vždy novou instanci proměnné.
      */
-    public function getFactoriesDefinitions();
+    public function getFactoriesDefinitions(): iterable;
 }
