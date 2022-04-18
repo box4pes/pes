@@ -18,46 +18,56 @@ use Pes\Logger\FileLogger;
 
 use Pes\Container\Container;
 
-class ContainerDuplicateServiceKAliasFactory extends ContainerConfiguratorAbstract {
-    public function getAliases() {return ['dbNick' => 'NICK'];
+class ContainerDuplicateServiceKService   extends ContainerConfiguratorAbstract {
+    public function getParams(): iterable {
+        return [];
     }
-    public function getServicesDefinitions() {return ['dbNick' => 'duplikátnínick'];
+    public function getAliases(): iterable {return [];
     }
-    public function getServicesOverrideDefinitions() {return [];
+    public function getServicesDefinitions(): iterable {return ['dbNick' => 'NICK', 'dbNick' => 'duplikátnínick'];
     }
-    public function getFactoriesDefinitions() {return [];
+    public function getServicesOverrideDefinitions(): iterable {return [];
     }
-}
-
-class ContainerDuplicateFactoryKAliasFactory extends ContainerConfiguratorAbstract {
-
-    public function getAliases() {return ['dbType' => 'type', 'servisníobjekt' => function() { return new stdClass();} ];
-    }
-    public function getServicesDefinitions() {return [];
-    }
-    public function getServicesOverrideDefinitions() {return [];
-    }
-    public function getFactoriesDefinitions() {return ['dbType' => function() { return new stdClass();} ];
+    public function getFactoriesDefinitions(): iterable {return [];
     }
 }
 
-class ContainerDuplicateFactoryKServiceFactory extends ContainerConfiguratorAbstract {
+class ContainerDuplicateFactoryKFactory extends ContainerConfiguratorAbstract {
+    public function getParams(): iterable {
+        return [];
+    }
+    public function getAliases(): iterable {return ['servisníobjekt' => function() { return new stdClass();} ];
+    }
+    public function getServicesDefinitions(): iterable {return [];
+    }
+    public function getServicesOverrideDefinitions(): iterable {return [];
+    }
+    public function getFactoriesDefinitions(): iterable {return ['dbType' => 'type', 'dbType' => function() { return new stdClass();} ];
+    }
+}
 
-    public function getAliases() {return [];
+class ContainerDuplicateFactoryKService  extends ContainerConfiguratorAbstract {
+    public function getParams(): iterable {
+        return [];
     }
-    public function getServicesDefinitions() {return ['servisníobjekt' => function() { return new stdClass();} ];
+    public function getAliases(): iterable {return [];
     }
-    public function getServicesOverrideDefinitions() {return [];
+    public function getServicesDefinitions(): iterable {return ['servisníobjekt' => function() { return new stdClass();} ];
     }
-    public function getFactoriesDefinitions() {return ['servisníobjekt' => function() { return new stdClass();} ];
+    public function getServicesOverrideDefinitions(): iterable {return [];
+    }
+    public function getFactoriesDefinitions(): iterable {return ['servisníobjekt' => function() { return new stdClass();} ];
     }
 }
 
 class ContainerTestOuterConfigurator extends ContainerConfiguratorAbstract {
-    public function getAliases() {
+    public function getParams(): iterable {
         return [];
     }
-    public function getFactoriesDefinitions() {
+    public function getAliases(): iterable {
+        return [];
+    }
+    public function getFactoriesDefinitions(): iterable {
         return [
             "outerValue" => "outerString",
             "outerFactory" => function(ContainerInterface $c) {
@@ -65,22 +75,25 @@ class ContainerTestOuterConfigurator extends ContainerConfiguratorAbstract {
             }
         ];
     }
-    public function getServicesDefinitions() {
+    public function getServicesDefinitions(): iterable {
         return [];
     }
-    public function getServicesOverrideDefinitions() {
+    public function getServicesOverrideDefinitions(): iterable {
         return [];
     }
 }
 
 class ContainerTestDelegateConfigurator extends ContainerConfiguratorAbstract {
-    public function getAliases() {
+    public function getParams(): iterable {
         return [];
     }
-    public function getFactoriesDefinitions() {
+    public function getAliases(): iterable {
         return [];
     }
-    public function getServicesDefinitions() {
+    public function getFactoriesDefinitions(): iterable {
+        return [];
+    }
+    public function getServicesDefinitions(): iterable {
         return [
             "delegateValue" => "delegateString",
             "delegateService" => function(ContainerInterface $c) {
@@ -88,16 +101,19 @@ class ContainerTestDelegateConfigurator extends ContainerConfiguratorAbstract {
             }
         ];
     }
-    public function getServicesOverrideDefinitions() {
+    public function getServicesOverrideDefinitions(): iterable {
         return [];
     }
 }
 
 class ContainerTestDefinitionsConfigurator extends ContainerConfiguratorAbstract {
-    public function getAliases() {
+    public function getParams(): iterable {
         return [];
     }
-    public function getServicesDefinitions() {
+    public function getAliases(): iterable {
+        return [];
+    }
+    public function getServicesDefinitions(): iterable {
 
         return [
             NullLogger::class => function(ContainerInterface $c) {
@@ -117,19 +133,22 @@ class ContainerTestDefinitionsConfigurator extends ContainerConfiguratorAbstract
             }
         ];
     }
-    public function getServicesOverrideDefinitions() {
+    public function getServicesOverrideDefinitions(): iterable {
         return [];
     }
-    public function getFactoriesDefinitions() {
+    public function getFactoriesDefinitions(): iterable {
         return [];
     }
 }
 
 class ContainerTestSettingsConfigurator extends ContainerConfiguratorAbstract {
-    public function getAliases() {
+    public function getParams(): iterable {
         return [];
     }
-    public function getServicesDefinitions() {
+    public function getAliases(): iterable {
+        return [];
+    }
+    public function getServicesDefinitions(): iterable {
     return [
         'DB_TYPE' => DbTypeEnum::MSSQL,
         'DB_NAME' => 'pes',
@@ -149,37 +168,40 @@ class ContainerTestSettingsConfigurator extends ContainerConfiguratorAbstract {
         'TESTOVACI_STRING' => "Cyrilekoěščřžýáíéúů",
         ];
     }
-    public function getServicesOverrideDefinitions() {
+    public function getServicesOverrideDefinitions(): iterable {
         return [];
     }
-    public function getFactoriesDefinitions() {
+    public function getFactoriesDefinitions(): iterable {
         return [];
     }
 }
 
 /**
- * Description of StatementTest
+ * Description of ContainerTest
  *
  * @author pes2704
  */
 class ContainerTest extends TestCase {
 
-    public function testDuplicateServiceDefinionException() {
-        try {
-            $c = (new ContainerDuplicateServiceKAliasFactory())->configure(new Container());
-        } catch (Exception\ConfiguratorDuplicateServiceDefinionException $duplExc) {
-            $this->assertStringStartsWith("Jméno alias, služby nebo factory lze použít pouze jednou. ", $duplExc->getMessage());
-        }
-        try {
-            $c = (new ContainerDuplicateServiceKAliasFactory())->configure(new Container());
-        } catch (Exception\ConfiguratorDuplicateServiceDefinionException $duplExc) {
-            $this->assertStringStartsWith("Jméno alias, služby nebo factory lze použít pouze jednou. ", $duplExc->getMessage());
-        }
-        try {
-            $c = (new ContainerDuplicateServiceKAliasFactory())->configure(new Container());
-        } catch (Exception\ConfiguratorDuplicateServiceDefinionException $duplExc) {
-            $this->assertStringStartsWith("Jméno alias, služby nebo factory lze použít pouze jednou. ", $duplExc->getMessage());
-        }
+    /**
+     * @expectedException Pes\Container\Exception\ConfiguratorDuplicateServiceDefinionException
+     */
+    public function testDuplicateServiceKServiceException() {
+            $c = (new ContainerDuplicateServiceKService  ())->configure(new Container());
+    }
+
+    /**
+     * @expectedException Pes\Container\Exception\ConfiguratorDuplicateServiceDefinionException
+     */
+    public function testDuplicateFactoryKFactoryException() {
+            $c = (new ContainerDuplicateFactoryKFactory())->configure(new Container());
+    }
+
+    /**
+     * @expectedException Pes\Container\Exception\ConfiguratorDuplicateServiceDefinionException
+     */
+    public function testDuplicateFactoryKServiceException() {
+            $c = (new ContainerDuplicateFactoryKService())->configure(new Container());
     }
 
     /**

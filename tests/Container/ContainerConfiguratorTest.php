@@ -8,24 +8,30 @@ use Pes\Container\Exception\LockedContainerException;
 use Psr\Container\ContainerInterface;
 
 class ContainerConfiguratorTestOuterConfigurator extends ContainerConfiguratorAbstract {
-    public function getAliases() {return [];
+    public function getParams(): iterable {
+        return [];
     }
-    public function getFactoriesDefinitions() {return ["factory" => "factory"];
+    public function getAliases(): iterable {return [];
     }
-    public function getServicesDefinitions() {return [];
+    public function getFactoriesDefinitions(): iterable {return ["factory" => "factory"];
     }
-    public function getServicesOverrideDefinitions() {return [];
+    public function getServicesDefinitions(): iterable {return [];
+    }
+    public function getServicesOverrideDefinitions(): iterable {return [];
     }
 }
 
 class ContainerConfiguratorTestDelegateConfigurator extends ContainerConfiguratorAbstract {
-    public function getAliases() {return [];
+    public function getParams(): iterable {
+        return [];
     }
-    public function getFactoriesDefinitions() {return [];
+    public function getAliases(): iterable {return [];
     }
-    public function getServicesDefinitions() {return ["service" => "service"];
+    public function getFactoriesDefinitions(): iterable {return [];
     }
-    public function getServicesOverrideDefinitions() {return [];
+    public function getServicesDefinitions(): iterable {return ["service" => "service"];
+    }
+    public function getServicesOverrideDefinitions(): iterable {return [];
     }
 }
 
@@ -55,7 +61,10 @@ class ContainerConfiguratorTest extends TestCase {
         $delegate = new Container();
         $outer = new Container($delegate);
         $outer = (new ContainerConfiguratorTestOuterConfigurator())->configure($outer);
+        $outer->get("factory");
         $delegate = (new ContainerConfiguratorTestDelegateConfigurator())->configure($delegate);
+        $delegate->get("service");
+        $outer->set("new_service", "new_service");
 
     }
 }

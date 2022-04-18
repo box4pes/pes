@@ -110,8 +110,8 @@ class Container implements ContainerSettingsAwareInterface {
      * tak různé objekty, respektive objekty stejného typu, ale ve více instancích, přestože jsou definovány metodou set(). To je potenciálně nebezpečná situace a proto
      * je duplicitní nastevení služby metodou set() zakázáno.
      *
-     * <b>Uzamčený kontejner:</b> Pokud byl kontejner uzamčen voláním metody lock(), nelze mu již nastavovat žádné služby, volání metody set() zamčeného kontejneru vyvolá výjimku. Pozor: kontejner
-     * je vždy automaticky uzamčen, pokud byl použit jako delegate kontejner, tedy v okamžiku, kdy je předán jako parametr konstruktoru delegujícího kontejneru.
+     * <b>Uzamčený kontejner:</b> Pokud byl kontejner uzamčen voláním metody lock(), nelze mu již nastavovat žádné služby, volání metody set() zamčeného kontejneru vyvolá výjimku.
+     * Pozor: kontejner je vždy automaticky uzamčen, pokud byla úspěšně volána metoda get(), has() nebo hesSelf() kontejneru.
      *
      * @param string $serviceName
      * @param \Closure $service
@@ -215,9 +215,9 @@ class Container implements ContainerSettingsAwareInterface {
             $cName = $this->containerInfo ?? "";
             throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru $cName. Kontener je uzamčen automaticky, když byl použit jako delegát.");
         }
-        if ($this->has($serviceName)) {
+        if ($this->has($factoryName)) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla nastavena v tomto kontejneru nebo v delagátovi.");
+            throw new Exception\UnableToSetServiceException("Nelze nastavit factory službu $factoryName kontejneru $cName. Služba $factoryName již byla nastavena v tomto kontejneru nebo v delagátovi.");
         }
         if ($service instanceof \Closure) {
             $this->generators[$factoryName] = function() use ($factoryName, $service) {
@@ -260,15 +260,41 @@ class Container implements ContainerSettingsAwareInterface {
     /**
      * Existuje definice služby? Zjišťuje, zda je služby definována v tomto objektu kontejneru nhebo v některém delegátovi.
      *
+     * Při prvním úspěšném volání metody, t.j. když metoda úspěšně nalezne službu v tomto kontejneru, je kontejner uzamčen.
+     * Uzamčení kontejneru odděluje konfiguraci a používání kontejneru a brání vzniku velmi těžko odhalitelných chyb, které by mohly vzniknout při změně konfigurace
+     * kontejneru poté, kdy již byla nějaká služba kontejneru použita.
+     *
      * @param string $serviceName Jméno hledané služby
      * @return bool
      */
     public function has(string $serviceName) {
+        if ($this->hasSelf($serviceName)) {
+            return TRUE;
+        }
+        if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    /**
+     * Existuje definice služby v tomto obhjektu kontejneru? Neptá se, zda exituje definice v delegátovi
+     *
+     * Při prvním úspěšném volání metody, t.j. když metoda úspěšně nalezne službu v tomto kontejneru, je kontejner uzamčen.
+     * Uzamčení kontejneru odděluje konfiguraci a používání kontejneru a brání vzniku velmi těžko odhalitelných chyb, které by mohly vzniknout při změně konfigurace
+     * kontejneru poté, kdy již byla nějaká služba kontejneru použita.
+     *
+     * @param string $serviceName
+     * @return boolean
+     */
+    private function hasSelf(string $serviceName) {
         if (isset($this->generators[$serviceName])) {     // pole $this->has obsahuje jen položky definované v této instanci kontejneru
+            $this->lock();
             return TRUE;
         }
         $realName = $this->realName($serviceName);
         if (isset($this->generators[$realName])) {
+            $this->lock();
             return TRUE;
         }
         if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
@@ -280,16 +306,22 @@ class Container implements ContainerSettingsAwareInterface {
     /**
      * Vrací výsledek volání služby zadaného jména.
      *
+     * Při prvním úspěšném volání metody, t.j. když metoda úspěšně nalezne službu v tomto kontejneru, je kontejner uzamčen.
+     * Uzamčení kontejneru odděluje konfiguraci a používání kontejneru a brání vzniku velmi těžko odhalitelných chyb, které by mohly vzniknout při změně konfigurace
+     * kontejneru poté, kdy již byla nějaká služba kontejneru použita.
+     *
      * @param string $serviceName Jméno volané služby.
      * @return mixed Návratová hodnota vracená službou.
      * @throws NotFoundException Služba nenalezena
      */
     public function get(string $serviceName) {
         if (isset($this->generators[$serviceName])) {
+            $this->lock();
             return $this->generators[$serviceName]();
         }
         $realName = $this->realName($serviceName);
         if (isset($this->generators[$realName])) {
+            $this->lock();
             return $this->generators[$realName]();
         }
         if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {

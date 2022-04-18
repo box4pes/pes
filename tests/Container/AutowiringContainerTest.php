@@ -17,10 +17,13 @@ use Pes\Container\Exception;
 
 
 class AutowiringContainerTestSettingsConfigurator extends ContainerConfiguratorAbstract {
-    public function getAliases() {
+    public function getParams(): iterable {
         return [];
     }
-    public function getServicesDefinitions() {
+    public function getAliases(): iterable {
+        return [];
+    }
+    public function getServicesDefinitions(): iterable {
         return [
             'DB_TYPE' => Pes\Database\Handler\DbTypeEnum::MySQL,
             'DB_NAME' => 'pes',
@@ -38,17 +41,19 @@ class AutowiringContainerTestSettingsConfigurator extends ContainerConfiguratorA
             'PASSWORD' => 'pes_tester',
         ];
     }
-    public function getServicesOverrideDefinitions() {
+    public function getServicesOverrideDefinitions(): iterable {
         return [];
     }
-    public function getFactoriesDefinitions() {
+    public function getFactoriesDefinitions(): iterable {
         return [];
     }
 }
 
 class AutowiringContainerTestDefinitionsConfigurator extends ContainerConfiguratorAbstract {
-
-    public function getAliases() {
+    public function getParams(): iterable {
+        return [];
+    }
+    public function getAliases(): iterable {
         return [
             'dbNick' => 'NICK',
             'dbType' => 'DB_TYPE',
@@ -67,13 +72,13 @@ class AutowiringContainerTestDefinitionsConfigurator extends ContainerConfigurat
         ];
     }
 
-    public function getServicesDefinitions() {
+    public function getServicesDefinitions(): iterable {
         return [];
     }
-    public function getServicesOverrideDefinitions() {
+    public function getServicesOverrideDefinitions(): iterable {
         return [];
     }
-    public function getFactoriesDefinitions() {
+    public function getFactoriesDefinitions(): iterable {
         return [];
     }
 }
