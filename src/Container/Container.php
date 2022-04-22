@@ -297,9 +297,6 @@ class Container implements ContainerSettingsAwareInterface {
             $this->lock();
             return TRUE;
         }
-        if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
-            return TRUE;
-        }
         return FALSE;
     }
 

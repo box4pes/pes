@@ -90,7 +90,9 @@ function loggingExceptionHandler(\Throwable $e) {
 //            flushOutputBufferAndThrowException ($e, __FUNCTION__);
 //        }
 
-        flushOutputBuffer();
+//        flushOutputBuffer();
+
+
 //        $info = (__FUNCTION__ . 'error handler nebo exception handler').' v Pes\Bootstrap - ';
 //        throw new Exception("Výjimka zpracována funkcí $info", 0, $e);
         throw $e;
