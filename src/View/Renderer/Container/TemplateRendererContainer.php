@@ -50,15 +50,19 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
     }
 
     public function has($className): bool {
-        if (!isset(self::$renderers[$className])) {
-            $exists = $this->existRendererClass($className);
-            // při volání class_exists( dojde k autoloadu a pokud je v kódu hledaní třídy chyba,
-            // pak (viz include) pak class_exists() skončí s chybou a návratová hodnota existRendererClass() je null ( není bool)
-            return $exists ?? false;
-        }
-        return true;
+        return isset(self::$renderers[$className]);
     }
 
+    private function create($className) {
+        if ($this->existRendererClass($className)) {
+            $renderer = new $className();
+            if ($renderer instanceof RendererRecordableInterface AND isset(self::$recorderProvider)) {
+                $renderer->setRecorderProvider(self::$recorderProvider);
+            }
+        }
+        return $renderer;
+    }
+    
     private function existRendererClass($className) {
         if (!$className) {
             throw new RendererClassNotExistsException("Zadán prázdný název třády rendereru v kontejneru ".__CLASS__.".");
@@ -76,15 +80,6 @@ class TemplateRendererContainer implements TemplateRendererContainerInterface {
         return true;
     }
 
-    private function create($className) {
-        if ($this->existRendererClass($className)) {
-            $renderer = new $className();
-            if ($renderer instanceof RendererRecordableInterface AND isset(self::$recorderProvider)) {
-                $renderer->setRecorderProvider(self::$recorderProvider);
-            }
-        }
-        return $renderer;
-    }
 
     /**
      * Zadaný recorder provider bude nastaven všem rendererům vraceným kontejnerem metodou get(), které implementují interface RendererRecordableInterface.
