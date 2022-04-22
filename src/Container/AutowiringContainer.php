@@ -41,11 +41,7 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
      */
     public function has(string $serviceName) {
         $realName = $this->realName($serviceName);
-        if(parent::has($realName)) {
-            return TRUE;
-        } else {
-            return $this->createFactory($realName, FALSE);
-        }
+        return parent::has($realName);
     }
 
     /**

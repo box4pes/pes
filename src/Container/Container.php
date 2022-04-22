@@ -126,7 +126,7 @@ class Container implements ContainerSettingsAwareInterface {
         }
         if ($this->has($serviceName)) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla nastavena v tomto kontejneru nebo v delagátovi.");
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla nastavena v tomto kontejneru nebo v delegátovi.");
         }
         $this->setGenerator($serviceName, $service);
         return $this;
@@ -228,7 +228,7 @@ class Container implements ContainerSettingsAwareInterface {
         }
         if ($this->has($factoryName)) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit factory službu $factoryName kontejneru $cName. Služba $factoryName již byla nastavena v tomto kontejneru nebo v delagátovi.");
+            throw new Exception\UnableToSetServiceException("Nelze nastavit factory službu $factoryName kontejneru $cName. Služba $factoryName již byla nastavena v tomto kontejneru nebo v delegátovi.");
         }
         if ($service instanceof \Closure) {
             $this->generators[$factoryName] = function() use ($factoryName, $service) {
