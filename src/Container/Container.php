@@ -128,32 +128,44 @@ class Container implements ContainerSettingsAwareInterface {
             $cName = $this->containerInfo ?? "";
             throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla nastavena v tomto kontejneru nebo v delagátovi.");
         }
-        $this->setOverride($serviceName, $service);
+        $this->setGenerator($serviceName, $service);
         return $this;
     }
 
     /**
-     * Nastaví službu tak, že služba přetíží případnou službu stejného jména v kterémkoli delegátovi konfigurovaného kontejneru (ve vnořených kontejnerech).
-     * Služba definovaná metodou setOverride() - stejně jako u metody set() - generuje hodnotu pouze jednou, při prvním volání metody kontejneru get(), další volání metody get() vrací
-     * tutéž hodnotu. Pokud služba generuje objekt, každé volání get() vrací stejnou instanci objektu.
-     * Metoda setOverride() nastavuje služby s jménem, které bude použito v právě konfigurováném kontejneru a případně v dalších delegujících kontejnerech (obalujících),
-     * přetíží tedy případnou služby stejného jména v kterémkoli delegátovi (ve vnořeném kontejneru).
+     * Nastaví službu, která vrací hodnotu typu scalar nebo array.
      *
-     * Služby nastavené metodou setOverride() je možno volat i z delegujících kontejnerů, tedy jako služby delegáta.
+     * <b>"Přetížení služby" pro parametr:</b>
+     * Kontejner umožňuje nastavit stejně pojmenovaný parametr jako má parametr již definovaný v delegátovi, nový parametr tak může
+     * obsahovat jinou hodnotu než parametr již definovaný v delegátovi. Tímto způsobem lze simulovat "přetížení" parametru
+     * definované v delegátovi parametrem definovaným v podřízeném kontejneru.
      *
-     * @param string $serviceName
-     * @param \Closure $service
-     * @return \Pes\Container\ContainerSettingsAwareInterface
+     * Poznámka: nelze nastavovat stejně pojmenovaný parametr v témže kontejneru, lze "přetěžovat" pouze parametry v delegátech.
+     *
+     * @param string $parameterName
+     * @param scalar|array $value
+     * @return ContainerSettingsAwareInterface
+     * @throws Exception\LockedContainerException
+     * @throws Exception\UnableToSetServiceException
      */
-    public function setOverride(string $serviceName, $service): \Pes\Container\ContainerSettingsAwareInterface {
+    public function param(string $parameterName, $value): ContainerSettingsAwareInterface {
         if ($this->locked) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\LockedContainerException("Nelze nastavovat službu uzamčenému kontejneru $cName. Kontener je uzamčen automaticky, když byl použit jako delegát.");
+            throw new Exception\LockedContainerException("Nelze nastavovat parametr uzamčenému kontejneru $cName. Kontener je uzamčen automaticky, když byl použit jako delegát.");
         }
-        if ($this->hasSelf($serviceName)) {
+        if ($this->hasSelf($parameterName)) {
             $cName = $this->containerInfo ?? "";
-            throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nastavena.");
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu pro parametr $parameterName kontejneru $cName. Služba $parameterName již byla v tomto kontejneru nastavena.");
         }
+        if (!is_scalar($value) OR !is_array($value)) {
+            $cName = $this->containerInfo ?? "";
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu pro parametr $parameterName kontejneru $cName. Hodnota paramentru musí být scalar nebo array.");
+        }
+        $this->setGenerator($parameterName, $value);
+        return $this;
+    }
+
+    private function setGenerator(string $serviceName, $service) {
         if ($service instanceof \Closure) {
             $this->generators[$serviceName] = function() use ($serviceName, $service) {
                         // ještě není instance?
@@ -168,7 +180,6 @@ class Container implements ContainerSettingsAwareInterface {
                         return $service;  // service je hodnota - nevytvářím instanci - mám hodnotu zde v definici anonymní funkce
                     };
         }
-        return $this;
     }
 
     /**

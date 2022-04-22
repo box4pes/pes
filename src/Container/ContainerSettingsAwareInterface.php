@@ -32,6 +32,20 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
     public function lock(): ContainerSettingsAwareInterface;
 
     /**
+     * Nastaví službu, která vrací hodnotu typu scalar nebo array.
+     *
+     * <b>"Přetížení služby" pro parametr:</b>
+     * Kontejner umožňuje nastavit stejně pojmenovaný parametr jako má parametr již definovaný v delegátovi, nový parametr tak může
+     * obsahovat jinou hodnotu než parametr již definovaný v delegátovi. Tímto způsobem lze simulovat "přetížení" parametru
+     * definované v delegátovi parametrem definovaným v podřízeném kontejneru.
+     *
+     * @param string $parameterName
+     * @param scalar|array $value
+     * @return ContainerSettingsAwareInterface
+     */
+    public function param(string $parameterName, $value): ContainerSettingsAwareInterface;
+
+    /**
      * Nastaví službu. Služba při prvním volání vytvoří instanci objektu a při dalších voláních vrací vždy tuto instanci.
      * Metoda set() nastavuje služby s unikátním jménem v rámci celého sestaveného kontejneru, tedy v rámci delegujícího kontejneru i všech delegátů.
      * Nelze definovat službu stejného jména v delegujícím kontejneru i v delegátovi, takové vlání set() vyhodí výjimku.
@@ -43,20 +57,6 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
      * @return ContainerSettingsAwareInterface
      */
     public function set(string $serviceName, $service) : ContainerSettingsAwareInterface;
-
-    /**
-     * Nastaví službu tak, že služba přetíží případnou službu stejného jména v kterémkoli delegátovi konfigurovaného kontejneru (ve vnořených kontejnerech).
-     * Služba při prvním volání vytvoří instanci objektu a při dalších voláních vrací vždy tuto instanci.
-     * Metoda setOverride() nastavuje služby s jménem, které bude použito v právě konfigurováném kontejneru a případně v dalších delegujících kontejnerech (obalujících),
-     * přetíží tedy případnou služby stejného jména v kterémkoli delegátovi (ve vnořeném kontejneru).
-     *
-     * Služby nastavené metodou setOverride() je možno volat i z delegujících kontejnerů, teda jako služby delegáta.
-     *
-     * @param string $serviceName
-     * @param type $service
-     * @return \Pes\Container\ContainerSettingsAwareInterface
-     */
-    public function setOverride(string $serviceName, $service) : ContainerSettingsAwareInterface;
 
     /**
      * Nastaví factory. Factory při každém volání vytváří objekt znovu.
