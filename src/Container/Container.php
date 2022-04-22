@@ -157,7 +157,7 @@ class Container implements ContainerSettingsAwareInterface {
             $cName = $this->containerInfo ?? "";
             throw new Exception\UnableToSetServiceException("Nelze nastavit službu pro parametr $parameterName kontejneru $cName. Služba $parameterName již byla v tomto kontejneru nastavena.");
         }
-        if (!is_scalar($value) OR !is_array($value)) {
+        if (!is_scalar($value) AND !is_array($value)) {
             $cName = $this->containerInfo ?? "";
             throw new Exception\UnableToSetServiceException("Nelze nastavit službu pro parametr $parameterName kontejneru $cName. Hodnota paramentru musí být scalar nebo array.");
         }
