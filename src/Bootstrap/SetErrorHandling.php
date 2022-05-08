@@ -41,7 +41,7 @@ function flushOutputBuffer() {
     echo $obContent;
 }
 
-function logExcLogMessage(FileLogger $exceptionsLogger, \Exception $e) {
+function logExcLogMessage(FileLogger $exceptionsLogger, \Throwable $e) {
     // v20
     if (class_exists('\\Error') AND $e instanceof \Error) {
         $cls = get_class($e);
