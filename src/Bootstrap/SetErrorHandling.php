@@ -2,8 +2,6 @@
 
 use Pes\Logger\FileLogger;
 
-use Exception;
-
 ######### ERROR REPORTING & PROFILING & PHP ERROR LOG ########################
 if (PES_DEVELOPMENT) {
     ini_set('display_errors', 1);
@@ -43,7 +41,7 @@ function flushOutputBuffer() {
     echo $obContent;
 }
 
-function logExcLogMessage(FileLogger $exceptionsLogger, Exception $e) {
+function logExcLogMessage(FileLogger $exceptionsLogger, \Exception $e) {
     // v20
     if (class_exists('\\Error') AND $e instanceof \Error) {
         $cls = get_class($e);
