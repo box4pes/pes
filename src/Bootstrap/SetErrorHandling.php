@@ -2,6 +2,8 @@
 
 use Pes\Logger\FileLogger;
 
+use Exception;
+
 ######### ERROR REPORTING & PROFILING & PHP ERROR LOG ########################
 if (PES_DEVELOPMENT) {
     ini_set('display_errors', 1);
@@ -41,15 +43,16 @@ function flushOutputBuffer() {
     echo $obContent;
 }
 
-function getExcLogMessage($e) {
+function logExcLogMessage(FileLogger $exceptionsLogger, Exception $e) {
     // v20
     if (class_exists('\\Error') AND $e instanceof \Error) {
         $cls = get_class($e);
     } else {
         $cls = get_class($e)." exception ";
     }
-    return "$cls {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}";
-;
+    $exceptionsLogger->critical("$cls {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}");
+    $exceptionsLogger->debug($e->getTraceAsString());
+
 }
 
 /**
@@ -65,15 +68,12 @@ function loggingExceptionHandler(\Throwable $e) {
 
     $exceptionsLogger = FileLogger::getInstance(PES_BOOTSTRAP_ERROR_LOGS_PATH, 'ExceptionsLogger.log', FileLogger::APPEND_TO_LOG);
 
-    $exceptionsLogger->critical(getExcLogMessage($e));
+    $exceptionsLogger->critical(logExcLogMessage($exceptionsLogger, $e));
     if($e->getPrevious()) {
-        $exceptionsLogger->critical("Previous exception:". getExcLogMessage($e->getPrevious()));
+        $exceptionsLogger->info("Previous exception:");
+        logExcLogMessage($exceptionsLogger, $e->getPrevious());
     }
 
-    if (isset($e->xdebug_message)) {
-        $xdebugExceptionsLogger = FileLogger::getInstance(PES_BOOTSTRAP_ERROR_LOGS_PATH, 'XDebugExceptionLogger.log', FileLogger::REWRITE_LOG);
-        $xdebugExceptionsLogger->debug($e->xdebug_message);
-    }
     if ($development) {
 
 //        if (class_exists('\\Error') AND $e instanceof \Error) {
