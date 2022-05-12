@@ -336,9 +336,6 @@ class Container implements ContainerSettingsAwareInterface {
         if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
             return $this->delegateContainer->get($serviceName);
         }
-        if (isset($this->delegateContainer) AND $this->delegateContainer->has($serviceName)) {
-            return $this->delegateContainer->get($serviceName);
-        }
         throw new Exception\NotFoundException("Volání služby kontejneru get('$serviceName') selhalo. Požadovaná služba kontejneru se jménem: '$serviceName' neexistuje, nebyla nastavena. Kontejner {$this->containerInfo}.");
     }
 
