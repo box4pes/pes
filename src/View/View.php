@@ -99,7 +99,7 @@ class View implements ViewInterface {
             try {
                 $this->contextData = new ContextData($contextData);
             } catch (InvalidDataTypeException $exc) {
-                throw new InvalidTypeForSetDataException('Data musí být typu ContextDataInterface nebo vhodná data pro konstruktor ContextData. Dta jsou typu'. gettype($contextData).'.', 0, $exc);
+                throw new InvalidTypeForSetDataException('Data musí být typu ContextDataInterface nebo vhodná data pro konstruktor ContextData. Data jsou typu'. gettype($contextData).'.', 0, $exc);
             }
 
         }
@@ -201,6 +201,10 @@ class View implements ViewInterface {
         return $this->componentViews->offsetExists($name) ? $this->componentViews->offsetGet($name) : null;
     }
 
+    public function getComponentViewsArray(): array {
+        return $this->componentViews->getArrayCopy();
+    }
+    
     /**
      * Metoda umožňuje použít objekt view přímo jako proměnnou (proměnou v šabloně) pro další view.
      *

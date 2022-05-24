@@ -111,10 +111,16 @@ interface ViewInterface {
 
     /**
      * Vrací komponetní view se zadaným jménem nebo null.
-     * 
+     *
      * @param string $name
      * @return ViewInterface|null
      */
     public function getComponentView($name): ?ViewInterface;
+
+    /**
+     * Vrací pole všech komponentních view
+     * @return array
+     */
+    public function getComponentViewsArray(): array;
 }
 
