@@ -1,0 +1,64 @@
+<?php
+
+namespace Pes\View;
+
+use Pes\View\InheritDataViewInterface;
+
+use ArrayObject;
+
+/**
+ *
+ * @author pes2704
+ */
+class CollectionView extends View implements CollectionViewInterface {
+
+    /**
+     *
+     * @var ArrayObject of View
+     */
+    private $componentViews;
+
+    /**
+     * Přijímá dvojici iterable kolekce view (položky typu ViewInterface) a jméno proměnné.
+     * Kompozitní view při renderování nahradí proměnou daného jména zřetězenými komponentními view z kolekce. Jednotlivá view z kolekce převede na string voláním metodu __toString().
+     * Pokud předaná hodnota komponentního view je null, musí kompozitní view proměnnou nahrazovat prázdným řetězcem.
+     *
+     *
+     * @param iterable $componentViewCollection Kolekce view, položky typu ViewInterface
+     * @param string $name  Jméno proměnné v kompozitním view, která má být nahrazena zřetězenými výstupy zadaný komponentních view z kolekce
+     * @return ViewInterface
+     */
+    public function appendComponentViewCollection(iterable $componentViewCollection, $name): ViewInterface {
+        if (!isset($this->componentViews)) {
+            $this->componentViews = new ArrayObject();
+        }
+        $this->componentViews->append($componentView);
+        return $this;
+    }
+
+    /**
+     * Metoda renderuje všechny vložené component view v kolekci.
+     *
+     * Výstupní řetězec z jednotlivých renderování vkládá do kontextu
+     * tohoto (composite) view metodou append(), t.j. bez jména (indexu).
+     *
+     * Pokud komponentní view v kolekci implementuje InheritDataInterface, předá data tohoto (kompozitního) view do komponentu pomocí metody inheritData().
+     *
+     * @return string
+     */
+    protected function renderComponets(): void {
+        if (is_iterable($this->componentViews)) {
+            foreach ($this->componentViews as $componentView) {
+                $this->contextData->append($this->renderComponent($componentView));
+            }
+        }
+    }
+
+    private function renderComponent($componentView) {
+        if ($componentView instanceof InheritDataViewInterface) {
+            /** @var InheritDataViewInterface $componentView */
+            $componentView->inheritData($this->contextData);
+        }
+        return $componentView->getString();
+    }
+}

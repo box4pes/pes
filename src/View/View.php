@@ -16,8 +16,6 @@ use Psr\Container\ContainerInterface;
 use Pes\Type\ContextDataInterface;
 use Pes\Type\ContextData;
 
-use Pes\View\InheritDataViewInterface;
-
 use Pes\View\Renderer\RendererInterface;
 use Pes\View\Renderer\TemplateRendererInterface;
 use Pes\View\Template\TemplateInterface;
@@ -28,12 +26,12 @@ use Pes\View\Template\TemplateInterface;
 use Pes\View\Renderer\ImplodeRenderer as FallbackRenderer;
 use Pes\View\Template\ImplodeTemplate as FallbackTemplate;
 
-use ArrayObject;
-
 use Pes\Type\Exception\InvalidDataTypeException;
 use Pes\View\Exception\{
     BadRendererForTemplateException, InvalidTypeForSetDataException
 };
+
+use ArrayObject;
 
 /**
  * View - objekt je vytvořen se zadaným rendererem a s jeho použitím vytváří textový obsah z aktuálně zadaných dat.
@@ -73,17 +71,21 @@ class View implements ViewInterface {
 
     /**
      *
+     * @var ArrayObject of View
+     */
+    private $componentViews;
+
+    /**
+     *
      * @var ContextData
      */
     protected $contextData;
 
     /**
      *
-     * @var ArrayObject of View
+     * @return ContextDataInterface
      */
-    public $componentViews;
-
-    public function getData() {
+    public function getData(): ContextDataInterface {
         return $this->contextData;
     }
     /**
@@ -167,44 +169,6 @@ class View implements ViewInterface {
         return $this;
     }
 
-    /**
-     * Metoda pro přidání komponentních view. Při renderování kompozitního view budou renderována komponentní view a vygenerovaný výsledek bude vložen
-     * do kompozitního view na místo proměnné zadané zde jako jméno. Pokud kompozitní view je null, proměnná je nahrazena prázdným retězcem.
-     * Jednotlivá komponentní view budou renderována bez předání (nastavení) template a dat, musí mít tedy před renderováním kompozitního view nastavenu šablonu
-     * a data pokud je potřebují pro své renderování.
-     *
-     * @param \Pes\View\ViewInterface $componentView Komponetní view nebo null
-     * @param string $name Jméno proměnné v kompozitním view, která má být nahrazena výstupem zadané komponentní view
-     * @return ViewInterface
-     */
-    public function appendComponentView(ViewInterface $componentView, $name): ViewInterface {
-        if (!isset($this->componentViews)) {
-            $this->componentViews = new ArrayObject();
-        }
-        $this->componentViews->offsetSet($name, $componentView);
-        return $this;
-    }
-
-    /**
-     * Metoda pro přidání komponentních view jako pole nebo \Traversable objekt. Interně volá metodu appendComponentView()
-     * @param iterable $componentViews
-     * @return ViewInterface
-     */
-    public function appendComponentViews(iterable $componentViews): ViewInterface  {
-        foreach ($componentViews as $name => $componentView) {
-            $this->appendComponentView($componentView, $name);
-        }
-        return $this;
-    }
-
-    public function getComponentView($name): ?ViewInterface {
-        return $this->componentViews->offsetExists($name) ? $this->componentViews->offsetGet($name) : null;
-    }
-
-    public function getComponentViewsArray(): array {
-        return $this->componentViews->getArrayCopy();
-    }
-    
     /**
      * Metoda umožňuje použít objekt view přímo jako proměnnou (proměnou v šabloně) pro další view.
      *
@@ -365,25 +329,4 @@ class View implements ViewInterface {
         return $renderer;
     }
 
-    /**
-     * Metoda renderuje všechny vložené component view.
-     *
-     * Výstupní řetězec z jednotlivých renderování vkládá do kontextu
-     * tohoto (composite) view vždy pod jménem proměnné, se kterým byl component view přidán.
-     *
-     * Pokud komponentní view implementuje InheritDataInterface, předá data tohoto (kompozitního) view do komponentu pomocí metody inheritData().
-     *
-     * @return string
-     */
-    private function renderComponets(): void {
-        if (is_iterable($this->componentViews)) {
-            foreach ($this->componentViews as $name => $componentView) {
-                /** @var SplObjectStorage|InheritDataViewInterface $componentView */
-                if ($componentView instanceof InheritDataViewInterface) {
-                    $componentView->inheritData($this->contextData);
-                }
-                $this->contextData[$name] = $componentView->getString();
-            }
-        }
-    }
 }
