@@ -52,6 +52,26 @@ class CompositeView extends View implements CompositeViewInterface {
     }
 
     /**
+     * Zavolá beforeRenderingHook(), nalezne vhodný renderer pomocí metody resolveRenderer(), renderuje kolekci komponentních views, výsledky jejich renderování přidá do kontextu vždy se jménem, se kterým byl komponentní view přidán
+     * a renderuje s použitím kontextu.
+     *
+     * @return string
+     */
+    public function getString() {
+        // aktivity před renderováním - zde může dojít k přidání template, rendereru, dat apod.
+        $this->beforeRenderingHook();
+        // renderování komponentních view - pokud některé views používají stejný renderer (typicky PhpTemplateRenderer), používá se tatáž instance rendereru poskytnutá (singleton)
+        // službou Renderer kontejneru - proto musí být nejdříve renderer použit pro jednotlivé komponenty a potom teprve pro renderování komposit view, resolveRenderer() při použití PhpTemplate
+        // nastaví rendereru jeho template - to mění vnitřní stav rendereru!, renderer není bezstavový
+        $this->renderComponets();
+        // renderování kompozitu
+        $renderer = $this->resolveRenderer();
+        return $renderer->render($this->contextData);  // předává data jako pole
+    }
+
+#### protected ####
+
+    /**
      * Metoda renderuje všechny vložené component view.
      *
      * Výstupní řetězec z jednotlivých renderování vkládá do kontextu

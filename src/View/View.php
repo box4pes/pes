@@ -196,20 +196,13 @@ class View implements ViewInterface {
     }
 
     /**
-     * Nalezne vhodný renderer pomocí metody resolveRenderer(), pokud je renderer typu RendererModelAwareInterface nastaví rendereru viewModel nastavený metodou setViewModel()
-     * a renderuje bez použití dat nastavených metodou setData(), pokud renderer není typu RendererModelAwareInterface, renderuje s použitím dat nastavených metodou setData().
-     *
-     * Pokud je renderer typu RendererModelAwareInterface a view nemá nastaven viewModel metodou setViewModel() vyhofí výjimku.
+     * Zavolá beforeRenderingHook(), nalezne vhodný renderer pomocí metody resolveRenderer() a renderuje s použitím kontextu
      *
      * @return string
      */
     public function getString() {
         // aktivity před renderováním - zde může dojít k přidání template, rendereru, dat apod.
         $this->beforeRenderingHook();
-        // renderování komponentních view - pokud některé views používají stejný renderer (typicky PhpTemplateRenderer), používá se tatáž instance rendereru poskytnutá (singleton)
-        // službou Renderer kontejneru - proto musí být nejdříve renderer použit pro jednotlivé komponenty a potom teprve pro renderování komposit view, resolveRenderer() při použití PhpTemplate
-        // nastaví rendereru jeho template - to mění vnitřní stav rendereru!, renderer není bezstavový
-        $this->renderComponets();
         // renderování kompozitu
         $renderer = $this->resolveRenderer();
         return $renderer->render($this->contextData);  // předává data jako pole

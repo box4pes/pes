@@ -37,6 +37,24 @@ class CollectionView extends View implements CollectionViewInterface {
     }
 
     /**
+     * Zavolá beforeRenderingHook(), nalezne vhodný renderer pomocí metody resolveRenderer(), renderuje kolekci komponentních views, výsledky jejich renderování přidá do kontextu
+     * a renderuje s použitím kontextu.
+     *
+     * @return string
+     */
+    public function getString() {
+        // aktivity před renderováním - zde může dojít k přidání template, rendereru, dat apod.
+        $this->beforeRenderingHook();
+        // renderování komponentních view - pokud některé views používají stejný renderer (typicky PhpTemplateRenderer), používá se tatáž instance rendereru poskytnutá (singleton)
+        // službou Renderer kontejneru - proto musí být nejdříve renderer použit pro jednotlivé komponenty a potom teprve pro renderování komposit view, resolveRenderer() při použití PhpTemplate
+        // nastaví rendereru jeho template - to mění vnitřní stav rendereru!, renderer není bezstavový
+        $this->renderComponets();
+        // renderování kompozitu
+        $renderer = $this->resolveRenderer();
+        return $renderer->render($this->contextData);  // předává data jako pole
+    }
+
+    /**
      * Metoda renderuje všechny vložené component view v kolekci.
      *
      * Výstupní řetězec z jednotlivých renderování vkládá do kontextu
