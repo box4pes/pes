@@ -249,7 +249,7 @@ class View implements ViewInterface {
      * - Pro renderování bez template je samozřejmě nutné nastavit renderer metodou setRenderer() nebo setRendererName() vždy.
      *
      */
-    private function resolveRenderer(): RendererInterface {
+    protected function resolveRenderer(): RendererInterface {
         if (isset($this->template)) {
             if (isset($this->renderer)) {
                 $renderer = $this->renderer;
