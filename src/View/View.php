@@ -73,7 +73,7 @@ class View implements ViewInterface {
      *
      * @var ArrayObject of View
      */
-    private $componentViews;
+    protected $componentViews;
 
     /**
      *
