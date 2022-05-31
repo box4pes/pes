@@ -12,6 +12,11 @@ use ArrayObject;
  */
 class CompositeView extends View implements CompositeViewInterface {
 
+    /**
+     *
+     * @var ArrayObject of View
+     */
+    protected $componentViews;
 
     /**
      * Metoda pro přidání komponentních view. Při renderování kompozitního view budou renderována komponentní view a vygenerovaný výsledek bude vložen

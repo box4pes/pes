@@ -16,12 +16,11 @@ class CollectionView extends View implements CollectionViewInterface {
      *
      * @var ArrayObject of View
      */
-    private $componentViews;
+    protected $componentViews;
 
     /**
      * Přijímá dvojici iterable kolekce view (položky typu ViewInterface) a jméno proměnné.
-     * Kompozitní view při renderování nahradí proměnou daného jména zřetězenými komponentními view z kolekce. Jednotlivá view z kolekce převede na string voláním metodu __toString().
-     * Pokud předaná hodnota komponentního view je null, musí kompozitní view proměnnou nahrazovat prázdným řetězcem.
+     * Kompozitní view při renderování nahradí proměnou daného jména výsledkem renderování kolekce komponentních view. Jednotlivá view z kolekce převede na string voláním metodu __toString().
      *
      *
      * @param iterable $componentViewCollection Kolekce view, položky typu ViewInterface

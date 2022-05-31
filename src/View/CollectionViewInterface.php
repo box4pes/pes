@@ -21,8 +21,7 @@ interface CollectionViewInterface extends ViewInterface {
 
     /**
      * Přijímá iterable kolekci view (položky typu ViewInterface).
-     * Kompozitní view při renderování nahradí proměnou daného jména zřetězenými komponentními view z kolekce. Jednotlivá view z kolekce převede na string voláním metodu __toString().
-     * Pokud předaná hodnota komponentního view je null, musí kompozitní view proměnnou nahrazovat prázdným řetězcem.
+     * Kompozitní view při renderování nahradí proměnou daného jména výsledkem renderování kolekce komponentních view. Jednotlivá view z kolekce převede na string voláním metodu __toString().
      *
      * @param iterable $componentViewCollection
      * @return ViewInterface

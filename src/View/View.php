@@ -69,11 +69,6 @@ class View implements ViewInterface {
      */
     protected $template;
 
-    /**
-     *
-     * @var ArrayObject of View
-     */
-    protected $componentViews;
 
     /**
      *
