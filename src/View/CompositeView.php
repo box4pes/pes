@@ -88,6 +88,9 @@ class CompositeView extends View implements CompositeViewInterface {
      */
     protected function renderComponets(): void {
         if (is_iterable($this->componentViews)) {
+            if (is_null($this->contextData)) {
+                $this->setData([]); // vytvoří contextData
+            }
             foreach ($this->componentViews as $name => $componentView) {
                 $this->contextData[$name] = $this->renderComponent($componentView);
             }

@@ -77,12 +77,6 @@ interface ViewInterface {
     public function setData(iterable $data): ViewInterface;
 
     /**
-     * Nastaví objekt - view model pro renderování. View model bude použit, pokud renderer získaný protected metodou resolveREndere() bude typu RendererModelAwareInterface.
-
-     */
-    public function setViewModel($viewModel): ViewInterface;
-
-    /**
      * Metoda je prázdná a je připravena pro přetížení v objektu potomka. Slouží pro provedení operací, které je třeba provést vždy bezprostředně před zvolením rendereru
      * (provádí View metoodou resolveRenderer()) voláním metody render rendereru.
      *

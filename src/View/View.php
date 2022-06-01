@@ -72,7 +72,7 @@ class View implements ViewInterface {
 
     /**
      *
-     * @var ContextData
+     * @var ContextDataInterface
      */
     protected $contextData;
 
@@ -83,11 +83,14 @@ class View implements ViewInterface {
     public function getData(): ContextDataInterface {
         return $this->contextData;
     }
+
     /**
      * Lze nastavit data pro renderování. Tato data budou použita metodou render().
      *
      * @param iterable $contextData Data typu ContextDataInterface nebo pole nebo ArrayObject
+     *
      * @return ViewInterface
+     * @throws InvalidTypeForSetDataException
      */
     public function setData(iterable $contextData): ViewInterface {
         if ($contextData instanceof ContextDataInterface) {
@@ -101,17 +104,6 @@ class View implements ViewInterface {
 
         }
         return $this;
-    }
-
-    /**
-     * Deprecated.
-     *
-     * @param type $viewModel
-     * @return ViewInterface
-     */
-    public function setViewModel($viewModel): ViewInterface {
-        assert(false, 'Deprecated!');
-        $this->contextData = $viewModel;
     }
 
     public function setRendererContainer(ContainerInterface $rendererContainer): ViewInterface {
@@ -200,7 +192,7 @@ class View implements ViewInterface {
         $this->beforeRenderingHook();
         // renderování kompozitu
         $renderer = $this->resolveRenderer();
-        return $renderer->render($this->contextData);  // předává data jako pole
+        return $renderer->render($this->contextData); 
     }
 
     public function beforeRenderingHook(): void {

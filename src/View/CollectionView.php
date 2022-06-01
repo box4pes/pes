@@ -66,6 +66,9 @@ class CollectionView extends View implements CollectionViewInterface {
      */
     protected function renderComponets(): void {
         if (is_iterable($this->componentViews)) {
+            if (is_null($this->contextData)) {
+                $this->setData([]); // vytvoří contextData
+            }
             foreach ($this->componentViews as $componentView) {
                 $this->contextData->append($this->renderComponent($componentView));
             }
