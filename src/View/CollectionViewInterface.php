@@ -24,8 +24,7 @@ interface CollectionViewInterface extends ViewInterface {
      * Kompozitní view při renderování nahradí proměnou daného jména výsledkem renderování kolekce komponentních view. Jednotlivá view z kolekce převede na string voláním metodu __toString().
      *
      * @param iterable $componentViewCollection
-     * @param type $name
      * @return ViewInterface
      */
-    public function appendComponentViewCollection(iterable $componentViewCollection, $name): ViewInterface ;
+    public function appendComponentViewCollection(iterable $componentViewCollection): ViewInterface ;
 }
