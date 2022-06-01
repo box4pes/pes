@@ -24,14 +24,15 @@ class CollectionView extends View implements CollectionViewInterface {
      *
      *
      * @param iterable $componentViewCollection Kolekce view, položky typu ViewInterface
-     * @param string $name  Jméno proměnné v kompozitním view, která má být nahrazena zřetězenými výstupy zadaný komponentních view z kolekce
      * @return ViewInterface
      */
-    public function appendComponentViewCollection(iterable $componentViewCollection, $name): ViewInterface {
+    public function appendComponentViewCollection(iterable $componentViewCollection): ViewInterface {
         if (!isset($this->componentViews)) {
             $this->componentViews = new ArrayObject();
         }
-        $this->componentViews->append($componentView);
+        foreach ($componentViewCollection as $view) {
+            $this->componentViews->append($view);
+        }
         return $this;
     }
 
