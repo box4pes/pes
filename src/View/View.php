@@ -192,7 +192,7 @@ class View implements ViewInterface {
         $this->beforeRenderingHook();
         // renderování kompozitu
         $renderer = $this->resolveRenderer();
-        return $renderer->render($this->contextData); 
+        return $renderer->render($this->contextData);
     }
 
     public function beforeRenderingHook(): void {
@@ -297,13 +297,13 @@ class View implements ViewInterface {
     }
 
     private function getFallbackRendereWithTemplate(): RendererInterface {
-        $rendererName = $this->rendererName ?? 'undefined';
-        $containerClass = isset($this->rendererContainer) ? get_class($this->rendererContainer) : 'renderer container is not set';
-        $templateClass = isset($this->template) ? get_class($this->template) : 'undefined';
-        user_error("Nepodařilo se získat renderer, je použit fallback renderer a fallback template. "
-                . " Renderer name: {$rendererName},"
-                . " renderer container: $containerClass,"
-                . " template: {$templateClass}", E_USER_NOTICE);
+//        $rendererName = $this->rendererName ?? 'undefined';
+//        $containerClass = isset($this->rendererContainer) ? get_class($this->rendererContainer) : 'renderer container is not set';
+//        $templateClass = isset($this->template) ? get_class($this->template) : 'undefined';
+//        user_error("Nepodařilo se získat renderer, je použit fallback renderer a fallback template. "
+//                . " Renderer name: {$rendererName},"
+//                . " renderer container: $containerClass,"
+//                . " template: {$templateClass}", E_USER_NOTICE);
         $renderer = new FallbackRenderer();
         $renderer->setTemplate(new FallbackTemplate());
         return $renderer;
