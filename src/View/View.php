@@ -41,6 +41,7 @@ use ArrayObject;
  */
 class View implements ViewInterface {
 
+    const FALLBACK_REBDERER_INFO = 'fallbackRendererInfo';
     /**
      * @var RendererInterface
      */
@@ -78,9 +79,9 @@ class View implements ViewInterface {
 
     /**
      *
-     * @return ContextDataInterface
+     * @return ContextDataInterface|null
      */
-    public function getData(): ContextDataInterface {
+    public function getData(): ?ContextDataInterface {
         return $this->contextData;
     }
 
@@ -199,6 +200,20 @@ class View implements ViewInterface {
 
     }
 
+    ##### protected methods ###########################
+
+    /**
+     * Poskytne context data, pokud neexistují, vytvoří nová (prázdna). Metoda tak vrací data vždy, slouží k získání dat předtím, než do nich chce nějaká metoda přidávat.
+     *
+     * @return type
+     */
+    protected function provideData(): ContextDataInterface {
+        if (is_null($this->contextData)) {
+            $this->setData([]); // vytvoří contextData
+        }
+        return $this->contextData;
+    }
+
     ##### private methods ###########################
 
     /**
@@ -304,6 +319,8 @@ class View implements ViewInterface {
 //                . " Renderer name: {$rendererName},"
 //                . " renderer container: $containerClass,"
 //                . " template: {$templateClass}", E_USER_NOTICE);
+        $contextData = $this->provideData();
+        $contextData->offsetSet(self::FALLBACK_REBDERER_INFO, FallbackRenderer::class);
         $renderer = new FallbackRenderer();
         $renderer->setTemplate(new FallbackTemplate());
         return $renderer;

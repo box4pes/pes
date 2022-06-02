@@ -30,7 +30,7 @@ interface ViewInterface {
 
     public function __toString();
 
-    public function getData(): ContextDataInterface;
+    public function getData(): ?ContextDataInterface;
 
     /**
      * Nastaví objekt renderer kontejner.

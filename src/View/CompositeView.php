@@ -19,7 +19,9 @@ class CompositeView extends View implements CompositeViewInterface {
     protected $componentViews;
 
     /**
-     * Metoda pro přidání komponentních view. Při renderování kompozitního view budou renderována komponentní view a vygenerovaný výsledek bude vložen
+     * Metoda pro přidání komponentních view. 
+     *
+     * Při renderování kompozitního view budou renderována komponentní view a vygenerovaný výsledek bude vložen
      * do kompozitního view na místo proměnné zadané zde jako jméno. Pokud kompozitní view je null, proměnná je nahrazena prázdným retězcem.
      * Jednotlivá komponentní view budou renderována bez předání (nastavení) template a dat, musí mít tedy před renderováním kompozitního view nastavenu šablonu
      * a data pokud je potřebují pro své renderování.
@@ -29,10 +31,8 @@ class CompositeView extends View implements CompositeViewInterface {
      * @return ViewInterface
      */
     public function appendComponentView(ViewInterface $componentView, $name): ViewInterface {
-        if (!isset($this->componentViews)) {
-            $this->componentViews = new ArrayObject();
-        }
-        $this->componentViews->offsetSet($name, $componentView);
+        $componentViews = $this->provideComponentViews();
+        $componentViews->offsetSet($name, $componentView);
         return $this;
     }
 
@@ -42,8 +42,9 @@ class CompositeView extends View implements CompositeViewInterface {
      * @return ViewInterface
      */
     public function appendComponentViews(iterable $componentViews): ViewInterface  {
+        $componentViews = $this->provideComponentViews();
         foreach ($componentViews as $name => $componentView) {
-            $this->appendComponentView($componentView, $name);
+            $componentViews->offsetSet($name, $componentView);
         }
         return $this;
     }
@@ -77,6 +78,18 @@ class CompositeView extends View implements CompositeViewInterface {
 #### protected ####
 
     /**
+     * Poskytne componentViews, pokud neexistují, vytvoří nové (prázdné). Metoda tak vrací componentViews vždy, slouží k získání componentViews předtím, než do nich chce nějaká metoda přidávat.
+     *
+     * @return ArrayObject
+     */
+    protected function provideComponentViews(): ArrayObject {
+        if (!isset($this->componentViews)) {
+            $this->componentViews = new ArrayObject();
+        }
+        return $this->componentViews;
+    }
+
+    /**
      * Metoda renderuje všechny vložené component view.
      *
      * Výstupní řetězec z jednotlivých renderování vkládá do kontextu
@@ -88,11 +101,9 @@ class CompositeView extends View implements CompositeViewInterface {
      */
     protected function renderComponets(): void {
         if (is_iterable($this->componentViews)) {
-            if (is_null($this->contextData)) {
-                $this->setData([]); // vytvoří contextData
-            }
+            $data = $this->provideData();
             foreach ($this->componentViews as $name => $componentView) {
-                $this->contextData[$name] = $this->renderComponent($componentView);
+                $data[$name] = $this->renderComponent($componentView);
             }
         }
     }

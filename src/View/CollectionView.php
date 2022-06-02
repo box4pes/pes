@@ -19,7 +19,7 @@ class CollectionView extends View implements CollectionViewInterface {
     protected $componentViews;
 
     /**
-     * Přijímá dvojici iterable kolekce view (položky typu ViewInterface) a jméno proměnné.
+     * Přijímá dvojici iterable kolekci view (položky typu ViewInterface) .
      * Kompozitní view při renderování nahradí proměnou daného jména výsledkem renderování kolekce komponentních view. Jednotlivá view z kolekce převede na string voláním metodu __toString().
      *
      *
@@ -27,11 +27,9 @@ class CollectionView extends View implements CollectionViewInterface {
      * @return ViewInterface
      */
     public function appendComponentViewCollection(iterable $componentViewCollection): ViewInterface {
-        if (!isset($this->componentViews)) {
-            $this->componentViews = new ArrayObject();
-        }
+        $componentViews = $this->provideComponentViews();
         foreach ($componentViewCollection as $view) {
-            $this->componentViews->append($view);
+            $componentViews->append($view);
         }
         return $this;
     }
@@ -54,6 +52,20 @@ class CollectionView extends View implements CollectionViewInterface {
         return $renderer->render($this->contextData);  // předává data jako pole
     }
 
+#### protected ####
+
+    /**
+     * Poskytne componentViews, pokud neexistují, vytvoří nové (prázdné). Metoda tak vrací componentViews vždy, slouží k získání componentViews předtím, než do nich chce nějaká metoda přidávat.
+     *
+     * @return ArrayObject
+     */
+    protected function provideComponentViews(): ArrayObject {
+        if (!isset($this->componentViews)) {
+            $this->componentViews = new ArrayObject();
+        }
+        return $this->componentViews;
+    }
+
     /**
      * Metoda renderuje všechny vložené component view v kolekci.
      *
@@ -66,11 +78,9 @@ class CollectionView extends View implements CollectionViewInterface {
      */
     protected function renderComponets(): void {
         if (is_iterable($this->componentViews)) {
-            if (is_null($this->contextData)) {
-                $this->setData([]); // vytvoří contextData
-            }
+            $data = $this->provideData();
             foreach ($this->componentViews as $componentView) {
-                $this->contextData->append($this->renderComponent($componentView));
+                $data->append($this->renderComponent($componentView));
             }
         }
     }
