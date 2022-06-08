@@ -320,7 +320,6 @@ class View implements ViewInterface {
 //                . " renderer container: $containerClass,"
 //                . " template: {$templateClass}", E_USER_NOTICE);
         $contextData = $this->provideData();
-        $contextData->offsetSet(self::FALLBACK_REBDERER_INFO, FallbackRenderer::class);
         $renderer = new FallbackRenderer();
         $renderer->setTemplate(new FallbackTemplate());
         return $renderer;
