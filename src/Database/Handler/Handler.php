@@ -238,7 +238,40 @@ class Handler extends \PDO implements HandlerInterface {
         return print_r($param, TRUE);
     }
 
-######### PŘETÍŽENÉ METODY PDO ( metody PDO Interface) #######################################################################xx
+######### PŘETÍŽENÉ METODY PDO ( metody PDO Interface) #######################################################################
+
+    public function beginTransaction() {
+        $ret = parent::beginTransaction();
+        if ($this->logger) {
+                $this->logger->debug($this->getInstanceInfo().' beginTransaction()');
+        }
+        return $ret;
+    }
+
+    public function commit() {
+        $ret = parent::commit();
+        if ($this->logger) {
+                $this->logger->debug($this->getInstanceInfo().' commit()');
+        }
+        return $ret;
+    }
+
+    public function exec(string $statement) {
+        $ret = parent::exec($statement);
+        if ($this->logger) {
+                $this->logger->debug($this->getInstanceInfo().' exec({sqlStatement})',
+                    ['sqlStatement'=>$sqlStatement]);        }
+        return $ret;
+    }
+
+    public function rollBack() {
+        $ret = parent::rollBack();
+        if ($this->logger) {
+                $this->logger->debug($this->getInstanceInfo().' rollBack()');
+        }
+        return $ret;
+    }
+
 
     /**
      * {@inheritDoc}
