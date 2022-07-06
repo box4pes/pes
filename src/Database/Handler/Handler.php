@@ -259,8 +259,8 @@ class Handler extends \PDO implements HandlerInterface {
         return $ret;
     }
 
-    public function exec(string $statement) {
-        $ret = parent::exec($statement);
+    public function exec($query) {
+        $ret = parent::exec($query);
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' exec({sqlStatement})',
                     ['sqlStatement'=>$sqlStatement]);        }
