@@ -45,7 +45,7 @@ class Handler extends \PDO implements HandlerInterface {
      */
     protected static $handlerCounter=0;
 
-    private $statementNumber;
+    private $handlerNumber;
 
     /**
      *
@@ -81,7 +81,7 @@ class Handler extends \PDO implements HandlerInterface {
                                 AttributesProviderInterface $attributesProvider,
                                 LoggerInterface $constructorExceptionsLogger
             ) {
-        $this->statementNumber = ++self::$statementCounter;
+        $this->handlerNumber = ++self::$handlerCounter;
         self::$safeExceptionHandlerLogger = $constructorExceptionsLogger;  // pokud dojde k výjimce v konstruktoru, není objekt, není $this
         $this->dbName = $connectionInfo->getDbName();
         $this->dbHost = $connectionInfo->getDbHost();
@@ -223,7 +223,7 @@ class Handler extends \PDO implements HandlerInterface {
      * @return integer
      */
     public function getInstanceInfo() {
-        return "Handler $this->dbName ($this->statementNumber)";
+        return "Handler $this->dbName ($this->handlerNumber)";
     }
 
     public function getSchemaName(): string {
