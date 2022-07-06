@@ -19,14 +19,14 @@ class Statement extends \PDOStatement implements StatementInterface {
      * @var int
      */
     private static $statementCounter=0;
-
+    private $statementNumber;
     /**
      * @var LoggerInterface
      */
     protected $logger;
 
     protected function __construct() {
-        self::$statementCounter++;
+        $this->statementNumber = ++self::$statementCounter;
         // konstruktor musí být deklarován i když je prázdný
         // bez toho nefunguje PDO::setAttribute(PDO::ATTR_STATEMENT_CLASS, ...
     }
@@ -36,7 +36,7 @@ class Statement extends \PDOStatement implements StatementInterface {
     }
 
     public function getInstanceInfo() {
-        return "Statement (".self::$statementCounter.")";
+        return "Statement ($this->statementNumber)";
     }
 
     /**
