@@ -13,5 +13,5 @@ namespace Pes\Text;
  * @author pes2704
  */
 interface FriendlyUrlInterface {
-    public static function friendlyUrlText($sourceText);
+    public static function friendlyUrlText($sourceText, $maxLength=null);
 }

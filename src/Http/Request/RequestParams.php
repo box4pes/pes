@@ -27,7 +27,7 @@ class RequestParams implements RequestParamsInterface {
      ******************************************************************************/
 
     /**
-     * Vrací parametr získaný z parsovaného request body. Obyvklé se jedná o proměnné odeslané html formulářem metodou POST.
+     * Vrací parametr získaný z z parsovaného request body nebo query (v tomto pořadí).
      *
      * @param ServerRequestInterface $request Objekt request
      * @param  string $key Klíč (index, jméno) parametru.
@@ -94,7 +94,8 @@ class RequestParams implements RequestParamsInterface {
     }
 
     /**
-     * Vrací asociativní pole parametrů requestu získaných z body nebo query (v tomto pořadí).
+     * Vrací asociativní pole všech parametrů requestu získaných z parsovaného body nebo query (v tomto pořadí).
+     * Při shodných indexech vítězí parametr z body (t.j. POST)
      *
      * @param RequestInterface $request
      *
