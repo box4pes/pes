@@ -59,6 +59,26 @@ interface ContainerSettingsAwareInterface extends ContainerInterface {
     public function set(string $serviceName, $service) : ContainerSettingsAwareInterface;
 
     /**
+     * Nastaví službu obdobně jako metoda set, rozdíl je pouze v možnostech opakované definice, "přetížení" služby.
+     * Nastaví definici služby s daným jménem. Služba je volaná metodou get() kontejneru a vrací hodnotu.
+     * Služba definovaná metodou set() generuje hodnotu pouze jednou, při prvním volání metody kontejneru get(), další volání metody get() vrací
+     * tutéž hodnotu. Pokud služba generuje objekt, každé volání get() vrací stejnou instanci objektu.
+     * Služba musí být Closure nebo přímo zadaná hodnota. Generování hodnoty zadanou službou probíhá až v okamžiku volání metody get().
+     * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jde tedy o lazy load generování hodnoty.
+     *
+     * <b>Předefinování služby ("Přetížení služby"):</b>
+     * Metoda umožňuje nastavit stejně pojmenovanou službu jako je již definovaná služna v delegátovi, nová služba tak může
+     * vracet jiný objekt než služba definovaná v delegátovi. Tímto způsobem lze simulovat "přetížení" služby
+     * definované v delegátovi službou definovanou v podřízeném kontejneru. Metoda kontejneru get() hledá vždy nejdříve v kontejneru, ve kterém je definovány a pokud nenalezne
+     * volanou služby, pak postupně v jednotlivých delegátech (deleguje hledání služby).
+     *
+     * @param string $serviceName
+     * @param type $service
+     * @return ContainerSettingsAwareInterface
+     */
+    public function setOverride(string $serviceName, $service) : ContainerSettingsAwareInterface;
+
+    /**
      * Nastaví factory. Factory při každém volání vytváří objekt znovu.
      * @param string $factoryName
      * @param mixed $service Closure nebo hodnota

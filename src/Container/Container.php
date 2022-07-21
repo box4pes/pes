@@ -102,7 +102,7 @@ class Container implements ContainerSettingsAwareInterface {
      * Služba definovaná metodou set() generuje hodnotu pouze jednou, při prvním volání metody kontejneru get(), další volání metody get() vrací
      * tutéž hodnotu. Pokud služba generuje objekt, každé volání get() vrací stejnou instanci objektu.
      * Služba musí být Closure nebo přímo zadaná hodnota. Generování hodnoty zadanou službou probíhá až v okamžiku volání metody get().
-     * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jed tedy o lazy load generování hodnoty.
+     * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jde tedy o lazy load generování hodnoty.
      *
      * <b>Předefinování služby ("Přetížení služby"):</b>
      * Při opakovaném volání metody set() se stejným jménem služby dojde k vyhození výjimky.
@@ -139,7 +139,7 @@ class Container implements ContainerSettingsAwareInterface {
      * Služba definovaná metodou set() generuje hodnotu pouze jednou, při prvním volání metody kontejneru get(), další volání metody get() vrací
      * tutéž hodnotu. Pokud služba generuje objekt, každé volání get() vrací stejnou instanci objektu.
      * Služba musí být Closure nebo přímo zadaná hodnota. Generování hodnoty zadanou službou probíhá až v okamžiku volání metody get().
-     * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jed tedy o lazy load generování hodnoty.
+     * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jde tedy o lazy load generování hodnoty.
      *
      * <b>Předefinování služby ("Přetížení služby"):</b>
      * Metoda umožňuje nastavit stejně pojmenovanou službu jako je již definovaná služna v delegátovi, nová služba tak může

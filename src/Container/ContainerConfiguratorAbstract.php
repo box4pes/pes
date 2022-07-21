@@ -69,7 +69,7 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
         }
         foreach ($overrides as $name=>$definition) {
             try {
-                $container->set($name, $definition);
+                $container->setOverride($name, $definition);
             } catch(UnableToSetServiceException $uExc) {
                 throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno $name již bylo použito pro konfiguraci service v tomto kontejneru.", 0, $uExc);
             }
