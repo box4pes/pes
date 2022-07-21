@@ -104,7 +104,8 @@ class Container implements ContainerSettingsAwareInterface {
      * Služba musí být Closure nebo přímo zadaná hodnota. Generování hodnoty zadanou službou probíhá až v okamžiku volání metody get().
      * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jed tedy o lazy load generování hodnoty.
      *
-     * <b>Předefinování služby:</b> Při opakovaném volání metody set() se stejným jménem služby dojde k vyhození výjimky.
+     * <b>Předefinování služby ("Přetížení služby"):</b>
+     * Při opakovaném volání metody set() se stejným jménem služby dojde k vyhození výjimky.
      * Stejnou službu nelze ani dodatečně dodefinovat do delegáta, ovšem to proto, že kontejner, který je použit jako delegát,
      * je v takovém okamžiku uzamčen. Duplicitní volání služby se stejným jménem v různých delegujících a delegátech má za následek, že z různých kontejnerů jsou volány různé služby a vznikají
      * tak různé objekty, respektive objekty stejného typu, ale ve více instancích, přestože jsou definovány metodou set(). To je potenciálně nebezpečná situace a proto
@@ -127,6 +128,48 @@ class Container implements ContainerSettingsAwareInterface {
         if ($this->has($serviceName)) {
             $cName = $this->containerInfo ?? "";
             throw new Exception\UnableToSetServiceException("Nelze nastavit službu $serviceName kontejneru $cName. Služba $serviceName již byla nastavena v tomto kontejneru nebo v delegátovi.");
+        }
+        $this->setGenerator($serviceName, $service);
+        return $this;
+    }
+
+    /**
+     * Nastaví službu obdobně jako metoda set, rozdíl je pouze v možnostech opakované definice, "přetížení" služby.
+     * Nastaví definici služby s daným jménem. Služba je volaná metodou get() kontejneru a vrací hodnotu.
+     * Služba definovaná metodou set() generuje hodnotu pouze jednou, při prvním volání metody kontejneru get(), další volání metody get() vrací
+     * tutéž hodnotu. Pokud služba generuje objekt, každé volání get() vrací stejnou instanci objektu.
+     * Služba musí být Closure nebo přímo zadaná hodnota. Generování hodnoty zadanou službou probíhá až v okamžiku volání metody get().
+     * Pokud je služba typu \Closure, provede se se až v okamžiku volání metody get() kontejneru, jed tedy o lazy load generování hodnoty.
+     *
+     * <b>Předefinování služby ("Přetížení služby"):</b>
+     * Metoda umožňuje nastavit stejně pojmenovanou službu jako je již definovaná služna v delegátovi, nová služba tak může
+     * vracet jiný objekt než služba definovaná v delegátovi. Tímto způsobem lze simulovat "přetížení" služby
+     * definované v delegátovi službou definovanou v podřízeném kontejneru. Metoda kontejneru get() hledá vždy nejdříve v kontejneru, ve kterém je definovány a pokud nenalezne
+     * volanou služby, pak postupně v jednotlivých delegátech (deleguje hledání služby).
+     *
+     * <b>Použití: </b>
+     * Příkladem jsou sklužby pro připojení k databázi. V delegátovi mohou být definovány služby (handler, connectionInfo apod.) pro připojení k jedné databázi, v delegujícím kontejneru
+     * služby se stejným názvemk pro připojení k druhé databázi - další služby definované v delegátovi pak používají přístup k první databázi, služby defonované v delegujícím
+     * používají přístup k druhé databázi.
+     * Obdobně je možné používat pouze např. jen jiný logger, jen jiného uživatele pro přístup k databázi atd.
+     *
+     * Poznámka: nelze nastavovat stejně pojmenovanou službu v témže kontejneru, lze "přetěžovat" pouze služby v delegátech.
+     * Poznámka: Neexistuje metoda pro "přetěžování" factory, taková množnost by vedla k příliš nepřehlednému generování různých objektů stejného typu.
+     *
+     * @param string $serviceName
+     * @param type $service
+     * @return ContainerSettingsAwareInterface
+     * @throws Exception\LockedContainerException
+     * @throws Exception\UnableToSetServiceException
+     */
+    public function setOverride(string $serviceName, $service): ContainerSettingsAwareInterface {
+        if ($this->locked) {
+            $cName = $this->containerInfo ?? "";
+            throw new Exception\LockedContainerException("Nelze nastavovat parametr uzamčenému kontejneru $cName. Kontener je uzamčen automaticky, když byl použit jako delegát.");
+        }
+        if ($this->hasSelf($serviceName)) {
+            $cName = $this->containerInfo ?? "";
+            throw new Exception\UnableToSetServiceException("Nelze nastavit službu pro parametr $serviceName kontejneru $cName. Služba $serviceName již byla v tomto kontejneru nastavena.");
         }
         $this->setGenerator($serviceName, $service);
         return $this;
@@ -163,23 +206,6 @@ class Container implements ContainerSettingsAwareInterface {
         }
         $this->setGenerator($parameterName, $value);
         return $this;
-    }
-
-    private function setGenerator(string $serviceName, $service) {
-        if ($service instanceof \Closure) {
-            $this->generators[$serviceName] = function() use ($serviceName, $service) {
-                        // ještě není instance?
-                        if (!isset($this->instances[$serviceName])) {
-                            // vytvoř instanci
-                            $this->instances[$serviceName] = $service($this);
-                        }
-                        return $this->instances[$serviceName];
-                    };
-        } else {
-            $this->generators[$serviceName] = function() use ($service) {
-                        return $service;  // service je hodnota - nevytvářím instanci - mám hodnotu zde v definici anonymní funkce
-                    };
-        }
     }
 
     /**
@@ -230,15 +256,7 @@ class Container implements ContainerSettingsAwareInterface {
             $cName = $this->containerInfo ?? "";
             throw new Exception\UnableToSetServiceException("Nelze nastavit factory službu $factoryName kontejneru $cName. Služba $factoryName již byla nastavena v tomto kontejneru nebo v delegátovi.");
         }
-        if ($service instanceof \Closure) {
-            $this->generators[$factoryName] = function() use ($factoryName, $service) {
-                        return $service($this);
-                    };
-        } else {
-            $this->generators[$factoryName] = function() use ($service) {
-                        return $service;  // service je hodnota
-                    };
-        }
+        $this->setFactory($factoryName, $service);
         return $this;
     }
 
@@ -265,6 +283,37 @@ class Container implements ContainerSettingsAwareInterface {
         }
         $this->aliases[$alias] = $name;
         return $this;
+    }
+
+    private function setGenerator(string $serviceName, $service) {
+        if ($service instanceof \Closure) {
+            $this->generators[$serviceName] = function() use ($serviceName, $service) {
+                        // ještě není instance?
+                        if (!isset($this->instances[$serviceName])) {
+                            // vytvoř instanci
+                            $this->instances[$serviceName] = $service($this);
+                        }
+                        return $this->instances[$serviceName];
+                    };
+        } else {
+            $this->setParam($serviceName, $service);
+        }
+    }
+
+    private function setFactory(string $factoryName, $service) {
+        if ($service instanceof \Closure) {
+            $this->generators[$factoryName] = function() use ($factoryName, $service) {
+                        return $service($this);
+                    };
+        } else {
+            $this->setParam($serviceName, $service);
+        }
+    }
+
+    private function setParam(string $serviceName, $value) {
+            $this->generators[$serviceName] = function() use ($value) {
+                        return $value;  // service je hodnota - nevytvářím instanci - mám hodnotu zde v definici anonymní funkce
+                    };
     }
 
 ###############################################

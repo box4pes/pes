@@ -34,6 +34,7 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
         $params = $this->getParams();
         $aliases = $this->getAliases();
         $services = $this->getServicesDefinitions();
+        $overrides = $this->getServicesOverrideDefinitions();
         $factories = $this->getFactoriesDefinitions();
 
         $container->addContainerInfo('Configured by '.get_called_class());
@@ -66,6 +67,34 @@ abstract class ContainerConfiguratorAbstract implements ContainerConfiguratorInt
                 throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno $name již bylo použito pro konfiguraci factory.", 0, $uExc);
             }
         }
+        foreach ($overrides as $name=>$definition) {
+            try {
+                $container->set($name, $definition);
+            } catch(UnableToSetServiceException $uExc) {
+                throw new Exception\ConfiguratorDuplicateServiceDefinionException("Jméno $name již bylo použito pro konfiguraci service v tomto kontejneru.", 0, $uExc);
+            }
+        }
+
         return $container;
+    }
+
+    public function getAliases(): iterable {
+        return [];
+    }
+
+    public function getParams(): iterable {
+        return [];
+    }
+
+    public function getServicesDefinitions(): iterable {
+        return [];
+    }
+
+    public function getFactoriesDefinitions(): iterable {
+        return [];
+    }
+
+    public function getServicesOverrideDefinitions(): iterable {
+        return [];
     }
 }

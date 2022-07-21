@@ -41,6 +41,11 @@ interface ContainerConfiguratorInterface {
     public function getServicesDefinitions(): iterable;
 
     /**
+     * Vrací pole definic služeb kontejneru, které umožňují předefinování služby. Služby kontejneru vracejí při opakovaném volání vždy stejnou instanci proměnné.
+     */
+    public function getServicesOverrideDefinitions(): iterable;
+
+    /**
      * Vrací pole definic továren kontejneru. Továrna kontejneru je zvláštní služba, továrny vracejí při opakovaném volání vždy novou instanci proměnné.
      */
     public function getFactoriesDefinitions(): iterable;
