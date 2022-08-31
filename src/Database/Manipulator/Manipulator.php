@@ -135,7 +135,7 @@ class Manipulator {
         try {
             $dbhTransact->beginTransaction();
             foreach ($queries as $query) {
-                if ($query) {
+                if (trim($query)) {
                     $this->logger->info($query);
                     $dbhTransact->exec($query);
                 }
@@ -172,9 +172,6 @@ class Manipulator {
             $dbhTransact->beginTransaction();
             foreach ($queries as $query) {
                 if (trim($query)) {
-                    if (isset($stat)) {
-                        throw new \LogicException("Touto metodou lze vykonat pouze jeden SQL příkaz. Nalezen druhý příkaz oddělený středníkem v zadaném stringu.");
-                    }
                     $this->logger->info($query);
                     $stat = $dbhTransact->query($query);
                 }
