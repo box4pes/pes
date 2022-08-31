@@ -112,13 +112,12 @@ class Manipulator {
 
     /**
      * Vykoná obsah zadaného souboru jako posloupnost SQL příkazů.
-     * Předpokládá, že příkazy v souboru jsou odděleny středníkem ";".
-     * Používá databázový handler generovaný database factory, která byla nastavena při instancování objektu.
+     * Předpokládá, že SQL příkazy v souboru jsou odděleny středníkem ";".
      * Příkazy vykonává v rámci jedné transakce, kterou spouští.
-     * Neporadí si, pokud ji zavoláte uprostřed již spuštěné transkace. V takovém případě by vykonání neznámé posloupnosti SQL příkazů mohlo vést
+     * Neporadí si, pokud ji zavoláte uprostřed již spuštěné transakce. V takovém případě by vykonání neznámé posloupnosti SQL příkazů mohlo vést
      * k nepředvídaným výsledkům. V tomto případě metoda vyhodí výjimku.
      *
-     * @param string $sql Řetězec s posloupností SQL příkazů oddělený středníky.
+     * @param string $sql Řetězec s posloupností SQL příkazů oddělených středníky.
      * @return bool TRUE, pokud transakce skončila úspěšně, jinak FALSE.
      * @throws \LogicException Při volání uprostřed již spuštěné transakce.
      * @throws \RuntimeException Pokud nelze přečíst zadaný soubor.
@@ -126,9 +125,9 @@ class Manipulator {
      */
     public function exec($sql) {
         if (!$sql) {
-            throw new \LogicException('Zadaný SQL řetězec je prázdný.');
+            throw new \LogicException('Zadaný soubor je prázdný.');
         }
-        $queries = \explode(';', \trim($sql));
+        $queries = $this->mysql_explode(\trim($sql));
         $dbhTransact = $this->handler;
         if ($dbhTransact->inTransaction()) {
             throw new \LogicException('Nelze volat tuto metodu uprostřed spuštěné databázové transakce.');
@@ -151,14 +150,20 @@ class Manipulator {
         return $succ ? TRUE : FALSE;
     }
 
+    /**
+     * Metoda očekává string obsahující jeden sql příkaz nebo řadu SQl příkazů oddělených středníkem.
+     * Metoda rozloží sql string na jednotlivé SQL příkazy a provede ve v jedné transakci. Pokud transakce selže, procede rollback.
+     *
+     * @param type $sql
+     * @return StatementInterface
+     * @throws \LogicException
+     * @throws \RuntimeException
+     */
     public function query($sql): StatementInterface {
         if (!$sql) {
             throw new \LogicException('Zadaný SQL řetězec je prázdný.');
         }
-        $queries = \explode(';', \trim($sql));
-        if ($queries === false) {
-            throw new \LogicException("Příkazy SQL musí být oddělené středníkem. Nenalezen žádný příkaz oddělený středníkem v zadaném stringu.");
-        }
+        $queries = $this->mysql_explode(\trim($sql));
         $dbhTransact = $this->handler;
         if ($dbhTransact->inTransaction()) {
             throw new \LogicException('Nelze volat tuto metodu uprostřed spuštěné databázové transakce.');
@@ -181,7 +186,7 @@ class Manipulator {
             $dbhTransact->rollBack();
             throw new \RuntimeException($e);
         }
-        return $stat;
+        return $succ ? TRUE : FALSE;
     }
 
     public function findAllRows($tablename) {
@@ -210,5 +215,49 @@ class Manipulator {
         }
         $stmt->execute();
         return $stmt->fetchALL(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * MySQL umožňuje escapovat apostrof i takto: \'
+     * Metoda toto escapování převede na standardní SQL escapování '' a pak volá sql_explode
+     * @param type $sql
+     * @return type
+     */
+    private function mysql_explode($sql) {
+        $sql = str_replace("\'", "''", $sql);
+        return $this->sql_explode($sql);
+    }
+
+    /**
+     *
+     * @param type $sql
+     * @return type
+     */
+    private function sql_explode($sql) {
+        $separator = ";";
+        $leftBracket = "'";
+        $rightBracket = "'";
+
+        $ret = array();
+        $left_parenthesis = 0;
+        $right_parenthesis = 0;
+        $opened_paretnhesis = false;
+        $pos = 0;
+        for($i=0;$i<strlen($sql);$i++)
+        {
+            $c = $sql[$i];
+            $opened_paretnhesis = $left_parenthesis>$right_parenthesis;
+            if($c == $separator && !$opened_paretnhesis) {
+                $ret[] = substr($sql, $pos, $i-$pos);
+                $pos = $i+1;
+            } elseif($opened_paretnhesis && $c == $rightBracket) {
+                $right_parenthesis++;
+            } elseif($c == $leftBracket) {
+                $left_parenthesis++;
+            }
+        }
+        if($pos > 0) $ret[] = substr($sql, $pos);
+
+        return $ret;
     }
 }
