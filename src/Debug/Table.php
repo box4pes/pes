@@ -43,7 +43,7 @@ class Table {
                 $th .= '</th>';
     //        }
             $td .= '<td>';
-            if ($value instanceof \Traversable) {
+            if (is_iterable($value)) {
                 $td .= self::Table($value);
             } else {
                 $td .= self::Value($value);
