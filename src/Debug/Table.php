@@ -27,8 +27,8 @@ class Table {
         self::$level = $level;
     }
 
-    public static function Table($traversable) {
-        if ($traversable instanceof \Traversable) {
+    public static function Table($iterable) {
+        if (is_iterable($iterable)) {
         // start table
         $html = '<table class="debugTable">';
 
@@ -36,7 +36,7 @@ class Table {
         $firstRow = TRUE;
         $th = '';
         $td = '';
-        foreach( $traversable as $key=>$value){
+        foreach( $iterable as $key=>$value){
     //        if ($firstRow) {
                 $th .= '<th>';
                     $th .= htmlspecialchars($key);
@@ -71,7 +71,7 @@ class Table {
 
         $html .= '</table>';
         } else {
-            $html = self::Value($traversable);
+            $html = self::Value($iterable);
         }
         return $html;
     }
