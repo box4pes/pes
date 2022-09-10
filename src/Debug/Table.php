@@ -71,7 +71,7 @@ class Table {
 
         $html .= '</table>';
         } else {
-            $html = self::Value($value);
+            $html = self::Value($traversable);
         }
         return $html;
     }
