@@ -63,10 +63,11 @@ class Html implements HtmlInterface {
      */
     public static function tag($name, array $attributes=[], $innerHtml='') {
         if ($name) {
+            $attr = self::attributes($attributes);
             if (is_array($innerHtml)) {
-                $html = "<$name ".self::attributes($attributes).">".self::EOL.implode(self::EOL, $innerHtml).self::EOL."</$name>";
+                $html = "<$name".($attr ? " $attr" : '').">".self::EOL.implode(self::EOL, $innerHtml).self::EOL."</$name>";
             } else {
-                $html = "<$name ".self::attributes($attributes).">".self::EOL.$innerHtml.self::EOL."</$name>";
+                $html = "<$name".($attr ? " $attr" : '').">".$innerHtml."</$name>";
             }
         }
         return $html ?? '';
@@ -81,7 +82,8 @@ class Html implements HtmlInterface {
      */
     public static function tagNopair($name, array $attributes=[]) {
         if ($name) {
-            $html = "<$name ".self::attributes($attributes)." />";
+            $attr = self::attributes($attributes);
+            $html = "<$name".($attr ? " $attr" : '')." />";
         }
         return $html ?? '';
     }
