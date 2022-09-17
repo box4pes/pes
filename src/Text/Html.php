@@ -127,4 +127,39 @@ class Html implements HtmlInterface {
         $text = preg_replace('|<p>\s*</p>|', '', $text);
         return $text;
     }
+
+    /**
+     * Generuje html kód tagu select včetně tagů option.
+     *
+     * Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
+     *
+     * Pole attributes by mělo obsahovat položku s klíčem "id", může obsahovat položku s klíčem "name".
+     * - pokud ople atributů neobsahuje položku "id" je vygenerováno id jako náhodný řetězec (uniquid)
+     * - pokud pole atributů neobsahuje "name", je jako name použita hodnota id (položka atributů id nebo vygenerované id)
+     *
+     * Pokud je zadána hodnota selecteValue, je option se stejnou hodnotou doplněn atributem selected.
+     *
+     * @param type $label
+     * @param type $attributes
+     * @param type $optionValues
+     * @param type $selectedValue
+     * @return type
+     */
+    public static function select($label='', $attributes=[], $optionValues=[], $selectedValue=null) {
+        if (!array_key_exists("id", $attributes)) {
+            $attributes["id"] = uniqid();
+        }
+        if (!array_key_exists("name", $attributes)) {
+            $attributes["name"] = $attributes["id"];
+        }
+        if ($label) {
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+        }
+        $optionsHtml = [];
+        foreach ($optionValues as $value) {
+            $optionsHtml[] = Html::tag("option", (isset($selectedValue) AND $value==$selectedValue) ? ['selected'=>true] : [], $value);
+        }
+        $html[] = Html::tag("select", $attributes, $optionsHtml);
+        return implode(PHP_EOL, $html);
+    }
 }

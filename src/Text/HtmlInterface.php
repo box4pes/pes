@@ -50,7 +50,7 @@ interface HtmlInterface {
      * @return string
      */
     public static function tagNopair($name, array $attributes=[]);
-    
+
     /**
      * Převede text s dvakrát odřádkovanými odstavci na html paragrafy (<p></p>)
      * Vstupní text obalí na začátku a na konci otevíracím tagem <p> a koncovým tagem </p>,
@@ -63,4 +63,23 @@ interface HtmlInterface {
      * @return string
      */
     public static function p($text);
+
+    /**
+     * Generuje html kód tagu select včetně tagů option.
+     *
+     * Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
+     *
+     * Pole attributes by mělo obsahovat položku s klíčem "id", může obsahovat položku s klíčem "name".
+     * - pokud ople atributů neobsahuje položku "id" je vygenerováno id jako náhodný řetězec (uniquid)
+     * - pokud pole atributů neobsahuje "name", je jako name použita hodnota id (položka atributů id nebo vygenerované id)
+     *
+     * Pokud je zadána hodnota selecteValue, je option se stejnou hodnotou doplněn atributem selected.
+     *
+     *
+     * @param type $label
+     * @param type $attributes
+     * @param type $optionValues
+     * @param type $selectedValue
+     */
+    public static function select($label='', $attributes=[], $optionValues=[], $selectedValue=null);
 }
