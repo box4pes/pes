@@ -88,7 +88,7 @@ class Html implements HtmlInterface {
         if (count($innerHtml)>1) {
             $impl = self::EOL.implode(self::EOL, $innerHtml).self::EOL;
         } else {
-            $impl = $innerHtml;
+            $impl = $innerHtml[0];
         }
         return $impl;
     }
