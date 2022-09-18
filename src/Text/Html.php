@@ -216,9 +216,9 @@ class Html implements HtmlInterface {
         $attributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
 
         if ($label) {
-            $html[] = Html::tagNopair("label", ["for"=>$attributes["id"]], $label);
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
-        $html[] = Html::tag("input", $attributes);
+        $html[] = Html::tagNopair("input", $attributes);
         return implode(PHP_EOL, $html);
     }
 }
