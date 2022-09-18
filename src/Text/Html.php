@@ -81,6 +81,8 @@ class Html implements HtmlInterface {
         foreach ($innerTag as $value) {
             if (is_array($value)) {
                 $innerHtml[] = Html::implodeInnerTags($value);
+            } else {
+                $innerHtml[] = $value;
             }
         }
         if (count($innerHtml)>1) {
