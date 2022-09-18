@@ -27,7 +27,7 @@ class Html implements HtmlInterface {
      *
      * Podle typu hodnoty atributu:
      * <ul>
-     * <li>Pro atributy s hodnotou typu boolean generuje jen jméno parametru (standard html nikoli xml)</li>
+     * <li>Pro atributy s hodnotou typu boolean s hodnotou true generuje jen jméno parametru (standard html nikoli xml), s hodnotou false negeneruje nic.</li>
      * <li>Pro atributy s hodnotou typu array generuje dvojici jméno="řetězec hodnot oddělených mezerou", řetězec hodnot vytvoří zřetězením hodnot v poli oddělených mezerou a obalí uvozovkami</li>
      * <li>Ostatní atributy jako dvojici jméno="hodnota" s tím, že hodnotu prvku převede na string a obalí uvozovkami.</li>
      * </ul>
@@ -44,7 +44,9 @@ class Html implements HtmlInterface {
     public static function attributes(iterable $attributes=[]) {
         foreach ($attributes as $type => $value) {
             if (is_bool($value)) {
-                $attr[] = $type;
+                if ($value) {
+                    $attr[] = $type;  // jen pro true
+                }
             } elseif (is_array($value)) {
                 $attr[] = $type.'="'.implode(' ', $value).'"';
             } else {

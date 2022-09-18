@@ -22,7 +22,7 @@ interface HtmlInterface {
      *
      * Podle typu hodnoty atributu:
      * <ul>
-     * <li>Pro atributy s hodnotou typu boolean generuje jen jméno parametru (standard html nikoli xml)</li>
+     * <li>Pro atributy s hodnotou typu boolean s hodnotou true generuje jen jméno parametru (standard html nikoli xml), s hodnotou false negeneruje nic.</li>
      * <li>Pro atributy s hodnotou typu array generuje dvojici jméno="řetězec hodnot oddělených mezerou", řetězec hodnot vytvoří zřetězením hodnot v poli oddělených mezerou a obalí uvozovkami</li>
      * <li>Ostatní atributy jako dvojici jméno="hodnota" s tím, že hodnotu prvku převede na string a obalí uvozovkami.</li>
      * </ul>
