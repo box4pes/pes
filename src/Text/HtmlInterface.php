@@ -18,38 +18,44 @@ namespace Pes\Text;
 interface HtmlInterface {
 
     /**
-     * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako asociativní pole.
-     * - Atributy s logickou hodnotou: generuje pro hodnotu TRUE jen jméno parametru, pro hodnotu FALSE nic
-     * - ostatní atributy: generuje dvojici jméno="hodnota" s tím, že hodnotu prvku obalí uvozovkami. Výsledný
-     * řetězec začíná mezerou a atributy v řetězci jsou odděleny mezerami.
+     * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako iterable proměnnou s dvojicemi key=>value.
+     *
+     * Podle typu hodnoty atributu:
+     * <ul>
+     * <li>Pro atributy s hodnotou typu boolean generuje jen jméno parametru (standard html nikoli xml)</li>
+     * <li>Pro atributy s hodnotou typu array generuje dvojici jméno="řetězec hodnot oddělených mezerou", řetězec hodnot vytvoří zřetězením hodnot v poli oddělených mezerou a obalí uvozovkami</li>
+     * <li>Ostatní atributy jako dvojici jméno="hodnota" s tím, že hodnotu prvku převede na string a obalí uvozovkami.</li>
+     * </ul>
+     * Pokud je hodnota atributu řetězec, který obsahuje uvozovky, výsledné html bude chybné. Hodnota atributu je vždy obalena uvozovkami.
+     * Výsledný navrácený řetězec začíná mezerou a atributy v řetězci jsou odděleny mezerami.
      *
      * Příklad:
-     * ['class'=>'ui item alert', 'readonly'=>TRUE, ] převede na: class="ui item alert" readonly
-     * ['class'=>'ui item ok', 'readonly'=>FALSE, ] převede na: class="ui item ok"
+     * ['id'=>'alert', 'class'=>['ui', 'item', 'alert'], 'readonly'=>TRUE, data-info=>'a neni b'] převede na: id="alert" class="ui item alert" readonly data-info="a neni b".
+     * Víceslovné řetězce (typicky class) lze tedy zadávat jako pole nebo víceslovný řetězec.
      *
-     * @param array $attributesArray Asocitivní pole
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
      * @return string
      */
-    public static function attributes($array);
+    public static function attributes(iterable $attributes);
 
     /**
      * Generuje html kód párového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
-     * @param array $attributes Asociativní pole. Viz metoda attributes().
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
      * @param string $innerHtml Text, bude bez úprav vložen jako textový obsah tagu
      * @return string
      */
-    public static function tag($name, array $attributes=[], $innerHtml='');
+    public static function tag($name, iterable $attributes=[], $innerHtml='');
 
     /**
      * Generuje html kód nepárového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
-     * @param array $attributes Asociativní pole. Viz metoda attributes().
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
      * @return string
      */
-    public static function tagNopair($name, array $attributes=[]);
+    public static function tagNopair($name, iterable $attributes=[]);
 
     /**
      * Převede text s dvakrát odřádkovanými odstavci na html paragrafy (<p></p>)
@@ -59,27 +65,27 @@ interface HtmlInterface {
      * Chcete-li skutečně vytvořit odstavec, použijte dvojí odřádkování.
      *
      * Metoda nijak nemění jakékoli html značky (tagy) ani žádné viditelné znaky v textu, naopak mění odřádkování (CR, LF alias \r, \n) a whitespaces (mezery, tabelátory ad.).
+     *
      * @param type $text
      * @return string
      */
     public static function p($text);
 
     /**
-     * Generuje html kód tagu select včetně tagů option.
+     * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
      *
-     * Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
+     * Parametr attributes by měl obsahovat položku s klíčem "id", může obsahovat položku s klíčem "name".
+     * - pokud parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid), pokud je zadán parametr label, je pro propojení
+     * generovaného tagu label použito zadané případně vygenerované id
+     * - pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má parament name)
      *
-     * Pole attributes by mělo obsahovat položku s klíčem "id", může obsahovat položku s klíčem "name".
-     * - pokud ople atributů neobsahuje položku "id" je vygenerováno id jako náhodný řetězec (uniquid)
-     * - pokud pole atributů neobsahuje "name", je jako name použita hodnota id (položka atributů id nebo vygenerované id)
+     * Vygenerovaný option se stejnou hodnotou jako je hodnota položky kontextu s klíčem odpovídajícím parametru name je doplněn atributem selected.
      *
-     * Pokud je zadána hodnota selecteValue, je option se stejnou hodnotou doplněn atributem selected.
-     *
-     *
-     * @param type $label
-     * @param type $attributes
-     * @param type $optionValues
-     * @param type $selectedValue
+     * @param string $name
+     * @param string $label
+     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
+     * @param array $context
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
      */
-    public static function select($label='', $attributes=[], $optionValues=[], $selectedValue=null);
+    public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]);
 }

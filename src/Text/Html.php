@@ -23,13 +23,13 @@ class Html implements HtmlInterface {
     const EOL = PHP_EOL;
 
     /**
-     * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako asociativní pole.
+     * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako iterable proměnnou s dvojicemi key=>value.
      *
      * Podle typu hodnoty atributu:
      * <ul>
-     * <li>Atributy s logickou hodnotou uvede jen jako jméno parametru (standard html nikoli xml)</li>
-     * <li>Atributy s hodnotou typu array jako dvojici jméno="řetězec hodnot oddělených mezerou", řetězec hodnot vytvoří zřetězením hodnot v poli oddělených mezerou a obalí uvozovkami</li>
-     * <li>Ostatní atributy jako dvojici jméno="hodnota" s tím, že hodnotu prvku přčevede na string a obalí uvozovkami.</li>
+     * <li>Pro atributy s hodnotou typu boolean generuje jen jméno parametru (standard html nikoli xml)</li>
+     * <li>Pro atributy s hodnotou typu array generuje dvojici jméno="řetězec hodnot oddělených mezerou", řetězec hodnot vytvoří zřetězením hodnot v poli oddělených mezerou a obalí uvozovkami</li>
+     * <li>Ostatní atributy jako dvojici jméno="hodnota" s tím, že hodnotu prvku převede na string a obalí uvozovkami.</li>
      * </ul>
      * Pokud je hodnota atributu řetězec, který obsahuje uvozovky, výsledné html bude chybné. Hodnota atributu je vždy obalena uvozovkami.
      * Výsledný navrácený řetězec začíná mezerou a atributy v řetězci jsou odděleny mezerami.
@@ -37,11 +37,12 @@ class Html implements HtmlInterface {
      * Příklad:
      * ['id'=>'alert', 'class'=>['ui', 'item', 'alert'], 'readonly'=>TRUE, data-info=>'a neni b'] převede na: id="alert" class="ui item alert" readonly data-info="a neni b".
      * Víceslovné řetězce (typicky class) lze tedy zadávat jako pole nebo víceslovný řetězec.
-     * @param array $attributesArray Asocitivní pole
+     *
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
      * @return string
      */
-    public static function attributes($attributesArray=[]) {
-        foreach ($attributesArray as $type => $value) {
+    public static function attributes(iterable $attributes=[]) {
+        foreach ($attributes as $type => $value) {
             if (is_bool($value)) {
                 $attr[] = $type;
             } elseif (is_array($value)) {
@@ -57,11 +58,11 @@ class Html implements HtmlInterface {
      * Generuje html kód párového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
-     * @param array $attributes Asociativní pole. Viz metoda attributes().
+     * @param iterable $attributes Asociativní pole. Viz metoda attributes().
      * @param string $innerHtml Text, bude bez úprav vložen jako textový obsah tagu
      * @return string
      */
-    public static function tag($name, array $attributes=[], $innerHtml='') {
+    public static function tag($name, iterable $attributes=[], $innerHtml='') {
         if ($name) {
             $attr = self::attributes($attributes);
             if (is_array($innerHtml)) {
@@ -77,10 +78,10 @@ class Html implements HtmlInterface {
      * Generuje html kód nepárového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
-     * @param array $attributes Asociativní pole. Viz metoda attributes().
+     * @param iterable $attributes Asociativní pole. Viz metoda attributes().
      * @return string
      */
-    public static function tagNopair($name, array $attributes=[]) {
+    public static function tagNopair($name, iterable $attributes=[]) {
         if ($name) {
             $attr = self::attributes($attributes);
             $html = "<$name".($attr ? " $attr" : '')." />";
@@ -129,33 +130,31 @@ class Html implements HtmlInterface {
     }
 
     /**
-     * Generuje html kód tagu select včetně tagů option.
+     * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
      *
-     * Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
+     * Parametr attributes by měl obsahovat položku s klíčem "id", může obsahovat položku s klíčem "name".
+     * - pokud parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid), pokud je zadán parametr label, je pro propojení
+     * generovaného tagu label použito zadané případně vygenerované id
+     * - pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má parament name)
      *
-     * Pole attributes by mělo obsahovat položku s klíčem "id", může obsahovat položku s klíčem "name".
-     * - pokud ople atributů neobsahuje položku "id" je vygenerováno id jako náhodný řetězec (uniquid)
-     * - pokud pole atributů neobsahuje "name", je jako name použita hodnota id (položka atributů id nebo vygenerované id)
+     * Vygenerovaný option se stejnou hodnotou jako je hodnota položky kontextu s klíčem odpovídajícím parametru name je doplněn atributem selected.
      *
-     * Pokud je zadána hodnota selecteValue, je option se stejnou hodnotou doplněn atributem selected.
-     *
-     * @param type $label
-     * @param type $attributes
-     * @param type $optionValues
-     * @param type $selectedValue
-     * @return type
+     * @param string $name
+     * @param string $label
+     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
+     * @param array $context
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
      */
-    public static function select($label='', $attributes=[], $optionValues=[], $selectedValue=null) {
+    public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]) {
         if (!array_key_exists("id", $attributes)) {
             $attributes["id"] = uniqid();
         }
-        if (!array_key_exists("name", $attributes)) {
-            $attributes["name"] = $attributes["id"];
-        }
+        $attributes["name"] = $name;
         if ($label) {
             $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
         $optionsHtml = [];
+        $selectedValue = array_key_exists($name, $context) ? $context[$name] : null;
         foreach ($optionValues as $value) {
             $optionsHtml[] = Html::tag("option", (isset($selectedValue) AND $value==$selectedValue) ? ['selected'=>true] : [], $value);
         }
