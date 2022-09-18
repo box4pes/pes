@@ -62,7 +62,7 @@ class Html implements HtmlInterface {
      * @param variadic $innerTag Sada proměnných, které budou vloženy jako textový obsah tagu, jednotlivé proměnné mohou být typu string nebo pole
      * @return string
      */
-    public static function tag($name, iterable $attributes=[], ...$innerTag=null) {
+    public static function tag($name, iterable $attributes=[], ...$innerTag) {
         if ($name) {
             $attr = self::attributes($attributes);
             $html = [];

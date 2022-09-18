@@ -42,11 +42,11 @@ interface HtmlInterface {
      * Generuje html kód párového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
-     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
-     * @param string $innerHtml Text, bude bez úprav vložen jako textový obsah tagu
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value
+     * @param variadic $innerTag Sada proměnných, které budou vloženy jako textový obsah tagu, jednotlivé proměnné mohou být typu string nebo pole
      * @return string
      */
-    public static function tag($name, iterable $attributes=[], $innerHtml='');
+    public static function tag($name, iterable $attributes=[], ...$innerTag);
 
     /**
      * Generuje html kód nepárového tagu.
