@@ -132,10 +132,12 @@ class Html implements HtmlInterface {
     /**
      * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
      *
-     * Parametr attributes by měl obsahovat položku s klíčem "id", může obsahovat položku s klíčem "name".
-     * - pokud parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid), pokud je zadán parametr label, je pro propojení
-     * generovaného tagu label použito zadané případně vygenerované id
-     * - pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má parament name)
+     * Pokud je zadán parametr label, parametr attributes by měl obsahovat položku s klíčem "id", pokud ji neobsahuje, bude doplněna.
+     * Parametr attributes může obsahovat položku s klíčem "name", ale ta nebude použita.
+     *
+     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
+     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
+     * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
      *
      * Vygenerovaný option se stejnou hodnotou jako je hodnota položky kontextu s klíčem odpovídajícím parametru name je doplněn atributem selected.
      *
@@ -146,7 +148,7 @@ class Html implements HtmlInterface {
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
      */
     public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]) {
-        if (!array_key_exists("id", $attributes)) {
+        if ($label AND !array_key_exists("id", $attributes)) {
             $attributes["id"] = uniqid();
         }
         $attributes["name"] = $name;
@@ -162,8 +164,28 @@ class Html implements HtmlInterface {
         return implode(PHP_EOL, $html);
     }
 
+
+    /**
+     * Generuje htm kód tagu input. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem input.
+     *
+     * Atributy name a value vždy generuje z hodnot parametrů.
+     *
+     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
+     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
+     *
+     * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
+     *
+     * Atribut value je generován tak, že jako hodnota je použita hodnota položky kontextu s klíčem odpovídajícím parametru name, případně prázný řetězec.
+     * Pokud parametr attributes obsahuje položku "value", nepoužije se, přednost hodnota v poli context s klíčem odpovídajícím parametru name).
+     *
+     * @param string $name
+     * @param string $label
+     * @param array $context
+     * @param iterable $attributes
+     * @return type
+     */
     public static function input($name, $label='', array $context=[], iterable $attributes=[]) {
-        if (!array_key_exists("id", $attributes)) {
+        if ($label AND !array_key_exists("id", $attributes)) {
             $attributes["id"] = uniqid();
         }
         if (!array_key_exists("type", $attributes)) {
