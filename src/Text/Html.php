@@ -175,6 +175,7 @@ class Html implements HtmlInterface {
         if ($label) {
             $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
-        return Html::tag("input", $attributes);
+        $html[] = Html::tag("input", $attributes);
+        return implode(PHP_EOL, $html);
     }
 }
