@@ -161,4 +161,20 @@ class Html implements HtmlInterface {
         $html[] = Html::tag("select", $attributes, $optionsHtml);
         return implode(PHP_EOL, $html);
     }
+
+    public static function input($name, $label='', array $context=[], iterable $attributes=[]) {
+        if (!array_key_exists("id", $attributes)) {
+            $attributes["id"] = uniqid();
+        }
+        if (!array_key_exists("type", $attributes)) {
+            $attributes["type"] = "text";
+        }
+        $attributes["name"] = $name;
+        $attributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
+
+        if ($label) {
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+        }
+        return Html::tag("input", $attributes);
+    }
 }

@@ -88,4 +88,6 @@ interface HtmlInterface {
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
      */
     public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]);
+
+    public static function input($name, $label='', array $context=[], iterable $attributes=[]);
 }
