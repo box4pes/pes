@@ -77,6 +77,7 @@ class Html implements HtmlInterface {
     }
 
     private static function implodeInnerTags(array $innerTag) {
+        $innerHtml = [];
         foreach ($innerTag as $value) {
             if (is_array($value)) {
                 $innerHtml[] = Html::implodeInnerTags($value);
