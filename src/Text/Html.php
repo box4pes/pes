@@ -63,9 +63,9 @@ class Html implements HtmlInterface {
      * @return string
      */
     public static function tag($name, iterable $attributes=[], ...$innerTag) {
+        $html = [];
         if ($name) {
             $attr = self::attributes($attributes);
-            $html = [];
             foreach ($innerTag as $innerHtml) {
                 if (is_array($innerHtml)) {
                     $html[] = "<$name".($attr ? " $attr" : '').">".self::EOL.implode(self::EOL, $innerHtml).self::EOL."</$name>";
@@ -74,7 +74,7 @@ class Html implements HtmlInterface {
                 }
             }
         }
-        return $html ? (count($html) ? self::EOL.implode(self::EOL, $innerHtml).self::EOL : implode(self::EOL, $innerHtml)) : '';
+        return $html ? (count($html)>1 ? self::EOL.implode(self::EOL, $html).self::EOL : implode(self::EOL, $html)) : '';
     }
 
     /**
