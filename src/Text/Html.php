@@ -38,7 +38,7 @@ class Html implements HtmlInterface {
      * ['id'=>'alert', 'class'=>['ui', 'item', 'alert'], 'readonly'=>TRUE, data-info=>'a neni b'] převede na: id="alert" class="ui item alert" readonly data-info="a neni b".
      * Víceslovné řetězce (typicky class) lze tedy zadávat jako pole nebo víceslovný řetězec.
      *
-     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value
      * @return string
      */
     public static function attributes(iterable $attributes=[]) {
@@ -58,20 +58,23 @@ class Html implements HtmlInterface {
      * Generuje html kód párového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
-     * @param iterable $attributes Asociativní pole. Viz metoda attributes().
-     * @param string $innerHtml Text, bude bez úprav vložen jako textový obsah tagu
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value
+     * @param variadic $innerTag Sada proměnných, které budou vloženy jako textový obsah tagu, jednotlivé proměnné mohou být typu string nebo pole
      * @return string
      */
-    public static function tag($name, iterable $attributes=[], $innerHtml='') {
+    public static function tag($name, iterable $attributes=[], ...$innerTag=null) {
         if ($name) {
             $attr = self::attributes($attributes);
-            if (is_array($innerHtml)) {
-                $html = "<$name".($attr ? " $attr" : '').">".self::EOL.implode(self::EOL, $innerHtml).self::EOL."</$name>";
-            } else {
-                $html = "<$name".($attr ? " $attr" : '').">".$innerHtml."</$name>";
+            $html = [];
+            foreach ($innerTag as $innerHtml) {
+                if (is_array($innerHtml)) {
+                    $html[] = "<$name".($attr ? " $attr" : '').">".self::EOL.implode(self::EOL, $innerHtml).self::EOL."</$name>";
+                } else {
+                    $html[] = "<$name".($attr ? " $attr" : '').">".$innerHtml."</$name>";
+                }
             }
         }
-        return $html ?? '';
+        return $html ? (count($html) ? self::EOL.implode(self::EOL, $innerHtml).self::EOL : implode(self::EOL, $innerHtml)) : '';
     }
 
     /**
