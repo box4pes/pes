@@ -67,19 +67,27 @@ class Html implements HtmlInterface {
         if ($name) {
             $attr = self::attributes($attributes);
             if ($innerTag) {
-                foreach ($innerTag as $innerHtml) {
-                    if (is_array($innerHtml)) {
-                        $html[] = "<$name".($attr ? " $attr" : '').">".self::EOL.implode(self::EOL, $innerHtml).self::EOL."</$name>";
-                    } else {
-                        $html[] = "<$name".($attr ? " $attr" : '').">".$innerHtml."</$name>";
-                    }
-                }
-                $ret = count($html)>1 ? self::EOL.implode(self::EOL, $html).self::EOL : $html[0];
+                $innerHtml = Html::implodeInnerTags($innerTag);
+                $ret = "<$name".($attr ? " $attr" : '').">".$innerHtml."</$name>";
             } else {
                 $ret = "<$name".($attr ? " $attr" : '')."></$name>";
             }
         }
         return $ret ?? '';
+    }
+
+    private static function implodeInnerTags(array $innerTag) {
+        foreach ($innerTag as $value) {
+            if (is_array($value)) {
+                $innerHtml[] = Html::implodeInnerTags($value);
+            }
+        }
+        if (count($innerHtml)>1) {
+            $impl = self::EOL.implode(self::EOL, $innerHtml).self::EOL;
+        } else {
+            $impl = $innerHtml;
+        }
+        return $impl;
     }
 
     /**
