@@ -222,18 +222,19 @@ class Html implements HtmlInterface {
         return implode(PHP_EOL, $html);
     }
 
-    public static function radio($name, $label='', array $context=[], iterable $attributes=[]) {
-        if ($label AND !array_key_exists("id", $attributes)) {
+    public static function radio($name, iterable $radiosetValuesLabels=[], array $context=[]) {
+        $checkedValue = array_key_exists($name, $context) ? $context[$name] : null;
+        foreach ($radiosetValuesLabels as $value => $label) {
             $attributes["id"] = uniqid();
-        }
-        $attributes["type"] = "radio";
-        $attributes["name"] = $name;
-        $attributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
-
-        $html[] = Html::tagNopair("input", $attributes);
-        if ($label) {
+            $attributes["type"] = "radio";
+            $attributes["name"] = $name;
+            $attributes["value"] =
+            $attributes["checked"] = ($checkedValue==$value) ;
+            $html[] = Html::tagNopair("input", $attributes);
             $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
+
+
         return implode(PHP_EOL, $html);
     }
 }
