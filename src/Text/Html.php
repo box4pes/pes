@@ -221,4 +221,19 @@ class Html implements HtmlInterface {
         $html[] = Html::tagNopair("input", $attributes);
         return implode(PHP_EOL, $html);
     }
+
+    public static function radio($name, $label='', array $context=[], iterable $attributes=[]) {
+        if ($label AND !array_key_exists("id", $attributes)) {
+            $attributes["id"] = uniqid();
+        }
+        $attributes["type"] = "radio";
+        $attributes["name"] = $name;
+        $attributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
+
+        $html[] = Html::tagNopair("input", $attributes);
+        if ($label) {
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+        }
+        return implode(PHP_EOL, $html);
+    }
 }
