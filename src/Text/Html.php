@@ -228,7 +228,7 @@ class Html implements HtmlInterface {
             $attributes["id"] = uniqid();
             $attributes["type"] = "radio";
             $attributes["name"] = $name;
-            $attributes["value"] =
+            $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
             $html[] = Html::tagNopair("input", $attributes);
             $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
