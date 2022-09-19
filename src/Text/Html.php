@@ -222,19 +222,32 @@ class Html implements HtmlInterface {
         return implode(PHP_EOL, $html);
     }
 
-    public static function radio($name, iterable $radiosetValuesLabels=[], array $context=[]) {
+    public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[]) {
         $checkedValue = array_key_exists($name, $context) ? $context[$name] : null;
-        foreach ($radiosetValuesLabels as $value => $label) {
+        $attributes["type"] = "radio";
+        foreach ($radiosetLbelsValues as $label => $value) {
             $attributes["id"] = uniqid();
-            $attributes["type"] = "radio";
             $attributes["name"] = $name;
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
             $html[] = Html::tagNopair("input", $attributes);
             $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
+        return implode(PHP_EOL, $html);
+    }
 
-
+    public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[]) {
+        $attributes["type"] = "checkbox";
+        foreach ($checkboxsetLabelsNameValuePairs as $label => $nameValuePair) {
+            list("name", "value") = $nameValuePair;
+            $checkedValue = array_key_exists($name, $context) ? $context[$name] : null;
+            $attributes["id"] = uniqid();
+            $attributes["name"] = $name;
+            $attributes["value"] = $value;
+            $attributes["checked"] = ($checkedValue==$value) ;
+            $html[] = Html::tagNopair("input", $attributes);
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+        }
         return implode(PHP_EOL, $html);
     }
 }
