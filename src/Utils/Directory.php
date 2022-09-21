@@ -78,12 +78,12 @@ class Directory {
     public static function createDirectory($directoryPath) {
         $normPath = self::normalizePath($directoryPath);
         if (!is_dir($normPath)) {  //pokud není složka, vytvoří ji - vytvoří rekurzivně všechny neexistující podsložky cesty
-            if (mkdir($normPath, 0777, TRUE)) {  // druhý parametr je ve Windows ignorován
-                return $normPath;
-            } else {
+            $make = mkdir($normPath, 0777, TRUE);  // druhý parametr je ve Windows ignorován
+            if (!$make) {
                 throw new CreateDirectoryFailedException("Creating folder for passed path failed.");  // vypsat uživateli cestu je asi nebezpečné
             }
         }
+        return $normPath;
     }
     private $permittedPaths;
 
