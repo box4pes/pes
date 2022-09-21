@@ -85,10 +85,10 @@ class Directory {
         }
         return $normPath;
     }
-    private $permittedPaths;
+    private static $permittedPaths;
 
     /**
-     * Smaže obsah složky zadané cestou ke složce. Mazat lze pouze soubory ve složkách uvedených v seznamu složek, pokud byl zadán jako parametr konstruktoru.
+     * Smaže obsah složky zadané cestou ke složce. 
      *
      * Smaže všechny soubory, ke kterým má skript v okamžiku spuštění právo zápisu. Pokud k souboru práva nemá
      * vznikne chyba s úrovní E_USER_NOTICE.
@@ -96,7 +96,7 @@ class Directory {
      * @param string $path
      */
     public function cleanDirectory($path) {
-        if (in_array($path, $this->permittedPaths)) {
+        if (in_array($path, static::$permittedPaths)) {
             foreach (new \FilesystemIterator($path) as $fileInfo){  // FilesystemIterator->current() defaultně vrací SplFileInfo objekt
                 $fullFilename = $path.$fileInfo->getFilename();
                 if (is_writable($fullFilename)) {
