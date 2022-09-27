@@ -238,9 +238,44 @@ class Handler extends \PDO implements HandlerInterface {
      * @return type
      */
     private static function varPrint($param) {
-        return print_r($param, TRUE);
+        $pr = [];
+        foreach ($param as $var) {
+            $vartype = gettype($var);
+            $pr[] = static::renderValueAsInfo($var);
+        }
+        return print_r($pr, TRUE);
     }
+    private static function renderValueAsInfo($var) {
+        $vartype = gettype($var);
+        switch ($vartype) {
+            case "boolean":
+                $rendered = $vartype." ".($var ? "TRUE" : "FALSE");
+                break;
+            case "integer":
+            case "double":    // (for historical reasons "double" is returned in case of a float, and not simply
+            case "float":
+                $rendered = $vartype." ".$var;
+                break;
+            case "string":
+                $rendered = $vartype." ". strlen($var)." bytes";
+                break;
+            case "array":
+                $rendered = $vartype." ".count($var)." elements";
+                break;
+            case "object":
+            case "resource":
+            case "resource (closed)":  // as of PHP 7.2.0
+                $rendered = $vartype." ". get_class($var);
+                break;
+            case "NULL":
+            case "unknown type":
+                $rendered = $vartype;
+                break;
 
+        }
+
+        return $rendered;
+    }
 ######### PŘETÍŽENÉ METODY PDO ( metody PDO Interface) #######################################################################
 
     public function beginTransaction() {

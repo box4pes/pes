@@ -106,6 +106,7 @@ class Table {
                 break;
             case "object":
             case "resource":
+            case "resource (closed)":  // as of PHP 7.2.0
                 $rendered = $vartype." ". get_class($var);
                 break;
             case "NULL":
