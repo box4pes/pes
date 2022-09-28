@@ -198,7 +198,7 @@ class Handler extends \PDO implements HandlerInterface {
                  .'('.\implode(',', array_map('self::varPrint', $trace['args'])).')'.\PHP_EOL;
             $i++;
             // pokud jsou parametry handleru injektovány z kontejneru, pak výpis proměnných nad úroveň #1 vypisuje obsah kontejneru - log je obrovský
-            if ($i>1) {
+            if ($i>3) {
                 break;       #0 je PDO exception, #1 je Handler exception - to stačí
             }
         }
