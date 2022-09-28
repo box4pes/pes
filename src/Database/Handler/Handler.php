@@ -192,6 +192,8 @@ class Handler extends \PDO implements HandlerInterface {
         $str2 = '';
         $i = 0;
         foreach ($exception->getTrace() as $trace) {
+
+            // pro výpis argumentů používá metodu self::varPrint() - volá array_map na všechny argumenty s metodou self::varPrint() jako mapovací funkcí
             @$str2 .= '#'.$i.' '.$trace['file'].', line '.$trace['line'].': '.$trace['class'].$trace['type'].$trace['function']
                  .'('.\implode(',', array_map('self::varPrint', $trace['args'])).')'.\PHP_EOL;
             $i++;
@@ -204,7 +206,7 @@ class Handler extends \PDO implements HandlerInterface {
         self::$safeExceptionHandlerLogger->critical('Chyba při instancování db handleru. '.$exception->getMessage().\PHP_EOL.\PHP_EOL.'Trace string:'.\PHP_EOL.$exception->getTraceAsString().\PHP_EOL.$str2);
 
         // Output the exception details
-        throw new \UnexpectedValueException(' Problém s připojením k databázi - chyba při instancování Handleru. Info v logu. Kontaktujte správce systému.');//. $exception->getMessage()); //????? getMessage
+        throw new \UnexpectedValueException(' Problém s připojením k databázi - chyba při instancování Handleru. Info v logu. Kontaktujte správce systému.', $exception);//. $exception->getMessage()); //????? getMessage
     }
 
 ######## metody HandlerInterface ######################################################
@@ -245,6 +247,7 @@ class Handler extends \PDO implements HandlerInterface {
         }
         return print_r($pr, TRUE);
     }
+
     private static function renderValueAsInfo($var) {
         $vartype = gettype($var);
         switch ($vartype) {
@@ -257,7 +260,7 @@ class Handler extends \PDO implements HandlerInterface {
                 $rendered = $vartype." ".$var;
                 break;
             case "string":
-                $rendered = $vartype." ". strlen($var)." bytes";
+                $rendered = $vartype." ". strlen($var)." bytes" . (strlen($var)>80 ? ": \"".substr($var, 0, 80)."... (shortened)\"" : $var);
                 break;
             case "array":
                 $rendered = $vartype." ".count($var)." elements";
@@ -276,6 +279,7 @@ class Handler extends \PDO implements HandlerInterface {
 
         return $rendered;
     }
+
 ######### PŘETÍŽENÉ METODY PDO ( metody PDO Interface) #######################################################################
 
     public function beginTransaction() {
