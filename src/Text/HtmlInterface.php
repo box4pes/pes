@@ -111,4 +111,10 @@ interface HtmlInterface {
      * @param iterable $attributes
      */
     public static function input($name, $label='', array $context=[], iterable $attributes=[]);
+
+    public static function textarea($name, $label='', array $context=[], iterable $attributes=[]);
+
+    public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[]);
+
+    public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[]);
 }

@@ -196,7 +196,7 @@ class Html implements HtmlInterface {
      *
      * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
      *
-     * Atribut value je generován tak, že jako hodnota je použita hodnota položky kontextu s klíčem odpovídajícím parametru name, případně prázný řetězec.
+     * Jako hodnota atributu value je použita hodnota položky kontextu s klíčem odpovídajícím parametru name, případně prázný řetězec.
      * Pokud parametr attributes obsahuje položku "value", nepoužije se, přednost hodnota v poli context s klíčem odpovídajícím parametru name).
      *
      * @param string $name
@@ -219,6 +219,20 @@ class Html implements HtmlInterface {
             $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
         $html[] = Html::tagNopair("input", $attributes);
+        return implode(PHP_EOL, $html);
+    }
+
+    public static function textarea($name, $label='', array $context=[], iterable $attributes=[]) {
+        if ($label AND !array_key_exists("id", $attributes)) {
+            $attributes["id"] = uniqid();
+        }
+        $attributes["name"] = $name;
+        $innertext = array_key_exists($name, $context) ? $context[$name] : '';
+
+        if ($label) {
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+        }
+        $html[] = Html::tag("textarea", $attributes, $innertext);
         return implode(PHP_EOL, $html);
     }
 
