@@ -244,10 +244,12 @@ class Html implements HtmlInterface {
             $attributes["name"] = $name;
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
-            $html[] = Html::tagNopair("input", $attributes);
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+            $html = Html::tag('span', [],
+                    Html::tagNopair("input", $attributes),
+                    Html::tag("label", ["for"=>$attributes["id"]], $label)
+                );
         }
-        return implode(PHP_EOL, $html);
+        return $html;
     }
 
     public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[]) {
@@ -260,9 +262,11 @@ class Html implements HtmlInterface {
             $attributes["name"] = $name;
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
-            $html[] = Html::tagNopair("input", $attributes);
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+            $html = Html::tag('span', [],
+                    Html::tagNopair("input", $attributes),
+                    Html::tag("label", ["for"=>$attributes["id"]], $label)
+                );
         }
-        return implode(PHP_EOL, $html);
+        return $html;
     }
 }
