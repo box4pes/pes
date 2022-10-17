@@ -216,7 +216,7 @@ class Html implements HtmlInterface {
         $attributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
 
         if ($label) {
-            $html[] = Html::tag('div', [],
+            $html[] = Html::tag('span', [],
                     Html::tag("label", ["for"=>$attributes["id"]], $label),
                     Html::tagNopair("input", $attributes)
                 );
@@ -234,7 +234,7 @@ class Html implements HtmlInterface {
         $innertext = array_key_exists($name, $context) ? $context[$name] : '';
 
         if ($label) {
-            $html[] = Html::tag('div', [],
+            $html[] = Html::tag('span', [],
                     Html::tag("label", ["for"=>$attributes["id"]], $label),
                     Html::tag("textarea", $attributes, $innertext)
                 );
@@ -252,7 +252,7 @@ class Html implements HtmlInterface {
             $attributes["name"] = $name;
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
-            $html[] = Html::tag('div', [],
+            $html[] = Html::tag('span', [],
                     Html::tagNopair("input", $attributes),
                     Html::tag("label", ["for"=>$attributes["id"]], $label)
                 );
@@ -270,7 +270,7 @@ class Html implements HtmlInterface {
             $attributes["name"] = $name;
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
-            $html[] = Html::tag('div', [],
+            $html[] = Html::tag('span', [],
                     Html::tagNopair("input", $attributes),
                     Html::tag("label", ["for"=>$attributes["id"]], $label)
                 );
