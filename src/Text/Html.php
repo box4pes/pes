@@ -216,9 +216,13 @@ class Html implements HtmlInterface {
         $attributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
 
         if ($label) {
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+            $html[] = Html::tag('div', [],
+                    Html::tag("label", ["for"=>$attributes["id"]], $label),
+                    Html::tagNopair("input", $attributes)
+                );
+        } else {
+            $html[] = Html::tagNopair("input", $attributes);
         }
-        $html[] = Html::tagNopair("input", $attributes);
         return implode(PHP_EOL, $html);
     }
 
@@ -230,9 +234,13 @@ class Html implements HtmlInterface {
         $innertext = array_key_exists($name, $context) ? $context[$name] : '';
 
         if ($label) {
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+            $html[] = Html::tag('div', [],
+                    Html::tag("label", ["for"=>$attributes["id"]], $label),
+                    Html::tag("textarea", $attributes, $innertext)
+                );
+        } else {
+            $html[] = Html::tag("textarea", $attributes, $innertext);
         }
-        $html[] = Html::tag("textarea", $attributes, $innertext);
         return implode(PHP_EOL, $html);
     }
 
@@ -244,7 +252,7 @@ class Html implements HtmlInterface {
             $attributes["name"] = $name;
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
-            $html[] = Html::tag('span', [],
+            $html[] = Html::tag('div', [],
                     Html::tagNopair("input", $attributes),
                     Html::tag("label", ["for"=>$attributes["id"]], $label)
                 );
@@ -262,7 +270,7 @@ class Html implements HtmlInterface {
             $attributes["name"] = $name;
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
-            $html[] = Html::tag('span', [],
+            $html[] = Html::tag('div', [],
                     Html::tagNopair("input", $attributes),
                     Html::tag("label", ["for"=>$attributes["id"]], $label)
                 );
