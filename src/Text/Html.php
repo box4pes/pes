@@ -181,7 +181,9 @@ class Html implements HtmlInterface {
         foreach ($optionValues as $value) {
             $optionsHtml[] = Html::tag("option", (isset($selectedValue) AND $value==$selectedValue) ? ['selected'=>true] : [], $value);
         }
-        $html[] = Html::tag("select", $attributes, $optionsHtml);
+        $html[] = Html::tag('span', [],
+                    Html::tag("select", $attributes, $optionsHtml)
+                );
         return implode(PHP_EOL, $html);
     }
 
@@ -216,13 +218,11 @@ class Html implements HtmlInterface {
         $attributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
 
         if ($label) {
-            $html[] = Html::tag('span', [],
-                    Html::tag("label", ["for"=>$attributes["id"]], $label),
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+        }
+        $html[] = Html::tag('span', [],
                     Html::tagNopair("input", $attributes)
                 );
-        } else {
-            $html[] = Html::tagNopair("input", $attributes);
-        }
         return implode(PHP_EOL, $html);
     }
 
@@ -234,13 +234,11 @@ class Html implements HtmlInterface {
         $innertext = array_key_exists($name, $context) ? $context[$name] : '';
 
         if ($label) {
-            $html[] = Html::tag('span', [],
-                    Html::tag("label", ["for"=>$attributes["id"]], $label),
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+        }
+        $html[] = Html::tag('span', [],
                     Html::tag("textarea", $attributes, $innertext)
                 );
-        } else {
-            $html[] = Html::tag("textarea", $attributes, $innertext);
-        }
         return implode(PHP_EOL, $html);
     }
 
@@ -253,9 +251,9 @@ class Html implements HtmlInterface {
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
             $html[] = Html::tag('span', [],
-                    Html::tagNopair("input", $attributes),
-                    Html::tag("label", ["for"=>$attributes["id"]], $label)
-                );
+                    Html::tagNopair("input", $attributes)
+                    );
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
         return implode(PHP_EOL, $html);
     }
@@ -271,9 +269,9 @@ class Html implements HtmlInterface {
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue==$value) ;
             $html[] = Html::tag('span', [],
-                    Html::tagNopair("input", $attributes),
-                    Html::tag("label", ["for"=>$attributes["id"]], $label)
-                );
+                    Html::tagNopair("input", $attributes)
+                    );
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
         return implode(PHP_EOL, $html);
     }
