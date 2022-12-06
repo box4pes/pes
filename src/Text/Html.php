@@ -24,6 +24,24 @@ class Html implements HtmlInterface {
 
     const EOL = PHP_EOL;
 
+#### value escaper #######
+
+    static $escaper;
+
+    public static function setEscaper(callable $escaper) {
+        self::$escaper = self::$escaper;
+    }
+
+    private static function value() {
+        if (isset(self::$escaper)) {
+            return self::$escaper($value);
+        } else {
+            return Text::esc($value);
+        }
+    }
+
+##########################
+
     /**
      * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako iterable proměnnou s dvojicemi key=>value.
      *
@@ -286,4 +304,5 @@ class Html implements HtmlInterface {
         }
         return implode(PHP_EOL, $html);
     }
+
 }
