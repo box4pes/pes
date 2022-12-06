@@ -94,7 +94,8 @@ class Html implements HtmlInterface {
             if (is_array($value)) {
                 $innerHtml[] = Html::implodeInnerTags($value);
             } else {
-                $innerHtml[] = Text::esc($value);
+//                $innerHtml[] = Text::esc($value);
+                $innerHtml[] = $value;
             }
         }
         if (count($innerHtml)>1) {
