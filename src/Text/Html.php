@@ -11,6 +11,8 @@
 
 namespace Pes\Text;
 
+use Pes\Text\Text;
+
 /**
  * Obsahuje statické metody, které generují html string.
  *
@@ -24,6 +26,8 @@ class Html implements HtmlInterface {
 
     /**
      * Metoda generuje textovou reprezentaci atributů html tagu z dat zadaných jako iterable proměnnou s dvojicemi key=>value.
+     *
+     * Jednotlivé hodnoty atrubutů vždy uzavírá do uvozovek. Tím se zmenšuje riziko XSS útoku kódem v atributech. Přesto nevkládejte uživatelský vstup do hodnot atributů.
      *
      * Podle typu hodnoty atributu:
      * <ul>
@@ -57,7 +61,7 @@ class Html implements HtmlInterface {
     }
 
     /**
-     * Generuje html kód párového tagu.
+     * Generuje html kód párového tagu. Hodnoty vkládaných tagů escapuje pomocí metody Text::esc().
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value
@@ -78,13 +82,19 @@ class Html implements HtmlInterface {
         return $ret ?? '';
     }
 
+    /**
+     * Escapuje jednotlivé hodnoty innerTag pomocí metody Text::esc().
+     *
+     * @param array $innerTag
+     * @return type
+     */
     private static function implodeInnerTags(array $innerTag) {
         $innerHtml = [];
         foreach ($innerTag as $value) {
             if (is_array($value)) {
                 $innerHtml[] = Html::implodeInnerTags($value);
             } else {
-                $innerHtml[] = $value;
+                $innerHtml[] = Text::esc($value);
             }
         }
         if (count($innerHtml)>1) {

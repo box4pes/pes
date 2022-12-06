@@ -57,19 +57,27 @@ class Text implements TextInterface {
      * Metodu použijte na ošetření textů, které obsahují text zadaný uživatelem (např. ve formuláři). Jde o základní ochranu proti XSS útokům.
      * Metoda provede tzv escapování. Všechny znaky, které mohou v HTML mít význam, tzv. rezervované znaky HTML, převede na HTML entity.
      * Např. znak < na &lt; apod.
-     * Metoda nestačí na ošetření textů vkládaných kamkoli jinam než jen do textového obsahu tagu určeného k zobrazení.
+     *
+     * Defaultní hodnoty:
+     * Metoda předpokládá, že text je HTML5 a zachovává všechny znaky povolené v HTML5, neescapuje uvozovky ani apostrofy, nahrazuje invalidní části textu znaky
+     * Unicode Replacement Character U+FFFD (UTF-8). Metoda neescapuje nalezené HTML5 entity.
+     *
+     * Metoda pracuje pouze s kódováním UTF-8.
+     *
+     * Metoda nestačí na ošetření textů vkládaných kamkoli jinam než jen do textového obsahu tagu určeného k zobrazení. Nebrání ani XSS útoku na atributy tagu.
      * Nikdy nevkládejte uživatelem zadaný text do obsahu tagu <script>, do html komentáře <!-- -->, do názvu atributu, do jména tagu, do css.
      * Tato místa nelze nikdy dokonale ošetřit.
      *
-     * Tato metoda escapuje i html entity, které byly v opravovaném textu, např. pokud text obsahuje "mluví o&nbsp;všem" vznikne "mluví o&amp;nbsp;všem".
+     * Pokud nastavíte $doubleEncode na false, tato metoda escapuje i html entity, které byly v opravovaném textu, např. pokud text obsahuje "mluví o&nbsp;všem" vznikne "mluví o&amp;nbsp;všem".
      * pozor tedy také na pořadí filtrovacích metod: self::filter('e|mono', 'v neděli'); je v pořádku, zatímco self::filter('mono|e', 'v neděli');
      * oescapuje i &nbsp; vytvořené filtrem "mono".
      *
      * @param type $text
-     * @return type
+     * @return string
      */
-    public static function esc($text='') {
-        return htmlspecialchars($text);
+    public static function esc($text='', $flags= ENT_NOQUOTES | ENT_HTML5 | ENT_SUBSTITUTE, $doubleEncode=false) {
+        // https://www.php.net/manual/en/function.htmlspecialchars.php#125979
+        return htmlspecialchars( $text, $flags, 'UTF-8', $doubleEncode );
     }
 
     /**
