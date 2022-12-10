@@ -79,7 +79,7 @@ class Html implements HtmlInterface {
     }
 
     /**
-     * Generuje html kód párového tagu. Hodnoty vkládaných tagů escapuje pomocí metody Text::esc().
+     * Generuje html kód párového tagu. 
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value
@@ -101,7 +101,6 @@ class Html implements HtmlInterface {
     }
 
     /**
-     * Escapuje jednotlivé hodnoty innerTag pomocí metody Text::esc().
      *
      * @param array $innerTag
      * @return type
@@ -112,7 +111,6 @@ class Html implements HtmlInterface {
             if (is_array($value)) {
                 $innerHtml[] = Html::implodeInnerTags($value);
             } else {
-//                $innerHtml[] = Text::esc($value);
                 $innerHtml[] = $value;
             }
         }

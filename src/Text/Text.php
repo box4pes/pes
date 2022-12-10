@@ -33,7 +33,7 @@ class Text implements TextInterface {
      * @param type $text
      * @return type
      */
-    public static function filter($filters='', $text='') {
+    public static function filter(string $filters, string $text): string {
         $names = explode(self::FILTER_DELIMITER, $filters);
         foreach ($names as $name) {
             if (array_key_exists($name, get_class_methods(self::class))) {
@@ -44,12 +44,101 @@ class Text implements TextInterface {
     }
 
     /**
-     * Alias k metodě esc().
+     * Nedělitelné mezery pro český text. Zamezí zalamování textu za jednoznakovou předložkou, spojkou a mezi čísly datumu pro český text.
+     * <ul>
+     * <li>Metoda nahradí mezeru mezi jednoznakovou předložkou nebo spojkou a následujícím slovem nedělitelnou mezerou.
+     * Jednoznakové předložky a spojky jsou: k, s, v, z, o, u, i, a.</li>
+     * <li>Metoda nahradí mezeru mezi číslem zakončeném tečkou a dalším číslem nedělitelnou mezeru</li>
+     * <ul>
+     *
+     * Metoda nepracuje správně v případě více než jedné jednoznakové spojky nebo předložky za sebou, např, text 'a i s jinými' převede jen na 'a&nbsp;i s&nbsp;jinými'.
      *
      * @param type $text
      * @return type
      */
-    public static function e($text='') {
+    public static function mono(string $text): string {
+        $patterns = [
+            '/(\s[ksvzouiaKSVZOUIA])\s/',
+            '/(\d{1})\.\s(\d{1})\.\s(\d{1})/',
+            '/(\d{1})\.\s(\d{1})/'
+        ];
+        $replacements = [
+           '$1&nbsp;',
+           '$1.&nbsp;$2.&nbsp;$3',
+           '$1.&nbsp;$2'
+        ];
+        return preg_replace($patterns, $replacements, trim($text));
+    }
+
+    /**
+     * Řetěcec datumu v českém formátu normalizuje na tvar den. měsíc. rok, čísla bez levostraných nul a s tečkou (pořadová) a mezi tečkou a následujícím číslem obyčejná mezera.
+     *
+     * @param string $dateCsFormatted
+     */
+    public static function dateCsSpaces(string $dateCsFormatted): string  {
+        return \implode('. ', self::dateCsTokens($dateCsFormatted));
+    }
+
+    /**
+     * Řetěcec datumu v českém formátu normalizuje na tvar den. měsíc. rok, čísla bez levostraných nul a s tečkou (pořadová) a mezi tečkou a následujícím číslem
+     * nerozděkitelná HTML mezera - řetězec &nbsp;
+     *
+     * @param string $dateCsFormatted
+     */
+    public static function dateCsNbsp(string $dateCsFormatted): string  {
+        return \implode('.&nbsp;', self::dateCsTokens($dateCsFormatted));
+    }
+
+    /**
+     * Z datumu v českém formátu vytroví pole obsahujíci jednotlivá čísla datumu bez mezer a levostraných nul
+     * @param type $dateCsFormatted
+     * @return array
+     */
+    private static function dateCsTokens(string $dateCsFormatted) {
+        // odstraní whitespaces
+        $tokens = explode('.', preg_replace('/\s/', '', $dateCsFormatted));
+        foreach ($tokens as $key=>$value) {
+            $tokens[$key] = (string) (int) $value;
+        }
+        return $tokens;
+    }
+
+    /**
+     * Převede odřádkování v textu na značku (tag) <br />. Převádí každé odřádkování, vícenásobné odřádkování způsobí vícenásobné vložení značky.
+     *
+     * @param type $text
+     * @return type
+     */
+    public static function nl2br(string $text): string {
+        return str_replace(array("\r\n", "\r", "\n"), "<br />", $text);
+    }
+
+    /**
+     *
+     * @param bool $condition Default true
+     * @param string $textOnTrue
+     * @param string $textOnFalse Nepoviný parametr
+     * @return string
+     */
+    public static function resolve($condition = true, string $textOnTrue, string $textOnFalse = ''): string {
+        if ((bool) $condition) {
+            return $textOnTrue;
+        } else {
+            return $textOnFalse;
+        }
+    }
+
+#### ESCAPE ############################
+
+    /**
+     * Alias k metodě esc().
+     *
+     * @param string $text
+     * @param int $flags Kombinace (logický součet) PHP konstant ENT_XXXXXX, defaultně ENT_NOQUOTES | ENT_HTML5 | ENT_SUBSTITUTE
+     * @param bool $doubleEncode Defaultně false
+     * @return type
+     */
+    public static function e(string $text): string {
         return self::esc($text);
     }
 
@@ -58,7 +147,11 @@ class Text implements TextInterface {
      * Metoda provede tzv escapování. Všechny znaky, které mohou v HTML mít význam, tzv. rezervované znaky HTML, převede na HTML entity.
      * Např. znak < na &lt; apod.
      *
-     * Defaultní hodnoty:
+     * Metoda interně používá htmlspecialchars() s parametry:
+     * flags: Kombinace (logický součet) PHP konstant ENT_NOQUOTES | ENT_HTML5 | ENT_SUBSTITUTE
+     * encoding: UTF-8
+     * doubleEncode: false (opačně než htmlspecialchars())
+     *
      * Metoda předpokládá, že text je HTML5 a zachovává všechny znaky povolené v HTML5, neescapuje uvozovky ani apostrofy, nahrazuje invalidní části textu znaky
      * Unicode Replacement Character U+FFFD (UTF-8). Metoda neescapuje nalezené HTML5 entity.
      *
@@ -68,49 +161,23 @@ class Text implements TextInterface {
      * Nikdy nevkládejte uživatelem zadaný text do obsahu tagu <script>, do html komentáře <!-- -->, do názvu atributu, do jména tagu, do css.
      * Tato místa nelze nikdy dokonale ošetřit.
      *
-     * Pokud nastavíte $doubleEncode na false, tato metoda escapuje i html entity, které byly v opravovaném textu, např. pokud text obsahuje "mluví o&nbsp;všem" vznikne "mluví o&amp;nbsp;všem".
-     * pozor tedy také na pořadí filtrovacích metod: self::filter('e|mono', 'v neděli'); je v pořádku, zatímco self::filter('mono|e', 'v neděli');
-     * oescapuje i &nbsp; vytvořené filtrem "mono".
+     * Tato metoda neescapuje html entity, které byly ve vstupním textu, např. pokud text obsahuje "<mluví> o&nbsp;všem" zachová vznikne "&lt;mluví&gt; o&amp;nbsp;všem".
+     * Díky tomu nezáleží na pořadí filtrovacích metod: self::filter('e|mono', 'v neděli'); je v pořádku, self::filter('mono|e', 'v neděli'); také,
+     * neescapuje &nbsp; vytvořené filtrem "mono".
      *
-     * @param type $text
-     * @return string
+     * @param string $text
+     * @param int $flags Kombinace (logický součet) PHP konstant ENT_XXXXXX, defaultně ENT_NOQUOTES | ENT_HTML5 | ENT_SUBSTITUTE
+     * @param bool $doubleEncode Defaultně false
+     * @return type
      */
-    public static function esc($text='', $flags= ENT_NOQUOTES | ENT_HTML5 | ENT_SUBSTITUTE, $doubleEncode=false) {
+    public static function esc(string $text): string {
         // https://www.php.net/manual/en/function.htmlspecialchars.php#125979
-        return htmlspecialchars( $text, $flags, 'UTF-8', $doubleEncode );
+        return htmlspecialchars( $text, ENT_NOQUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8', false );
     }
 
-    /**
-     * Nedělitelné mezery pro český text. Zamezí zalamování textu za jednoznakovou předložky, spojkou a mezi čísly datumu pro český text.
-     * <ul>
-     * <li>Metoda vloží mezi jednoznakové předložky nebo spojky a následující slovo nedělitelnou mezeru.
-     * Jednoznakové předložky a spojky jsou: k, s, v, z, o, u, i, a.</li>
-     * <li>Metoda vloží mezi číslo zakončené tečkou a další číslo nedělitelnou mezeru</li>
-     * <ul>
-     *
-     * @param type $text
-     * @return type
-     */
-    public static function mono($text='') {
-        $patterns = [
-            '/(\s[ksvzouiaKSVZOUIA])\s/',
-            '/(\d{1})\.\s(\d{1})/'
-        ];
-        $replacements = [
-           '$1&nbsp;',
-             '$1.&nbsp;$2'
-        ];
-        return preg_replace($patterns, $replacements, trim($text));
-    }
-
-    /**
-     * Převede odřádkování v textu na značku (tag) <br />. Převádí každé odřádkování, vícenásobné odřádkování způsobí vícenásobné vložení značky.
-     *
-     * @param type $text
-     * @return type
-     */
-    public static function nl2br($text='') {
-        return str_replace(array("\r\n", "\r", "\n"), "<br />", $text);
+    public static function esc_attr(string $text): string {
+        // https://www.php.net/manual/en/function.htmlspecialchars.php#125979
+        return htmlspecialchars( $text, ENT_NOQUOTES, 'UTF-8', false );
     }
 
     /**
@@ -118,25 +185,24 @@ class Text implements TextInterface {
      *
      * @param string $text
      */
-    public static function esc_js($text='') {
+    public static function esc_js(string $text): string {
         $safe_text = htmlspecialchars( $text, ENT_COMPAT );   // konvertuje &"<> na &xxx kódy (ENT_COMPAT Will convert double-quotes and leave single-quotes alone.)
         $safe_text = preg_replace( '/&#(x)?0*(?(1)27|39);?/i', "'", stripslashes( $safe_text ) );  // stripslashes odstraní escapovací zpětná lomítka (vždy jedno), preg vymění &#x27; a &#039; (oboje apostrofy) za apostrof
-
+        $safe_text = str_replace( "\r", '', $safe_text );
+	$safe_text = str_replace( "\n", '\\n', addslashes( $safe_text ) );
         return $safe_text;
     }
 
     /**
+     * Escape a string for the URI or Parameter contexts. This should not be used to escape
+     * an entire URI - only a subcomponent being inserted. The function is a simple proxy
+     * to rawurlencode() which now implements RFC 3986 since PHP 5.3 completely.
      *
-     * @param bool $condition
-     * @param string $textOnTrue
-     * @param string $textOnFalse
      * @return string
      */
-    public static function resolve($condition = false, $textOnTrue = '', $textOnFalse = '') {
-        if ((bool) $condition) {
-            return $textOnTrue;
-        } else {
-            return $textOnFalse;
-        }
+    public static function esc_Url(string $string): string {
+        return rawurlencode($string);
     }
+
+
 }
