@@ -79,7 +79,7 @@ class Html implements HtmlInterface {
     }
 
     /**
-     * Generuje html kód párového tagu. 
+     * Generuje html kód párového tagu.
      *
      * @param string $name Jméno tagu. Bude použito bez změny malách a velkých písmen
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value
@@ -180,6 +180,7 @@ class Html implements HtmlInterface {
     /**
      * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
      *
+     * Generování label:
      * Pokud je zadán parametr label, parametr attributes by měl obsahovat položku s klíčem "id", pokud ji neobsahuje, bude doplněna.
      * Parametr attributes může obsahovat položku s klíčem "name", ale ta nebude použita.
      *
@@ -187,10 +188,15 @@ class Html implements HtmlInterface {
      * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
      * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
      *
-     * Vygenerovaný option se stejnou hodnotou jako je hodnota položky kontextu s klíčem odpovídajícím parametru name je doplněn atributem selected.
+     * Generování option:
+     * Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value. Hodnoty $key jsou použity jako hodnota proměnné formuláře (value v tagu option),
+     * $value jsou použity pro zobrazení v html (html obsah tagu option).
+     * Pokud je jako parametr použito neasociativní pole (automaticky číslované) dojde k tomu, že číselné klíče se nepoužijí a hodnoty pole bodou použity jako value v option i jako zobrazované hodnoty v html.
      *
-     * @param string $name
-     * @param string $label
+     * Pokud je v kontextu pložka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
+     *
+     * @param string $name Jméno proměnné formuláře /má přednost před případným atributem name)
+     * @param string $label Pokud je zadán vygeneruje se tag label
      * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
      * @param array $context
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
@@ -205,8 +211,11 @@ class Html implements HtmlInterface {
         }
         $optionsHtml = [];
         $selectedValue = array_key_exists($name, $context) ? $context[$name] : null;
-        foreach ($optionValues as $value) {
-            $optionsHtml[] = Html::tag("option", (isset($selectedValue) AND $value==$selectedValue) ? ['selected'=>true] : [], $value);
+        $useKeysAsValues = !is_array($optionValues) OR array_key_first($optionValues)!=0 OR !array_is_list($optionValues);
+
+        foreach ($optionValues as $key=>$value) {
+            $optionValue = $useKeysAsValues ? $key : $value;
+            $optionsHtml[] = Html::tag("option", (isset($selectedValue) AND $value==$selectedValue) ? ['value'=>$optionValue , 'selected'=>true] : ['value'=>$optionValue ?? $value], $value);
         }
         $html[] = Html::tag('span', [],
                     Html::tag("select", $attributes, $optionsHtml)
