@@ -82,7 +82,8 @@ class TextTest extends TestCase {
     }
 
     public function testEscJs() {
-        $attribute  = Text::esc_js("onLoad=alert(uid);");
-        $this->assertEquals("12.&nbsp;3.&nbsp;2999", $t);
+//        $txt = "jaVasCript:/*-/*`/*\`/*'/*"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\x3csVg/<sVg/oNloAd=alert()//>\x3e";
+        $attribute  = Text::esc_js('onLoad=alert(&"<>);');
+        $this->assertEquals("onLoad=alert(&amp;&quot;&lt;&gt;);", $attribute);
     }
 }

@@ -32,8 +32,6 @@ class HtmlTest extends TestCase {
         $select = Html::select("jmeno", "To je label:", [1=>"", 2=>"Plzeň-město", 3=>"Plzeň-jih", 4=>"Plzeň-sever", 5=>"Klatovy", 6=>"Cheb", 7=>"jiné"], ["jmeno"=>"Plzeň-sever"], ["data-testovaci"=>"testovaci_atribut"]);
 
         $select = Html::select("jmeno", "To je label:", [1=>"", 2=>"Plzeň-město", 3=>"Plzeň-jih", 4=>"Plzeň-sever", 5=>"Klatovy", 6=>"Cheb", 7=>"jiné"], ["jmeno"=>"nesmysl"], ["data-testovaci"=>"testovaci_atribut"]);
-//        $this->assertEquals("Testovací text na pevné mezery  ! ! . k&nbsp;s v&nbsp;z o&nbsp;u i&nbsp;a K&nbsp;S V&nbsp;Z O&nbsp;U I&nbsp;A halelujá. A&nbsp;co p r d m n ?", $t);
-
 
     }
 
