@@ -111,7 +111,9 @@ class Manipulator {
     }
 
     /**
-     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů.
+     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů. Jednotlivé SQL příkazy vykoná pomocé metody PDO->exec(), která jako návratovou hodnotu vrací bool.
+     * Metoda tak nevrací žádný výsledek jen informuje o úspěchu.
+     *
      * Předpokládá, že SQL příkazy v souboru jsou odděleny středníkem ";".
      * Příkazy vykonává v rámci jedné transakce, kterou spouští.
      * Neporadí si, pokud ji zavoláte uprostřed již spuštěné transakce. V takovém případě by vykonání neznámé posloupnosti SQL příkazů mohlo vést
@@ -151,39 +153,34 @@ class Manipulator {
     }
 
     /**
-     * Metoda očekává string obsahující jeden sql příkaz nebo řadu SQl příkazů oddělených středníkem.
-     * Metoda rozloží sql string na jednotlivé SQL příkazy a provede ve v jedné transakci. Pokud transakce selže, procede rollback.
+     * Metoda očekává string obsahující jeden sql příkaz. Tento příkaz provede pomocí PDO->query() a vrací objekt StatementInterface.
+     * Pokud provedení selže, vrací null (nikoli false).
      *
-     * @param type $sql
-     * @return StatementInterface
+     *
+     * @param string $sql
+     * @return StatementInterface|null
      * @throws \LogicException
      * @throws \RuntimeException
      */
-    public function query($sql): StatementInterface {
+    public function query($sql): ?StatementInterface {
         if (!$sql) {
             throw new \LogicException('Zadaný SQL řetězec je prázdný.');
         }
         $queries = $this->mysql_explode(\trim($sql));
-        $dbhTransact = $this->handler;
-        if ($dbhTransact->inTransaction()) {
-            throw new \LogicException('Nelze volat tuto metodu uprostřed spuštěné databázové transakce.');
+        if (count($queries)>1) {
+            throw new \LogicException('Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.');
         }
         try {
-            $dbhTransact->beginTransaction();
-            foreach ($queries as $query) {
-                if (trim($query)) {
-                    $this->logger->info($query);
-                    $stat = $dbhTransact->query($query);
-                }
+            if (trim($queries[0])) {
+                $this->logger->info($queries[0]);
+                $stat = $this->handler->query($queries[0]);
             }
-            $this->logger->info('Commit.');
-            $succ = $dbhTransact->commit();
+            $this->logger->info('Success.');
         } catch(\Exception $e) {
-            $this->logger->error('Rollback: '.$e->getMessage());
-            $dbhTransact->rollBack();
+            $this->logger->error('Error: '.$e->getMessage());
             throw new \RuntimeException($e);
         }
-        return $succ ? TRUE : FALSE;
+        return $succ ? $stat : null;
     }
 
     public function findAllRows($tablename) {
