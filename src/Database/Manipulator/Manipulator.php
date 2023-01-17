@@ -111,7 +111,7 @@ class Manipulator {
     }
 
     /**
-     * Vykoná obsah zadaného souboru jako posloupnost SQL příkazů.
+     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů.
      * Předpokládá, že SQL příkazy v souboru jsou odděleny středníkem ";".
      * Příkazy vykonává v rámci jedné transakce, kterou spouští.
      * Neporadí si, pokud ji zavoláte uprostřed již spuštěné transakce. V takovém případě by vykonání neznámé posloupnosti SQL příkazů mohlo vést

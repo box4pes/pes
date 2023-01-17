@@ -109,9 +109,13 @@ class Html implements HtmlInterface {
         $innerHtml = [];
         foreach ($innerTag as $value) {
             if (is_array($value)) {
-                $innerHtml[] = Html::implodeInnerTags($value);
+                if (count($value)>0) {
+                    $innerHtml[] = Html::implodeInnerTags($value);
+                } else {
+                    $innerHtml[] = "";
+                }
             } else {
-                $innerHtml[] = $value;
+                $innerHtml[] = (string) $value;
             }
         }
         if (count($innerHtml)>1) {
