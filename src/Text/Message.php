@@ -50,7 +50,7 @@ class Message {
     public static function setAppLocale($appLocale) {
         // \Locale potřebuje mít povoleno rozšíření intl (php.ini)
 //        self::$appLocale = explode('-', $appLocale)[0];
-        if (extension_loaded('intl')) {
+        if (!extension_loaded('intl')) {
             throw new LogicException("Metoda Message::setAppLocale() potřebuje mít povoleno rozšíření intl (php.ini).");
         }
             self::$appLocale = \Locale::getPrimaryLanguage($appLocale);
