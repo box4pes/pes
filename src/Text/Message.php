@@ -11,6 +11,8 @@ namespace Pes\Text;
 use Pes\Text\Template;
 use Psr\Log\LoggerInterface;
 
+use LogicException;
+
 /**
  * Description of T
  *
@@ -48,7 +50,10 @@ class Message {
     public static function setAppLocale($appLocale) {
         // \Locale potřebuje mít povoleno rozšíření intl (php.ini)
 //        self::$appLocale = explode('-', $appLocale)[0];
-        self::$appLocale = \Locale::getPrimaryLanguage($appLocale);
+        if (extension_loaded('intl')) {
+            throw new LogicException("Metoda Message::setAppLocale() potřebuje mít povoleno rozšíření intl (php.ini).");
+        }
+            self::$appLocale = \Locale::getPrimaryLanguage($appLocale);
     }
 
     public static function setLogger(LoggerInterface $logger) {
