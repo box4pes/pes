@@ -98,8 +98,8 @@ class UriFactory implements UriFactoryInterface, EnvironmentAcceptInterface {
 
         // parse_url() requires a full URL. As we don't extract the domain name or scheme,
         // we use a stand-in.
-        $requestUri = parse_url('http://example.com' . $environment->get('REQUEST_URI'), PHP_URL_PATH);
-
+        $rUFromRequestUri = parse_url('http://example.com' . $environment->get('REQUEST_URI'), PHP_URL_PATH);
+        $requestUri = $rUFromRequestUri ?? '';// parse_url() pro neexistující komponentu url vrací null, $requestUri musí být string
 //        $basePath = '';
 //        $virtualPath = $requestUri;
 //        if (stripos($requestUri, $requestScriptName) === 0) {
@@ -115,7 +115,8 @@ class UriFactory implements UriFactoryInterface, EnvironmentAcceptInterface {
         // Query string
         $queryString = $environment->get('QUERY_STRING', '');
         if ($queryString === '') {
-            $queryString = parse_url('http://example.com' . $environment->get('REQUEST_URI'), PHP_URL_QUERY);
+            $qSFromRequestUri = parse_url('http://example.com' . $environment->get('REQUEST_URI'), PHP_URL_QUERY);
+            $queryString = $qSFromRequestUri ?? '';// parse_url() pro neexistující komponentu url vrací null, $queryString musí být string
         }
 
         // Fragment

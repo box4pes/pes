@@ -27,7 +27,8 @@ class BodyParser implements BodyParserInterface {
      */
     private $mediaContentResolver;
 
-
+    private $bodyParsers;
+    
     public function __construct(MediaContentResolverInterface $requestMediaContentResolver=NULL) {
 
         $this->mediaContentResolver = $requestMediaContentResolver ? $requestMediaContentResolver : new MediaContentResolver();
