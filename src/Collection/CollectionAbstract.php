@@ -2,6 +2,7 @@
 namespace Pes\Collection;
 
 use ArrayObject;
+use Traversable;
 
 /**
  * CollectionAbstract
@@ -26,7 +27,7 @@ abstract class CollectionAbstract implements CollectionInterface {
         $this->internalStorage = clone $this->internalStorage;
     }
 
-    public function count() {
+    public function count(): int {
         return $this->internalStorage->count();
     }
 
@@ -34,7 +35,7 @@ abstract class CollectionAbstract implements CollectionInterface {
         return $this->internalStorage->getArrayCopy();
     }
 
-    public function getIterator() {
+    public function getIterator(): Traversable {
         return $this->internalStorage->getIterator();
     }
 
