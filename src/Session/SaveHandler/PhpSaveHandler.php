@@ -23,12 +23,12 @@ class PhpSaveHandler extends \SessionHandler implements \SessionHandlerInterface
         return $close;
     }
 
-    public function read($id) {
+    public function read(string $id) { // : int|false 
         $read = parent::read($id);
         return $read;
     }
 
-    public function write($id, $data) {
+    public function write(string $id, string $data): bool {
         $write = parent::write($id, $data);
         return $write;
     }
