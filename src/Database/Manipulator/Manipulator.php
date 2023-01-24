@@ -129,7 +129,7 @@ class Manipulator {
         if (!$sql) {
             throw new \LogicException('Zadaný soubor je prázdný.');
         }
-        $queries = $this->mysql_explode(\trim($sql));
+        $queries = $this->mysql_explode($sql);
         $dbhTransact = $this->handler;
         if ($dbhTransact->inTransaction()) {
             throw new \LogicException('Nelze volat tuto metodu uprostřed spuštěné databázové transakce.');
@@ -166,7 +166,7 @@ class Manipulator {
         if (!$sql) {
             throw new \LogicException('Zadaný SQL řetězec je prázdný.');
         }
-        $queries = $this->mysql_explode(\trim($sql));
+        $queries = $this->mysql_explode($sql);
         if (count($queries)>1) {
             throw new \LogicException('Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.');
         }
@@ -228,6 +228,7 @@ class Manipulator {
      * @return type
      */
     private function sql_explode($sql) {
+        $sql = \trim(\trim($sql), ";").";";
         $separator = ";";
         $leftBracket = "'";
         $rightBracket = "'";
