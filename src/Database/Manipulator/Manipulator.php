@@ -251,7 +251,7 @@ class Manipulator {
                 $left_parenthesis++;
             }
         }
-        if($pos > 0) $ret[] = substr($sql, $pos);
+//        if($pos > 0) $ret[] = substr($sql, $pos);
 
         return $ret;
     }
