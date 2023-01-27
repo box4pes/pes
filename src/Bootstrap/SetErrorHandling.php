@@ -9,8 +9,11 @@ if (PES_DEVELOPMENT) {
     ini_set('log_errors', 1);
     ini_set('error_log', PES_BOOTSTRAP_ERROR_LOGS_PATH.'PHP_error_log '.str_replace(['/', '\\'], '_', $_SERVER['PHP_SELF']).'.log'); // Logging file
 //    ini_set('log_errors_max_len', 1024); // Logging mesage size!
-    error_reporting(E_ALL);
-//    display_errors = On
+    if(defined("PES_BOOTSTRAP_ERROR_REPORTING")) {
+        error_reporting(PES_BOOTSTRAP_ERROR_REPORTING);
+    } else {
+        error_reporting(E_ALL);
+    }//    display_errors = On
 //    display_startup_errors = On
 //    error_reporting = -1
 //    log_errors = On
@@ -18,8 +21,11 @@ if (PES_DEVELOPMENT) {
     ini_set('display_errors', 0);
     ini_set('display_startup_errors', 0);
     ini_set('log_errors', 1);
-    error_reporting(E_ALL);
-//    display_errors = Off
+    if(defined("PES_BOOTSTRAP_ERROR_REPORTING")) {
+        error_reporting(PES_BOOTSTRAP_ERROR_REPORTING);
+    } else {
+        error_reporting(E_ALL);
+    }//    display_errors = Off
 //    display_startup_errors = Off
 //    error_reporting = E_ALL
 //    log_errors = On
