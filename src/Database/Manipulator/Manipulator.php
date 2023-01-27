@@ -173,14 +173,14 @@ class Manipulator {
         try {
             if (trim($queries[0])) {
                 $this->logger->info($queries[0]);
-                $stat = $this->handler->query($queries[0]);
+                $stat = $this->handler->query($queries[0]);  // vrací statement nebo false
             }
             $this->logger->info('Success.');
         } catch(\Exception $e) {
             $this->logger->error('Error: '.$e->getMessage());
             throw new \RuntimeException($e);
         }
-        return $succ ? $stat : null;
+        return $stat ? $stat : null;
     }
 
     public function findAllRows($tablename) {
