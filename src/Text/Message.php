@@ -52,8 +52,9 @@ class Message {
 //        self::$appLocale = explode('-', $appLocale)[0];
         if (!extension_loaded('intl')) {
             self::$appLocale = explode("-", $appLocale)[0];
-        }
+        } else {
             self::$appLocale = \Locale::getPrimaryLanguage($appLocale);
+        }
     }
 
     public static function setLogger(LoggerInterface $logger) {
