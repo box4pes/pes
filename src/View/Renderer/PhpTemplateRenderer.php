@@ -276,7 +276,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * @param iterable $data
      * @param string $emptyDataTemplateFilename
      */
-    public function insertConditionally($condition=false, $templateFilename='item', iterable $data=[], $emptyDataTemplateFilename='') {
+    public function insertIf($condition=false, $templateFilename='item', iterable $data=[], $emptyDataTemplateFilename='') {
         if ($condition) {
             $ret = $this->insert($templateFilename, $data, $emptyDataTemplateFilename);
         } else {
