@@ -28,7 +28,7 @@ class BodyParser implements BodyParserInterface {
     private $mediaContentResolver;
 
     private $bodyParsers;
-    
+
     public function __construct(MediaContentResolverInterface $requestMediaContentResolver=NULL) {
 
         $this->mediaContentResolver = $requestMediaContentResolver ? $requestMediaContentResolver : new MediaContentResolver();
@@ -37,7 +37,7 @@ class BodyParser implements BodyParserInterface {
 //    if ($method === 'POST' && in_array($mediaContentResolver->getMediaType($headers), ['application/x-www-form-urlencoded', 'multipart/form-data'])) {
 
         $this->registerMediaParser('application/x-www-form-urlencoded', function ($input) {
-            return $_POST;
+            return $_POST; // return asociative array
 //https://stackoverflow.com/questions/5077969/php-some-post-values-missing-but-are-present-in-php-input
 //            parse_str($input, $data);
 //            return $data;
@@ -47,25 +47,25 @@ class BodyParser implements BodyParserInterface {
 //            https://stackoverflow.com/questions/1075513/php-parsing-multipart-form-data
 //             multipart parser:
 //            https://github.com/h4cc/multipart
-            return $_POST;
+            return $_POST; // return asociative array
         });
 
         $this->registerMediaParser('application/json', function ($input) {
-            return json_decode($input, true);
+            return json_decode($input, true);  // return asociative array|null
         });
 
         $this->registerMediaParser('application/xml', function ($input) {
             $backup = libxml_disable_entity_loader(true);
             $result = simplexml_load_string($input);
             libxml_disable_entity_loader($backup);
-            return $result;
+            return $result;  // return SimpleXMLElement|false
         });
 
         $this->registerMediaParser('text/xml', function ($input) {
             $backup = libxml_disable_entity_loader(true);
             $result = simplexml_load_string($input);
             libxml_disable_entity_loader($backup);
-            return $result;
+            return $result;  // return SimpleXMLElement|false
         });
 
     }
@@ -85,7 +85,7 @@ class BodyParser implements BodyParserInterface {
 
     /**
      * {@inheritdoc}
-     * Parsování body provede pomocí media parseru registrovaného pro nedia typ requestu. Pokud není zaregistrován vhodný media type parser, metoda vrací NULL.
+     * Parsování body provede pomocí media parseru registrovaného pro nedia typ requestu. Pokud není zaregistrován vhodný media type parser, metoda vyhodí výjimku.
      *
      * @param ServerRequestInterface $request
      * @return type
@@ -115,7 +115,7 @@ class BodyParser implements BodyParserInterface {
                 }
                 return $parsed;
             } else {
-                user_error("Není zaregistrován media parser pro nalezený media typ {$mediaType}.", E_USER_WARNING);
+                throw new RuntimeException("Není zaregistrován media parser pro nalezený media typ {$mediaType}.");
             }
         }
         return null;
