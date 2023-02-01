@@ -290,10 +290,11 @@ class Html implements HtmlInterface {
             $attributes["name"] = $name;
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue===$value) ;
-            $html[] = Html::tag('span', [],
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]],
                     Html::tagNopair("input", $attributes)
+                    .
+                    $label
                     );
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
         return implode(PHP_EOL, $html);
     }
@@ -308,10 +309,11 @@ class Html implements HtmlInterface {
             $attributes["name"] = $name;
             $attributes["value"] = $value;
             $attributes["checked"] = ($checkedValue===$value) ;
-            $html[] = Html::tag('span', [],
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]],
                     Html::tagNopair("input", $attributes)
+                    .
+                    $label
                     );
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
         return implode(PHP_EOL, $html);
     }
