@@ -289,7 +289,7 @@ class Html implements HtmlInterface {
             $attributes["id"] = uniqid();
             $attributes["name"] = $name;
             $attributes["value"] = $value;
-            $attributes["checked"] = ($checkedValue==$value) ;
+            $attributes["checked"] = ($checkedValue===$value) ;
             $html[] = Html::tag('span', [],
                     Html::tagNopair("input", $attributes)
                     );
@@ -307,7 +307,7 @@ class Html implements HtmlInterface {
             $attributes["id"] = uniqid();
             $attributes["name"] = $name;
             $attributes["value"] = $value;
-            $attributes["checked"] = ($checkedValue==$value) ;
+            $attributes["checked"] = ($checkedValue===$value) ;
             $html[] = Html::tag('span', [],
                     Html::tagNopair("input", $attributes)
                     );
