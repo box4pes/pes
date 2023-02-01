@@ -282,7 +282,7 @@ class Html implements HtmlInterface {
         return implode(PHP_EOL, $html);
     }
 
-    public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[]) {
+    public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[], iterable $attributes=[]) {
         $checkedValue = array_key_exists($name, $context) ? $context[$name] : null;
         $attributes["type"] = "radio";
         foreach ($radiosetLbelsValues as $label => $value) {
@@ -298,7 +298,7 @@ class Html implements HtmlInterface {
         return implode(PHP_EOL, $html);
     }
 
-    public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[]) {
+    public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[], iterable $attributes=[]) {
         $attributes["type"] = "checkbox";
         foreach ($checkboxsetLabelsNameValuePairs as $label => $nameValuePair) {
             $name = key($nameValuePair);
