@@ -27,7 +27,7 @@ class RequestParams implements RequestParamsInterface {
      ******************************************************************************/
 
     /**
-     * Vrací parametr získaný z z parsovaného request body nebo query (v tomto pořadí).
+     * Vrací parametr získaný z z parsovaného request body nebo query (v tomto pořadí). Pokud parametr neexistuje múže vracet default hodnotu.
      *
      * @param ServerRequestInterface $request Objekt request
      * @param  string $key Klíč (index, jméno) parametru.
@@ -52,7 +52,7 @@ class RequestParams implements RequestParamsInterface {
     }
 
     /**
-     * Vrací parametr získaný z parsovaného request body.
+     * Vrací jeden parametr získaný z parsovaného request body. Pokud parametr neexistuje múže vracet default hodnotu.
      *
      * @param ServerRequestInterface $request
      * @param  string $key Klíč (index, jméno) parametru.
@@ -74,7 +74,7 @@ class RequestParams implements RequestParamsInterface {
     }
 
     /**
-     * Vrací parametr získaný z query.
+     * Vrací jeden parametr získaný z query. Pokud parametr neexistuje múže vracet default hodnotu.
      *
      * @param ServerRequestInterface $request
      * @param  string $key Klíč (index, jméno) parametru.
@@ -94,8 +94,10 @@ class RequestParams implements RequestParamsInterface {
     }
 
     /**
-     * Vrací asociativní pole všech parametrů requestu získaných z parsovaného body nebo query (v tomto pořadí).
-     * Při shodných indexech vítězí parametr z body (t.j. POST)
+     * Vrací všechny parametry requestu získané z parsovaného body nebo query (v tomto pořadí). Parametry vrací jako asociativní pole.
+     * Při shodných indexech parametru v POST i GET vítězí parametr z body (t.j. POST).
+     *
+     * Umí zpracovat výsledek parsování body jen pokud je to array. Pokud body parser, který je automaticky vybrán podle obsahu requestu
      *
      * @param RequestInterface $request
      *

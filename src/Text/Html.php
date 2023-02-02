@@ -282,36 +282,38 @@ class Html implements HtmlInterface {
         return implode(PHP_EOL, $html);
     }
 
-    public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[]) {
+    public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=[]) {
         $checkedValue = array_key_exists($name, $context) ? $context[$name] : null;
-        $attributes["type"] = "radio";
+        $inputAttributes["type"] = "radio";
         foreach ($radiosetLbelsValues as $label => $value) {
-            $attributes["id"] = uniqid();
-            $attributes["name"] = $name;
-            $attributes["value"] = $value;
-            $attributes["checked"] = ($checkedValue==$value) ;
-            $html[] = Html::tag('span', [],
-                    Html::tagNopair("input", $attributes)
+            $inputAttributes["id"] = uniqid();
+            $inputAttributes["name"] = $name;
+            $inputAttributes["value"] = $value;
+            $inputAttributes["checked"] = ($checkedValue===$value) ;
+            $html[] = Html::tag("label", ["for"=>$inputAttributes["id"]]+$labelAttributes,
+                    Html::tagNopair("input", $inputAttributes)
+                    .
+                    $label
                     );
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
         return implode(PHP_EOL, $html);
     }
 
-    public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[]) {
-        $attributes["type"] = "checkbox";
+    public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=[]) {
+        $inputAttributes["type"] = "checkbox";
         foreach ($checkboxsetLabelsNameValuePairs as $label => $nameValuePair) {
             $name = key($nameValuePair);
             $value = $nameValuePair[$name];
             $checkedValue = array_key_exists($name, $context) ? $context[$name] : null;
-            $attributes["id"] = uniqid();
-            $attributes["name"] = $name;
-            $attributes["value"] = $value;
-            $attributes["checked"] = ($checkedValue==$value) ;
-            $html[] = Html::tag('span', [],
-                    Html::tagNopair("input", $attributes)
+            $inputAttributes["id"] = uniqid();
+            $inputAttributes["name"] = $name;
+            $inputAttributes["value"] = $value;
+            $inputAttributes["checked"] = ($checkedValue===$value) ;
+            $html[] = Html::tag("label", ["for"=>$inputAttributes["id"]]+$labelAttributes,
+                    Html::tagNopair("input", $inputAttributes)
+                    .
+                    $label
                     );
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
         return implode(PHP_EOL, $html);
     }
