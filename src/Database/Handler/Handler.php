@@ -206,7 +206,7 @@ class Handler extends \PDO implements HandlerInterface {
         self::$safeExceptionHandlerLogger->critical('Chyba při instancování db handleru. '.$exception->getMessage().\PHP_EOL.\PHP_EOL.'Trace string:'.\PHP_EOL.$exception->getTraceAsString().\PHP_EOL.$str2);
 
         // Output the exception details
-        throw new \UnexpectedValueException(' Problém s připojením k databázi - chyba při instancování Handleru. Info v logu. Kontaktujte správce systému.', $exception);//. $exception->getMessage()); //????? getMessage
+        throw new \UnexpectedValueException(' Problém s připojením k databázi - chyba při instancování Handleru. Info v logu. Kontaktujte správce systému.', 0, $exception);//. $exception->getMessage()); //????? getMessage
     }
 
 ######## metody HandlerInterface ######################################################
