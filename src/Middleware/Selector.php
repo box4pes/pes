@@ -20,6 +20,8 @@ use Psr\Http\Message\ResponseInterface;
 use Pes\Application\AppFactory;
 use Pes\Application\UriInfoInterface;
 
+use Pes\Http\Uri\UriPath;
+
 /**
  * Description of Switch
  *
@@ -47,6 +49,8 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
      * @param \Pes\Middleware\callable $resolver
      */
     public function addItem($prefix, $stack, callable $resolver=NULL): SelectorInterface{
+        //ENCODE
+        $encodedPrefix = UriPath::encodePath($prefix);
         $this->items[] = (new SelectorItem())->setPrefix($prefix)->setStack($stack, $resolver);
         return $this;
     }

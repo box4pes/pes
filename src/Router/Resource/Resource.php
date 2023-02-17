@@ -8,13 +8,14 @@
 
 namespace Pes\Router\Resource;
 
+use Pes\Router\MethodEnum;
+use Pes\Router\UrlPatternValidator;
+use Pes\Http\Uri\UriPath;
+
+use Pes\Type\Exception\TypeExceptionInterface;
 use Pes\Router\Resource\Exception\ResourceHttpMethodNotValid;
 use Pes\Router\Resource\Exception\ResourceUrlPatternNotValid;
 use Pes\Router\Resource\Exception\ResourcePathParameterDoesNotMatch;
-
-use Pes\Router\MethodEnum;
-use Pes\Type\Exception\TypeExceptionInterface;
-use Pes\Router\UrlPatternValidator;
 use Pes\Router\Exception\WrongPatternFormatException;
 
 /**
@@ -66,8 +67,10 @@ class Resource implements ResourceInterface {
         } catch (WrongPatternFormatException $e) {
             throw new ResourceUrlPatternNotValid("Passed URL pattern $urlPattern is not valid.", 0, $e);
         }
+        //ENCODE
+        $encodedPattern = UriPath::encodePath($urlPattern);
         $cloned = clone $this;
-        $cloned->urlPattern = $urlPattern;
+        $cloned->urlPattern = $encodedPattern;
         return $cloned;
     }
 
