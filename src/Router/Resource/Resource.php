@@ -67,10 +67,8 @@ class Resource implements ResourceInterface {
         } catch (WrongPatternFormatException $e) {
             throw new ResourceUrlPatternNotValid("Passed URL pattern $urlPattern is not valid.", 0, $e);
         }
-        //ENCODE
-        $encodedPattern = UriPath::encodePath($urlPattern);
         $cloned = clone $this;
-        $cloned->urlPattern = $encodedPattern;
+        $cloned->urlPattern = $this->urlPattern;
         return $cloned;
     }
 
