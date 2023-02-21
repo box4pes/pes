@@ -68,7 +68,7 @@ class Resource implements ResourceInterface {
             throw new ResourceUrlPatternNotValid("Passed URL pattern $urlPattern is not valid.", 0, $e);
         }
         $cloned = clone $this;
-        $cloned->urlPattern = $this->urlPattern;
+        $cloned->urlPattern = $urlPattern;
         return $cloned;
     }
 
