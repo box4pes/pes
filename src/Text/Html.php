@@ -230,7 +230,6 @@ class Html implements HtmlInterface {
 
     /**
      * Generuje htm kód tagu input a případně i tagu label.
-     *
      * <p><b>Tag label:</b></p>
      * <p>Pokud je zadán parametr <code>label</code>, metoda přidá tag label a generovaný tag input vloží do tagu label jako potomka.
      * Label je zobrazován vlevo před tagem input a kliknutí na label přesune focus formuláře na input.
@@ -244,23 +243,23 @@ class Html implements HtmlInterface {
      * <li>Jako hodnota atributu value je použita hodnota položky parametru <code>context</code> se jménem odpovídajícím parametru <code>name</code>, případně prázný řetězec.
      * Pokud parametr <code>inputAttributes</code> obsahuje položku "value", tato hodnota se nepoužije, přednost má hodnota v poli položky parametru <code>context</code> se jménem odpovídajícím parametru <code>name</code>).</li>
      * </p>
-     *
      * @param string $name
      * @param string $label
      * @param array $context Pole kontext - asociativní pole dvojic name=>value.
      * @param iterable $inputAttributes
      * @return type
      */
-    public static function input($name, $label='', array $context=[], iterable $inputAttributes=[], iterable $spanAttributes=["style"=>"white-space:nowrap"]) {
+    public static function input($name, $label='', array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=["style"=>"white-space:nowrap"]) {
         if (!array_key_exists("type", $inputAttributes)) {
             $inputAttributes["type"] = "text";
         }
         $inputAttributes["name"] = $name;
         $inputAttributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
-        if(isset($inputAttributes["id"]) AND $inputAttributes["id"]) {
-            $labelAttributes["for"] = $inputAttributes["id"];
-        }
+
         if($label ?? '') {
+            if(isset($inputAttributes["id"]) AND $inputAttributes["id"]) {
+                $labelAttributes["for"] = $inputAttributes["id"];
+            }
             $html[] = Html::tag("label", $labelAttributes,
                     $label
                     .
