@@ -229,39 +229,46 @@ class Html implements HtmlInterface {
 
 
     /**
-     * Generuje htm kód tagu input. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem input.
+     * Generuje htm kód tagu input a případně i tagu label.
      *
-     * Atributy name a value vždy generuje z hodnot parametrů.
-     *
-     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
-     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
-     *
-     * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
-     *
-     * Jako hodnota atributu value je použita hodnota položky kontextu s klíčem odpovídajícím parametru name, případně prázný řetězec.
-     * Pokud parametr attributes obsahuje položku "value", nepoužije se, přednost hodnota v poli context s klíčem odpovídajícím parametru name).
+     * <p><b>Tag label:</b></p>
+     * <p>Pokud je zadán parametr <code>label</code>, metoda přidá tag label a generovaný tag input vloží do tagu label jako potomka.
+     * Label je zobrazován vlevo před tagem input a kliknutí na label přesune focus formuláře na input.
+     * Pokud atributy pro input <code>inputAttributes</code> obsahují položku "id" a je zadán parametr <code>label</code> je k atributům tagu label přidána položka "for" s hodnotou id inputu.</p>
+     * <p><b>Atribut type:</b></p>
+     * <p>Pokud atributy pro tag input <code>inputAttributes</code> neobsahují položku "type" použije se typ "text".</p>
+     * <p><b>Atributy name a value:</b></p>
+     * <p>Atributy name a value tagu input vždy generuje z hodnot parametrů takto:</p>
+     * <ul>
+     * <li>Jako hodnota atributu name tagu inpu se vždy použije parametr <code>name</code>. tPokud parametr <code>inputAttributes</code> obsahuje položku "name", tato hodnota se nepoužije (přednost má povinný parametr <code>name</code>).</li>
+     * <li>Jako hodnota atributu value je použita hodnota položky parametru <code>context</code> se jménem odpovídajícím parametru <code>name</code>, případně prázný řetězec.
+     * Pokud parametr <code>inputAttributes</code> obsahuje položku "value", tato hodnota se nepoužije, přednost má hodnota v poli položky parametru <code>context</code> se jménem odpovídajícím parametru <code>name</code>).</li>
+     * </p>
      *
      * @param string $name
      * @param string $label
-     * @param array $context
-     * @param iterable $attributes
+     * @param array $context Pole kontext - asociativní pole dvojic name=>value.
+     * @param iterable $inputAttributes
      * @return type
      */
-    public static function input($name, $label='', array $context=[], iterable $attributes=[], iterable $spanAttributes=["style"=>"white-space:nowrap"]) {
-        if ($label AND !array_key_exists("id", $attributes)) {
-            $attributes["id"] = uniqid();
+    public static function input($name, $label='', array $context=[], iterable $inputAttributes=[], iterable $spanAttributes=["style"=>"white-space:nowrap"]) {
+        if (!array_key_exists("type", $inputAttributes)) {
+            $inputAttributes["type"] = "text";
         }
-        if (!array_key_exists("type", $attributes)) {
-            $attributes["type"] = "text";
+        $inputAttributes["name"] = $name;
+        $inputAttributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
+        if(isset($inputAttributes["id"]) AND $inputAttributes["id"]) {
+            $labelAttributes["for"] = $inputAttributes["id"];
         }
-        $attributes["name"] = $name;
-        $attributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
-
-        $html[] = Html::tag('span', $spanAttributes,
-                ($label ? Html::tag("label", ["for"=>$attributes["id"]], $label) : ""),
-                Html::tagNopair("input", $attributes)
-            );
-
+        if($label ?? '') {
+            $html[] = Html::tag("label", $labelAttributes,
+                    $label
+                    .
+                    Html::tagNopair("input", $inputAttributes)
+                );
+        } else {
+            $html[] = Html::tagNopair("input", $inputAttributes);
+        }
         return implode(PHP_EOL, $html);
     }
 
@@ -285,11 +292,13 @@ class Html implements HtmlInterface {
         $checkedValue = array_key_exists($name, $context) ? $context[$name] : null;
         $inputAttributes["type"] = "radio";
         foreach ($radiosetLbelsValues as $label => $value) {
-            $inputAttributes["id"] = uniqid();
             $inputAttributes["name"] = $name;
             $inputAttributes["value"] = $value;
             $inputAttributes["checked"] = ($checkedValue===$value) ;
-            $html[] = Html::tag("label", ["for"=>$inputAttributes["id"]]+$labelAttributes,
+            if(isset($inputAttributes["id"]) AND $inputAttributes["id"]) {
+                $labelAttributes["for"] = $inputAttributes["id"];
+            }
+            $html[] = Html::tag("label", $labelAttributes,
                     Html::tagNopair("input", $inputAttributes)
                     .
                     $label
@@ -304,11 +313,13 @@ class Html implements HtmlInterface {
             $name = key($nameValuePair);
             $value = $nameValuePair[$name];
             $checkedValue = array_key_exists($name, $context) ? $context[$name] : null;
-            $inputAttributes["id"] = uniqid();
             $inputAttributes["name"] = $name;
             $inputAttributes["value"] = $value;
             $inputAttributes["checked"] = ($checkedValue===$value) ;
-            $html[] = Html::tag("label", ["for"=>$inputAttributes["id"]]+$labelAttributes,
+            if(isset($inputAttributes["id"]) AND $inputAttributes["id"]) {
+                $labelAttributes["for"] = $inputAttributes["id"];
+            }
+            $html[] = Html::tag("label", $labelAttributes,
                     Html::tagNopair("input", $inputAttributes)
                     .
                     $label
