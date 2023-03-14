@@ -247,7 +247,7 @@ class Html implements HtmlInterface {
      * @param iterable $attributes
      * @return type
      */
-    public static function input($name, $label='', array $context=[], iterable $attributes=[], iterable $spanAttributes=[]) {
+    public static function input($name, $label='', array $context=[], iterable $attributes=[], iterable $spanAttributes=["style"=>"white-space:nowrap"]) {
         if ($label AND !array_key_exists("id", $attributes)) {
             $attributes["id"] = uniqid();
         }
