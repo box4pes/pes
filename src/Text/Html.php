@@ -247,7 +247,7 @@ class Html implements HtmlInterface {
      * @param iterable $attributes
      * @return type
      */
-    public static function input($name, $label='', array $context=[], iterable $attributes=[]) {
+    public static function input($name, $label='', array $context=[], iterable $attributes=[], $span=true, $spanAttributes=[]) {
         if ($label AND !array_key_exists("id", $attributes)) {
             $attributes["id"] = uniqid();
         }
@@ -257,12 +257,16 @@ class Html implements HtmlInterface {
         $attributes["name"] = $name;
         $attributes["value"] = array_key_exists($name, $context) ? $context[$name] : '';
 
-        if ($label) {
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
-        }
-        $html[] = Html::tag('span', [],
+        if ($span) {
+            $html[] = Html::tag('span', $spanAttributes,
+                    ($label ? Html::tag("label", ["for"=>$attributes["id"]], $label) : ""),
                     Html::tagNopair("input", $attributes)
                 );
+        } else {
+            $html[] = $label ? Html::tag("label", ["for"=>$attributes["id"]], $label) : "";
+            $html[] = Html::tagNopair("input", $attributes);
+        }
+
         return implode(PHP_EOL, $html);
     }
 
