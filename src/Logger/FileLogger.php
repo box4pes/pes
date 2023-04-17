@@ -74,27 +74,26 @@ class FileLogger extends AbstractLogger {
         }
         $fullLogDirectoryPath = self::$baseLogsDirectory.Directory::normalizePath($logDirectoryPath);
         Directory::createDirectory($fullLogDirectoryPath);
-
+        switch ($mode) {
+            case self::REWRITE_LOG:
+                $fopenMode = 'w+';
+                $fullLogFileName = $fullLogDirectoryPath.$logFileName;
+                break;
+            case self::APPEND_TO_LOG:
+                $fopenMode = 'a+';
+                $fullLogFileName = $fullLogDirectoryPath.$logFileName;
+                break;
+            case self::FILE_PER_DAY:
+                $fopenMode = 'a+';
+                $fullLogFileName = $fullLogDirectoryPath.date('Ymd')."\\".$logFileName;
+                break;
+            default:
+                $mode = self::APPEND_TO_LOG;
+                $fopenMode = 'a+';
+                user_error('Zadán neznámý parametr $mode při vytváření loggeru. Použit mode APPEND_TO_LOG.', E_USER_WARNING);
+                break;
+        }
         if(!isset(self::$instances[$fullLogFileName])){
-            switch ($mode) {
-                case self::REWRITE_LOG:
-                    $fopenMode = 'w+';
-                    $fullLogFileName = $fullLogDirectoryPath.$logFileName;
-                    break;
-                case self::APPEND_TO_LOG:
-                    $fopenMode = 'a+';
-                    $fullLogFileName = $fullLogDirectoryPath.$logFileName;
-                    break;
-                case self::FILE_PER_DAY:
-                    $fopenMode = 'a+';
-                    $fullLogFileName = $fullLogDirectoryPath.date('Ymd')."\\".$logFileName;
-                    break;
-                default:
-                    $mode = self::APPEND_TO_LOG;
-                    $fopenMode = 'a+';
-                    user_error('Zadán neznámý parametr $mode při vytváření loggeru. Použit mode APPEND_TO_LOG.', E_USER_WARNING);
-                    break;
-            }
             $oldLogExists = is_readable($fullLogFileName);
             $handle = fopen($fullLogFileName, $fopenMode);
             if ($handle===FALSE) {
