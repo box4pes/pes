@@ -12,6 +12,7 @@
 namespace Pes\Middleware;
 
 use Psr\Http\Message\RequestInterface;
+use Pes\Middleware\Exception\UnprocessedRequestException;
 
 /**
  * Description of NonprocessedRequestHandler
@@ -22,7 +23,7 @@ class UnprocessedRequestHandler extends RequestHandler {
     public function __construct() {
         parent::__construct(
                 function ( RequestInterface $request) {
-                    throw new \LogicException("Nevyhodnocený request: řetézec middleware vyčerpán bez získání výstupu. method: {$request->getMethod()}, path: {$request->getUri()->getPath()}");
+                    throw new UnprocessedRequestException("Nevyhodnocený request: řetézec middleware vyčerpán bez získání výstupu. method: {$request->getMethod()}, path: {$request->getUri()->getPath()}");
 
                 }
             );
