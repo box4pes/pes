@@ -28,8 +28,9 @@ class FileLogger extends AbstractLogger {
     const ODSAZENI = "    ";
     const SLOT = "/[:::::]/";
 
-    const REWRITE_LOG = 'w+';
-    const APPEND_TO_LOG = 'a+';
+    const REWRITE_LOG = 'replace log file';
+    const APPEND_TO_LOG = 'append to existing log file';
+    const FILE_PER_DAY = 'new log file for day, apend to log in one day range';
 
     /**
      * Privátní konstruktor. Objekt je vytvářen voláním factory metody getInstance().
@@ -74,27 +75,49 @@ class FileLogger extends AbstractLogger {
         $fullLogDirectoryPath = self::$baseLogsDirectory.Directory::normalizePath($logDirectoryPath);
         Directory::createDirectory($fullLogDirectoryPath);
 
-        $fullLogFileName = $fullLogDirectoryPath.$logFileName;
         if(!isset(self::$instances[$fullLogFileName])){
             switch ($mode) {
                 case self::REWRITE_LOG:
-                    $fopenMode = self::REWRITE_LOG;
+                    $fopenMode = 'w+';
+                    $fullLogFileName = $fullLogDirectoryPath.$logFileName;
                     break;
-            case self::APPEND_TO_LOG:
-                    $fopenMode = self::APPEND_TO_LOG;
+                case self::APPEND_TO_LOG:
+                    $fopenMode = 'a+';
+                    $fullLogFileName = $fullLogDirectoryPath.$logFileName;
+                    break;
+                case self::FILE_PER_DAY:
+                    $fopenMode = 'a+';
+                    $fullLogFileName = $fullLogDirectoryPath.date('Ymd')."\\".$logFileName;
+                    break;
+                default:
+                    $mode = self::APPEND_TO_LOG;
+                    $fopenMode = 'a+';
+                    user_error('Zadán neznámý parametr $mode při vytváření loggeru. Použit mode APPEND_TO_LOG.', E_USER_WARNING);
+                    break;
+            }
+            $oldLogExists = is_readable($fullLogFileName);
+            $handle = fopen($fullLogFileName, $fopenMode);
+            if ($handle===FALSE) {
+                throw new \InvalidArgumentException('Nelze vytvořit '.__CLASS__.' pro soubor: '.$fullLogFileName.', nepodařilo se soubor vytvořit.');
+            }
+            $loggerInstance = new self($handle, $fullLogFileName);
+            switch ($mode) {
+                case self::REWRITE_LOG:
+                    $loggerInstance->debug("[{time}] Logger start. Rewrite log file: {fullLogFileName}. Mode '{mode}'.",
+                        ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName, 'mode'=>$mode]);
+                    break;
+                case self::APPEND_TO_LOG:
+                case self::FILE_PER_DAY:
+                    if (!$oldLogExists) {
+                    $loggerInstance->debug("[{time}] Logger start. New log file created: {fullLogFileName}. Mode '{mode}'.",
+                        ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName, 'mode'=>$mode]);
+                    }
                     break;
                 default:
                     $fopenMode = self::APPEND_TO_LOG;
                     user_error('Zadán neznámý parametr $mode při vytváření loggeru. Použit mode APPEND_TO_LOG.', E_USER_WARNING);
                     break;
             }
-            $handle = fopen($fullLogFileName, $fopenMode);
-            if ($handle===FALSE) {
-                throw new \InvalidArgumentException('Nelze vytvořit '.__CLASS__.' pro soubor: '.$fullLogFileName.', nepodařilo se soubor vytvořit.');
-            }
-            $loggerInstance = new self($handle, $fullLogFileName);
-            $loggerInstance->debug("[{time}] Logger start. Log file: {fullLogFileName}. Mode '{mode}'.",
-                ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName, 'mode'=>$mode]);
             self::$instances[$fullLogFileName] = $loggerInstance;
         }
         return self::$instances[$fullLogFileName];
