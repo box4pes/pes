@@ -102,13 +102,13 @@ class FileLogger extends AbstractLogger {
             $loggerInstance = new self($handle, $fullLogFileName);
             switch ($mode) {
                 case self::REWRITE_LOG:
-                    $loggerInstance->debug("[{time}] Logger start. Rewrite log file: {fullLogFileName}.", ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName]);
+                    $loggerInstance->debug("Logger start. Rewrite log file: {fullLogFileName}.", ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName]);
                     $loggerInstance->debug("Mode '{mode}'.", ['mode'=>$mode]);
                     break;
                 case self::APPEND_TO_LOG:
                 case self::FILE_PER_DAY:
                     if (!$oldLogExists) {
-                    $loggerInstance->debug("[{time}] Logger start. New log file created: {fullLogFileName}. ", ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName]);
+                    $loggerInstance->debug("Logger start. New log file created: {fullLogFileName}. ", ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName]);
                     $loggerInstance->debug("Mode '{mode}'.", ['mode'=>$mode]);
                     }
                     break;
