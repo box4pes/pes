@@ -20,7 +20,7 @@ class ResponseSender implements ResponseSenderInterface {
     }
 
     /**
-     * Send the response the client
+     * Send the response to the client
      *
      * @param ResponseInterface $response
      */
@@ -46,7 +46,7 @@ class ResponseSender implements ResponseSenderInterface {
                     if (isset($this->logger)) {
                         $this->logger->debug("ResponseSender: Send header with content: {headerContent}", ['headerContent'=>$headerContent]);
                     }
-                    header($headerContent, false);
+                    header($headerContent, true);  // replace server headers
                 }
             }
         } elseif (isset($this->logger)) {
