@@ -215,7 +215,7 @@ class Html implements HtmlInterface {
         }
         $optionsHtml = [];
         $selectedValue = array_key_exists($name, $context) ? $context[$name] : null;
-        $useKeysAsValues = (!is_array($optionValues)) || (array_key_first($optionValues)!=0); // od PHP8: OR !array_is_list($optionValues);
+        $useKeysAsValues = (!is_array($optionValues)) || (array_key_first($optionValues)!==0); // od PHP8: OR !array_is_list($optionValues);
 
         foreach ($optionValues as $key=>$value) {
             $optionValue = $useKeysAsValues ? $key : $value;
