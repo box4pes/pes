@@ -102,5 +102,30 @@ SELECT;
 
     }
 
+    public function testRadio() {
+        $radio = Html::radio('faze', ['první fáze'=>'raz', 'Druhá fáze'=>'dva', 'Třetí a poslední'=>'tři'], ['faze'=>'dva']);
+$rad = <<<SELECT
+<label><input type="radio" name="faze" value="raz" />první fáze</label>
+<label><input type="radio" name="faze" value="dva" checked />Druhá fáze</label>
+<label><input type="radio" name="faze" value="tři" />Třetí a poslední</label>
+SELECT;
 
+        $this->assertEquals($rad, $radio);
+    }
+
+    public function testChecknox() {
+        $checkbox = Html::checkbox(
+                                [
+                                    "Piju kafe"=>["kafe"=>"Piji kávu aspoň občas"],
+                                    "Piju čaj"=>["caj"=>"Piji čajíček"]
+                                ],
+                                ["kafe"=>"Piji kávu aspoň občas"]
+                            );
+$che = <<<SELECT
+<label><input type="checkbox" name="kafe" value="Piji kávu aspoň občas" checked />Piju kafe</label>
+<label><input type="checkbox" name="caj" value="Piji čajíček" />Piju čaj</label>
+SELECT;
+
+        $this->assertEquals($che, $checkbox);
+    }
 }

@@ -72,27 +72,6 @@ interface HtmlInterface {
     public static function p($text);
 
     /**
-     * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
-     *
-     * Pokud je zadán parametr label, parametr attributes by měl obsahovat položku s klíčem "id", pokud ji neobsahuje, bude doplněna.
-     * Parametr attributes může obsahovat položku s klíčem "name", ale ta nebude použita.
-     *
-     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
-     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
-     * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
-     *
-     * Vygenerovaný option se stejnou hodnotou jako je hodnota položky kontextu s klíčem odpovídajícím parametru name je doplněn atributem selected.
-     *
-     * @param string $name
-     * @param string $label
-     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
-     * @param array $context
-     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
-     */
-    public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]);
-
-    /**
-    /**
      * Generuje htm kód tagu input. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem input.
      *
      * Atributy name a value vždy generuje z hodnot parametrů.
@@ -113,6 +92,32 @@ interface HtmlInterface {
     public static function input($name, $label='', array $context=[], iterable $attributes=[]);
 
     public static function textarea($name, $label='', array $context=[], iterable $attributes=[]);
+
+    /**
+     * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
+     *
+     * Generování label:
+     * Pokud je zadán parametr label, parametr attributes by měl obsahovat položku s klíčem "id", pokud ji neobsahuje, bude doplněna.
+     * Parametr attributes může obsahovat položku s klíčem "name", ale ta nebude použita.
+     *
+     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
+     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
+     * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
+     *
+     * Generování option:
+     * Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value. Hodnoty $key jsou použity jako hodnota proměnné formuláře (value v tagu option),
+     * $value jsou použity pro zobrazení v html (html obsah tagu option).
+     * Pokud je jako parametr použito neasociativní pole (automaticky číslované) dojde k tomu, že číselné klíče se nepoužijí a hodnoty pole bodou použity jako value v option i jako zobrazované hodnoty v html.
+     *
+     * Pokud je v kontextu pložka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
+     *
+     * @param string $name Jméno proměnné formuláře /má přednost před případným atributem name)
+     * @param string $label Pokud je zadán vygeneruje se tag label
+     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
+     * @param array $context
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
+     */
+    public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]);
 
     public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[]);
 

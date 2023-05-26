@@ -182,53 +182,6 @@ class Html implements HtmlInterface {
     }
 
     /**
-     * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
-     *
-     * Generování label:
-     * Pokud je zadán parametr label, parametr attributes by měl obsahovat položku s klíčem "id", pokud ji neobsahuje, bude doplněna.
-     * Parametr attributes může obsahovat položku s klíčem "name", ale ta nebude použita.
-     *
-     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
-     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
-     * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
-     *
-     * Generování option:
-     * Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value. Hodnoty $key jsou použity jako hodnota proměnné formuláře (value v tagu option),
-     * $value jsou použity pro zobrazení v html (html obsah tagu option).
-     * Pokud je jako parametr použito neasociativní pole (automaticky číslované) dojde k tomu, že číselné klíče se nepoužijí a hodnoty pole bodou použity jako value v option i jako zobrazované hodnoty v html.
-     *
-     * Pokud je v kontextu pložka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
-     *
-     * @param string $name Jméno proměnné formuláře /má přednost před případným atributem name)
-     * @param string $label Pokud je zadán vygeneruje se tag label
-     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
-     * @param array $context
-     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
-     */
-    public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]) {
-        if ($label AND !array_key_exists("id", $attributes)) {
-            $attributes["id"] = uniqid();
-        }
-        $attributes["name"] = $name;
-        if ($label) {
-            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
-        }
-        $optionsHtml = [];
-        $selectedValue = array_key_exists($name, $context) ? $context[$name] : null;
-        $useKeysAsValues = (!is_array($optionValues)) || (array_key_first($optionValues)!==0); // od PHP8: OR !array_is_list($optionValues);
-
-        foreach ($optionValues as $key=>$value) {
-            $optionValue = $useKeysAsValues ? $key : $value;
-            $optionsHtml[] = Html::tag("option", (isset($selectedValue) AND $optionValue==$selectedValue) ? ['value'=>$optionValue , 'selected'=>true] : ['value'=>$optionValue ?? $value], $value);
-        }
-        $html[] = Html::tag('span', [],
-                    Html::tag("select", $attributes, $optionsHtml)
-                );
-        return implode(PHP_EOL, $html);
-    }
-
-
-    /**
      * Generuje htm kód tagu input a případně i tagu label.
      * <p><b>Tag label:</b></p>
      * <p>Pokud je zadán parametr <code>label</code>, metoda přidá tag label a generovaný tag input vloží do tagu label jako potomka.
@@ -287,10 +240,72 @@ class Html implements HtmlInterface {
         return implode(PHP_EOL, $html);
     }
 
-    public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=[]) {
+    /**
+     * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
+     *
+     * Generování label:
+     * Pokud je zadán parametr label, parametr attributes by měl obsahovat položku s klíčem "id", pokud ji neobsahuje, bude doplněna.
+     * Parametr attributes může obsahovat položku s klíčem "name", ale ta nebude použita.
+     *
+     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
+     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
+     * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
+     *
+     * Generování option:
+     * Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value. Hodnoty $key jsou použity jako hodnota proměnné formuláře (value v tagu option),
+     * $value jsou použity pro zobrazení v html (html obsah tagu option).
+     * Pokud je jako parametr použito neasociativní pole (automaticky číslované) dojde k tomu, že číselné klíče se nepoužijí a hodnoty pole bodou použity jako value v option i jako zobrazované hodnoty v html.
+     *
+     * Pokud je v kontextu položka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
+     *
+     * @param string $name Jméno proměnné formuláře (má přednost před případným atributem name)
+     * @param string $label Pokud je zadán vygeneruje se tag label
+     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
+     * @param array $context Kontext - asociativní pole dat získaných z formuláře.
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
+     * @return string
+     */
+    public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]) {
+        if ($label AND !array_key_exists("id", $attributes)) {
+            $attributes["id"] = uniqid();
+        }
+        $attributes["name"] = $name;
+        if ($label) {
+            $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
+        }
+        $optionsHtml = [];
+        $selectedValue = array_key_exists($name, $context) ? $context[$name] : null;
+        $useKeysAsValues = (!is_array($optionValues)) || (array_key_first($optionValues)!==0); // od PHP8: OR !array_is_list($optionValues);
+
+        foreach ($optionValues as $key=>$value) {
+            $optionValue = $useKeysAsValues ? $key : $value;
+            $optionsHtml[] = Html::tag("option", (isset($selectedValue) AND $optionValue==$selectedValue) ? ['value'=>$optionValue , 'selected'=>true] : ['value'=>$optionValue ?? $value], $value);
+        }
+        $html[] = Html::tag('span', [],
+                    Html::tag("select", $attributes, $optionsHtml)
+                );
+        return implode(PHP_EOL, $html);
+    }
+
+    /**
+     * Generuje html kód input tagu typu radio. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem input.
+     *
+     * Pokud je zadán parametr labelAttribites a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
+     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
+     *
+     * Pokud je v kontextu položka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
+     *
+     * @param type $name Jméno proměnné formuláře (má přednost před případným atributem name)
+     * @param iterable $radiosetLabelsValues Asociativní pole dvojic nadpis položky => hodnota položky
+     * @param array $context Kontext - asociativní pole dat získaných z formuláře.
+     * @param iterable $inputAttributes atributy tagu input, případné položky "type", "name", "value" a "checked" budou přepsány automaticky generovanými hodnotami
+     * @param iterable $labelAttributes atributy tygu label, případná polžka "for" bude v případě automaticky generovaného id tagu input přepsána autoticky generovanou hodnotou
+     * @return string
+     */
+    public static function radio($name, iterable $radiosetLabelsValues=[], array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=[]) {
         $checkedValue = array_key_exists($name, $context) ? $context[$name] : null;
         $inputAttributes["type"] = "radio";
-        foreach ($radiosetLbelsValues as $label => $value) {
+        foreach ($radiosetLabelsValues as $label => $value) {
             $inputAttributes["name"] = $name;
             $inputAttributes["value"] = $value;
             $inputAttributes["checked"] = ($checkedValue===$value) ;
@@ -306,6 +321,18 @@ class Html implements HtmlInterface {
         return implode(PHP_EOL, $html);
     }
 
+    /**
+     * Generuje html kód input tagu typu chackbox.
+     *
+     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
+     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
+     *
+     * @param iterable $checkboxsetLabelsNameValuePairs
+     * @param array $context
+     * @param iterable $inputAttributes atributy tagu input, případné položky "type", "name", "value" a "checked" budou přepsány automaticky generovanými hodnotami
+     * @param iterable $labelAttributes atributy tygu label, případná položka "for" bude v případě automaticky generovaného id tagu input přepsána autoticky generovanou hodnotou
+     * @return string
+     */
     public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=[]) {
         $inputAttributes["type"] = "checkbox";
         foreach ($checkboxsetLabelsNameValuePairs as $label => $nameValuePair) {
