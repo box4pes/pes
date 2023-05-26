@@ -262,7 +262,7 @@ class Html implements HtmlInterface {
      * @param string $label Pokud je zadán vygeneruje se tag label
      * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
      * @param array $context Kontext - asociativní pole dat získaných z formuláře.
-     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value. Viz dokumentace k metodě HTML::attributes().
      * @return string
      */
     public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]) {
@@ -298,8 +298,8 @@ class Html implements HtmlInterface {
      * @param type $name Jméno proměnné formuláře (má přednost před případným atributem name)
      * @param iterable $radiosetLabelsValues Asociativní pole dvojic nadpis položky => hodnota položky
      * @param array $context Kontext - asociativní pole dat získaných z formuláře.
-     * @param iterable $inputAttributes atributy tagu input, případné položky "type", "name", "value" a "checked" budou přepsány automaticky generovanými hodnotami
-     * @param iterable $labelAttributes atributy tygu label, případná polžka "for" bude v případě automaticky generovaného id tagu input přepsána autoticky generovanou hodnotou
+     * @param iterable $inputAttributes Atributy tagu input, případné položky "type", "name", "value" a "checked" budou přepsány automaticky generovanými hodnotami.  Viz dokumentace k metodě HTML::attributes().
+     * @param iterable $labelAttributes Atributy tygu label, případná položka "for" bude v případě automaticky generovaného id tagu input přepsána autoticky generovanou hodnotou.  Viz dokumentace k metodě HTML::attributes().
      * @return string
      */
     public static function radio($name, iterable $radiosetLabelsValues=[], array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=[]) {
@@ -329,8 +329,8 @@ class Html implements HtmlInterface {
      *
      * @param iterable $checkboxsetLabelsNameValuePairs
      * @param array $context
-     * @param iterable $inputAttributes atributy tagu input, případné položky "type", "name", "value" a "checked" budou přepsány automaticky generovanými hodnotami
-     * @param iterable $labelAttributes atributy tygu label, případná položka "for" bude v případě automaticky generovaného id tagu input přepsána autoticky generovanou hodnotou
+     * @param iterable $inputAttributes Atributy tagu input, případné položky "type", "name", "value" a "checked" budou přepsány automaticky generovanými hodnotami.  Viz dokumentace k metodě HTML::attributes().
+     * @param iterable $labelAttributes Atributy tygu label, případná položka "for" bude v případě automaticky generovaného id tagu input přepsána autoticky generovanou hodnotou.  Viz dokumentace k metodě HTML::attributes().
      * @return string
      */
     public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=[]) {
