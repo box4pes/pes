@@ -324,7 +324,7 @@ class Html implements HtmlInterface {
     /**
      * Generuje html kód input tagu typu chackbox.
      *
-     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
+     * Pokud je zadán parametr $labelAttributes a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
      * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
      *
      * @param iterable $checkboxsetLabelsNameValuePairs
