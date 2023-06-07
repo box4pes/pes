@@ -65,7 +65,7 @@ class Html implements HtmlInterface {
      */
     public static function attributes(iterable $attributes=[]) {
         foreach ($attributes as $type => $value) {
-            if (is_bool($value)) {
+            if (is_bool($value) AND $type!=='value') {
                 if ($value) {
                     $attr[] = $type;  // jen pro true
                 }
