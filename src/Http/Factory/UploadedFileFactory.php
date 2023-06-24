@@ -30,7 +30,7 @@ class UploadedFileFactory implements UploadedFileFactoryInterface {
         string $clientFilename = null,
         string $clientMediaType = null
     ): UploadedFileInterface {
-        new UploadedFile(
+        return new UploadedFile(
                     $stream,
                     $clientFilename,
                     $clientMediaType,
