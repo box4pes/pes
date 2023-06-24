@@ -69,12 +69,6 @@ class UploadedFile implements UploadedFileInterface
                 throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile');
             }
         }
-
-        if (! is_int($size)) {
-            throw new InvalidArgumentException('Invalid size provided for UploadedFile; must be an int');
-        }
-        $this->size = $size;
-
         if (! is_int($this->error)
             || 0 > $this->error
             || 8 < $this->error
@@ -82,6 +76,11 @@ class UploadedFile implements UploadedFileInterface
             throw new InvalidArgumentException('Invalid upload error status for UploadedFile; must be some of UPLOAD_ERR_* constants');
         }
         $this->error = (new UploadedFileErrorEnum())($this->error);
+        
+        if (! is_int($size)) {
+            throw new InvalidArgumentException('Invalid size provided for UploadedFile; must be an int');
+        }
+        $this->size = $size;
 
         if (null !== $clientFilename && ! is_string($clientFilename)) {
             throw new InvalidArgumentException('Invalid client filename provided for UploadedFile; must be null or a string');
