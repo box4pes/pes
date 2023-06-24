@@ -25,7 +25,6 @@ class FilesFactory implements FilesFactoryInterface {
 
     private $uploadedFilesFactory;
 
-
 //    public function createUploadedFile(
 //        StreamInterface $stream,
 //        int $size = null,
@@ -74,7 +73,7 @@ class FilesFactory implements FilesFactoryInterface {
             $parsed[$field] = [];
             if (!is_array($uploadedFile['error'])) {
                 $parsed[$field] = 
-                $this->uploadedFilesFactory->createUploadedFile(
+                $this->createUploadedFile(
 //                        new UploadedFile(
                     $uploadedFile['tmp_name'],              // předávám filename
                     isset($uploadedFile['size']) ? $uploadedFile['size'] : null,
@@ -96,7 +95,41 @@ class FilesFactory implements FilesFactoryInterface {
                 }
             }
         }
-
         return $parsed;
     }
+
+    public function createUploadedFile($stringOrResourceOrStream, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null)
+    {
+        if ($uploadErrorCode === UPLOAD_ERR_OK) {
+            if (is_string($stringOrResourceOrStream)) {
+                $stream = new Stream($stringOrResourceOrStream);
+            } elseif (is_resource($stringOrResourceOrStream)) {
+                $stream = new Stream($stringOrResourceOrStream);
+            } elseif ($stringOrResourceOrStream instanceof StreamInterface) {
+                $stream = $stringOrResourceOrStream;
+            } else {
+                throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile');
+            }
+        }
+        if (! is_int($uploadErrorCode)
+            || 0 > $uploadErrorCode
+            || 8 < $uploadErrorCode
+        ) {
+            throw new InvalidArgumentException('Invalid upload error status for UploadedFile; must be some of UPLOAD_ERR_* constants');
+        }
+        $error = (new UploadedFileErrorEnum())($uploadErrorCode);
+        
+        if (! is_int($size)) {
+            throw new InvalidArgumentException('Invalid size provided for UploadedFile; must be an int');
+        }
+
+        if (null !== $clientFilename && ! is_string($clientFilename)) {
+            throw new InvalidArgumentException('Invalid client filename provided for UploadedFile; must be null or a string');
+        }
+
+        if (null !== $clientMediaType && ! is_string($clientMediaType)) {
+            throw new InvalidArgumentException('Invalid client media type provided for UploadedFile; must be null or a string');
+        }
+        $this->uploadedFilesFactory->createUploadedFile($stream, $size, $error, $clientFilename, $clientMediaType);
+    }    
 }

@@ -28,11 +28,6 @@ class UploadedFile implements UploadedFileInterface
     private $error;
 
     /**
-     * @var null|string
-     */
-    private $file;
-
-    /**
      * @var bool
      */
     private $moved = false;
@@ -60,7 +55,7 @@ class UploadedFile implements UploadedFileInterface
         $this->error = $uploadErrorCode;
         if ($this->error === UPLOAD_ERR_OK) {
             if (is_string($stringOrResourceOrStream)) {
-                $this->file = $stringOrResourceOrStream;
+                $this->stream = new Stream($stringOrResourceOrStream);
             } elseif (is_resource($stringOrResourceOrStream)) {
                 $this->stream = new Stream($stringOrResourceOrStream);
             } elseif ($stringOrResourceOrStream instanceof StreamInterface) {
@@ -107,11 +102,6 @@ class UploadedFile implements UploadedFileInterface
             throw new RuntimeException('Cannot retrieve stream after it has already been moved');
         }
 
-        if ($this->stream instanceof StreamInterface) {
-            return $this->stream;
-        }
-
-        $this->stream = new Stream($this->file);
         return $this->stream;
     }
 
