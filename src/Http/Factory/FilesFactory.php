@@ -127,6 +127,6 @@ class FilesFactory implements FilesFactoryInterface {
         if (null !== $clientMediaType && ! is_string($clientMediaType)) {
             throw new InvalidArgumentException('Invalid client media type provided for UploadedFile; must be null or a string');
         }
-        $this->uploadedFilesFactory->createUploadedFile($stream, $size, $error, $clientFilename, $clientMediaType);
+        return $this->uploadedFilesFactory->createUploadedFile($stream, $size, $error, $clientFilename, $clientMediaType);
     }    
 }
