@@ -11,6 +11,8 @@
 
 namespace Pes\Http\Factory;
 
+use Psr\Http\Message\UploadedFileFactoryInterface;
+
 use Pes\Http\Environment;
 use Pes\Http\UploadedFile;
 
@@ -21,6 +23,9 @@ use Pes\Http\UploadedFile;
  */
 class FilesFactory implements FilesFactoryInterface {
 
+    private $uploadedFilesFactory;
+
+
 //    public function createUploadedFile(
 //        StreamInterface $stream,
 //        int $size = null,
@@ -29,6 +34,9 @@ class FilesFactory implements FilesFactoryInterface {
 //        string $clientMediaType = null
 //    ): UploadedFileInterface;
 
+    public function __construct(UploadedFileFactoryInterface $uploadedFilesFactory) {
+        $this->uploadedFilesFactory = $uploadedFilesFactory;
+    }
 
     /**
      * Create a normalized tree of UploadedFile instances from the Environment.
@@ -65,7 +73,9 @@ class FilesFactory implements FilesFactoryInterface {
 
             $parsed[$field] = [];
             if (!is_array($uploadedFile['error'])) {
-                $parsed[$field] = new UploadedFile(
+                $parsed[$field] = 
+                $this->uploadedFilesFactory->createUploadedFile(
+//                        new UploadedFile(
                     $uploadedFile['tmp_name'],              // předávám filename
                     isset($uploadedFile['size']) ? $uploadedFile['size'] : null,
                         $uploadedFile['error'],
@@ -89,67 +99,4 @@ class FilesFactory implements FilesFactoryInterface {
 
         return $parsed;
     }
-
-
-    /**
-     * Normalize uploaded files
-     *
-     * Transforms each value into an UploadedFileInterface instance, and ensures
-     * that nested arrays are normalized.
-     *
-     * @param array $files
-     * @return array
-     * @throws InvalidArgumentException for unrecognized values
-     */
-    public static function normalizeFiles(array $files)
-    {
-        $normalized = [];
-        foreach ($files as $key => $value) {
-            if ($value instanceof UploadedFileInterface) {
-                $normalized[$key] = $value;
-                continue;
-            }
-
-            if (is_array($value) && isset($value['tmp_name'])) {
-                $normalized[$key] = self::createUploadedFileFromSpec($value);
-                continue;
-            }
-
-            if (is_array($value)) {
-                $normalized[$key] = self::normalizeFiles($value);
-                continue;
-            }
-
-            throw new InvalidArgumentException('Invalid value in files specification');
-        }
-        return $normalized;
-    }
-
-
-    /**
-     * Create and return an UploadedFile instance from a $_FILES specification.
-     *
-     * If the specification represents an array of values, this method will
-     * delegate to normalizeNestedFileSpec() and return that return value.
-     *
-     * @param array $value $_FILES struct
-     * @return array|UploadedFileInterface
-     */
-    private static function createUploadedFileFromSpec(array $value)
-    {
-        if (is_array($value['tmp_name'])) {
-            return self::normalizeNestedFileSpec($value);
-        }
-
-        return new UploadedFile(
-            $value['tmp_name'],
-            $value['size'],
-            $value['error'],
-            $value['name'],
-            $value['type']
-        );
-    }
-
-
-
 }

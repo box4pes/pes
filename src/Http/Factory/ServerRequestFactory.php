@@ -33,7 +33,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface, Environment
             $cookies = $_COOKIE;
         }
         $body = ( new BodyFactory())->createFromEnvironment($environment);
-        $uploadedFiles = (new FilesFactory())->createFromEnvironment($environment);
+        $uploadedFiles = (new FilesFactory())->createFiles();
         $request = new Request($method, $uri, $headers, $cookies, $serverParams, $body, $uploadedFiles);
 
         return $request;
