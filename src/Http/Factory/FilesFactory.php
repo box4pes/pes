@@ -98,17 +98,13 @@ class FilesFactory implements FilesFactoryInterface {
         return $parsed;
     }
 
-    public function createUploadedFile($stringOrResourceOrStream, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null)
+    private function createUploadedFile($filepath, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null)
     {
         if ($uploadErrorCode === UPLOAD_ERR_OK) {
-            if (is_string($stringOrResourceOrStream)) {
-                $stream = new Stream($stringOrResourceOrStream);
-            } elseif (is_resource($stringOrResourceOrStream)) {
-                $stream = new Stream($stringOrResourceOrStream);
-            } elseif ($stringOrResourceOrStream instanceof StreamInterface) {
-                $stream = $stringOrResourceOrStream;
-            } else {
-                throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile');
+            try {
+                $stream = new Stream(fopen($filepath, 'r+'));
+            } catch (InvalidArgumentException $e) {
+                throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile', 0, $e);
             }
         }
         if (! is_int($uploadErrorCode)
