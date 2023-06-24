@@ -57,7 +57,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface, Environment
         }
         $serverParams = $environment->getArrayCopy();
         $body = ( new BodyFactory())->createFromEnvironment($environment);
-        $uploadedFiles = (new FilesFactory(new UploadedFileFactory()))->createFiles();
+        $uploadedFiles = (new FilesFactory(new UploadedFileFactory( )))->createFiles();
         $request = new Request($method, $uri, $headers, $cookies, $serverParams, $body, $uploadedFiles);
 
         return $request;
