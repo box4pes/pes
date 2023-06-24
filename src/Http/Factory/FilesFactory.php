@@ -12,7 +12,7 @@
 namespace Pes\Http\Factory;
 
 use Psr\Http\Message\UploadedFileFactoryInterface;
-
+use Pes\Http\Stream;
 use Pes\Http\Environment;
 use Pes\Http\UploadedFile;
 
