@@ -43,48 +43,19 @@ class UploadedFile implements UploadedFileInterface
     private $stream;
 
     /**
-     * @param string|resource|StreamInterface $stringOrResourceOrStream
+     * @param string|resource|StreamInterface $stream
      * @param int $size
      * @param int $this->error
      * @param string|null $clientFilename
      * @param string|null $clientMediaType
      * @throws InvalidArgumentException
      */
-    public function __construct($stringOrResourceOrStream, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null)
+    public function __construct(StreamInterface $stream, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null)
     {
-        $this->error = $uploadErrorCode;
-        if ($this->error === UPLOAD_ERR_OK) {
-            if (is_string($stringOrResourceOrStream)) {
-                $this->stream = new Stream($stringOrResourceOrStream);
-            } elseif (is_resource($stringOrResourceOrStream)) {
-                $this->stream = new Stream($stringOrResourceOrStream);
-            } elseif ($stringOrResourceOrStream instanceof StreamInterface) {
-                $this->stream = $stringOrResourceOrStream;
-            } else {
-                throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile');
-            }
-        }
-        if (! is_int($this->error)
-            || 0 > $this->error
-            || 8 < $this->error
-        ) {
-            throw new InvalidArgumentException('Invalid upload error status for UploadedFile; must be some of UPLOAD_ERR_* constants');
-        }
-        $this->error = (new UploadedFileErrorEnum())($this->error);
-        
-        if (! is_int($size)) {
-            throw new InvalidArgumentException('Invalid size provided for UploadedFile; must be an int');
-        }
+        $this->stream = $stream;        
         $this->size = $size;
-
-        if (null !== $clientFilename && ! is_string($clientFilename)) {
-            throw new InvalidArgumentException('Invalid client filename provided for UploadedFile; must be null or a string');
-        }
+        $this->error = $uploadErrorCode;
         $this->clientFilename = $clientFilename;
-
-        if (null !== $clientMediaType && ! is_string($clientMediaType)) {
-            throw new InvalidArgumentException('Invalid client media type provided for UploadedFile; must be null or a string');
-        }
         $this->clientMediaType = $clientMediaType;
     }
 
