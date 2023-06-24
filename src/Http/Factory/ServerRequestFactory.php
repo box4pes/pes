@@ -27,7 +27,16 @@ class ServerRequestFactory implements ServerRequestFactoryInterface, Environment
 
     public function createServerRequest(string $method, $uri, array $serverParams = array()): ServerRequestInterface {
         $environment = EnvironmentFactory::createFromServerParams($serverParams);
-        return $this->createFromEnvironment($environment);
+        $headers = (new HeadersFactory())->createFromEnvironment($environment);
+        $cookies = (new CookiesArrayFactory())->extractFromCookieHeader($headers->get('Cookie'));
+        if (!isset($cookies)) {
+            $cookies = $_COOKIE;
+        }
+        $body = ( new BodyFactory())->createFromEnvironment($environment);
+        $uploadedFiles = (new FilesFactory())->createFromEnvironment($environment);
+        $request = new Request($method, $uri, $headers, $cookies, $serverParams, $body, $uploadedFiles);
+
+        return $request;
     }
 
     /**

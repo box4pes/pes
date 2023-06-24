@@ -19,7 +19,7 @@ use Pes\Http\UploadedFile;
  *
  * @author pes2704
  */
-class FilesFactory implements EnvironmentAcceptInterface {
+class FilesFactory implements FilesFactoryInterface {
 
 //    public function createUploadedFile(
 //        StreamInterface $stream,
@@ -37,19 +37,14 @@ class FilesFactory implements EnvironmentAcceptInterface {
      *
      * @return array|null A normalized tree of UploadedFile instances or null if none are provided.
      */
-    public function createFromEnvironment(Environment $env)
+    public function createFiles()
     {
-//        if (is_array($env['slim.files']) && $env->has('slim.files')) {
-//            return $env['slim.files'];
-//        } elseif (isset($_FILES)) {
-//            return static::parseUploadedFiles($_FILES);
-//        }
-
         if (isset($_FILES)) {
             return static::parseUploadedFiles($_FILES);
         }
         return [];
     }
+    
     /**
      * Parse a non-normalized, i.e. $_FILES superglobal, tree of uploaded file data.
      *
