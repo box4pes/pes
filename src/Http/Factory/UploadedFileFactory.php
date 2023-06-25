@@ -32,10 +32,10 @@ class UploadedFileFactory implements UploadedFileFactoryInterface {
     ): UploadedFileInterface {
         return new UploadedFile(
                     $stream,
-                    $clientFilename,
-                    $clientMediaType,
                     $size,
-                    $error
+                    $error,
+                    $clientFilename,
+                    $clientMediaType
                 );
     }
 
