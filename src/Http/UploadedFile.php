@@ -113,7 +113,7 @@ class UploadedFile implements UploadedFileInterface
         // PHP_SAPI - lowercase string that describes the type of interface (the Server API, SAPI) that PHP is using. For example,
         // in CLI PHP this string will be "cli" whereas with Apache it may have several different values depending on the exact SAPI used.
         $sapi = PHP_SAPI;
-        if (empty($sapi) OR 0 === strpos($sapi, 'cli') OR ! $this->file) {   //http://php.net/manual/en/function.php-sapi-name.php#89858, https://stackoverflow.com/questions/10886539/why-does-php-sapi-not-equal-cli-when-called-from-a-cron-job
+        if (empty($sapi) OR 0 === strpos($sapi, 'cli')) {   //http://php.net/manual/en/function.php-sapi-name.php#89858, https://stackoverflow.com/questions/10886539/why-does-php-sapi-not-equal-cli-when-called-from-a-cron-job
             // PHP spuštěno neznámým způsobem nebo přes CLI mebo neznám název souboru
             $this->writeStreamContentIntoFile($targetPath);
         } else {
