@@ -28,6 +28,11 @@ class UploadedFile implements UploadedFileInterface
     private $error;
 
     /**
+     * @var null|string
+     */
+    private $file;
+
+    /**
      * @var bool
      */
     private $moved = false;
@@ -43,19 +48,57 @@ class UploadedFile implements UploadedFileInterface
     private $stream;
 
     /**
-     * @param string|resource|StreamInterface $stream
+     * Konstruktor je připraven na situaci, kdy došlo k volání přes SAPI a objekt UploadedFile je vytvářenem že souboru 
+     * nebo na situaci, kdy nevznikne pole $_FILES. K tomu dojse pokud request nebyl POST nebo PHP skript byl volán jinak, 
+     * bez SAPI, např. přes cli (říkazovou řádku) nebo v unit tetech nebo ReactPHP apod. 
+     * 
+     * Pro případ volábí přes SAPI přijímá jméno dočasného souoru a vnitřní proměnnou typu stream vytváří až po úspěšném 
+     * volání metody moveTo().
+     * Pro případ volání mimo SAPI přijímá rsource a z něj vytvářá Stream v konstruktoru nebo přímo Stream.
+     * 
+     * @param string|resource|StreamInterface $filenameOrResourceOrStream
      * @param int $size
      * @param int $this->error
      * @param string|null $clientFilename
      * @param string|null $clientMediaType
      * @throws InvalidArgumentException
      */
-    public function __construct(StreamInterface $stream, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null)
+    public function __construct($filenameOrResourceOrStream, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null)
     {
-        $this->stream = $stream;        
-        $this->size = $size;
         $this->error = $uploadErrorCode;
+        if ($this->error === UPLOAD_ERR_OK) {
+            if (is_string($filenameOrResourceOrStream)) {
+                $this->file = $filenameOrResourceOrStream;
+            } elseif (is_resource($filenameOrResourceOrStream)) {
+                $this->stream = new Stream($filenameOrResourceOrStream);
+            } elseif ($filenameOrResourceOrStream instanceof StreamInterface) {
+                $this->stream = $filenameOrResourceOrStream;
+            } else {
+                throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile');
+            }
+        }
+
+        if (! is_int($size)) {
+            throw new InvalidArgumentException('Invalid size provided for UploadedFile; must be an int');
+        }
+        $this->size = $size;
+
+        if (! is_int($this->error)
+            || 0 > $this->error
+            || 8 < $this->error
+        ) {
+            throw new InvalidArgumentException('Invalid upload error status for UploadedFile; must be some of UPLOAD_ERR_* constants');
+        }
+        $this->error = (new UploadedFileErrorEnum())($this->error);
+
+        if (null !== $clientFilename && ! is_string($clientFilename)) {
+            throw new InvalidArgumentException('Invalid client filename provided for UploadedFile; must be null or a string');
+        }
         $this->clientFilename = $clientFilename;
+
+        if (null !== $clientMediaType && ! is_string($clientMediaType)) {
+            throw new InvalidArgumentException('Invalid client media type provided for UploadedFile; must be null or a string');
+        }
         $this->clientMediaType = $clientMediaType;
     }
 
@@ -73,6 +116,11 @@ class UploadedFile implements UploadedFileInterface
             throw new RuntimeException('Cannot retrieve stream after it has already been moved');
         }
 
+        if ($this->stream instanceof StreamInterface) {
+            return $this->stream;
+        }
+
+        $this->stream = new Stream($this->file);
         return $this->stream;
     }
 
@@ -113,7 +161,7 @@ class UploadedFile implements UploadedFileInterface
         // PHP_SAPI - lowercase string that describes the type of interface (the Server API, SAPI) that PHP is using. For example,
         // in CLI PHP this string will be "cli" whereas with Apache it may have several different values depending on the exact SAPI used.
         $sapi = PHP_SAPI;
-        if (empty($sapi) OR 0 === strpos($sapi, 'cli')) {   //http://php.net/manual/en/function.php-sapi-name.php#89858, https://stackoverflow.com/questions/10886539/why-does-php-sapi-not-equal-cli-when-called-from-a-cron-job
+        if (empty($sapi) OR 0 === strpos($sapi, 'cli') OR ! $this->file) {   //http://php.net/manual/en/function.php-sapi-name.php#89858, https://stackoverflow.com/questions/10886539/why-does-php-sapi-not-equal-cli-when-called-from-a-cron-job
             // PHP spuštěno neznámým způsobem nebo přes CLI mebo neznám název souboru
             $this->writeStreamContentIntoFile($targetPath);
         } else {
