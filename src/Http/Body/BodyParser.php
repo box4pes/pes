@@ -4,6 +4,7 @@ namespace Pes\Http\Body;
 use Psr\Http\Message\ServerRequestInterface;
 use Pes\Http\Request\MediaContentResolverInterface;
 use Pes\Http\Request\MediaContentResolver;
+use RuntimeException;
 
 /*
  * Copyright (C) 2018 pes2704
