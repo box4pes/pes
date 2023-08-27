@@ -4,6 +4,8 @@ namespace Pes\Http\Body;
 use Psr\Http\Message\ServerRequestInterface;
 use Pes\Http\Request\MediaContentResolverInterface;
 use Pes\Http\Request\MediaContentResolver;
+use Pes\Http\Stream;
+
 use RuntimeException;
 
 /*
@@ -57,20 +59,23 @@ class BodyParser implements BodyParserInterface {
 
         $this->registerMediaParser('application/xml', function ($input) {
             $backup = libxml_disable_entity_loader(true);
-            $result = simplexml_load_string($input);
+            $result = simplexml_load_string($input);// return SimpleXMLElement|false
             libxml_disable_entity_loader($backup);
-            return $result;  // return SimpleXMLElement|false
+            return $result ? $result : null;  
         });
 
         $this->registerMediaParser('text/xml', function ($input) {
             $backup = libxml_disable_entity_loader(true);
-            $result = simplexml_load_string($input);
+            $result = simplexml_load_string($input);  // return SimpleXMLElement|false
             libxml_disable_entity_loader($backup);
-            return $result;  // return SimpleXMLElement|false
+            return $result ? $result : null;  
         });
         
         $this->registerMediaParser('text/plain', function ($input) {
-            return $input;  
+            $stream = new Stream(fopen('php://temp', 'r+'));
+            $stream->write($content);
+            $stream->rewind();
+            return $stream;            
         });
     }
 
@@ -109,8 +114,8 @@ class BodyParser implements BodyParserInterface {
             }
 
             if (isset($this->bodyParsers[$mediaType]) === true) {
-                $body = (string)$request->getBody();
-                $parsed = $this->bodyParsers[$mediaType]($body);
+                $bodyString = (string)$request->getBody();
+                $parsed = $this->bodyParsers[$mediaType]($bodyString);
 
                 if (!is_null($parsed) && !is_object($parsed) && !is_array($parsed)) {
                     throw new RuntimeException(
