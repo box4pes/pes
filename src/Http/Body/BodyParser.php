@@ -68,7 +68,10 @@ class BodyParser implements BodyParserInterface {
             libxml_disable_entity_loader($backup);
             return $result;  // return SimpleXMLElement|false
         });
-
+        
+        $this->registerMediaParser('text/plain', function ($input) {
+            return $input;  
+        });
     }
 
     /**
