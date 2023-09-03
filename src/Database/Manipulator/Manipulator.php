@@ -116,8 +116,8 @@ class Manipulator {
      *
      * Předpokládá, že SQL příkazy v souboru jsou odděleny středníkem ";".
      * Příkazy vykonává v rámci jedné transakce, kterou spouští.
-     * Neporadí si, pokud ji zavoláte uprostřed již spuštěné transakce. V takovém případě by vykonání neznámé posloupnosti SQL příkazů mohlo vést
-     * k nepředvídaným výsledkům. V tomto případě metoda vyhodí výjimku.
+     * Při pokusu o volání metody uprostřed již spuštěné transakce by vykonání neznámé posloupnosti SQL příkazů mohlo vést
+     * k nepředvídaným výsledkům. Proto v případě pokusu o volání metody uprostřed již spuštěné transakce metoda vyhodí výjimku.
      *
      * @param string $sql Řetězec s posloupností SQL příkazů oddělených středníky.
      * @return bool TRUE, pokud transakce skončila úspěšně, jinak FALSE.
@@ -125,7 +125,7 @@ class Manipulator {
      * @throws \RuntimeException Pokud nelze přečíst zadaný soubor.
      * @throws \UnexpectedValueException Výjimka při vykonávání transakce.
      */
-    public function exec($sql) {
+    public function exec($sql, $rollback=false) {
         if (!$sql) {
             throw new \LogicException('Zadaný soubor je prázdný.');
         }
@@ -143,7 +143,11 @@ class Manipulator {
                 }
             }
             $this->logger->info('Commit.');
-            $succ = $dbhTransact->commit();
+            if ($rollback) {
+                $dbhTransact->rollBack();            
+            } else {
+                $succ = $dbhTransact->commit();
+            }
         } catch(\Exception $e) {
             $this->logger->error('Rollback: '.$e->getMessage());
             $dbhTransact->rollBack();
