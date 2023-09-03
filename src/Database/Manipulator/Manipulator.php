@@ -144,7 +144,7 @@ class Manipulator {
             }
             $this->logger->info('Commit.');
             if ($rollback) {
-                $dbhTransact->rollBack();            
+                $succ = $dbhTransact->rollBack();            
             } else {
                 $succ = $dbhTransact->commit();
             }
