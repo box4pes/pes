@@ -283,34 +283,34 @@ class Handler extends \PDO implements HandlerInterface {
 ######### PŘETÍŽENÉ METODY PDO ( metody PDO Interface) #######################################################################
 
     public function beginTransaction() {
-        $ret = parent::beginTransaction();
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' beginTransaction()');
         }
+        $ret = parent::beginTransaction();
         return $ret;
     }
 
     public function commit() {
-        $ret = parent::commit();
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' commit()');
         }
+        $ret = parent::commit();
         return $ret;
     }
 
     public function exec($query) {
-        $ret = parent::exec($query);
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' exec({sqlStatement})',
                     ['sqlStatement'=>$query]);        }
+        $ret = parent::exec($query);
         return $ret;
     }
 
     public function rollBack() {
-        $ret = parent::rollBack();
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' rollBack()');
         }
+        $ret = parent::rollBack();
         return $ret;
     }
 
@@ -338,8 +338,11 @@ class Handler extends \PDO implements HandlerInterface {
 
 
         try {
-        /* @var $prepStatement StatementInterface */
-        $prepStatement = parent::prepare($sqlStatement, $driver_options);
+            if ($this->logger) {
+                    $this->logger->debug($this->getInstanceInfo()." prepare $sqlStatement");
+            }
+            /* @var $prepStatement StatementInterface */
+            $prepStatement = parent::prepare($sqlStatement, $driver_options);
         } catch (\PDOException $pdoException) {
             if ($this->logger) {
                 $this->logger->error($this->getInstanceInfo().' selhal prepare({sqlStatement}), nebyl vytvořen statement objekt.',
@@ -380,6 +383,9 @@ class Handler extends \PDO implements HandlerInterface {
      * @return type
      */
     public function query(string $sqlStatement='') {
+        if ($this->logger) {
+                $this->logger->debug($this->getInstanceInfo()." query $sqlStatement");
+        }        
         /* @var $statement StatementInterface */
         $statement =  parent::query($sqlStatement);
         if ($statement) {
