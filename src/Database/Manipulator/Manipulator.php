@@ -69,14 +69,14 @@ class Manipulator {
         $dbhTransact = $this->handler;
         try {
             $dbhTransact->beginTransaction();
-            $this->logger->info("CREATE TABLE $newTableName LIKE $oldTableName");
+//            $this->logger->info("CREATE TABLE $newTableName LIKE $oldTableName");
             $dbhTransact->exec("CREATE TABLE $newTableName LIKE $oldTableName");
-            $this->logger->info("INSERT $newTableName SELECT * FROM $oldTableName");
+//            $this->logger->info("INSERT $newTableName SELECT * FROM $oldTableName");
             $dbhTransact->exec("INSERT $newTableName SELECT * FROM $oldTableName");
-            $this->logger->info('Commit.');
+//            $this->logger->info('Commit.');
             $succ = $dbhTransact->commit();
         } catch(PDOException $e) {
-            $this->logger->error('Rollback: '.$e->getMessage());
+//            $this->logger->error('Rollback: '.$e->getMessage());
             $dbhTransact->rollBack();
             throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
@@ -148,20 +148,21 @@ class Manipulator {
             $dbhTransact->beginTransaction();
             foreach ($queries as $query) {
                 if (trim($query)) {
-                    $this->logger->info($query);
+//                    $this->logger->info($query);
                     $dbhTransact->exec($query);
                 }
             }
-            $this->logger->info('Commit.');
             if ($rollback) {
+//            $this->logger->info('Forced rollback: '.$e->getMessage());
                 $succ = $dbhTransact->rollBack();
                 throw new ForcedRollbackException("Proveden přikázaný rollback transakce.");
                 
             } else {
+//                $this->logger->info('Commit.');
                 $succ = $dbhTransact->commit();
             }
         } catch(PDOException $e) {
-            $this->logger->error('Rollback: '.$e->getMessage());
+//            $this->logger->error('Rollback: '.$e->getMessage());
             $dbhTransact->rollBack();
             throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
@@ -195,11 +196,11 @@ class Manipulator {
         }
         try {
             if (trim($queries[0])) {
-                $this->logger->info($queries[0]);
+//                $this->logger->info($queries[0]);
                 $stat = $this->handler->query($queries[0]);  // vrací statement nebo false
             }
-            $this->logger->info('Success.');
         } catch(PDOException $e) {
+//            $this->logger->info('Error: '.$e->getMessage());
             $this->logger->error('Error: '.$e->getMessage());
             throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
@@ -209,10 +210,10 @@ class Manipulator {
     public function findAllRows($tablename) {
         $query = "SELECT *
                 FROM $tablename ";
-        $this->logger->info($query);
+//        $this->logger->info($query);
         $stmt = $this->handler->prepare($query);
         $stmt->execute();
-        $this->logger->info($query);
+//        $this->logger->info($query);
         return $stmt->fetchALL(\PDO::FETCH_ASSOC);
     }
 
@@ -225,7 +226,7 @@ class Manipulator {
         if ($criteria) {
             $query .= "WHERE ".implode(" AND ", $criteria);
         }
-        $this->logger->info($query);
+//        $this->logger->info($query);
         $stmt = $this->handler->prepare($query);
         foreach($criteriaArray as $key => $value) {
             $stmt->bindValue(":$key", $value);
