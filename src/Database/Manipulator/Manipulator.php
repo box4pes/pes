@@ -6,6 +6,12 @@ use Pes\Database\Statement\StatementInterface;
 
 use Psr\Log\LoggerInterface;
 
+use PDOException;
+use LogicException;
+use UnexpectedValueException;
+use Pes\Database\Manipulator\Exception\ErrorRollbackException;
+use Pes\Database\Manipulator\Exception\ForcedRollbackException;
+
 /**
  * Description of Convertor
  *
@@ -39,8 +45,9 @@ class Manipulator {
      * @param string $oldTableName
      * @param string $newTableName
      * @return bool TRUE, pokud kopírování skončilo úspěšně, jinak FALSE.
-     * @throws \UnexpectedValueException Pokud neexistuje zdrojová tabulka
-     * @throws \LogicException Již existuje cílová tabulka kopírování.
+     * @throws UnexpectedValueException Pokud neexistuje zdrojová tabulka
+     * @throws LogicException Již existuje cílová tabulka kopírování.
+     * @throws ErrorRollbackException
      */
     public function copyTable(string $oldTableName, string $newTableName) {
 
@@ -53,10 +60,10 @@ class Manipulator {
         //CREATE TABLE tbl_new AS SELECT * FROM tbl_old;
 
         if (!$this->tableExists($oldTableName)) {
-            throw new \UnexpectedValueException("Zdrojová tabulka kopírování '$oldTableName' neexistuje. Nevím co mám dělat a tak jsem se zhroutil.");
+            throw new UnexpectedValueException("Zdrojová tabulka kopírování '$oldTableName' neexistuje. Nevím co mám dělat a tak jsem se zhroutil.");
         }
         if ($this->tableExists($newTableName)) {
-            throw new \LogicException("Zakázané nebezpečné chování - cílová tabulka kopírování '$newTableName'již existuje. Nelze přepsat existující tabulku.");
+            throw new LogicException("Zakázané nebezpečné chování - cílová tabulka kopírování '$newTableName'již existuje. Nelze přepsat existující tabulku.");
         }
 
         $dbhTransact = $this->handler;
@@ -68,10 +75,10 @@ class Manipulator {
             $dbhTransact->exec("INSERT $newTableName SELECT * FROM $oldTableName");
             $this->logger->info('Commit.');
             $succ = $dbhTransact->commit();
-        } catch(\Exception $e) {
+        } catch(PDOException $e) {
             $this->logger->error('Rollback: '.$e->getMessage());
             $dbhTransact->rollBack();
-            throw new \RuntimeException($e);
+            throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
         return $succ ? TRUE : FALSE;
     }
@@ -80,6 +87,7 @@ class Manipulator {
      *
      * @param string $tableName
      * @return bool TRUE, pokud tabulka existuje a lze z ní číst, jinak FALSE.
+     * @throws UnexpectedValueException
      */
     public function tableExists($tableName) {
         $dbh = $this->handler;
@@ -94,7 +102,6 @@ class Manipulator {
                 break;
             default:
                 throw new UnexpectedValueException("Zadané jméno tabulky musí být ve tvaru jednoho slova nebo dvou slov spojených tečkou. Jméno $tableName neumím zpracovat.");
-                break;
         }
 
         $stmt = $dbh->prepare(
@@ -106,13 +113,15 @@ class Manipulator {
         $stmt->bindParam(':table_name', $tableName, \PDO::PARAM_STR);
 
         $stmt->execute();
-        $q =  $stmt->fetch(\PDO::FETCH_ASSOC); //  array['table_name']=>$tableName)
+        $q =  $stmt->fetch(\PDO::FETCH_ASSOC); 
         return is_array($q) ? TRUE : FALSE;
     }
 
     /**
-     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů. Jednotlivé SQL příkazy vykoná pomocé metody PDO->exec(), která jako návratovou hodnotu vrací bool.
-     * Metoda tak nevrací žádný výsledek jen informuje o úspěchu.
+     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů v jedné transakci. Jednotlivé SQL příkazy vykoná pomocé metody PDO->exec(), 
+     * která jako návratovou hodnotu vrací bool. Metoda tak nevrací žádný výsledek jen informuje o úspěchu.
+     * Lze zadat parametr rollback, který vynutí, že se po provedení příkazů v trasakci nikdy neprovede commit, vždy se volá rollback. 
+     * Tím není ovlivněno chování v průběhu trasakce, pokud dojde v průběhu transakce k chybě, proběhne samozřejmě rollback zcela standartně.
      *
      * Předpokládá, že SQL příkazy v souboru jsou odděleny středníkem ";".
      * Příkazy vykonává v rámci jedné transakce, kterou spouští.
@@ -120,19 +129,20 @@ class Manipulator {
      * k nepředvídaným výsledkům. Proto v případě pokusu o volání metody uprostřed již spuštěné transakce metoda vyhodí výjimku.
      *
      * @param string $sql Řetězec s posloupností SQL příkazů oddělených středníky.
+     * @param bool $rollback Pokud je true, pak se po provedení příkazů v trasakci nikdy neprovede commit, vždy se volá rollback.
      * @return bool TRUE, pokud transakce skončila úspěšně, jinak FALSE.
-     * @throws \LogicException Při volání uprostřed již spuštěné transakce.
-     * @throws \RuntimeException Pokud nelze přečíst zadaný soubor.
-     * @throws \UnexpectedValueException Výjimka při vykonávání transakce.
+     * @throws LogicException Pokud nelze přečíst zadaný soubor. Při volání uprostřed již spuštěné transakce.
+     * @throws ErrorRollbackException Výjimka při vykonávání transakce.
+     * @throws ForcedRollbackException Rollbak byl vynucen parametrem rollback.
      */
     public function exec($sql, $rollback=false) {
         if (!$sql) {
-            throw new \LogicException('Zadaný soubor je prázdný.');
+            throw new LogicException('Zadaný soubor je prázdný.');
         }
         $queries = $this->mysql_explode($sql);
         $dbhTransact = $this->handler;
         if ($dbhTransact->inTransaction()) {
-            throw new \LogicException('Nelze volat tuto metodu uprostřed spuštěné databázové transakce.');
+            throw new LogicException('Nelze volat tuto metodu uprostřed spuštěné databázové transakce.');
         }
         try {
             $dbhTransact->beginTransaction();
@@ -144,14 +154,16 @@ class Manipulator {
             }
             $this->logger->info('Commit.');
             if ($rollback) {
-                $succ = $dbhTransact->rollBack();            
+                $succ = $dbhTransact->rollBack();
+                throw new ForcedRollbackException("Proveden přikázaný rollback transakce.");
+                
             } else {
                 $succ = $dbhTransact->commit();
             }
-        } catch(\Exception $e) {
+        } catch(PDOException $e) {
             $this->logger->error('Rollback: '.$e->getMessage());
             $dbhTransact->rollBack();
-            throw new \RuntimeException($e);
+            throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
         return $succ ? TRUE : FALSE;
     }
@@ -163,16 +175,23 @@ class Manipulator {
      *
      * @param string $sql
      * @return StatementInterface|null
-     * @throws \LogicException
+     * @throws LogicException
      * @throws \RuntimeException
+     */
+    /**
+     * 
+     * @param type $sql
+     * @return StatementInterface|null
+     * @throws LogicException Zadaný SQL řetězec je prázdný. Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.
+     * @throws ErrorRollbackException Výjimka při vykonávání transakce.
      */
     public function query($sql): ?StatementInterface {
         if (!$sql) {
-            throw new \LogicException('Zadaný SQL řetězec je prázdný.');
+            throw new LogicException('Zadaný SQL řetězec je prázdný.');
         }
         $queries = $this->mysql_explode($sql);
         if (count($queries)>1) {
-            throw new \LogicException('Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.');
+            throw new LogicException('Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.');
         }
         try {
             if (trim($queries[0])) {
@@ -180,9 +199,9 @@ class Manipulator {
                 $stat = $this->handler->query($queries[0]);  // vrací statement nebo false
             }
             $this->logger->info('Success.');
-        } catch(\Exception $e) {
+        } catch(PDOException $e) {
             $this->logger->error('Error: '.$e->getMessage());
-            throw new \RuntimeException($e);
+            throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
         return $stat ? $stat : null;
     }
