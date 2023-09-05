@@ -162,6 +162,10 @@ class Manipulator {
                 $succ = $dbhTransact->commit();
             }
         } catch(PDOException $e) {
+            $handlerLogger = $this->handler->getLogger();
+            if (isset($handlerLogger)) {
+                $handlerLogger->error("Vyhozena PDOException: {$e->getMessage()}");
+            }
 //            $this->logger->error('Rollback: '.$e->getMessage());
             $dbhTransact->rollBack();
             throw new ErrorRollbackException($e->getMessage(), 0, $e);
