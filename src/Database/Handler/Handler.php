@@ -214,7 +214,11 @@ class Handler extends \PDO implements HandlerInterface {
     public function setLogger(LoggerInterface $logger) {
         $this->logger = $logger;
     }
-
+    
+    public function getLogger(): ?LoggerInterface {
+        return $this->logger;
+    }
+    
     /**
      * Metoda getInstanceInfo
      *

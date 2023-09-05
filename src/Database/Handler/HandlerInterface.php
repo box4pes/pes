@@ -33,4 +33,11 @@ interface HandlerInterface extends PDOInterface, LoggerAwareInterface {
      * @return string
      */
     public function getSchemaName(): string;
+    
+    /**
+     * Vrací objekt Logger nastavený v konstruktoru. Umožňuje přidat zprávy do logu, který je vytvářen objektem Handler.
+     * 
+     * @return LoggerInterface|null
+     */
+    public function getLogger(): ?LoggerInterface;    
 }
