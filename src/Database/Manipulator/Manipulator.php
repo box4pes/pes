@@ -164,6 +164,7 @@ class Manipulator {
         } catch(PDOException $e) {
             $handlerLogger = $this->handler->getLogger();
             if (isset($handlerLogger)) {
+                // přidá do logu handleru message z výjimky, pokud nastala při volání metody handleru
                 $handlerLogger->error("Vyhozena PDOException: {$e->getMessage()}");
             }
 //            $this->logger->error('Rollback: '.$e->getMessage());
