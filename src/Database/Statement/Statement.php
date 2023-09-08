@@ -100,13 +100,15 @@ class Statement extends \PDOStatement implements StatementInterface {
     public function fetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0) {
         $result = parent::fetch($fetch_style, $cursor_orientation, $cursor_offset);
         if ($this->logger) {
-            $this->logger->debug($this->getInstanceInfo().' fetch({fetch_style}, {cursor_orientation}, {cursor_offset})',
-                    array('fetch_style'=>$fetch_style, 'cursor_orientation'=>$cursor_orientation, 'cursor_offset'=>$cursor_offset));
+            $message = $this->getInstanceInfo().' fetch({fetch_style}, {cursor_orientation}, {cursor_offset})';
+            $context = ['fetch_style'=>$fetch_style ?? 'null', 'cursor_orientation'=>$cursor_orientation, 'cursor_offset'=>$cursor_offset];
             if ($result===FALSE) {
-                $this->logger->warning(' Metoda '.__METHOD__.' nevrátila žádná data.');
+                $message .= ' Metoda '.__METHOD__.' nevrátila žádná data.';
             } else {
-                $this->logger->debug('Result má {count} prvků.', array( 'count'=>count($result)));
+                $message .= 'Result má {count} prvků.';
+                $context = array_merge($context, ['count'=>count($result)]);
             }
+            $this->logger->debug($message, $context);
         }
         return $result;
     }
@@ -120,27 +122,28 @@ class Statement extends \PDOStatement implements StatementInterface {
             $result = parent::fetchAll($fetch_style);
             if ($this->logger) {
                 $message = $this->getInstanceInfo().' fetchAll({fetch_style})';
-                $this->logger->debug($message, array('fetch_style'=>$fetch_style, 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args));
+                $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
             }
         } elseif ($ctor_args === NULL) {
             $result = parent::fetchAll($fetch_style, $fetch_argument);
             if ($this->logger) {
                 $message = $this->getInstanceInfo().' fetchAll({fetch_style}, {fetch_argument})';
-                $this->logger->debug($message, array('fetch_style'=>$fetch_style, 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args));
+                $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
             }
         } else {
             $result = parent::fetchAll($fetch_style, $fetch_argument, $ctor_args);
             if ($this->logger) {
                 $message = $this->getInstanceInfo().' fetchAll({fetch_style}, {fetch_argument}, {ctor_args})';
-                $this->logger->debug($message, array('fetch_style'=>$fetch_style, 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args));
+                $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
             }
         }
 
         if ($this->logger) {
             if ($result===FALSE) {
-                $this->logger->warning('Metoda '.__METHOD__.' selhala.');
+                $message .= 'Metoda '.__METHOD__.' selhala.';
             } else {
-                $this->logger->debug('Result má {count} prvků.', array( 'count'=>count($result)));
+                $message .= 'Result má {count} prvků.';
+                $context = array_merge($context, ['count'=>count($result)]);
             }
         }
         return $result;
