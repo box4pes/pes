@@ -264,7 +264,7 @@ class Handler extends \PDO implements HandlerInterface {
                 $rendered = $vartype." ".$var;
                 break;
             case "string":
-                $rendered = $vartype." ". strlen($var)." bytes" . (strlen($var)>80 ? ": \"".substr($var, 0, 80)."... (shortened)\"" : $var);
+                $rendered = $vartype." ". strlen($var)." bytes" . (strlen($var)>100 ? ": \"".substr($var, 0, 97)."... (shortened)\"" : $var);
                 break;
             case "array":
                 $rendered = $vartype." ".count($var)." elements";
@@ -342,9 +342,6 @@ class Handler extends \PDO implements HandlerInterface {
 
 
         try {
-            if ($this->logger) {
-                    $this->logger->debug($this->getInstanceInfo()." prepare $sqlStatement");
-            }
             /* @var $prepStatement StatementInterface */
             $prepStatement = parent::prepare($sqlStatement, $driver_options);
         } catch (\PDOException $pdoException) {
