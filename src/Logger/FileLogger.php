@@ -26,7 +26,6 @@ class FileLogger extends AbstractLogger {
     private $logFileHandle;
 
     const ODSAZENI = "    ";
-    const SLOT = "/[:::::]/";
 
     const REWRITE_LOG = 'replace log file';
     const APPEND_TO_LOG = 'append to existing log file';
@@ -85,7 +84,7 @@ class FileLogger extends AbstractLogger {
                 break;
             case self::FILE_PER_DAY:
                 $fopenMode = 'a+';
-                $fullLogFileName = $fullLogDirectoryPath.date('Ymd')."\\".$logFileName;
+                $fullLogFileName = $fullLogDirectoryPath.date('Ymd')." ".$logFileName;
                 break;
             default:
                 $mode = self::APPEND_TO_LOG;
