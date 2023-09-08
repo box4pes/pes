@@ -63,21 +63,21 @@ class Statement extends \PDOStatement implements StatementInterface {
         if ($arg2 === null && $arg3 === null) {
             $success = parent::setFetchMode($fetchMode);
             if ($this->logger) {
-                $message = $this->getInstanceInfo().' setFetchMode({fetchMode})';
+                $message = $this->getInstanceInfo().': setFetchMode({fetchMode})';
                 $substitutes = array('fetchMode'=>$fetchMode);
                 $this->logger->debug($message, $substitutes);
             }
         } elseif ($arg3 === null) {
             $success = parent::setFetchMode($fetchMode, $arg2);
             if ($this->logger) {
-                $message = $this->getInstanceInfo().' setFetchMode({fetchMode}, {arg2})';
+                $message = $this->getInstanceInfo().': setFetchMode({fetchMode}, {arg2})';
                 $substitutes = array('fetchMode'=>$fetchMode, 'arg2'=>$arg2);
                 $this->logger->debug($message, $substitutes);
             }
         } else {
             $success = parent::setFetchMode($fetchMode, $arg2, $arg3);
             if ($this->logger) {
-                $message = $this->getInstanceInfo().' setFetchMode({fetchMode}, {arg2}, {arg3})';
+                $message = $this->getInstanceInfo().': setFetchMode({fetchMode}, {arg2}, {arg3})';
                 $substitutes = array('fetchMode'=>$fetchMode, 'arg2'=>$arg2, 'arg3'=>$arg3);
                 $this->logger->debug($message, $substitutes);
             }
@@ -100,12 +100,12 @@ class Statement extends \PDOStatement implements StatementInterface {
     public function fetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0) {
         $result = parent::fetch($fetch_style, $cursor_orientation, $cursor_offset);
         if ($this->logger) {
-            $message = $this->getInstanceInfo().' fetch({fetch_style}, {cursor_orientation}, {cursor_offset})';
+            $message = $this->getInstanceInfo().': fetch({fetch_style}, {cursor_orientation}, {cursor_offset})';
             $context = ['fetch_style'=>$fetch_style ?? 'null', 'cursor_orientation'=>$cursor_orientation, 'cursor_offset'=>$cursor_offset];
             if ($result===FALSE) {
                 $message .= ' Metoda '.__METHOD__.' nevrátila žádná data.';
             } else {
-                $message .= 'Result má {count} prvků.';
+                $message .= ' Result má {count} prvků.';
                 $context = array_merge($context, ['count'=>count($result)]);
             }
             $this->logger->debug($message, $context);
@@ -121,19 +121,19 @@ class Statement extends \PDOStatement implements StatementInterface {
         if ($fetch_argument === NULL && $ctor_args === NULL) {
             $result = parent::fetchAll($fetch_style);
             if ($this->logger) {
-                $message = $this->getInstanceInfo().' fetchAll({fetch_style})';
+                $message = $this->getInstanceInfo().': fetchAll({fetch_style})';
                 $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
             }
         } elseif ($ctor_args === NULL) {
             $result = parent::fetchAll($fetch_style, $fetch_argument);
             if ($this->logger) {
-                $message = $this->getInstanceInfo().' fetchAll({fetch_style}, {fetch_argument})';
+                $message = $this->getInstanceInfo().': fetchAll({fetch_style}, {fetch_argument})';
                 $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
             }
         } else {
             $result = parent::fetchAll($fetch_style, $fetch_argument, $ctor_args);
             if ($this->logger) {
-                $message = $this->getInstanceInfo().' fetchAll({fetch_style}, {fetch_argument}, {ctor_args})';
+                $message = $this->getInstanceInfo().': fetchAll({fetch_style}, {fetch_argument}, {ctor_args})';
                 $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
             }
         }
@@ -160,7 +160,7 @@ class Statement extends \PDOStatement implements StatementInterface {
         $success = parent::execute($input_parameters);
         } catch (\PDOException $pdoException) {
             if ($this->logger) {
-                $this->logger->error($this->getInstanceInfo().' selhal execute({input_parameters}).',
+                $this->logger->error($this->getInstanceInfo().': Selhal execute({input_parameters}).',
                         ['input_parameters'=>$input_parameters]);
                 $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
                 $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
@@ -171,7 +171,7 @@ class Statement extends \PDOStatement implements StatementInterface {
             throw new ExecuteException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
             if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().' execute({input_parameters}).',
+                $this->logger->debug($this->getInstanceInfo().': execute({input_parameters}).',
                     ['input_parameters'=>$input_parameters]);
             }
 
@@ -210,7 +210,7 @@ class Statement extends \PDOStatement implements StatementInterface {
             throw new BindParamException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
             if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().' bindParam({parameter}, {variable}, {data_type}, {length}, {driver_options})',
+                $this->logger->debug($this->getInstanceInfo().': bindParam({parameter}, {variable}, {data_type}, {length}, {driver_options})',
                     ['parameter'=>$parameter, 'variable'=>$variable, 'data_type'=>$data_type, 'length'=>$length=NULL, 'driver_options'=>$driver_options]);
             }
         }
@@ -240,7 +240,7 @@ class Statement extends \PDOStatement implements StatementInterface {
             throw new BindValueException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
             if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().' bindValue({parameter}, {value}, {data_type})',
+                $this->logger->debug($this->getInstanceInfo().': bindValue({parameter}, {value}, {data_type})',
                     ['parameter'=>$parameter, 'value'=>$value, 'data_type'=>$data_type]);
             }
         }

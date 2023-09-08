@@ -362,7 +362,7 @@ class Handler extends \PDO implements HandlerInterface {
                     } else {
                         $replace = ['sqlStatement'=>$sqlStatement, 'driver_options'=>$driver_options, 'statementInfo'=> get_class($prepStatement)];
                     }
-                    $this->logger->debug($this->getInstanceInfo().' prepare({sqlStatement}, {driver_options}). Vytvořen {statementInfo}.',
+                    $this->logger->debug($this->getInstanceInfo().': prepare({sqlStatement}, {driver_options}). Vytvořen {statementInfo}.',
                         $replace);
 
                     // !!! pokud má handler nastaven logger, Statement objekt ho "zdědí"
