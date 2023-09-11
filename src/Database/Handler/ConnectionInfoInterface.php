@@ -14,7 +14,7 @@ interface ConnectionInfoInterface {
     public function getDbType();
 
     /**
-     * @return
+     * @return string
      */
     public function getDbHost();
 

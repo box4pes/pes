@@ -161,7 +161,7 @@ class Statement extends \PDOStatement implements StatementInterface {
         } catch (\PDOException $pdoException) {
             if ($this->logger) {
                 $this->logger->error($this->getInstanceInfo().': Selhal execute({input_parameters}).',
-                        ['input_parameters'=>$input_parameters]);
+                        ['input_parameters'=>$input_parameters ?? 'null']);
                 $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
                 $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
                 $errorInfo = $this->errorInfo();

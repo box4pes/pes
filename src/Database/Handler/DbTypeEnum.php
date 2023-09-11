@@ -11,4 +11,5 @@ use Pes\Type\Enum;
 class DbTypeEnum extends Enum {    
     const MySQL = 'mysql';
     const MSSQL = 'sqlsrv';
+    const SQLITE = 'sqlite';
 }
