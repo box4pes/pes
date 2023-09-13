@@ -35,7 +35,7 @@ class AttributesProvider extends AttributesProviderAbstract {
      * XxxOptionsProvider. Například atributy s konstantami začínajícími prefixem MYSQL..., tedy atributy specifcké pro mysql driver v objektu MysqlOptionsProvider
      * jako options (nikoli po instancování PDO jako setAttributes). To funguje.
      */
-    public function __construct() {
+    public function __construct(array $attributes=[]) {
 
         // při chybě vyhazuj výjimky
         $this->attributes[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
@@ -50,6 +50,8 @@ class AttributesProvider extends AttributesProviderAbstract {
         $this->attributes[\PDO::ATTR_EMULATE_PREPARES] = FALSE;
 
         // ???? (PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL) - viz sERGE-01 http://php.net/manual/en/pdostatement.rowcount.php#113608
+
+        $this->attributes = $this->attributes + $attributes;
     }
 
 }
