@@ -280,20 +280,19 @@ class Html implements HtmlInterface {
         $selectedValue = array_key_exists($name, $context) ? $context[$name] : null;
         $useKeysAsValues = (!is_array($optionValues)) || (array_key_first($optionValues)!==0); // od PHP8: OR !array_is_list($optionValues);
         $isRequired = array_key_exists("required", $attributes) && $attributes["required"];
-
-        foreach ($optionValues as $key=>$value) {
-            $optionValue = $useKeysAsValues ? $key : $value;
-            if ((isset($selectedValue) AND $optionValue==$selectedValue)) {
-                $optionAttributes = ['value'=>$optionValue , 'selected'=>true];
+        $optValues = $useKeysAsValues ? array_keys($optionValues) : $optionValues;
+        $isSelected = (isset($selectedValue) && in_array($selectedValue, $optValues));
+        foreach ($optValues as $value) {
+            if ($isSelected AND $value==$selectedValue) {
+                $optionAttributes = ['value'=>$value , 'selected'=>true];
             } else {
-                $optionAttributes = ['value'=>$optionValue ?? $value];
-                if ($useEmptyKeyValueAsPlaceholder AND $isRequired AND empty($optionValue)) {
+                $optionAttributes = ['value'=>$value];
+                if ($useEmptyKeyValueAsPlaceholder AND $isRequired AND !$isSelected AND empty($optionValue)) {
                     // nastaví hodnotu s prázdným klíčem jako placeholder - k atributu disabled je nutné nastavit i selected, 
                     // jinak se automaticky vybere první nedisabled hodnota
                     $optionAttributes += ['disabled'=>true, 'selected'=>true];  
                 }
             }
-
             $optionsHtml[] = Html::tag("option", $optionAttributes, $value);
         }
         $html[] = Html::tag('span', [],
