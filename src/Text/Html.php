@@ -284,8 +284,10 @@ class Html implements HtmlInterface {
         foreach ($optionValues as $key=>$value) {
             $optionValue = $useKeysAsValues ? $key : $value;
             $optionAttributes = (isset($selectedValue) AND $optionValue==$selectedValue) ? ['value'=>$optionValue , 'selected'=>true] : ['value'=>$optionValue ?? $value];
-            if ($isRequired AND empty($key)) {
-                $optionAttributes += ["disabled"=>true];
+            if ($isRequired AND empty($optionValue)) {
+                // nastaví hodnotu s prázdným klíčem jako placeholder - k atributu disabled je nutné nastavit i selected, 
+                // jinak se automaticky vybere první nedisabled hodnota
+                $optionAttributes += ['disabled'=>true, 'selected'=>true];  
             }
             $optionsHtml[] = Html::tag("option", $optionAttributes, $value);
         }
