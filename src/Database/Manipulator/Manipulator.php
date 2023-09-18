@@ -142,7 +142,7 @@ class Manipulator {
         $queries = $this->mysql_explode($sql);
         $dbhTransact = $this->handler;
         if ($dbhTransact->inTransaction()) {
-            throw new LogicException('Nelze volat tuto metodu uprostřed spuštěné databázové transakce.');
+            throw new LogicException('Nelze volat tuto metodu exec() uprostřed spuštěné databázové transakce.');
         }
         try {
             $dbhTransact->beginTransaction();

@@ -109,15 +109,18 @@ interface HtmlInterface {
      * $value jsou použity pro zobrazení v html (html obsah tagu option).
      * Pokud je jako parametr použito neasociativní pole (automaticky číslované) dojde k tomu, že číselné klíče se nepoužijí a hodnoty pole bodou použity jako value v option i jako zobrazované hodnoty v html.
      *
-     * Pokud je v kontextu pložka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
-     *
+     * Pokud je v kontextu položka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
+     * Pokud je zadán parametr $useEmptyKeyValueAsPlaceholder=true a generovaný select je s atributem required použije hodnotu položky pole s prázdným klíčem 
+     * (např. prázdný string) jako placeholder, to znamená, že příslušnému tagu option nastaví atribut disabled.
+     * 
      * @param string $name Jméno proměnné formuláře /má přednost před případným atributem name)
      * @param string $label Pokud je zadán vygeneruje se tag label
-     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
      * @param array $context
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
+     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
+     * @param type $useEmptyKeyValueAsPlaceholder Pro select s atributem required použije hodnotu položky pole s prázdným klíčem (např. prázdný string) jako placeholder
      */
-    public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]);
+    public static function select($name, $label='', array $context=[], iterable $attributes=[], iterable $optionValues=[], $useEmptyKeyValueAsPlaceholder=false);
 
     public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[]);
 

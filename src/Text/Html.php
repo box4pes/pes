@@ -257,15 +257,18 @@ class Html implements HtmlInterface {
      * Pokud je jako parametr použito neasociativní pole (automaticky číslované) dojde k tomu, že číselné klíče se nepoužijí a hodnoty pole bodou použity jako value v option i jako zobrazované hodnoty v html.
      *
      * Pokud je v kontextu položka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
-     *
+     * Pokud je zadán parametr $useEmptyKeyValueAsPlaceholder=true a generovaný select je s atributem required použije hodnotu položky pole s prázdným klíčem 
+     * (např. prázdný string) jako placeholder, to znamená, že příslušnému tagu option nastaví atribut disabled.
+     * 
      * @param string $name Jméno proměnné formuláře (má přednost před případným atributem name)
      * @param string $label Pokud je zadán vygeneruje se tag label
-     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
      * @param array $context Kontext - asociativní pole dat získaných z formuláře.
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value. Viz dokumentace k metodě HTML::attributes().
+     * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
+     * @param type $useEmptyKeyValueAsPlaceholder Pro select s atributem required použije hodnotu položky pole s prázdným klíčem (např. prázdný string) jako placeholder
      * @return string
      */
-    public static function select($name, $label='', iterable $optionValues=[], array $context=[], iterable $attributes=[]) {
+    public static function select($name, $label='', array $context=[], iterable $attributes=[], iterable $optionValues=[], $useEmptyKeyValueAsPlaceholder=false) {
         if ($label AND !array_key_exists("id", $attributes)) {
             $attributes["id"] = uniqid();
         }
@@ -276,10 +279,15 @@ class Html implements HtmlInterface {
         $optionsHtml = [];
         $selectedValue = array_key_exists($name, $context) ? $context[$name] : null;
         $useKeysAsValues = (!is_array($optionValues)) || (array_key_first($optionValues)!==0); // od PHP8: OR !array_is_list($optionValues);
+        $isRequired = array_key_exists("required", $attributes) && $attributes["required"];
 
         foreach ($optionValues as $key=>$value) {
             $optionValue = $useKeysAsValues ? $key : $value;
-            $optionsHtml[] = Html::tag("option", (isset($selectedValue) AND $optionValue==$selectedValue) ? ['value'=>$optionValue , 'selected'=>true] : ['value'=>$optionValue ?? $value], $value);
+            $optionAttributes = (isset($selectedValue) AND $optionValue==$selectedValue) ? ['value'=>$optionValue , 'selected'=>true] : ['value'=>$optionValue ?? $value];
+            if ($isRequired) {
+                $optionAttributes += ["disabled"=>true];
+            }
+            $optionsHtml[] = Html::tag("option", $optionAttributes, $value);
         }
         $html[] = Html::tag('span', [],
                     Html::tag("select", $attributes, $optionsHtml)
