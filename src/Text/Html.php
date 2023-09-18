@@ -284,7 +284,7 @@ class Html implements HtmlInterface {
         foreach ($optionValues as $key=>$value) {
             $optionValue = $useKeysAsValues ? $key : $value;
             $optionAttributes = (isset($selectedValue) AND $optionValue==$selectedValue) ? ['value'=>$optionValue , 'selected'=>true] : ['value'=>$optionValue ?? $value];
-            if ($isRequired) {
+            if ($isRequired AND empty($key)) {
                 $optionAttributes += ["disabled"=>true];
             }
             $optionsHtml[] = Html::tag("option", $optionAttributes, $value);
