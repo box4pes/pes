@@ -263,12 +263,12 @@ class Html implements HtmlInterface {
      * @param string $name Jméno proměnné formuláře (má přednost před případným atributem name)
      * @param string $label Pokud je zadán vygeneruje se tag label
      * @param array $context Kontext - asociativní pole dat získaných z formuláře.
-     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value. Viz dokumentace k metodě HTML::attributes().
      * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
+     * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value. Viz dokumentace k metodě HTML::attributes().
      * @param type $useEmptyKeyValueAsPlaceholder Pro select s atributem required použije hodnotu položky pole s prázdným klíčem (např. prázdný string) jako placeholder
      * @return string
      */
-    public static function select($name, $label='', array $context=[], iterable $attributes=[], iterable $optionValues=[], $useEmptyKeyValueAsPlaceholder=false) {
+    public static function select($name, $label='', array $context=[], iterable $optionValues=[], iterable $attributes=[], $useEmptyKeyValueAsPlaceholder=false) {
         if ($label AND !array_key_exists("id", $attributes)) {
             $attributes["id"] = uniqid();
         }
