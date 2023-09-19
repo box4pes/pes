@@ -277,23 +277,24 @@ class Html implements HtmlInterface {
             $html[] = Html::tag("label", ["for"=>$attributes["id"]], $label);
         }
         $optionsHtml = [];
-        $selectedValue = array_key_exists($name, $context) ? $context[$name] : null;
+        $selectedKeyValue = array_key_exists($name, $context) ? $context[$name] : null;
         $useKeysAsValues = (!is_array($optionValues)) || (array_key_first($optionValues)!==0); // od PHP8: OR !array_is_list($optionValues);
         $isRequired = array_key_exists("required", $attributes) && $attributes["required"];
-        $optValues = $useKeysAsValues ? array_keys($optionValues) : $optionValues;
-        $isSelected = (isset($selectedValue) && in_array($selectedValue, $optValues));
-        foreach ($optValues as $value) {
-            if ($isSelected AND $value==$selectedValue) {
-                $optionAttributes = ['value'=>$value , 'selected'=>true];
-            } else {
-                $optionAttributes = ['value'=>$value];
-                if ($useEmptyKeyValueAsPlaceholder AND $isRequired AND !$isSelected AND empty($optionValue)) {
-                    // nastaví hodnotu s prázdným klíčem jako placeholder - k atributu disabled je nutné nastavit i selected, 
-                    // jinak se automaticky vybere první nedisabled hodnota
-                    $optionAttributes += ['disabled'=>true, 'selected'=>true];  
+        $optValues = $useKeysAsValues ? $optionValues : array_combine($optionValues, $optionValues);
+        $isSelected = (isset($selectedKeyValue) && array_key_exists($selectedKeyValue, $optValues));
+        foreach ($optValues as $keyValue=>$display) {
+            $optionAttributes = ['value'=>$keyValue];
+            if ($isSelected AND $keyValue==$selectedKeyValue) {
+                $optionAttributes += ['selected'=>true];
+            } elseif ($useEmptyKeyValueAsPlaceholder AND $isRequired AND empty($keyValue)) {
+                // nastaví hodnotu s prázdným klíčem jako placeholder - k atributu disabled je nutné nastavit i selected, 
+                // jinak se automaticky vybere první nedisabled hodnota
+                $optionAttributes += ['disabled'=>true];
+                if (!$isSelected) {
+                    $optionAttributes += ['selected'=>true];
                 }
             }
-            $optionsHtml[] = Html::tag("option", $optionAttributes, $value);
+            $optionsHtml[] = Html::tag("option", $optionAttributes, $display);
         }
         $html[] = Html::tag('span', [],
                     Html::tag("select", $attributes, $optionsHtml)
