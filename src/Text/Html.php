@@ -257,18 +257,25 @@ class Html implements HtmlInterface {
      * Pokud je jako parametr použito neasociativní pole (automaticky číslované) dojde k tomu, že číselné klíče se nepoužijí a hodnoty pole bodou použity jako value v option i jako zobrazované hodnoty v html.
      *
      * Pokud je v kontextu položka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
-     * Pokud je zadán parametr $useEmptyKeyValueAsPlaceholder=true a generovaný select je s atributem required použije hodnotu položky pole s prázdným klíčem 
-     * (např. prázdný string) jako placeholder, to znamená, že příslušnému tagu option nastaví atribut disabled.
+     * Pokud je zadán parametr $placeholderKey a generovaný select je s atributem required použije hodnotu položky pole s klíčem zadaným tímto parametrem jako placeholder, 
+     * to znamená, že option tagu s tímto klíčem nastaví atribut disabled a taková option položka bude zobrazena, nebude možné ji vybrat. Pokud je však není vybraná některá položka - option selected, 
+     * pak je právě položka označená jako placeholder označena selected a tím je zajištěna funkčnost atributu inputu "required", uživatel musí vybrat jinou položku než placeholder.
+     * 
+     * Poznámka: Pole s hodnotami pro option musí být buď tzv. číselné nebo asociativní
+     * - číselné pole je pole s klíči generovanými automaticky PHP, tedy skript musí vytvářet položky pole BEZ jakýchkoli klíčú, klíče vznikají od nuly postupně
+     * - asociativní pole je pole s jakýmikoli jinými hodnotami klíčů, pokud tedy do pole přídáte položku s klíčem (například proto, že cgcete položku pro placeholder) 
+     *   vznikne asocitivní pole.
+     * 
      * 
      * @param string $name Jméno proměnné formuláře (má přednost před případným atributem name)
      * @param string $label Pokud je zadán vygeneruje se tag label
      * @param array $context Kontext - asociativní pole dat získaných z formuláře.
      * @param iterable $optionValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value. Viz dokumentace k metodě HTML::attributes().
-     * @param type $useEmptyKeyValueAsPlaceholder Pro select s atributem required použije hodnotu položky pole s prázdným klíčem (např. prázdný string) jako placeholder
+     * @param type $placeholderKey Pro select s atributem required použije hodnotu položky pole s klíčem zadaným tímto parametrem jako placeholder
      * @return string
      */
-    public static function select($name, $label='', array $context=[], iterable $optionValues=[], iterable $attributes=[], $useEmptyKeyValueAsPlaceholder=false) {
+    public static function select($name, $label='', array $context=[], iterable $optionValues=[], iterable $attributes=[], $placeholderKey=null) {
         if ($label AND !array_key_exists("id", $attributes)) {
             $attributes["id"] = uniqid();
         }
@@ -284,10 +291,10 @@ class Html implements HtmlInterface {
         $isSelected = (isset($selectedKeyValue) && array_key_exists($selectedKeyValue, $optValues));
         foreach ($optValues as $keyValue=>$display) {
             $optionAttributes = ['value'=>$keyValue];
-            if ($isSelected AND $keyValue==$selectedKeyValue) {
+            if ($isSelected && $keyValue===$selectedKeyValue) {
                 $optionAttributes += ['selected'=>true];
-            } elseif ($useEmptyKeyValueAsPlaceholder AND $isRequired AND empty($keyValue)) {
-                // nastaví hodnotu s prázdným klíčem jako placeholder - k atributu disabled je nutné nastavit i selected, 
+            } elseif ($isRequired && isset($placeholderKey) && ($placeholderKey===$keyValue)) {
+                // nastaví položku se zvoleným klíčem jako placeholder - k atributu disabled je nutné nastavit i selected, 
                 // jinak se automaticky vybere první nedisabled hodnota
                 $optionAttributes += ['disabled'=>true];
                 if (!$isSelected) {
