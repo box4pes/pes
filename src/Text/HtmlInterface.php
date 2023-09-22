@@ -120,7 +120,7 @@ interface HtmlInterface {
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
      * @param type $useEmptyKeyValueAsPlaceholder Pro select s atributem required použije hodnotu položky pole s prázdným klíčem (např. prázdný string) jako placeholder
      */
-    public static function select($name, $label='', array $context=[], iterable $optionsValues=[], iterable $attributes=[], $useEmptyKeyValueAsPlaceholder=false);
+    public static function select($name, $label='', array $context=[], iterable $optionValues=[], iterable $attributes=[], $placeholderKey=null);
 
     public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[]);
 

@@ -295,8 +295,11 @@ class Html implements HtmlInterface {
             if ($isSelected && $keyValue===$selectedKeyValue) {
                 $optionAttributes += ['selected'=>true];
             } elseif ($isRequired && isset($placeholderOptionValue) && ($placeholderOptionValue===$keyValue)) {
-                // nastaví položku se zvoleným klíčem jako placeholder - k atributu disabled je nutné nastavit i selected, 
+                // nastaví položku jako placeholder - k atributu disabled je nutné nastavit i selected, 
                 // jinak se automaticky vybere první nedisabled hodnota
+                if (!$useKeysAsValues) {
+                    $optionAttributes = ['value'=>""];   // prázdný řetšzec -> nelze odeslat když je select required
+                }                
                 $optionAttributes += ['disabled'=>true];
                 if (!$isSelected) {
                     $optionAttributes += ['selected'=>true];

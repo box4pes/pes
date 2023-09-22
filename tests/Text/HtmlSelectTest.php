@@ -131,7 +131,7 @@ SELECT;
 $sel = <<<SELECT
 <label for="">To je label:</label>
 <span><select required id="" name="jmeno">
-<option value="Placeholder" disabled>Placeholder</option>
+<option value="" disabled>Placeholder</option>
 <option value="Plzeň-město">Plzeň-město</option>
 <option value="Plzeň-jih">Plzeň-jih</option>
 <option value="Plzeň-sever" selected>Plzeň-sever</option>
