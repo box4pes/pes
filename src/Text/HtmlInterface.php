@@ -96,31 +96,15 @@ interface HtmlInterface {
     /**
      * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
      *
-     * Generování label:
-     * Pokud je zadán parametr label, parametr attributes by měl obsahovat položku s klíčem "id", pokud ji neobsahuje, bude doplněna.
-     * Parametr attributes může obsahovat položku s klíčem "name", ale ta nebude použita.
-     *
-     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
-     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
-     * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
-     *
-     * Generování option:
-     * Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value. Hodnoty $key jsou použity jako hodnota proměnné formuláře (value v tagu option),
-     * $value jsou použity pro zobrazení v html (html obsah tagu option).
-     * Pokud je jako parametr použito neasociativní pole (automaticky číslované) dojde k tomu, že číselné klíče se nepoužijí a hodnoty pole bodou použity jako value v option i jako zobrazované hodnoty v html.
-     *
-     * Pokud je v kontextu položka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
-     * Pokud je zadán parametr $useEmptyKeyValueAsPlaceholder=true a generovaný select je s atributem required použije hodnotu položky pole s prázdným klíčem 
-     * (např. prázdný string) jako placeholder, to znamená, že příslušnému tagu option nastaví atribut disabled.
      * 
      * @param string $name Jméno proměnné formuláře /má přednost před případným atributem name)
      * @param string $label Pokud je zadán vygeneruje se tag label
      * @param array $context
      * @param iterable $optionsValues Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value.
      * @param iterable $attributes Atributy - iterable proměnná s dvojicemi key=>value.
-     * @param type $useEmptyKeyValueAsPlaceholder Pro select s atributem required použije hodnotu položky pole s prázdným klíčem (např. prázdný string) jako placeholder
+     * @param type $placeholderKey Pro select s atributem required použije hodnotu položky pole s prázdným klíčem (např. prázdný string) jako placeholder
      */
-    public static function select($name, $label='', array $context=[], iterable $optionValues=[], iterable $attributes=[], $placeholderKey=null);
+    public static function select($name, $label='', array $context=[], iterable $optionsValues=[], iterable $attributes=[], $placeholderKey=null);
 
     public static function radio($name, iterable $radiosetLbelsValues=[], array $context=[]);
 

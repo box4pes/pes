@@ -252,12 +252,18 @@ class Html implements HtmlInterface {
      * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
      *
      * Generování option:
-     * Hodnoty pro generování tagů option - iterable proměnná s dvojicemi key=>value. Hodnoty $key jsou použity jako hodnota proměnné formuláře (value v tagu option),
-     * $value jsou použity pro zobrazení v html (html obsah tagu option).
+     * Hodnoty pro generování tagů option:
+     * - číselné pole - pole s klíči generovanými automaticky PHP, například ["Adam", "Božena", "Cyril"]
+     * - asocitivní pole nebo iterable proměnná s dvojicemi key=>value. Hodnoty $key jsou použity jako hodnota proměnné formuláře (value v tagu option),
+     *   $value jsou použity pro zobrazení v html (html obsah tagu option).
      * Pokud je jako parametr použito neasociativní pole (automaticky číslované) dojde k tomu, že číselné klíče se nepoužijí a hodnoty pole bodou použity jako value v option i jako zobrazované hodnoty v html.
-     *
-     * Pokud je v kontextu položka se jménem odpovídajícím parametru name pak vygenerovaný option se stejnou hodnotou jako je hodnota položky je doplněn atributem selected.
      * 
+     * Použití kontextu:
+     * Metoda počítá s tím, že jako kontext je použito asociativní pole hodnot vše proměnných formuláře, tak jak již byly nastaveny dříve. 
+     * Pokud je v kontextu položka se jménem odpovídajícím parametru name generovaného selectu, pak option se stejnou hodnotou jako je hodnota 
+     * této položky kontextu, je doplněn atributem selected.
+     * 
+     * Placeholder:
      * Pokud je zadán parametr $placeholderOptionValue a generovaný select je s atributem required použije generovaný option s touto hodnotou (value) jako placeholder, 
      * to znamená, že option tagu s touto hodnotou nastaví atribut disabled a taková option položka bude zobrazena, ale nebude možné ji vybrat. Pokud je však není 
      * vybraná některá položka - option selected, pak je právě položka označená jako placeholder označena selected a tím je zajištěna funkčnost atributu inputu "required", uživatel musí vybrat jinou položku než placeholder.
