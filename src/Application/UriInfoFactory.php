@@ -27,7 +27,7 @@ class UriInfoFactory implements UriInfoFactoryInterface {
         $requestScriptName = parse_url($environment->get('SCRIPT_NAME'), PHP_URL_PATH);
         $requestScriptDir = dirname($requestScriptName);
 
-        $requestUri = $request->getUri()->getPath();
+        $requestUri = rawurldecode($request->getUri()->getPath());  // metoda getPath musí vracet enkódované uri 
 
         if (stripos($requestUri, $requestScriptName) === 0) {
             $subDomainPath = $requestScriptName;

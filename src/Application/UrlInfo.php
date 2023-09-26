@@ -99,7 +99,7 @@ class UrlInfo implements UriInfoInterface {
      * @return UriInfoInterface
      */
     public function setSubdomainUri(string $basePath): UriInfoInterface {
-        $this->subdomainUri = rawurldecode($basePath);
+        $this->subdomainUri = $basePath;
         return $this;
     }
 
@@ -110,7 +110,7 @@ class UrlInfo implements UriInfoInterface {
      * @return UriInfoInterface
      */
     public function setSubdomainPath(string $subdomainPath): UriInfoInterface {
-        $this->subdomainPath = rawurldecode($subdomainPath);
+        $this->subdomainPath = $subdomainPath;
         return $this;
     }
 
@@ -121,7 +121,7 @@ class UrlInfo implements UriInfoInterface {
      * @return UrlInfoInterface
      */
     public function setRestUri(string $restUri): UriInfoInterface {
-        $this->restUri = rawurldecode($restUri);
+        $this->restUri = $restUri;
         return $this;
     }
 
@@ -132,7 +132,7 @@ class UrlInfo implements UriInfoInterface {
      * @return $this
      */
     public function setRootAbsolutePath(string $rootAbsolutePath): UriInfoInterface {
-        $this->rootAbsolutePath = rawurldecode($rootAbsolutePath);
+        $this->rootAbsolutePath = $rootAbsolutePath;
         return $this;
     }
 
@@ -143,7 +143,7 @@ class UrlInfo implements UriInfoInterface {
      * @return $this
      */
     public function setWorkingPath(string $workingPath): UriInfoInterface {
-        $this->workingPath = rawurldecode($workingPath);
+        $this->workingPath = $workingPath;
         return $this;
     }
 
