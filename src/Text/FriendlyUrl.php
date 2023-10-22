@@ -16,8 +16,11 @@ namespace Pes\Text;
 class FriendlyUrl implements FriendlyUrlInterface {
 
     /**
-     * Převede zdrojový text na řetězec vhodný jako část url. Výsledný řetězec obsahuje pouze malá písmena, čísla a znaky,
-     * které mohou být součástí url. Mezery a bílé znaky převede na pomlčku, znaky s háčky a čárkami na znaky bez háčků a čárek a další.
+     * Převede zdrojový text na řetězec vhodný jako část url složený pouze ze znaků, které se nebudou v url kódovat. 
+     * Současně je výsledná text upraven tak, aby byl čitelný pro člověka.
+     * 
+     * Výsledný řetězec obsahuje pouze malá písmena, čísla pomlčky a podtržítka. Mezery a bílé znaky převede na pomlčku, 
+     * znaky s háčky a čárkami na znaky bez háčků a čárek (provede transliteraci).
      * Pokud je zadána maximální délka, omezí řetězec na tuto délku.
      * 
      * @param string $sourceText
