@@ -31,8 +31,8 @@ class CompositeView extends View implements CompositeViewInterface {
      * @return ViewInterface
      */
     public function appendComponentView(ViewInterface $componentView, $name): ViewInterface {
-        $componentViews = $this->provideComponentViews();
-        $componentViews->offsetSet($name, $componentView);
+        $components = $this->provideComponentViews();
+        $components->offsetSet($name, $componentView);
         return $this;
     }
 
@@ -42,9 +42,9 @@ class CompositeView extends View implements CompositeViewInterface {
      * @return ViewInterface
      */
     public function appendComponentViews(iterable $componentViews): ViewInterface  {
-        $componentViews = $this->provideComponentViews();
+        $components = $this->provideComponentViews();
         foreach ($componentViews as $name => $componentView) {
-            $componentViews->offsetSet($name, $componentView);
+            $components->offsetSet($name, $componentView);
         }
         return $this;
     }
