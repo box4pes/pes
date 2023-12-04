@@ -331,7 +331,7 @@ class Html implements HtmlInterface {
      * @param iterable $radiosetLabelsValues Asociativní pole dvojic nadpis položky => hodnota položky
      * @param array $context Kontext - asociativní pole dat získaných z formuláře.
      * @param iterable $inputAttributes Atributy tagu input, případné položky "type", "name", "value" a "checked" budou přepsány automaticky generovanými hodnotami.  Viz dokumentace k metodě HTML::attributes().
-     * @param iterable $labelAttributes Atributy tygu label, případná položka "for" bude v případě automaticky generovaného id tagu input přepsána autoticky generovanou hodnotou.  Viz dokumentace k metodě HTML::attributes().
+     * @param iterable $labelAttributes Atributy tagu label, případná položka "for" bude v případě automaticky generovaného id tagu input přepsána automaticky generovanou hodnotou.  Viz dokumentace k metodě HTML::attributes().
      * @return string
      */
     public static function radio($name, iterable $radiosetLabelsValues=[], array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=[]) {

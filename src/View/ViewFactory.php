@@ -46,10 +46,11 @@ class ViewFactory implements ViewFactoryInterface {
      * @return View
      */
     public function phpTemplateView($templateFilename, $data=null): View {
-        $template = new PhpTemplate($templateFilename);
-        $view = (new View())
-                ->setTemplate($template)
-                ->setData($data);
+        $template = new PhpTemplate($templateFilename);  // NoTemplateFileException
+        $view = (new View())->setTemplate($template);
+        if(isset($data)) {
+            $view->setData($data);
+        }
         if ($this->rendererContainer) {
             $view->setRendererContainer($this->rendererContainer);
         }
@@ -58,10 +59,10 @@ class ViewFactory implements ViewFactoryInterface {
 
     public function phpTemplateCompositeView($templateFilename, $data=null): View {
         $template = new PhpTemplate($templateFilename);
-        $view = (new CompositeView())
-                ->setTemplate($template)
-                ->setData($data);
-        if ($this->rendererContainer) {
+        $view = (new CompositeView())->setTemplate($template);
+        if(isset($data)) {
+            $view->setData($data);
+        }        if ($this->rendererContainer) {
             $view->setRendererContainer($this->rendererContainer);
         }
         return $view;
