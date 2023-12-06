@@ -31,7 +31,25 @@ class ViewFactory implements ViewFactoryInterface {
         $this->rendererContainer = $rendererContainer;
         return $this;
     }
-
+    
+    public function view(iterable $data = null) {
+        $view = new View();
+        $this->setDataAndRendererContainer($view, $data);
+    }
+    
+    public function compositeView(iterable $data = null) {
+        $view = new CompositeView();
+        $this->setDataAndRendererContainer($view, $data);
+    }
+    
+    public function implodeView(iterable $data = null) {
+        $view = new View();
+        if (isset($data)) {
+            $view->setData($data);
+        }
+        $view->setRenderer(new ImplodeRenderer());        
+    }
+    
     /**
      * Vytvoří nový view, přímo přetypovatelný na text. Pokud jsou zadána data, nastaví tomuto view i data, to je třeba, pokud zadaná šablona obsahuje proměnné.
      * Vytvořený objekt view je vhodný jako proměnná do šablony nebo jako view pro node typu TextView.
@@ -45,26 +63,17 @@ class ViewFactory implements ViewFactoryInterface {
      * @param type $data
      * @return View
      */
-    public function phpTemplateView($templateFilename, $data=null): View {
+    public function phpTemplateView($templateFilename, iterable $data=null): View {
         $template = new PhpTemplate($templateFilename);  // NoTemplateFileException
         $view = (new View())->setTemplate($template);
-        if(isset($data)) {
-            $view->setData($data);
-        }
-        if ($this->rendererContainer) {
-            $view->setRendererContainer($this->rendererContainer);
-        }
+        $this->setDataAndRendererContainer($view, $data);
         return $view;
     }
 
-    public function phpTemplateCompositeView($templateFilename, $data=null): View {
+    public function phpTemplateCompositeView($templateFilename, iterable $data=null): View {
         $template = new PhpTemplate($templateFilename);
         $view = (new CompositeView())->setTemplate($template);
-        if(isset($data)) {
-            $view->setData($data);
-        }        if ($this->rendererContainer) {
-            $view->setRendererContainer($this->rendererContainer);
-        }
+        $this->setDataAndRendererContainer($view, $data);
         return $view;
     }
 
@@ -80,5 +89,14 @@ class ViewFactory implements ViewFactoryInterface {
             $view->setRendererContainer($this->rendererContainer);
         }
         return $view;
+    }
+    
+    private function setDataAndRendererContainer($view, iterable $data=null) {
+        if(isset($data)) {
+            $view->setData($data);
+        }
+        if (isset($this->rendererContainer)) {
+            $view->setRendererContainer($this->rendererContainer);
+        }        
     }
 }
