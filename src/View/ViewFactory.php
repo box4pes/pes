@@ -11,6 +11,9 @@
 
 namespace Pes\View;
 
+use Pes\View\View;
+use Pes\View\CompositeView;
+use Pes\View\Renderer\ImplodeRenderer;
 use Psr\Container\ContainerInterface;
 use Pes\View\Template\PhpTemplate;
 use Pes\View\Template\NodeTemplate;
