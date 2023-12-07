@@ -103,7 +103,7 @@ class CompositeView extends View implements CompositeViewInterface {
         if (is_iterable($this->componentViews)) {
             $data = $this->provideData();
             foreach ($this->componentViews as $name => $componentView) {
-                $data[$name] = $this->renderComponent($componentView);
+                    $data[$name] = isset($componentView) ? $this->renderComponent($componentView) : '';
             }
         }
     }
