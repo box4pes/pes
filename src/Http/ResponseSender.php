@@ -30,9 +30,9 @@ class ResponseSender implements ResponseSenderInterface {
             // Status
             $statusHeaderContent = sprintf(
                 'HTTP/%s %s %s',
-                $response->getProtocolVersion(),
-                $response->getStatusCode(),
-                $response->getReasonPhrase()
+                $this->sanitizeString($response->getProtocolVersion()),  // remove new lines - caused duplicated headers
+                $this->sanitizeString($response->getStatusCode()),
+                $this->sanitizeString($response->getReasonPhrase())
             );
             if (isset($this->logger)) {
                 $this->logger->debug("ResponseSender: Send status header with content: {statusHesderContent}", ['statusHesderContent'=>$statusHeaderContent]);
@@ -108,6 +108,15 @@ class ResponseSender implements ResponseSenderInterface {
         }
     }
 
+    /**
+     * Replace multiple spaces and newlines with one space.
+     * @param type $string
+     * @return type
+     */
+    private function sanitizeString($string) {
+        return trim(preg_replace('/\s\s+/', ' ', $string));        
+    }
+    
     /**
      * Loops through the output buffer, flushing each, before emitting
      * the response.
