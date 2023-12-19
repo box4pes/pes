@@ -73,7 +73,7 @@ class BodyParser implements BodyParserInterface {
         
         $this->registerMediaParser('text/plain', function ($input) {
             $stream = new Stream(fopen('php://temp', 'r+'));
-            $stream->write($content);
+            $stream->write($input);
             $stream->rewind();
             return $stream;            
         });
