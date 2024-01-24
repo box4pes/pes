@@ -191,9 +191,9 @@ class FileLogger extends AbstractLogger {
      * Destruktor. Zavře logovací soubor.
      */
     public function __destruct() {
-//        if (is_resource($this->logFileHandle)) {
-//            fclose($this->logFileHandle);
-//        }
+        if (is_resource($this->logFileHandle)) {
+            fclose($this->logFileHandle);
+        }
     }
 }
 
