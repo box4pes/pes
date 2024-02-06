@@ -9,5 +9,5 @@ use Psr\Log\LoggerAwareInterface;
  * @author pes2704
  */
 interface OptionsProviderInterface extends LoggerAwareInterface {
-    public function getOptionsArray(ConnectionInfo $connectionInfo, $options=[]);
+    public function getOptionsArray(ConnectionInfo $connectionInfo);
 }

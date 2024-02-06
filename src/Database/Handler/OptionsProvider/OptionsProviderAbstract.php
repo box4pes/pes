@@ -23,9 +23,16 @@ use Psr\Log\LoggerInterface;
  */
 abstract class OptionsProviderAbstract implements OptionsProviderInterface {
 
+    protected $options = [];
+    
     /** @var Psr\Log\LoggerInterface */
     protected $logger;
 
+    
+    public function __construct(array $options=[]) {
+        $this->options = $options;
+    }
+    
     public function setLogger(LoggerInterface $logger) {
         $this->logger = $logger;
     }

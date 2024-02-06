@@ -40,7 +40,7 @@ final class OptionsProviderMysql extends OptionsProviderAbstract {
      * @param ConnectionInfo $connectionInfo
      * @return array
      */
-    public function getOptionsArray(ConnectionInfo $connectionInfo, $options=[]) {
+    public function getOptionsArray(ConnectionInfo $connectionInfo) {
 
         // Pro nastavení kódování a řazení pro připojení zde volám SET NAMES charset COLLATE collation, nastavení kódování v dsn funguje různě
         // ve starších verzích PHP a zřejmě tak nelze nastavit COLLATE
@@ -52,7 +52,7 @@ final class OptionsProviderMysql extends OptionsProviderAbstract {
             }
             static::$defaultOptions[\PDO::MYSQL_ATTR_INIT_COMMAND] = $cmd;
         }
-        $options = static::$defaultOptions + $options;
+        $options = static::$defaultOptions + $this->options;
         if($this->logger) {
             $this->logger->debug(__CLASS__.': Vytvořeny options - {options}', ['options' => print_r($options, TRUE)]);
         }
