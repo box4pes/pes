@@ -41,7 +41,7 @@ class AttributesProvider extends AttributesProviderAbstract {
         $this->attributes[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
 
         // vracej VLASTNÍ TYP objektu statement zadaného typu - default typ zadaný konstantou
-        $this->attributes[\PDO::ATTR_STATEMENT_CLASS] = array(Statement::class, array($this->logger));
+//        $this->attributes[\PDO::ATTR_STATEMENT_CLASS] = array(Statement::class, array($this->logger));
 
         //pokoušej se používat nativní poporu preparu poskytovanou driverem
         // používej nativní PDO prepare - viz http://dev.mysql.com/doc/refman/5.6/en/sql-syntax-prepared-statements.html
