@@ -18,12 +18,17 @@ namespace Pes\Debug;
  */
 class Timer {
 
+    private $verbose;
     private $startTime;
     private $lasttime;
 
+    public function __construct($verbose=true) {
+        $this->verbose = boolval($verbose);
+    }
+    
     public function start() {
         $this->startTime = $this->lasttime = microtime(TRUE);
-        return 'Reset timer'.PHP_EOL;
+        return $this->verbose ? 'Reset timer'.PHP_EOL : null;
     }
 
     /**
@@ -34,11 +39,11 @@ class Timer {
     public function interval() {
         $lt = $this->lasttime;
         $this->lasttime = microtime(TRUE);
-        return 'Interval: '. ($this->lasttime - $lt) .' sec'.PHP_EOL;
+        return $this->verbose ? 'Interval: '. ($this->lasttime - $lt) .' sec'.PHP_EOL : (string) ($this->lasttime - $lt);
     }
 
     public function runtime() {
-        return 'Runtime: '. (microtime(TRUE) - $this->startTime).' sec'.PHP_EOL;
+        return $this->verbose ? 'Runtime: '. (microtime(TRUE) - $this->startTime).' sec'.PHP_EOL : (string) (microtime(TRUE) - $this->startTime);
 
     }
 
