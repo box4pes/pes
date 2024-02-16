@@ -21,30 +21,34 @@ class Timer {
     private $verbose;
     private $startTime;
     private $lasttime;
-
-    public function __construct($verbose=true) {
-        $this->verbose = boolval($verbose);
-    }
     
+    /**
+     * Nastaví počáteční čas časového intervalu.
+     * 
+     * @return float Čas startu v sekundách, čas je UNIX čas.
+     */
     public function start() {
         $this->startTime = $this->lasttime = microtime(TRUE);
-        return $this->verbose ? 'Reset timer'.PHP_EOL : null;
+        return $this->startTime;
     }
 
     /**
-     * Vrací textovou informaci o čase uplynulém od posledního volání této metody.
+     * Vrací čas uplynulý od posledního volání této metody.
      *
-     * @return string
+     * @return float Čas v sekundách
      */
     public function interval() {
         $lt = $this->lasttime;
         $this->lasttime = microtime(TRUE);
-        return $this->verbose ? 'Interval: '. ($this->lasttime - $lt) .' sec'.PHP_EOL : (string) ($this->lasttime - $lt);
+        return $this->lasttime - $lt;
     }
 
+    /**
+     * 
+     * @return float Čas v sekundách
+     */
     public function runtime() {
-        return $this->verbose ? 'Runtime: '. (microtime(TRUE) - $this->startTime).' sec'.PHP_EOL : (string) (microtime(TRUE) - $this->startTime);
-
+        return microtime(TRUE) - $this->startTime;
     }
 
 }
