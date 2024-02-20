@@ -70,7 +70,7 @@ class Html implements HtmlInterface {
                     $attr[] = $type;  // jen pro true
                 }
             } elseif (is_array($value)) {
-                $attr[] = $type.'="'.implode(' ', $value).'"';
+                $attr[] = $type.'="'.implode(' ', array_filter($value, function($value) {return boolval($value);})).'"';  // filtruje prázdné řetězce
             } else {
                 $attr[] = $type.'="'.trim((string) $value).'"';
             }
