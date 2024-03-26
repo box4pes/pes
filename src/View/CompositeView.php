@@ -20,11 +20,12 @@ class CompositeView extends View implements CompositeViewInterface {
 
     /**
      * Metoda pro přidání komponentních view. 
+     * 
+     * Pokud je komponentní view typu InheritDataViewInterface, v tuto chvíli "zdědí" context data z kompozitního view.
+     * Případné pozdější nahrazení dat komponentního view (rodiče) nevede ke změně
      *
-     * Při renderování kompozitního view budou renderována komponentní view a vygenerovaný výsledek bude vložen
+     * Před renderováním kompozitního view budou nejprve renderována komponentní view a vygenerovaný výsledek bude vložen
      * do kompozitního view na místo proměnné zadané zde jako jméno. Pokud kompozitní view je null, proměnná je nahrazena prázdným retězcem.
-     * Jednotlivá komponentní view budou renderována bez předání (nastavení) template a dat, musí mít tedy před renderováním kompozitního view nastavenu šablonu
-     * a data pokud je potřebují pro své renderování.
      *
      * @param \Pes\View\ViewInterface $componentView Komponetní view nebo null
      * @param string $name Jméno proměnné v kompozitním view, která má být nahrazena výstupem zadané komponentní view
@@ -32,21 +33,31 @@ class CompositeView extends View implements CompositeViewInterface {
      */
     public function appendComponentView(ViewInterface $componentView, $name): ViewInterface {
         $components = $this->provideComponentViews();
+        $this->inheritParentData($componentView);
         $components->offsetSet($name, $componentView);
         return $this;
     }
 
     /**
-     * Metoda pro přidání komponentních view jako pole nebo \Traversable objekt. Interně volá metodu appendComponentView()
+     * Metoda pro přidání kolekce komponentních view. Kolekce komponentních view je předána jako pole nebo \Traversable objekt.
+     * 
      * @param iterable $componentViews
      * @return ViewInterface
      */
     public function appendComponentViews(iterable $componentViews): ViewInterface  {
         $components = $this->provideComponentViews();
         foreach ($componentViews as $name => $componentView) {
+            $this->inheritParentData($componentView);
             $components->offsetSet($name, $componentView);
         }
         return $this;
+    }
+    
+    private function inheritParentData($componentView) {
+        if ($componentView instanceof InheritDataViewInterface) {
+            /** @var InheritDataViewInterface $componentView */
+            $componentView->inheritData($this->contextData);
+        }        
     }
 
     public function getComponentView($name): ?ViewInterface {
@@ -110,10 +121,6 @@ class CompositeView extends View implements CompositeViewInterface {
 
 
     private function renderComponent($componentView) {
-        if ($componentView instanceof InheritDataViewInterface) {
-            /** @var InheritDataViewInterface $componentView */
-            $componentView->inheritData($this->contextData);
-        }
         return $componentView->getString();
     }
 }

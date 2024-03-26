@@ -28,7 +28,7 @@ use Pes\View\Template\ImplodeTemplate as FallbackTemplate;
 
 use Pes\Type\Exception\InvalidDataTypeException;
 use Pes\View\Exception\{
-    BadRendererForTemplateException, InvalidTypeForSetDataException
+    BadRendererForTemplateException, InvalidTypeForSetDataException, OverrideContextDataException
 };
 
 use ArrayObject;
@@ -94,6 +94,9 @@ class View implements ViewInterface {
      * @throws InvalidTypeForSetDataException
      */
     public function setData(iterable $contextData): ViewInterface {
+        if (isset($this->contextData)) {
+            throw new OverrideContextDataException("Nelze nastavovat kontextová data view objektu opakovaně.");
+        }
         if ($contextData instanceof ContextDataInterface) {
             $this->contextData = $contextData;
         } else {
@@ -296,11 +299,7 @@ class View implements ViewInterface {
     private function setRendererTemplate(RendererInterface $renderer, TemplateInterface $template=null) {
         if ($renderer instanceof TemplateRendererInterface) {
             if ($template) {
-                if (!$this->checkRendererTemplateCompatibility($renderer, $this->template)) {
-                    throw new BadRendererForTemplateException(
-                            "Template ".get_class($template)." vyžaduje renderer typu $templateDefaultRendererClass. "
-                            . "Zadaný renderer ".get_class($renderer)." nelze použít pro renderování template.");
-                }
+                $this->checkRendererTemplateCompatibility($renderer, $this->template);
                 $renderer->setTemplate($template);
             }
         }
@@ -308,7 +307,11 @@ class View implements ViewInterface {
 
     private function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template): bool {
         $templateDefaultRendererClass = $template->getDefaultRendererService();
-        return ($renderer instanceof $templateDefaultRendererClass);
+        if(!($renderer instanceof $templateDefaultRendererClass)) {
+            throw new BadRendererForTemplateException(
+                "Template ".get_class($template)." vyžaduje renderer typu $templateDefaultRendererClass. "
+                . "Zadaný renderer ".get_class($renderer)." nelze použít pro renderování template.");
+            }
     }
 
     private function getFallbackRendereWithTemplate(): RendererInterface {
