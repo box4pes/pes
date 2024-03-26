@@ -22,7 +22,7 @@ class CompositeView extends View implements CompositeViewInterface {
      * Metoda pro přidání komponentních view. 
      * 
      * Pokud je komponentní view typu InheritDataViewInterface, v tuto chvíli "zdědí" context data z kompozitního view.
-     * Případné pozdější nahrazení dat komponentního view (rodiče) nevede ke změně
+     * Případný pozdější pokus o nahrazení dat komponentního view (rodiče) vyhodí výjimku ve View.
      *
      * Před renderováním kompozitního view budou nejprve renderována komponentní view a vygenerovaný výsledek bude vložen
      * do kompozitního view na místo proměnné zadané zde jako jméno. Pokud kompozitní view je null, proměnná je nahrazena prázdným retězcem.

@@ -28,12 +28,23 @@ class CollectionView extends View implements CollectionViewInterface {
      */
     public function appendComponentViewCollection(iterable $componentViewCollection): ViewInterface {
         $componentViews = $this->provideComponentViews();
-        foreach ($componentViewCollection as $view) {
-            $componentViews->append($view);
+        foreach ($componentViewCollection as $componentView) {
+            if ($componentView instanceof InheritDataViewInterface) {
+                /** @var InheritDataViewInterface $componentView */
+                $this->inheritParentData($componentView);
+            }
+            $componentViews->append($componentView);
         }
         return $this;
     }
-
+    
+    private function inheritParentData($componentView) {
+        if ($componentView instanceof InheritDataViewInterface) {
+            /** @var InheritDataViewInterface $componentView */
+            $componentView->inheritData($this->contextData);
+        }        
+    }
+    
     /**
      * Zavolá beforeRenderingHook(), nalezne vhodný renderer pomocí metody resolveRenderer(), renderuje kolekci komponentních views, výsledky jejich renderování přidá do kontextu
      * a renderuje s použitím kontextu.
@@ -86,10 +97,6 @@ class CollectionView extends View implements CollectionViewInterface {
     }
 
     private function renderComponent($componentView) {
-        if ($componentView instanceof InheritDataViewInterface) {
-            /** @var InheritDataViewInterface $componentView */
-            $componentView->inheritData($this->contextData);
-        }
         return $componentView->getString();
     }
 }
