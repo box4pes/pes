@@ -305,7 +305,7 @@ class View implements ViewInterface {
         }
     }
 
-    private function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template): bool {
+    private function checkRendererTemplateCompatibility(RendererInterface $renderer, TemplateInterface $template): void {
         $templateDefaultRendererClass = $template->getDefaultRendererService();
         if(!($renderer instanceof $templateDefaultRendererClass)) {
             throw new BadRendererForTemplateException(
