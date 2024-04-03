@@ -82,7 +82,46 @@ class Manipulator {
         }
         return $succ ? TRUE : FALSE;
     }
+    /**
+     * Vytvoří kopii databázové tabulky. Pokud neexistuje zdrojová tabulka nebo existuje cílová tabulka již před kopírováním vyhodí výjimku.
+     * Do nové tabulky kopíruje strukturu, data, indexy a triggery.
+     *
+     * @param string $oldTableName
+     * @param string $newTableName
+     * @return bool TRUE, pokud kopírování skončilo úspěšně, jinak FALSE.
+     * @throws UnexpectedValueException Pokud neexistuje zdrojová tabulka
+     * @throws LogicException Již existuje cílová tabulka kopírování.
+     * @throws ErrorRollbackException
+     */
+    public function replaceTable(string $oldTableName, string $newTableName) {
 
+        // https://stackoverflow.com/questions/3280006/duplicating-a-mysql-table-indexes-and-data
+        //To copy with indexes and triggers do these 2 queries:
+        //CREATE TABLE newtable LIKE oldtable;
+        //INSERT newtable SELECT * FROM oldtable;
+        //
+        //To copy just structure and data use this one:
+        //CREATE TABLE tbl_new AS SELECT * FROM tbl_old;
+
+        $dbhTransact = $this->handler;
+        try {
+            $dbhTransact->beginTransaction();
+//            $this->logger->info("CREATE TABLE $newTableName LIKE $oldTableName");
+            $dbhTransact->exec("DROP TABLE IF EXISTS $oldTableName");
+//            $this->logger->info("CREATE TABLE $newTableName LIKE $oldTableName");
+            $dbhTransact->exec("CREATE TABLE $newTableName LIKE $oldTableName");
+//            $this->logger->info("INSERT $newTableName SELECT * FROM $oldTableName");
+            $dbhTransact->exec("INSERT $newTableName SELECT * FROM $oldTableName");
+//            $this->logger->info('Commit.');
+            $succ = $dbhTransact->commit();
+        } catch(PDOException $e) {
+//            $this->logger->error('Rollback: '.$e->getMessage());
+            $dbhTransact->rollBack();
+            throw new ErrorRollbackException($e->getMessage(), 0, $e);
+        }
+        return $succ ? TRUE : FALSE;
+    }
+    
     /**
      *
      * @param string $tableName
