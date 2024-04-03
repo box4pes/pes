@@ -42,14 +42,14 @@ class Manipulator {
      * Vytvoří kopii databázové tabulky. Pokud neexistuje zdrojová tabulka nebo existuje cílová tabulka již před kopírováním vyhodí výjimku.
      * Do nové tabulky kopíruje strukturu, data, indexy a triggery.
      *
-     * @param string $oldTableName
-     * @param string $newTableName
+     * @param string $sourceTableName
+     * @param string $targetTableName
      * @return bool TRUE, pokud kopírování skončilo úspěšně, jinak FALSE.
      * @throws UnexpectedValueException Pokud neexistuje zdrojová tabulka
      * @throws LogicException Již existuje cílová tabulka kopírování.
      * @throws ErrorRollbackException
      */
-    public function copyTable(string $oldTableName, string $newTableName) {
+    public function copyTable(string $sourceTableName, string $targetTableName) {
 
         // https://stackoverflow.com/questions/3280006/duplicating-a-mysql-table-indexes-and-data
         //To copy with indexes and triggers do these 2 queries:
@@ -59,24 +59,20 @@ class Manipulator {
         //To copy just structure and data use this one:
         //CREATE TABLE tbl_new AS SELECT * FROM tbl_old;
 
-        if (!$this->tableExists($oldTableName)) {
-            throw new UnexpectedValueException("Zdrojová tabulka kopírování '$oldTableName' neexistuje. Nevím co mám dělat a tak jsem se zhroutil.");
+        if (!$this->tableExists($sourceTableName)) {
+            throw new UnexpectedValueException("Zdrojová tabulka kopírování '$sourceTableName' neexistuje. Nevím co mám dělat a tak jsem se zhroutil.");
         }
-        if ($this->tableExists($newTableName)) {
-            throw new LogicException("Zakázané nebezpečné chování - cílová tabulka kopírování '$newTableName'již existuje. Nelze přepsat existující tabulku.");
+        if ($this->tableExists($targetTableName)) {
+            throw new LogicException("Zakázané nebezpečné chování - cílová tabulka kopírování '$targetTableName'již existuje. Nelze přepsat existující tabulku.");
         }
 
         $dbhTransact = $this->handler;
         try {
             $dbhTransact->beginTransaction();
-//            $this->logger->info("CREATE TABLE $newTableName LIKE $oldTableName");
-            $dbhTransact->exec("CREATE TABLE $newTableName LIKE $oldTableName");
-//            $this->logger->info("INSERT $newTableName SELECT * FROM $oldTableName");
-            $dbhTransact->exec("INSERT $newTableName SELECT * FROM $oldTableName");
-//            $this->logger->info('Commit.');
+            $dbhTransact->exec("CREATE TABLE $targetTableName LIKE $sourceTableName");
+            $dbhTransact->exec("INSERT $targetTableName SELECT * FROM $sourceTableName");
             $succ = $dbhTransact->commit();
         } catch(PDOException $e) {
-//            $this->logger->error('Rollback: '.$e->getMessage());
             $dbhTransact->rollBack();
             throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
@@ -86,14 +82,14 @@ class Manipulator {
      * Vytvoří kopii databázové tabulky. Pokud neexistuje zdrojová tabulka nebo existuje cílová tabulka již před kopírováním vyhodí výjimku.
      * Do nové tabulky kopíruje strukturu, data, indexy a triggery.
      *
-     * @param string $oldTableName
-     * @param string $newTableName
+     * @param string $souceTableName
+     * @param string $targetTableName
      * @return bool TRUE, pokud kopírování skončilo úspěšně, jinak FALSE.
      * @throws UnexpectedValueException Pokud neexistuje zdrojová tabulka
      * @throws LogicException Již existuje cílová tabulka kopírování.
      * @throws ErrorRollbackException
      */
-    public function replaceTable(string $oldTableName, string $newTableName) {
+    public function replaceTable(string $souceTableName, string $targetTableName) {
 
         // https://stackoverflow.com/questions/3280006/duplicating-a-mysql-table-indexes-and-data
         //To copy with indexes and triggers do these 2 queries:
@@ -106,16 +102,11 @@ class Manipulator {
         $dbhTransact = $this->handler;
         try {
             $dbhTransact->beginTransaction();
-//            $this->logger->info("CREATE TABLE $newTableName LIKE $oldTableName");
-            $dbhTransact->exec("DROP TABLE IF EXISTS $oldTableName");
-//            $this->logger->info("CREATE TABLE $newTableName LIKE $oldTableName");
-            $dbhTransact->exec("CREATE TABLE $newTableName LIKE $oldTableName");
-//            $this->logger->info("INSERT $newTableName SELECT * FROM $oldTableName");
-            $dbhTransact->exec("INSERT $newTableName SELECT * FROM $oldTableName");
-//            $this->logger->info('Commit.');
+            $dbhTransact->exec("DROP TABLE IF EXISTS $targetTableName");
+            $dbhTransact->exec("CREATE TABLE $targetTableName LIKE $souceTableName");
+            $dbhTransact->exec("INSERT $targetTableName SELECT * FROM $souceTableName");
             $succ = $dbhTransact->commit();
         } catch(PDOException $e) {
-//            $this->logger->error('Rollback: '.$e->getMessage());
             $dbhTransact->rollBack();
             throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
