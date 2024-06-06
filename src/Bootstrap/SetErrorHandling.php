@@ -181,7 +181,8 @@ function exceptionErrorHandler($errno, $errstr, $errfile, $errline) {
         // že zpracování chyby je předáno PHP, to zavolá standartní error handler.
         return FALSE;
     }
-    flushOutputBuffer( new ErrorException($errstr, 0, $errno, $errfile, $errline));
+    flushOutputBuffer( );
+    new ErrorException($errstr, 0, $errno, $errfile, $errline);    
 }
 
 // varianta pro produkci:
