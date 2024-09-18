@@ -5,6 +5,8 @@ use Psr\Log\AbstractLogger;
 use Pes\Utils\Directory;
 use Pes\Text\Template;
 
+use Pes\Utils\Exception\CreateDirectoryFailedException;
+
 /**
  * Description of FileLogger
  * Třída loguje tak, že zapisuje do souboru. Pro každý soubor vytváří jednu istanci objektu Projektor_Model_Auto_Autocode_Logger, je to singleton
@@ -72,7 +74,12 @@ class FileLogger extends AbstractLogger {
             self::$baseLogsDirectory = getcwd();
         }
         $fullLogDirectoryPath = self::$baseLogsDirectory.Directory::normalizePath($logDirectoryPath);
-        Directory::createDirectory($fullLogDirectoryPath);
+        try {
+            Directory::createDirectory($fullLogDirectoryPath);            
+        } catch (CreateDirectoryFailedException $exc) {
+            self::panicLog($e);
+        }
+
         switch ($mode) {
             case self::REWRITE_LOG:
                 $fopenMode = 'w+';
@@ -121,6 +128,21 @@ class FileLogger extends AbstractLogger {
         return self::$instances[$fullLogFileName];
     }
 
+private static function panicLog(\Throwable $e) {
+    $urihandler = fopen('panic.log', 'a+');   // !! proběhne commit do gitu!
+    fwrite($urihandler, self::getExcLogMessage($e).PHP_EOL);
+}
+
+private static function getExcLogMessage( \Throwable $e) {
+    // v20
+    if (class_exists('\\Error') AND $e instanceof \Error) {
+        $cls = get_class($e);
+    } else {
+        $cls = get_class($e)." exception ";
+    }
+    return "$cls {$e->getMessage()} on line {$e->getLine()} in file {$e->getFile()}";
+}
+    
     /**
      * Zápis jednoho záznamu do logu.
      *

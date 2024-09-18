@@ -239,7 +239,7 @@ function loggingErrorHandler($errno, $errstr, $errfile, $errline) {
     }
     if ($development) {
     /* Vracím FALSE = vyvolání dalšího zpracování chyby pomocí standartního interního error handleru PHP */
-        return FALSE;
+    return TRUE; // TODO: dočasně vypnuto - nutno opravit handler        return FALSE;
     }
     /* Vracím TRUE = potlačeno další zpracování chyby pomocí standartního interního error handleru PHP */
     return TRUE;
