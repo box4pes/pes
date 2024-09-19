@@ -129,9 +129,9 @@ class FileLogger extends AbstractLogger {
         return self::$instances[$fullLogFileName];
     }
 
-private static function panicLog(\Throwable $e) {
+private static function panicLog($message) {
     $urihandler = fopen('panic.log', 'a+');   // !! proběhne commit do gitu!
-    fwrite($urihandler, );
+    fwrite($urihandler, $message);
 }
 
 private static function getExcLogMessage( \Throwable $e) {
