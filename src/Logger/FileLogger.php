@@ -75,9 +75,10 @@ class FileLogger extends AbstractLogger {
         }
         $fullLogDirectoryPath = self::$baseLogsDirectory.Directory::normalizePath($logDirectoryPath);
         try {
-            Directory::createDirectory($fullLogDirectoryPath);            
+            $filePath = Directory::createDirectory($fullLogDirectoryPath);          
+            self::panicLog("Log filepath found or created: '$filePath'.".PHP_EOL);
         } catch (CreateDirectoryFailedException $exc) {
-            self::panicLog($e);
+            self::panicLog(self::getExcLogMessage($exc).PHP_EOL);
         }
 
         switch ($mode) {
@@ -130,7 +131,7 @@ class FileLogger extends AbstractLogger {
 
 private static function panicLog(\Throwable $e) {
     $urihandler = fopen('panic.log', 'a+');   // !! proběhne commit do gitu!
-    fwrite($urihandler, self::getExcLogMessage($e).PHP_EOL);
+    fwrite($urihandler, );
 }
 
 private static function getExcLogMessage( \Throwable $e) {
