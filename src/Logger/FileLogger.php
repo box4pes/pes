@@ -76,7 +76,7 @@ class FileLogger extends AbstractLogger {
         $fullLogDirectoryPath = self::$baseLogsDirectory.Directory::normalizePath($logDirectoryPath);
         try {
             $filePath = Directory::createDirectory($fullLogDirectoryPath);          
-            self::panicLog("Log filepath found or created: '$filePath'.".PHP_EOL);
+//            self::panicLog("Log filepath found or created: '$filePath'.".PHP_EOL);
         } catch (CreateDirectoryFailedException $exc) {
             self::panicLog(self::getExcLogMessage($exc).PHP_EOL);
         }
