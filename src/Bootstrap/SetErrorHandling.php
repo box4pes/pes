@@ -113,7 +113,7 @@ function loggingExceptionHandler(\Throwable $e) {
         </head>
         <body>';
         echo '<h4  style="border: 8px solid tomato; padding: 1em; background-color: lightyellow;">Tento web je mimo provoz. Velice se omlouváme.';
-        echo '<p> V '.$time.' nastala nečekaná výjimka.</p>';
+        echo '<p>Nastala nečekaná výjimka.</p>';
         echo '</body>
         </html>';
     }
