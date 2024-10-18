@@ -71,14 +71,10 @@ class Html implements HtmlInterface {
                 }
             } elseif (is_array($value)) {
                 $attrVal = implode(' ', array_filter($value, function($value) {return boolval($value);}));  // filtruje prázdné řetězce
-//                if ($attrVal) {
                     $attr[] = $type.'="'.$attrVal.'"';
-//                }
             } else {
                 $attrVal = trim((string) $value);
-//                if ($attrVal) {
                     $attr[] = $type.'="'.$attrVal.'"';
-//                }
             }
         }
         return isset($attr) ? implode(' ',$attr) : '';
