@@ -181,7 +181,7 @@ private static function getExcLogMessage( \Throwable $e) {
         if (is_resource($this->logFileHandle)) {
             fwrite($this->logFileHandle, $newString);
         } else {
-            user_error("Není handler k souboru logu při pokusu o zápis: $message", E_USER_WARNING);
+            user_error("Není handler k souboru logu při pokusu o logování zprávy: $message", E_USER_WARNING);
         }
     }
 
