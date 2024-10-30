@@ -246,12 +246,11 @@ class Html implements HtmlInterface {
      * Generuje html kód tagu select včetně tagů option. Pokud je zadán parametr label, přidá tag label svázaný s generovaným tagem select.
      *
      * Generování label:
-     * Pokud je zadán parametr label, parametr attributes by měl obsahovat položku s klíčem "id", pokud ji neobsahuje, bude doplněna.
-     * Parametr attributes může obsahovat položku s klíčem "name", ale ta nebude použita.
-     *
-     * Pokud je zadán parametr label a parametr attributes neobsahuje položku "id" je jako fallback vygenerováno id jako náhodný řetězec (uniquid).
-     * Pro propojení generovaného tagu label použito zadané případně vygenerované id.
-     * Pokud parametr attributes obsahuje položku "name", nepoužije se (přednost má povinný parametr name).
+     * Tag label je propojen s tagem select pomocí atributi id. Pokud je zadán parametr label, parametr attributes by měl obsahovat položku s klíčem "id", 
+     * pokud ji neobsahuje, bude doplněna, id bude vygenerováno jako náhodný řetězec (uniquid).
+     * 
+     * Name:
+     * Pokud parametr attributes obsahuje položku "name", položka se nepoužije (přednost má povinný parametr metody $name).
      *
      * Generování option:
      * Hodnoty pro generování tagů option:
