@@ -20,8 +20,11 @@ namespace Pes\View;
 interface CollectionViewInterface extends ViewInterface {
 
     /**
-     * Přijímá iterable kolekci view (položky typu ViewInterface).
-     * Kompozitní view při renderování nahradí proměnou daného jména výsledkem renderování kolekce komponentních view. Jednotlivá view z kolekce převede na string voláním metodu __toString().
+     * Interface je určeno pro kompozitní view, které renderuje kolekci pořazených kompozitních view. 
+     * Přijímá iterable kolekci komponentních view, která jsou všechna stejného typu (položky kolekce jsou typu ViewInterface).
+     * Kompozitní view před renderováním nahradí proměnou daného jména výsledkem renderování kolekce komponentních view. 
+     * 
+     * Jednotlivá view z kolekce převede na string voláním metodu __toString().
      *
      * @param iterable $componentViewCollection
      * @return ViewInterface

@@ -39,7 +39,9 @@ class CompositeView extends View implements CompositeViewInterface {
     }
 
     /**
-     * Metoda pro přidání kolekce komponentních view. Kolekce komponentních view je předána jako pole nebo \Traversable objekt.
+     * {@inheritDoc}
+     * 
+     * Pokud jednotlivá (i jen některá) komponentní view jsou typu InheritDataViewInterface jsou jim předána data nadřazeného (kompozitního) view metodou inheritData().
      * 
      * @param iterable $componentViews
      * @return ViewInterface

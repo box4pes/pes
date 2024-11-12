@@ -31,7 +31,9 @@ interface CompositeViewInterface extends ViewInterface {
     public function appendComponentView(ViewInterface $componentView, $name): ViewInterface ;
 
     /**
-     * Metoda pro přidání komponentních view jako pole nebo \Traversable objekt.
+     * Metoda pro přidání komponentních view jako asociativní pole name=>view nebo \Traversable objekt dvojic name->view.
+     * Kompozitní view při renderování nahradí proměnnou $name výsledkem renderování příslušného komponentního view.
+     * 
      * @param iterable $componentViews
      * @return ViewInterface
      */

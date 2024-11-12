@@ -19,10 +19,13 @@ class CollectionView extends View implements CollectionViewInterface {
     protected $componentViews;
 
     /**
+     * {@inheritDoc}
+     * 
      * Přijímá dvojici iterable kolekci view (položky typu ViewInterface) .
      * Kompozitní view při renderování nahradí proměnou daného jména výsledkem renderování kolekce komponentních view. Jednotlivá view z kolekce převede na string voláním metodu __toString().
      *
-     *
+     * Pokud jednotlivá komponentní view jsou typu InheritDataViewInterface jsou jim předána data nadřazeného (kompozitního) view metodou inheritData().
+     * 
      * @param iterable $componentViewCollection Kolekce view, položky typu ViewInterface
      * @return ViewInterface
      */
