@@ -26,7 +26,7 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
 
     private $debugMode=FALSE;
 
-    private $status;
+    private $contextStatus;
 
     /**
      * Třísa je wrapper pro ArrayObject. Tato třída přijímá data buď jako pole nebo jako ArrayObject.
@@ -56,17 +56,17 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
         return $this->debugMode;
     }
 
-    public function getStatus() {
-        return $this->status;
+    public function getContextStatus() {
+        return $this->contextStatus;
     }
 
     public function offsetGet($index) {
         $g = parent::offsetGet($index);
         if ($this->debugMode) {
             if (isset($g)) {
-                $this->status[$index][] = self::GET_EXISTING_VALUE;
+                $this->contextStatus[$index][] = self::GET_EXISTING_VALUE;
             } else {
-                $this->status[$index][] = self::GET_NONEXISTING_VALUE;
+                $this->contextStatus[$index][] = self::GET_NONEXISTING_VALUE;
             }
         }
         return $g;
@@ -76,9 +76,9 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
         $e = parent::offsetExists($index);
         if ($this->debugMode) {
             if ($e) {
-                $this->status[$index][] = self::IS_EXISTING_VALUE;
+                $this->contextStatus[$index][] = self::IS_EXISTING_VALUE;
             } else {
-                $this->status[$index][] = self::IS_NONEXISTING_VALUE;
+                $this->contextStatus[$index][] = self::IS_NONEXISTING_VALUE;
             }
         }
         return $e;

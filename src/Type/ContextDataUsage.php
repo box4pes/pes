@@ -20,7 +20,7 @@ class ContextDataUsage {
      * @param Framework_Type_ContextData $contextData
      */
     public function logStatus($logFileName, ContextDataInterface $contextData) {
-        $status = $contextData->getStatus();
+        $status = $contextData->getContextStatus();
         $warning = array();
         $notice = array();
         $debug = array();

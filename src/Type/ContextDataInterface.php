@@ -22,7 +22,7 @@ interface ContextDataInterface extends  \IteratorAggregate, \ArrayAccess, \Seria
     /**
      *
      */
-    public function getStatus();
+    public function getContextStatus();
 
     /**
      * Metoda přidá data z pole nebo \ArrayObject zadaného jako parametr.
