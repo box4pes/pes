@@ -217,8 +217,6 @@ class View implements ViewInterface {
         return $this->contextData;
     }
 
-    ##### private methods ###########################
-
     /**
      *
      * Vybere renderer v závislosti na kombinaci nastavených setTemplate(), setRenderer(), setRendererName(), setFallbackRenderer(), setFallbackRendererName():
@@ -277,6 +275,8 @@ class View implements ViewInterface {
         }
         return $renderer;
     }
+
+    ##### private methods ###########################
 
     private function getRendererByName($rendererName): RendererInterface {
         if (!isset($this->rendererContainer)) {

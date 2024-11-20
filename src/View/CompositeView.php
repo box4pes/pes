@@ -33,7 +33,6 @@ class CompositeView extends View implements CompositeViewInterface {
      */
     public function appendComponentView(ViewInterface $componentView, $name): ViewInterface {
         $components = $this->provideComponentViews();
-        $this->inheritParentData($componentView);
         $components->offsetSet($name, $componentView);
         return $this;
     }
@@ -49,17 +48,9 @@ class CompositeView extends View implements CompositeViewInterface {
     public function appendComponentViews(iterable $componentViews): ViewInterface  {
         $components = $this->provideComponentViews();
         foreach ($componentViews as $name => $componentView) {
-            $this->inheritParentData($componentView);
             $components->offsetSet($name, $componentView);
         }
         return $this;
-    }
-    
-    private function inheritParentData($componentView) {
-        if ($componentView instanceof InheritDataViewInterface) {
-            /** @var InheritDataViewInterface $componentView */
-            $componentView->inheritData($this->contextData);
-        }        
     }
 
     public function getComponentView($name): ?ViewInterface {
@@ -105,8 +96,8 @@ class CompositeView extends View implements CompositeViewInterface {
     /**
      * Metoda renderuje všechny vložené component view.
      *
-     * Výstupní řetězec z jednotlivých renderování vkládá do kontextu
-     * tohoto (composite) view vždy pod jménem proměnné, se kterým byl component view přidán.
+     * Výstupní řetězec z jednotlivých renderování přidá do kontextu
+     * tohoto (composite) view vždy pod jménem proměnné, se kterým byl přidán component view.
      *
      * Pokud komponentní view implementuje InheritDataInterface, předá data tohoto (kompozitního) view do komponentu pomocí metody inheritData().
      *
@@ -116,13 +107,15 @@ class CompositeView extends View implements CompositeViewInterface {
         if (is_iterable($this->componentViews)) {
             $data = $this->provideData();
             foreach ($this->componentViews as $name => $componentView) {
-                    $data[$name] = isset($componentView) ? $this->renderComponent($componentView) : '';
+                if (isset($componentView)) {
+                    if ($componentView instanceof InheritDataViewInterface) {
+                        /** @var InheritDataViewInterface $componentView */
+                        $componentView->inheritData($this->contextData->getContextVariable($name), []);  // metoda inheritData přijímá iterable - nastavuje default hodnoty metody getContextVariable na []
+                    }        
+                    $data[$name] = $componentView->getString();
+                }
+                    
             }
         }
-    }
-
-
-    private function renderComponent($componentView) {
-        return $componentView->getString();
     }
 }

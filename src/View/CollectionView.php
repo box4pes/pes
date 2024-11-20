@@ -32,20 +32,9 @@ class CollectionView extends View implements CollectionViewInterface {
     public function appendComponentViewCollection(iterable $componentViewCollection): ViewInterface {
         $componentViews = $this->provideComponentViews();
         foreach ($componentViewCollection as $componentView) {
-            if ($componentView instanceof InheritDataViewInterface) {
-                /** @var InheritDataViewInterface $componentView */
-                $this->inheritParentData($componentView);
-            }
             $componentViews->append($componentView);
         }
         return $this;
-    }
-    
-    private function inheritParentData($componentView) {
-        if ($componentView instanceof InheritDataViewInterface) {
-            /** @var InheritDataViewInterface $componentView */
-            $componentView->inheritData($this->contextData);
-        }        
     }
     
     /**
@@ -94,6 +83,10 @@ class CollectionView extends View implements CollectionViewInterface {
         if (is_iterable($this->componentViews)) {
             $data = $this->provideData();
             foreach ($this->componentViews as $componentView) {
+                if ($componentView instanceof InheritDataViewInterface) {
+                    /** @var InheritDataViewInterface $componentView */
+                    $componentView->inheritData($this->contextData);
+                }                
                 $data->append($this->renderComponent($componentView));
             }
         }
