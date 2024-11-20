@@ -15,7 +15,7 @@ namespace Pes\View;
  *
  * @author pes2704
  */
-interface InheritDataViewInterface extends ViewInterface {
+interface InheritDataInterface extends ViewInterface {
 
     /**
      * Interface je určen pro komponentní view.

@@ -2,7 +2,8 @@
 
 namespace Pes\View;
 
-use Pes\View\InheritDataViewInterface;
+use Pes\View\InheritViewModelInterface;
+use Pes\View\InheritDataInterface;
 
 use ArrayObject;
 
@@ -83,9 +84,13 @@ class CollectionView extends View implements CollectionViewInterface {
         if (is_iterable($this->componentViews)) {
             $data = $this->provideData();
             foreach ($this->componentViews as $componentView) {
-                if ($componentView instanceof InheritDataViewInterface) {
-                    /** @var InheritDataViewInterface $componentView */
+                if ($componentView instanceof InheritDataInterface) {
+                    /** @var InheritDataInterface $componentView */
                     $componentView->inheritData($this->contextData);
+                }             
+                if ($componentView instanceof InheritViewModelInterface) {
+                    /** @var InheritViewModelInterface $componentView */
+                    $componentView->inheritViewModel($this->contextData);
                 }                
                 $data->append($this->renderComponent($componentView));
             }

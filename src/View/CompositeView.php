@@ -2,7 +2,8 @@
 
 namespace Pes\View;
 
-use Pes\View\InheritDataViewInterface;
+use Pes\View\InheritViewModelInterface;
+use Pes\View\InheritDataInterface;
 
 use ArrayObject;
 
@@ -108,9 +109,13 @@ class CompositeView extends View implements CompositeViewInterface {
             $data = $this->provideData();
             foreach ($this->componentViews as $name => $componentView) {
                 if (isset($componentView)) {
-                    if ($componentView instanceof InheritDataViewInterface) {
-                        /** @var InheritDataViewInterface $componentView */
+                    if ($componentView instanceof InheritDataInterface) {
+                        /** @var InheritDataInterface $componentView */
                         $componentView->inheritData($this->contextData->getContextVariable($name), []);  // metoda inheritData přijímá iterable - nastavuje default hodnoty metody getContextVariable na []
+                    }        
+                    if ($componentView instanceof InheritViewModelInterface) {
+                        /** @var InheritViewModelInterface $componentView */
+                        $componentView->inheritViewModel($this->contextData);
                     }        
                     $data[$name] = $componentView->getString();
                 }
