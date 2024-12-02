@@ -22,7 +22,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class RequestParams implements RequestParamsInterface {
 
     private function htmlSpecialChars($input) {
-        return $input; // htmlspecialchars($input);
+        return \htmlspecialchars($input);
     }
     
     /*******************************************************************************
