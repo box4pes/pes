@@ -20,9 +20,15 @@ use Psr\Http\Message\ServerRequestInterface;
  * @author pes2704
  */
 class RequestParams implements RequestParamsInterface {
+    
+    private $escapeStrings;
+
+    public function __construct($escapeStrings = false) {
+        $this->escapeStrings = $escapeStrings;
+    }
 
     private function htmlSpecialChars($input) {
-        return \htmlspecialchars($input);
+        return ($this->escapeStrings && is_string($input)) ? \htmlspecialchars($input) : $input;
     }
     
     /*******************************************************************************
