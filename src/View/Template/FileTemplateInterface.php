@@ -15,6 +15,12 @@ namespace Pes\View\Template;
 interface FileTemplateInterface extends TemplateInterface {
 
     /**
+     * Nastaví nebo přepíše jméno souboru s template.
+     * @param string $path
+     */
+    public function setTemplateFilename(string $path);
+    
+    /**
      * Vrací název souboru s template.
      * @return string Název souboru s template
      */
