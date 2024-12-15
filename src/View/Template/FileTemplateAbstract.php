@@ -27,7 +27,9 @@ abstract class FileTemplateAbstract implements FileTemplateInterface {
      * @throws NoTemplateFileException Pokud soubor neexistuje nebo ho nelze číst
      */
     public function __construct($path=null) {
-        $this->setTemplateFilename($path);
+        if(isset($path)) {
+            $this->setTemplateFilename($path);
+        }
     }
     
     /**
