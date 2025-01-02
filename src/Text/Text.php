@@ -90,7 +90,7 @@ class Text implements TextInterface {
     }
 
     /**
-     * Z datumu v českém formátu vytroví pole obsahujíci jednotlivá čísla datumu bez mezer a levostraných nul
+     * Z datumu v českém formátu vytvoří pole obsahujíci jednotlivá čísla datumu bez mezer a levostraných nul
      * @param type $dateCsFormatted
      * @return array
      */
@@ -192,17 +192,15 @@ class Text implements TextInterface {
 	$safe_text = str_replace( "\n", '\\n', addslashes( $safe_text ) );
         return $safe_text;
     }
-
+    
     /**
-     * Escape a string for the URI or Parameter contexts. This should not be used to escape
-     * an entire URI - only a subcomponent being inserted. The function is a simple proxy
-     * to rawurlencode() which now implements RFC 3986 since PHP 5.3 completely.
-     *
+     * Enkóduje celou url path (obsahující lomítka) podle  RFC 3986 (nahrazuje zakázané znaky v url k=odováním %XX).
+     * 
+     * @param string $path
      * @return string
      */
-    public static function esc_Url(string $string): string {
-        return rawurlencode($string);
+    public static function encodeUrlPath(string $path): string {
+        return implode('/', array_map(function ($v) {return rawurlencode($v);}, explode('/', $path)));
     }
-
 
 }

@@ -83,7 +83,7 @@ interface TextInterface {
     public static function e(string $text): string;
 
     /**
-     * Metoda musí nahrazovat znaky způsobem vhodným pro použízí výsledného textu v HTML5.
+     * Metoda musí nahrazovat znaky způsobem vhodným pro použítí výsledného textu v HTML5.
      *
      * @param string $text Text k escapování
      */
@@ -98,5 +98,5 @@ interface TextInterface {
      */
     public static function esc_js(string $text): string;
     
-    public static function esc_Url(string $string): string;
+    public static function encodeUrlPath(string $path): string;
 }
