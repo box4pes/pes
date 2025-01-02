@@ -98,5 +98,11 @@ interface TextInterface {
      */
     public static function esc_js(string $text): string;
     
+    /**
+     * Enkóduje celou url path (obsahující lomítka) podle  RFC 3986 (nahrazuje zakázané znaky v url k=odováním %XX).
+     * 
+     * @param string $path
+     * @return string
+     */
     public static function encodeUrlPath(string $path): string;
 }
