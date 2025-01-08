@@ -177,7 +177,7 @@ class Text implements TextInterface {
 
     public static function esc_attr(string $text): string {
         // https://www.php.net/manual/en/function.htmlspecialchars.php#125979
-        return htmlspecialchars( $text, ENT_NOQUOTES, 'UTF-8', false );
+        return htmlspecialchars( $text, ENT_QUOTES, 'UTF-8', false );
     }
 
     /**
