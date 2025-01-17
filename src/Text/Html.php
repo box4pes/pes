@@ -368,6 +368,7 @@ class Html implements HtmlInterface {
      */
     public static function checkbox(iterable $checkboxsetLabelsNameValuePairs=[], array $context=[], iterable $inputAttributes=[], iterable $labelAttributes=[]) {
         $inputAttributes["type"] = "checkbox";
+        $html = [];
         foreach ($checkboxsetLabelsNameValuePairs as $label => $nameValuePair) {
             $name = key($nameValuePair);
             $value = $nameValuePair[$name];
