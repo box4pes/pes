@@ -23,7 +23,7 @@ use Pes\Http\Factory\ResponseFactory;
  *
  * @author pes2704
  */
-class NoMatchSelectorItemRequestHandler extends RequestHandler {
+class NoMatchedRouteRequestHandler extends RequestHandler {
 
     public function __construct(
             LoggerInterface $logger = null
