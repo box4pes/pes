@@ -14,6 +14,10 @@ namespace Pes\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
+
+use Pes\Http\Factory\ResponseFactory;
+
+
 /**
  * Description of NonprocessedRequestHandler
  *
@@ -26,7 +30,16 @@ class NoMatchSelectorItemRequestHandler extends RequestHandler {
     ) {
         if(isset($logger)) {
             parent::__construct(
-                function (ServerRequestInterface $request) use ($logger) {$logger->warning("Nenalezen selector item pro request s uri path: '".$request->getUri()->getPath()."'");}
+                function (ServerRequestInterface $request) use ($logger) {
+                $logger->warning("Nenalezen selector item pro request s uri path: '".$request->getUri()->getPath()."'");
+                $response = (new ResponseFactory())->createResponse();
+                ####  body  ####
+                $size = $response->getBody()->write("404 Not Found");
+                $response->getBody()->rewind();
+                return $response;
+                
+                
+                }
                 );
         } else {
             parent::__construct(
