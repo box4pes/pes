@@ -32,19 +32,21 @@ class NoMatchSelectorItemRequestHandler extends RequestHandler {
             parent::__construct(
                 function (ServerRequestInterface $request) use ($logger) {
                 $logger->warning("Nenalezen selector item pro request s uri path: '".$request->getUri()->getPath()."'");
-                $response = (new ResponseFactory())->createResponse();
-                ####  body  ####
-                $size = $response->getBody()->write("404 Not Found");
-                $response->getBody()->rewind();
-                return $response;
-                
-                
+                return $this->getResponse();
                 }
                 );
         } else {
             parent::__construct(
-                function (ServerRequestInterface $request) {throw new \LogicException("Nenalezen selector item pro request s uri path: '".$request->getUri()->getPath()."'");}
+                function (ServerRequestInterface $request) {return $this->getResponse();}
                 );
         }
+    }
+    
+    private function getResponse() {
+        $response = (new ResponseFactory())->createResponse();
+        ####  body  ####
+        $size = $response->getBody()->write("404 Not Found");
+        $response->getBody()->rewind();
+        return $response;
     }
 }
