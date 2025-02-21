@@ -43,9 +43,16 @@ class NoMatchedRouteRequestHandler extends RequestHandler {
     }
     
     private function getResponse() {
-        $response = (new ResponseFactory())->createResponse();
+        $response = (new ResponseFactory())->createResponse(404);
         ####  body  ####
-        $size = $response->getBody()->write("404 Not Found");
+        $size = $response->getBody()->write("<!doctype html>
+<head>
+    <title>404 not found</title>
+</head>
+
+
+
+");
         $response->getBody()->rewind();
         return $response;
     }
