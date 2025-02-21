@@ -49,7 +49,9 @@ class NoMatchedRouteRequestHandler extends RequestHandler {
 <head>
     <title>404 not found</title>
 </head>
-
+<body>
+<h1>Page not found</h1>
+</body
 
 
 ");
