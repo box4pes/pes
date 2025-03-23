@@ -198,7 +198,8 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
             }
         } else {
             throw new LogicException("Session je nastartována (není ukončena). Nelze obnovit session.");
-        }    }
+        }
+    }
     
     private function prepareOrRegenerate() {
         $this->setSessionHandlerVariables();
