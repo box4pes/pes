@@ -24,7 +24,20 @@ interface SessionStatusHandlerInterface {
      * @return \Pes\Session\SessionStatusHandlerInterface
      */
     public function setLogger(LoggerInterface $logger): SessionStatusHandlerInterface;
-
+    
+    /**
+     * Nastaví parametry session na základě parametrů konstrukroru a nastartuje session.
+     * Tuto metodu e třeba volat jen v případě, když parametr konstruktoru $manualStartStop nastaven na true, jinak dojde v konstruktoru 
+     * k automatickému staru session (dafault hodnota). V případě automatického startu session vyvolá následné volání metody 
+     * session_start() výjimku LogicException.
+     */
+    public function sessionStart();
+    
+    /**
+     * Nastaví parametry session na základě parametrů konstrukroru, přečte uložená session data a znovu nastartuje session.
+     */
+    public function sessionReset();
+    
     /**
      * Zapíše data session do úložiště a ukončí fungování session handleru.
      */

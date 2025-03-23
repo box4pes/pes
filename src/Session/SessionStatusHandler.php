@@ -2,7 +2,10 @@
 
 namespace Pes\Session;
 
+use Pes\Session\SessionStatusHandlerInterface;
 use Psr\Log\LoggerInterface;
+use LogicException;
+use RuntimeException;
 
 /**
  * SessionStatusHandler
@@ -151,65 +154,102 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
 ######## METODY PRO ŘÍZENÍ SESSION A PRÁCI S INTERNÍMI DATY SESSION HANDLERU - VOLAJÍ PHP FUNKCE PRO ŘÍZENÍ SESSION #######################################
 
     /**
-     * PROTECTED metoda -
-     * Je volána z konstruktoru, pokud není nastavena volaba manualStartStop.
-     * Jinak je nutné ji zavolat z potomka. Obvykle je tato metodu volána z metody potomka, která zahajuje zpracování session dat -
-     * typicky metoda start().
+     * Metoda je automaticky volána z konstruktoru, pokud není nastavena volba manualStartStop.
      *
-     * Zahajuje session a nastavuje do dat session položky potřebné pro korektní fungování ostatních metod této abstraktní
-     * třídy. Je nutné ji zavolat, jinak nezačne ukládání dat pomocí session handleru.
-     *
-     * @return boolean
+     * Nastaví parametry session na základě parametrů konstrukroru a nastartuje session. Je nutné ji zavolat, jinak nezačne 
+     * ukládání dat pomocí session handleru.
+     * 
+     * Tuto metodu je třeba volat jen v případě, když parametr konstruktoru $manualStartStop nastaven na true, jinak dojde 
+     * v konstruktoru k automatickému staru session (dafault hodnota). V případě automatického startu session vyvolá následné 
+     * volání metody session_start() výjimku LogicException.
+     * 
+     * Vrací doplňující informaci o případném znovunastartování session. Session je restartována při překročení času session durability 
+     * (parametr konstruktoru) nebo při změně fingeprintu session (parametr konstruktoru).
+     * 
+     * @return bool Vrací true v prípadě restartu session.
+     * @throws LogicException Při pokusu nastarovat již nastartovanou session
      */
-    final protected function sessionStart() {
-
+    final public function sessionStart() {
         if (session_id() === '') {
             if (session_start()) {      // session_start() vyvolá: open($sessionSavePath, $sessionName) a read($sessionId)
-
-                $this->sessionHandlerVars = & $_SESSION[self::HANDLER_VARS];  // reference
-
-                // pro novou session nastaví flag IS_NEW_SESSION a vyrobí fingerprint a čas vytvoření
-                if (!isset($this->sessionHandlerVars)) {  // první request v session
-                    $this->setNewSessionHandlerVars();
-                } elseif ($this->sessionHandlerVars[self::IS_NEW] ?? FALSE) {    // následný request po prvním, kdy byla nastavena session new
-                    $this->sessionHandlerVars[self::IS_NEW] = FALSE;
-                }
-
-                // časy obnovení session
-                $this->sessionHandlerVars[self::PREVIOUS_START_TIME] = $this->sessionHandlerVars[self::CURRENT_START_TIME] ?? NULL;
-                $this->sessionHandlerVars[self::CURRENT_START_TIME] = time();
-
-                // autodestrukce session, pokud nesouhlasí fingerprint
-                if ($this->fingerprintBasedAutodestuction AND !$this->hasFingerprint()) {
-                    $this->forget();  // provede sesiion close
-                    if (session_start()) {
-                        $this->setNewSessionHandlerVars();
-                        $this->sessionHandlerVars[self::FINGERPRINT_WARNING] = "Session destroyed, bad fingerprint.";
-                        if (isset($this->logger)) {
-                            $this->logger->debug("Session byla smazána, došlo ke změně fingerprintu. Nastartována nová session.");
-                        }
-                        return TRUE;
-                    }
-                    return FALSE;
-                }
-
-                // refresh session podle $this->sessionIdDurability
-                if ($this->sessionHandlerVars[self::IS_NEW] = FALSE) {
-                    return mt_rand(1, $this->sessionIdDurability) === 1 ? $this->refresh() : true;
-                } else {
-                    return TRUE;
-                }
+                $this->prepareOrRegenerate();
                 if (isset($this->logger)) {
                     $this->logger->debug("SessionStatusHandler: Start, byla načtena data session a nastartována session. Data sesiion: {data}", ['data'=> print_r($this->getArrayReference(), \TRUE)]);
                 }
             }
         } else {
-            user_error("Session již byla nastartována dříve. Nelze znovu nastartovat session.", E_USER_WARNING);
+            throw new LogicException("Session již byla nastartována dříve. Nelze znovu nastartovat session.");
+        }
+    }
+    
+    /**
+     * Nastaví parametry session na základě parametrů konstrukroru, přečte uložená session data a znovu nastartuje session.
+     * Pokud session běží již při volání metody, vyhodí výjimku.
+     * 
+     * @throws LogicException
+     */
+    final public function sessionReset() {
+        if (session_id() === '') {
+            if (session_reset()) {      // session_start() vyvolá: open($sessionSavePath, $sessionName) a read($sessionId)
+                $this->prepareOrRegenerate();
+                if (isset($this->logger)) {
+                    $this->logger->debug("SessionStatusHandler: Reset, byla načtena data session a znovu nastartována session. Data sesiion: {data}", ['data'=> print_r($this->getArrayReference(), \TRUE)]);
+                }
+            }
+        } else {
+            throw new LogicException("Session je nastartována (není ukončena). Nelze obnovit session.");
+        }    }
+    
+    private function prepareOrRegenerate() {
+        $this->setSessionHandlerVariables();
+        // autodestrukce session, pokud nesouhlasí fingerprint
+        $this->autodestructOnFingerprintChange();
+        // refresh session podle $this->sessionIdDurability
+        $this->refreshSessionOnDurabilityExceeding();        
+    }
+    
+    private function setSessionHandlerVariables() {
+        $this->sessionHandlerVars = & $_SESSION[self::HANDLER_VARS];  // reference
+
+        // pro novou session nastaví flag IS_NEW_SESSION a vyrobí fingerprint a čas vytvoření
+        if (!isset($this->sessionHandlerVars)) {  // první request v session
+            $this->setNewSessionHandlerVars();
+        } elseif ($this->sessionHandlerVars[self::IS_NEW] ?? FALSE) {    // následný request po prvním, kdy byla nastavena session new
+            $this->sessionHandlerVars[self::IS_NEW] = FALSE;
         }
 
-        return FALSE;
+        // časy obnovení session
+        $this->sessionHandlerVars[self::PREVIOUS_START_TIME] = $this->sessionHandlerVars[self::CURRENT_START_TIME] ?? NULL;
+        $this->sessionHandlerVars[self::CURRENT_START_TIME] = time();        
     }
-
+    
+    private function autodestructOnFingerprintChange() {
+        if ($this->fingerprintBasedAutodestuction AND !$this->hasFingerprint()) {
+            $this->forget();  // provede sesiion close
+            if (session_start()) {
+                $this->setNewSessionHandlerVars();
+                $this->sessionHandlerVars[self::FINGERPRINT_WARNING] = "Session destroyed, bad fingerprint.";
+                if (isset($this->logger)) {
+                    $this->logger->debug("Session byla smazána, došlo ke změně fingerprintu. Nastartována nová session.");
+                }
+                return;
+            } else {
+                throw new RuntimeException("Session byla zničena z důvodu změny fingerprint. Session se následně nepodařilo znovu nastartovat.");            
+            }
+        }            
+    }
+    
+    private function refreshSessionOnDurabilityExceeding() {
+        if ($this->sessionHandlerVars[self::IS_NEW] == FALSE && mt_rand(1, $this->sessionIdDurability) === 1) {
+            if ($this->refresh()) {
+                return;
+            } else {
+                throw new RuntimeException("Byla překročena doba trvanlivosti session (viz parametr konstruktoru session durabulity)"
+                        . ", ale session se následně nepodařilo regenerovat.");                
+            }
+        }        
+    }
+    
     private function setNewSessionHandlerVars() {
         $this->sessionHandlerVars[self::IS_NEW] = TRUE;
         $this->sessionHandlerVars[self::CREATION_TIME] = time();
@@ -219,9 +259,9 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
     /**
      * Nastaví loger.
      * @param LoggerInterface $logger
-     * @return \Pes\Session\SessionStatusHandlerInterface
+     * @return SessionStatusHandlerInterface
      */
-    public function setLogger(\Psr\Log\LoggerInterface $logger): SessionStatusHandlerInterface {
+    public function setLogger(LoggerInterface $logger): SessionStatusHandlerInterface {
         $this->logger = $logger;
         return $this;
     }
@@ -236,7 +276,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
             }
             session_write_close();
         } else {
-            user_error("Session již byla ukončena dříve. Nelze znovu ukončit session.", E_USER_WARNING);
+            throw new LogicException("Session již byla ukončena dříve. Nelze znovu ukončit session.");
         }
     }
 
