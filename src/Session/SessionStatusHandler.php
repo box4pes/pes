@@ -144,9 +144,10 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
         }
 
         if (!$this->manualStartStop) {
-            $success = $this->sessionStart();
-            if (!$success) {
-                throw new \RuntimeException("Nepodařilo se nastartovat session.");
+            try {
+                $this->sessionStart();
+            } catch (Exception $exc) {
+                throw new RuntimeException("Nepodařilo se nastartovat session.", 0, $exc);                
             }
         }
     }
