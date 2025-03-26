@@ -171,7 +171,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      * @throws LogicException Při pokusu nastarovat již nastartovanou session
      */
     final public function sessionStart() {
-        if (session_id() === '') {
+        if (session_status() == PHP_SESSION_NONE) {
             if (session_start()) {      // session_start() vyvolá: open($sessionSavePath, $sessionName) a read($sessionId)
                 $this->prepareOrRegenerate();
                 if (isset($this->logger)) {
@@ -190,7 +190,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      * @throws LogicException
      */
     final public function sessionReset() {
-        if (session_id() === '') {
+        if (session_status() == PHP_SESSION_NONE) {
             if (session_reset()) {      // session_start() vyvolá: open($sessionSavePath, $sessionName) a read($sessionId)
                 $this->prepareOrRegenerate();
                 if (isset($this->logger)) {
@@ -243,7 +243,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
     
     private function refreshSessionOnDurabilityExceeding() {
         if ($this->sessionHandlerVars[self::IS_NEW] == FALSE && mt_rand(1, $this->sessionIdDurability) === 1) {
-            if ($this->refresh()) {
+            if ($this->regenerate()) {
                 return;
             } else {
                 throw new RuntimeException("Byla překročena doba trvanlivosti session (viz parametr konstruktoru session durabulity)"
@@ -272,7 +272,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      * Zapíše data session do úložiště a ukončí fungování session handleru.
      */
     public function sessionFinish() {
-        if (session_id() !== '') {
+        if (session_status() == PHP_SESSION_ACTIVE) {
             if (isset($this->logger)) {
                 $this->logger->debug("SessionStatusHandler: Finish, budou uložena data session a ukončena session. Data sesiion: {data}", ['data'=> print_r($this->getArrayReference(), \TRUE)]);
             }
@@ -287,7 +287,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      * @return boolean
      */
     public function forget() {
-        if (session_id() === '') {
+        if (session_status() == PHP_SESSION_NONE) {
             return false;
         }
 
@@ -312,7 +312,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      *
      * @return bool
      */
-    public function refresh() {
+    public function regenerate() {
         // http://php.net/manual/en/function.session-regenerate-id.php
         // Warning
 

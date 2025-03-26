@@ -90,7 +90,7 @@ interface SessionStatusHandlerInterface {
      *
      * @return bool
      */
-    public function refresh();
+    public function regenerate();
 
     /**
      * Vrací čas vytvoření (prvního startu) session. Čas je unix timestamp.
