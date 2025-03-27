@@ -205,9 +205,9 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
     private function prepareOrRegenerate() {
         $this->setSessionHandlerVariables();
         // autodestrukce session, pokud nesouhlasí fingerprint
-        $this->autodestructOnFingerprintChange();
+//        $this->autodestructOnFingerprintChange();
         // refresh session podle $this->sessionIdDurability
-        $this->refreshSessionOnDurabilityExceeding();        
+//        $this->refreshSessionOnDurabilityExceeding();        
     }
     
     private function setSessionHandlerVariables() {
