@@ -168,14 +168,14 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      * (parametr konstruktoru) nebo při změně fingeprintu session (parametr konstruktoru).
      * 
      * @return bool Vrací true v prípadě restartu session.
-     * @throws LogicException Při pokusu nastarovat již nastartovanou session
+     * @throws LogicException Při pokusu nastartovat již nastartovanou session
      */
     final public function sessionStart() {
         if (session_status() == PHP_SESSION_NONE) {
             if (session_start()) {      // session_start() vyvolá: open($sessionSavePath, $sessionName) a read($sessionId)
                 $this->prepareOrRegenerate();
                 if (isset($this->logger)) {
-                    $this->logger->debug("SessionStatusHandler: Start, byla načtena data session a nastartována session. Data sesiion: {data}", ['data'=> print_r($this->getArrayReference(), \TRUE)]);
+                    $this->logger->debug("SessionStatusHandler: Start, byla načtena data session a nastartována session. Data session: {data}", ['data'=> print_r($this->getArrayReference(), \TRUE)]);
                 }
             }
         } else {
@@ -194,7 +194,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
             if (session_reset()) {      // session_start() vyvolá: open($sessionSavePath, $sessionName) a read($sessionId)
                 $this->prepareOrRegenerate();
                 if (isset($this->logger)) {
-                    $this->logger->debug("SessionStatusHandler: Reset, byla načtena data session a znovu nastartována session. Data sesiion: {data}", ['data'=> print_r($this->getArrayReference(), \TRUE)]);
+                    $this->logger->debug("SessionStatusHandler: Reset, byla načtena data session a znovu nastartována session. Data session: {data}", ['data'=> print_r($this->getArrayReference(), \TRUE)]);
                 }
             }
         } else {
@@ -242,7 +242,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
     }
     
     private function refreshSessionOnDurabilityExceeding() {
-        if ($this->sessionHandlerVars[self::IS_NEW] == FALSE && mt_rand(1, $this->sessionIdDurability) === 1) {
+        if ($this->sessionHandlerVars[self::IS_NEW] == FALSE && mt_rand(1, $this->sessionIdDurability) === 1) {  // náhodné int číslo mezi min, max
             if ($this->regenerate()) {
                 return;
             } else {
