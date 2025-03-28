@@ -4,6 +4,8 @@ namespace Pes\Session;
 
 use Pes\Session\SessionStatusHandlerInterface;
 use Psr\Log\LoggerInterface;
+
+use SessionHandlerInterface;
 use LogicException;
 use RuntimeException;
 
@@ -31,8 +33,9 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
     const IP_MASK = '255.255.0.0';
 
     private $name, $fingerprintBasedAutodestuction, $lockToUserAgent, $lockToIp, $sessionCookieParams, $sessionIdDurability, $manualStartStop;
+    
     /**
-     * @var \SessionHandlerInterface
+     * @var SessionHandlerInterface
      */
     private $sessionSaveHandler;
     private $sessionHandlerVars;   // reference na $_SESSION[self::HANDLER_VARS]
@@ -74,31 +77,36 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      *  - session ID bude předáváno pouze v cookie, nebude nikdy součástí GET parametrů: ini_set('session.use_only_cookies', 1);
      *</p>
      * @param string $sessionName Jméno session
-     * @param \SessionHandlerInterface $sessionSaveHandler Handler pro čtení a ukládání dat session. Implementuje PHP SessionHandlerInterface
+     * @param SessionHandlerInterface $sessionSaveHandler Handler pro čtení a ukládání dat session. Implementuje PHP SessionHandlerInterface
      * @param bool $fingerprintBasedAutodestuction Session budoe automaticky smazána při změně prohlížeče nebo IP adresy, pokud byla tvazba nastavena. Session bude nastartována jako nová, výchozí hodnota je TRUE.
-     * @param bool $lockToUserAgent Platnost session je vázána na klientskou aplikaci (prohlížeč), pro kterou byla session nastartována, výchozí hodnota je TRUE
-     * @param bool $lockToIp Platnost session dat je vázána na IP adresu klienta, lze použít jen v prostředí se stabilními IP adresami, výchozí hodnota je FALSE
+     * @param bool $lockToUserAgent Platnost session je vázána na klientskou aplikaci (prohlížeč), pro kterou byla session nastartována, výchozí hodnota je true
+     * @param bool $lockToIp Platnost session dat je vázána na IP adresu klienta, lze použít jen v prostředí se stabilními IP adresami, výchozí hodnota je false
      * @param array $sessionCookieParams Pole parametrů cookie používané pro předávání identifikátoru session. Lze zadat pouze ty parametry, které mění default hodnoty. Přípustné klíče pole jsou?
      *              'lifetime', 'path', 'domain', 'secure', 'httponly'. Default hodnoty jsou popsány výše.
      * @param integer $sessionIdDurability Průměrný počet použití session dat bez regenerování identifikátoru session
-     * @param boolean $manualStartStop Je vyžadováno spuštění a zastavení session voláním metod sessionStart() a sessionFinish(), defaultně FALSE.
-     * @param boolean $closeOnShutdown Pokud je TRUE, je funkce session_write_close() zaregistrována jako shutdown funkce (register_shutdown_function()). Pak je
-     *              session_write_close() volána automaticky při ukončení skriptu a dojde k zápisu dat sesssion do úložiště. Pozor! Musí být zaručeno, že data
-     *              jsou v handleru připravena před zahájením shutdown sekvence PHP. Pokud jsou data ukládána do handleru v destruktorech (obvyklá praxe
-     *              v repository, resp. entity manageru apod. dojde v komplexnějším skriptu snadno k tomu, že session_write_close() je v shutdown sekvenci
-     *              zavolána dříve, než je volán destruktor a do úložiště jsou zapsána chybná (stará) data. Defaultní hodnota je FALSE.
+     * @param boolean $manualStartStop Je vyžadováno spuštění a zastavení session voláním metod sessionStart() a sessionFinish(), defaultně false.
+     * @param boolean $closeOnShutdown Defaultní hodnota je true. Pokud je true, je funkce session_write_close() zaregistrována jako shutdown funkce (register_shutdown_function()). 
+     *              Pokud je jako session_save_handler použit objekt (to v PES package je) je shutdown funkce je volána při destrukci objektu handleru při ukončování skriptu. 
+     *              Zaregistrování  tak způsobí, že volání session_write_close() nastane v destruktoru správně až po uvolnění všech referencí na závislosti. Závislostí zde je 
+     *              např. objekt logger, bez registrování se může stát, že logger je destruován před tím, než je volána session_write_close(), session_write_close() pokud je 
+     *              použit session_save_handler vnitřně volá metody session save handleru write() a close() a pokud v těchto metodách je volání loggeru nebude již existovat 
+     *              objekt loggeru.
+     *              Pozor! Musí být zaručeno, že data session jsou v handleru připravena před zahájením shutdown sekvence PHP. Pokud jsou data ukládána do $_SESSION 
+     *              v destruktorech dojde v komplexnějším skriptu snadno k tomu, že session_write_close() je v shutdown sekvenci
+     *              zavolána dříve, než je volán destruktor a do úložiště jsou zapsána chybná (stará) data. Tedy chci-li používat logování nemůžu v destruktorech ještě zapisovat data do $_SESSION.
+     * 
      * @throws \RuntimeException Nepodařilo se nastartovat session.
      */
     public function __construct(
             $sessionName = self::SESSION_NAME,
-            \SessionHandlerInterface $sessionSaveHandler = NULL,
-            $fingerprintBasedAutodestuction = TRUE,
-            $lockToUserAgent = TRUE,
-            $lockToIp = FALSE,
+            SessionHandlerInterface $sessionSaveHandler = null,
+            $fingerprintBasedAutodestuction = true,
+            $lockToUserAgent = true,
+            $lockToIp = false,
             array $sessionCookieParams = [],
             $sessionIdDurability = 5,
-            $manualStartStop = FALSE,
-            $closeOnShutdown = FALSE
+            $manualStartStop = false,
+            $closeOnShutdown = true
         ) {
 
         $this->sessionSaveHandler = $sessionSaveHandler;
@@ -137,6 +145,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
 
         if ($this->sessionSaveHandler) {
             if ($closeOnShutdown) {
+//                Warning: When using objects as session save handlers, it is important to register the shutdown function with PHP to avoid unexpected side-effects from the way PHP internally destroys objects on shutdown and may prevent the write and close from being called. Typically you should register 'session_write_close' using the register_shutdown_function() function.                 
                 session_set_save_handler($this->sessionSaveHandler, true);  //druhý parametr=TRUE -> registruje session_write_close() jako a register_shutdown_function() funkci.
             } else {
                 session_set_save_handler($this->sessionSaveHandler, false);
