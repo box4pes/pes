@@ -54,9 +54,10 @@ class Route implements RouteInterface {
         $this->resource = $resource;
         // konvertuje route url na regulární výraz - obalí pattern routy znaky začátku a konce regulárního výrazu
         // a nahradí části začínající : výrazem ([a-zA-Z0-9\-\_]+)
-        // Příklad: url "/node/:id/add/" kovertuje na regulární výraz "@^/node/([a-zA-Z0-9\-\_]+)/add/$@D"
-        // když není nastaveno /u -> neumí utf8 jen ascii a tedy neumí písmenka s diakritikou
-        $this->patternPreg = "@^" . preg_replace('/\\\:[a-zA-Z0-9\_\-]+/u', '([a-zA-Z0-9\-\_]+)', preg_quote($this->resource->getUrlPattern())) . "$@D";
+        // Příklad: url "/node/:id/add/" kovertuje na regulární výraz "@^/node/([a-zA-Z0-9\-\_]+)/add/$@Du"
+        // D a u jsou pattern modifiers- D způsobí rozpoznání znaku $ jen ka konci vzoru a u způsobí vyhodnocování řetězsů jako utf8
+        // když není nastaveno u -> neumí utf8 jen ascii a tedy neumí písmenka s diakritikou
+        $this->patternPreg = "@^" . preg_replace('/\\\:[a-zA-Z0-9\_\-]+/u', '([a-zA-Z0-9\-\_]+)', preg_quote($this->resource->getUrlPattern())) . "$@Du";   // nastaveno pro utf8
        return $this;
     }
 
