@@ -27,6 +27,7 @@ class Coder implements CoderInterface {
      * Výčtový typ EnumEncoding definuje možné typy kódování používané touto třídou.
      *
      * Implementované typy kódování:
+     * EnumEncoding::BASE64URL = Kóduje metodou Base64 encoding - URL and Filename safe
      * EnumEncoding::BASE64 = Kóduje metodou Base64 encoding
      * EnumEncoding::HEX = Kóduje vstupní string jako hexadecimální string, horní byte jako první
      * EnumEncoding::RAW = Bez kódování - kopíruje vstupní text beze změny

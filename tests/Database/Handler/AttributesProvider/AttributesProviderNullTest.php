@@ -31,7 +31,7 @@ use Psr\Log\NullLogger;
  *
  * @author pes2704
  */
-class AttrubutesProviderNullTest extends TestCase {
+class AttributesProviderNullTest extends TestCase {
     const DB_NAME = 'pes';
     const DB_HOST = 'localhost';
     const DB_PORT = '3306';

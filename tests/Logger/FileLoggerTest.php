@@ -8,7 +8,7 @@ use Pes\Logger\FileLogger;
  *
  * @author pes2704
  */
-class FileLoggerTestQ extends TestCase {
+class FileLoggerTest extends TestCase {
     public function setUp():void {
 
     }
