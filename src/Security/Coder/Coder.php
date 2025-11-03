@@ -30,7 +30,6 @@ class Coder implements CoderInterface {
      * EnumEncoding::BASE64URL = Kóduje metodou Base64 encoding - URL and Filename safe
      * EnumEncoding::BASE64 = Kóduje metodou Base64 encoding
      * EnumEncoding::HEX = Kóduje vstupní string jako hexadecimální string, horní byte jako první
-     * EnumEncoding::RAW = Bez kódování - kopíruje vstupní text beze změny
      *
      * @param string $encoding Zvolené kódování. Hodnota výčtového typu EnumEncoding.
      */
@@ -58,12 +57,9 @@ class Coder implements CoderInterface {
             case (EnumEncoding::HEX):
                 $res = unpack('H*', $plainText)[1];
                 break;
-            case (EnumEncoding::RAW):
-                $res = $plainText;
-                break;
             default:
                 throw new \LogicException('Nerozpoznán typ kódování. Zadaný typ kódování není implementován a obsažen v typu EnumEncoding.');
-                break;
+//                break;
         }
         return $res;
     }
@@ -88,12 +84,9 @@ class Coder implements CoderInterface {
             case (EnumEncoding::HEX):
                 $res = pack('H*', $encodedText);
                 break;
-            case (EnumEncoding::RAW):
-                $res = $encodedText;
-                break;
             default:
                 throw new \LogicException('Nerozpoznán typ kódování. Zadaný typ kódování není implementován a obsažen v typu EnumEncoding.');
-                break;
+//                break;
         }
         return $res;
     }

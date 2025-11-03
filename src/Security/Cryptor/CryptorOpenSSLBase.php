@@ -11,6 +11,12 @@
 
 namespace Pes\Security\Cryptor;
 
+use Exception;
+
+use Pes\Security\Exception\EncryptionFailedException;
+use Pes\Security\Exception\DecryptionFailedException;
+use Pes\Security\Exception\InvalidParameterValueException;
+
 /**
  * Upraveno z:
  * https://github.com/ioncube/php-openssl-cryptor/blob/master/cryptor.php
@@ -59,7 +65,7 @@ class CryptorOpenSSLBase implements CryptorInterface {
 
     private $cipherMethod;
     private $hashMethod;
-
+    private $options;
     private $ivLength;
 
     private $iv;
@@ -68,22 +74,31 @@ class CryptorOpenSSLBase implements CryptorInterface {
     /**
      * Konstruktor bázové třídy - defaultně používá aes256 šifrování - mód AES256CBC, sha256 pro hash klíče, base64 kódování výstupního řetězce.
      *
-     * @param string $cipherMethod Šifrovací metoda.
-     * @param string $hashMethod   Metoda pro hashování klíče.
-     * @throws \UnexpectedValueException  Neexistující hodnota parametru v příslušném typu Enum
-     * @throws \UnexpectedValueException  Neznámá metoda šifrování nebo hashování
-     *
+     * @param type $key Šifrovací klíč
+     * @param type $options Default hodnota 0. Parametr musí být bitovou disjunkcí příznaků OPENSSL_RAW_DATA a OPENSSL_ZERO_PADDING nebo OPENSSL_DONT_ZERO_PAD_KEY.
+     *      Pokud je nastaveno OPENSSL_RAW_DATA, jsou zašifrovaná data vrácena tak, jak jsou. Pokud není zadána (default), jsou vrácena data v kódování Base64. 
+     * @param type $cipherMethod Šifrovací metoda. Hodnota EnumCipherMethod.
+     * @param type $hashMethod Metoda pro hashování klíče. Hodnota EnumKeyHashMethod
+     * @throws InvalidParameterValueException Chybná hodnota options, Neexistující hodnota parametru v příslušném typu Enum (Neznámá metoda šifrování nebo hashování)
      */
-    public function __construct($key, $cipherMethod = EnumCipherMethod::AES256CBC, $hashMethod = EnumKeyHashMethod::SHA256) {
+    public function __construct($key, $options = 0, $cipherMethod = EnumCipherMethod::AES256CBC, $hashMethod = EnumKeyHashMethod::SHA256) {
+        throw new Exception("Cryptor je v procesu úprav - nelze ho používat!");
         $this->key = $key;
         $this->cipherMethod = (new EnumCipherMethod())($cipherMethod);
         $this->hashMethod = (new EnumKeyHashMethod())($hashMethod);
-
+        // options is a bitwise disjunction of the flags OPENSSL_RAW_DATA, and OPENSSL_ZERO_PADDING or OPENSSL_DONT_ZERO_PAD_KEY. 
+        //OPENSSL_RAW_DATA = 1
+        //OPENSSL_ZERO_PADDING = 2
+        //OPENSSL_DONT_ZERO_PAD_KEY = 4
+        if ($options<0 || $options>8) {
+            throw new InvalidParameterValueException("Parameter options must be a bitwise disjunction of the flags OPENSSL_RAW_DATA, and OPENSSL_ZERO_PADDING or OPENSSL_DONT_ZERO_PAD_KEY. ");
+        }
+        $this->options = 3;//$options;
         if (!in_array($cipherMethod, openssl_get_cipher_methods(true))) {
-            throw new \UnexpectedValueException(get_called_class()." - openssl nepodporuje zadanou metodu šifrování {$this->cipherMethod}");
+            throw new InvalidParameterValueException("Cipher method {$this->cipherMethod} is not OpenSSL available cipher method.");
         }
         if (!in_array($hashMethod, openssl_get_md_methods(true))) {
-            throw new \UnexpectedValueException(get_called_class()." - openssl nepodporuje zadanou metodu hashování {$this->hashMethod}");
+            throw new InvalidParameterValueException("Hash method {$this->hashMethod} is not OpenSSL available digest (hash) method.");
         }
 
         $this->ivLength = openssl_cipher_iv_length($this->cipherMethod);
@@ -96,44 +111,58 @@ class CryptorOpenSSLBase implements CryptorInterface {
      */
     public function encrypt($plainText) {
         // Generování initializačního vektoru. Musí být náhodně generován iv pro každou zprávu!
-        $iv = openssl_random_pseudo_bytes($this->ivLength, $isStrongCrypto);   // $isStrongCrypto je návratová hodnota - TRUE -> použitý algoritmus je kryptograficky silný, vhodný pro GPG, hesla apod.
-        if (!$isStrongCrypto) {
-            throw new \RuntimeException(__METHOD__." - Not a strong key");
+        // $isStrongCrypto je návratová hodnota - TRUE -> použitý algoritmus je kryptograficky silný, vhodný pro GPG, hesla apod.
+        // 7.4.0 	The function no longer returns false on failure, but throws an Exception instead. 
+        try {
+            $iv = openssl_random_pseudo_bytes($this->ivLength, $isStrongCrypto);
+            if (!$isStrongCrypto) {
+                throw new EncryptionFailedException("Encyption failed  - the encryption algorithm used is not cryptographically strong.");
+            }            
+        } catch (Exception $exc) {
+            throw new EncryptionFailedException("Encyption failed  - the encryption algorithm used is not cryptographically strong. Message: {$exc->getMessage()}");
         }
+
         // Hash klíče
         $keyhash = openssl_digest($this->key, $this->hashMethod, true);
         // and encrypt
-        $opts =  OPENSSL_RAW_DATA;
-        $encrypted = openssl_encrypt($plainText, $this->cipherMethod, $keyhash, $opts, $iv);
+        $encrypted = openssl_encrypt($plainText, $this->cipherMethod, $keyhash, $this->options, $iv);
         if ($encrypted === false) {
-            throw new \RuntimeException(__METHOD__.' - Encryption failed: ' . openssl_error_string());
+            throw new EncryptionFailedException('Encryption failed. OpenSSL error: ' . openssl_error_string());
         }
         // jen zřetězení
         return $iv.$encrypted;
     }
     /**
      * Decrypt a string.
-     * @param  string $cipherText  String to decrypt.
+     * @param  string $cipherText  Text pro dešifrování.
      * @param  int $fmt Optional override for the input encoding. One of FORMAT_RAW, FORMAT_B64 or FORMAT_HEX.
-     * @return string      The decrypted string.
+     * @return string Dešifrovaný text.
      */
     public function decrypt($cipherText) {
         // and do an integrity check on the size.
         if (strlen($cipherText) < $this->ivLength) {
-            throw new \Exception(__METHOD__.' - '.'data length '.strlen($cipherText)." is less than initialization vector length {$this->ivLength}");
+            throw new DecryptionFailedException('Decryption failed due to data length '.strlen($cipherText)." is less than initialization vector length {$this->ivLength}");
         }
         // Rozložení řetězce na initialisation vector a encrypted data - rozloží podle ivLength znovu vypočtené v konstruktoru podle $this->cipherMethod
         $iv = substr($cipherText, 0, $this->ivLength);
-        $cipherText = substr($cipherText, $this->ivLength);
+        $cleanCipherText = substr($cipherText, $this->ivLength);
         // Hash the key
         $keyhash = openssl_digest($this->key, $this->hashMethod, true);
         // and decrypt.
-        $opts = OPENSSL_RAW_DATA;
-        $decrypted = openssl_decrypt($cipherText, $this->cipherMethod, $keyhash, $opts, $iv);
+        // options can be one of OPENSSL_RAW_DATA, OPENSSL_ZERO_PADDING or OPENSSL_DONT_ZERO_PAD_KEY. 
+        $decrypted = openssl_decrypt($cleanCipherText, $this->cipherMethod, $keyhash, $this->options, $iv);  // return string|false
         if ($decrypted === false) {
-            throw new \Exception(__METHOD__.' - decryption failed: ' . openssl_error_string());
+            throw new DecryptionFailedException('Decryption failed. OpenSSL error: ' . openssl_error_string());
         }
         return $decrypted;
+    }
+    
+    private function linkInitialisationVector($iv, $encrypted) {
+        
+    }
+    
+    private function unlinkInitialisationVector($param) {
+        
     }
 }
 

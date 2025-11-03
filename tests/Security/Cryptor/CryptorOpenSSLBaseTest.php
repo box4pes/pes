@@ -12,7 +12,7 @@
 use PHPUnit\Framework\TestCase;
 
 use Pes\Security\Cryptor\CryptorOpenSSLBase;
-
+use Pes\Security\Exception\DecryptionFailedException;
 /**
  * Description of CryptorReversingTestTTT
  *
@@ -26,7 +26,8 @@ class CryptorOpenSSLBaseTest extends TestCase {
         $cryptor1 = new CryptorOpenSSLBase(self::KEY);
         $cryptor2 = new CryptorOpenSSLBase(self::KEY);
         $message = 'asdfghjklůkjhgfdsaSDFGHJKLŮKJHGFDSA';
-        $c = $cryptor2->decrypt($cryptor1->encrypt($message));
+        $enc = $cryptor1->encrypt($message);
+        $c = $cryptor2->decrypt($enc);
         $this->assertTrue(hash_equals($message, $c));
     }
 
@@ -72,25 +73,64 @@ class CryptorOpenSSLBaseTest extends TestCase {
         $cryptor2 = new CryptorOpenSSLBase(self::KEY);
         $message = 'asdfghjklůkjhgfdsaSDFGHJKLŮKJHGFDSA';
         $c = $cryptor1->encrypt($message);
-        $corrupted = $this->corruptMessage($c);  // poznámka - změna v 1 bytu šifriovaného textu změní obykle je 1 byte v dešifrovaném textu!
-        try {
-            $decryptCorrupted = $cryptor2->decrypt($corrupted);
-        } catch (\Exception $e) {
-            $excMessage = $e->getMessage();
-        }
-        if (isset($e)) {
-            $this->assertTrue(strpos($excMessage, "decrypt - decryption failed:")>0);   // obvykle nastane výjimka
-        } else {
-            $lev = levenshtein($decryptCorrupted, $message);  // nebo taky ne
-            $this->assertNotEquals($decryptCorrupted, $message);
-            $this->assertTrue(($lev % 16) == 1 );  // zjištěno experimentálně
-        }
+        $corrupted = $this->corruptMessage($c);  // poznámka - změna v 1 bytu šifrovaného textu změní obykle jen 1 byte v dešifrovaném textu!
+        $this->expectException(DecryptionFailedException::class);
+        $decryptCorrupted = $cryptor2->decrypt($corrupted);
+
+//            $lev = levenshtein($decryptCorrupted, $message);  // nebo taky ne
+//            $this->assertNotEquals($decryptCorrupted, $message);
+//            $this->assertTrue(($lev % 16) == 1 );  // zjištěno experimentálně
+
     }
 
+    /**
+     * Metoda zamění 1byte v řetězci. Lze použít pro detekci chybně zakódovaného řetězce. Je určena pro 8 bitové kódování.
+     * 
+     * 
+     * @param array $message
+     * @return type
+     */
     private function corruptMessage($message) {
-        // Změní 1 bit
+//  POZOR! Nelze použít pro detekci chybně zakódovaného stringu v kódování Base64 ani po změně mb_strlen($message, '8bit') na mb_strlen($message, 'BASE64')
+//  - v kódování Base64 je mnoho bytů doplněno a pokud metoda corruptMessage() zamění některý doplněná byte, 
+//  dekódování proběhně v pořádku.
+//  - navíc v PHP 8.2 je použití metod jako je mb_strlen pro BASE deprecated 
+        if ($this->isBase64Encoded($message)) {
+            throw new UnexpectedValueException("Metodu nelze použít pro řetězce kódované Base64");
+        }
+         // Změní 1 bit
          $i = rand(0, mb_strlen($message, '8bit') - 1);
          $message[$i] = $message[$i] ^ chr(1);
          return $message;
     }
+    
+    /**
+     * Nedokonalý test na Base64 - https://stackoverflow.com/questions/4278106/how-to-check-if-a-string-is-base64-valid-in-php
+     * 
+     * Check if the given string is valid base 64 encoded.
+     *
+     * @param string $string The string to check.
+     * @return bool Return `true` if valid, `false` for otherwise.
+     */
+    private function isBase64Encoded($string): bool
+    {
+        if (!is_string($string)) {
+            // if check value is not string.
+            // base64_decode require this argument to be string, if not then just return `false`.
+            // don't use type hint because `false` value will be converted to empty string.
+            return false;
+        }
+
+        $decoded = base64_decode($string, true);
+        if (false === $decoded) {
+            return false;
+        }
+
+        if (json_encode([$decoded]) === false) {
+            return false;
+        }
+
+        return true;
+    }// isBase64Encoded
+    
 }
