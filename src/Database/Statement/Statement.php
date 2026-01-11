@@ -7,6 +7,7 @@
  */
 namespace Pes\Database\Statement;
 
+use PDO;
 use PDOStatement;
 use Psr\Log\LoggerInterface;
 use Pes\Database\Statement\Exception\ExecuteException;
