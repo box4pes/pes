@@ -1,7 +1,7 @@
 {
     "name": "pes/pes",
     "type": "library",
-    "description": "Psí framework pro PHP 7.3.",
+    "description": "Psí framework pro PHP 8.4.",
     "license": "MIT",
     "keywords": ["pes", "framework"],
     "authors": [
