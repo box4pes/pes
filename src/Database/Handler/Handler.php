@@ -19,7 +19,7 @@ use Pes\Database\Statement\StatementInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 
-class Handler extends \PDO implements HandlerInterface {
+class Handler extends \PDO { //implements HandlerInterface {
 
     /**
      *

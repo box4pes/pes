@@ -17,7 +17,7 @@ use Psr\Log\LoggerAwareInterface;
  *
  * @author pes2704
  */
-interface StatementInterface extends PDOStatementInterface, LoggerAwareInterface, \Traversable {
+interface StatementInterface extends LoggerAwareInterface, \Traversable {   // PDOStatementInterface, 
 
     /**
      * Vrací informaci umožňující rozlišit konkrétní instanci objektu, obvykle pro účely debugování a logování.
