@@ -12,7 +12,7 @@ use Pes\Database\Statement\Exception\ExecuteException;
 use Pes\Database\Statement\Exception\BindParamException;
 use Pes\Database\Statement\Exception\BindValueException;
 
-class Statement extends \PDOStatement implements StatementInterface {
+class Statement extends PDOStatement {  // implements StatementInterface {
 
     /**
      * Čítač instancí pro logování
