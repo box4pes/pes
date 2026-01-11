@@ -95,8 +95,8 @@ class Statement extends PDOStatement {  // implements StatementInterface {
     }
 
 //    public function fetchAll($fetch_style = NULL, $fetch_argument = NULL, $ctor_args = NULL): array {
-    public function fetchAll(int $mode = PDO::FETCH_DEFAULT): array {        
-            $result = parent::fetchAll($mode);
+    public function fetchAll(int $mode = PDO::FETCH_DEFAULT, mixed ...$args): array {        
+            $result = parent::fetchAll($mode, $args);
             if ($this->logger) {
                 $message = $this->getInstanceInfo().': fetchAll({fetch_style})';
                 $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
