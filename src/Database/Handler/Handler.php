@@ -20,8 +20,14 @@ use Pes\Database\Statement\StatementInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 
-class Handler extends PDO {   //implements HandlerInterface { // 
+class Handler { //extends PDO {   //implements HandlerInterface { // 
 
+    /**
+     * 
+     * @var PDO
+     */
+    private $connection;
+    
     /**
      *
      * @var LoggerInterface
@@ -106,7 +112,8 @@ class Handler extends PDO {   //implements HandlerInterface { //
         $userPassProperty->setAccessible(FALSE);
         // před voláním PDO nastaví vlastní exception handler
         $old = set_exception_handler(array(__CLASS__, 'safeExceptionHandler'));
-        parent::__construct(
+//        parent::__construct(
+        $this->connection = PDO::connect(
                 $dsnProvider->getDsn($connectionInfo),
                 $userNameValue,
                 $userPassValue,
@@ -132,7 +139,7 @@ class Handler extends PDO {   //implements HandlerInterface { //
      */
     private function setAttributes($attributes) {
         foreach ($attributes as $key => $value) {
-            $succ = $this->setAttribute($key, $value);
+            $succ = $this->connection->setAttribute($key, $value);
             if (!$succ) {
                 $dump = $this->dumpPDOParameters();
                 if ($this->logger) {
@@ -163,7 +170,7 @@ class Handler extends PDO {   //implements HandlerInterface { //
 
         foreach ($attributes as $attribute) {
             try {
-                $attr = $this->getAttribute(constant("\PDO::$attribute"));
+                $attr = $this->connection->getAttribute(constant("\PDO::$attribute"));
                 $dump[] = "PDO::$attribute: (atribut číslo ".constant("\PDO::$attribute").") má hodnotu ".$attr;
             } catch (PDOException $pdoex) {
                 if (strpos($pdoex->getMessage, self::CATCHED_ERROR_MESSAGE) !== FALSE) {
@@ -291,7 +298,7 @@ class Handler extends PDO {   //implements HandlerInterface { //
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' beginTransaction()');
         }
-        $ret = parent::beginTransaction();
+        $ret = $this->connection->beginTransaction();
         return $ret;
     }
 
@@ -299,7 +306,7 @@ class Handler extends PDO {   //implements HandlerInterface { //
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' commit()');
         }
-        $ret = parent::commit();
+        $ret = $this->connection->commit();
         return $ret;
     }
 
@@ -307,7 +314,7 @@ class Handler extends PDO {   //implements HandlerInterface { //
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' exec({sqlStatement})',
                     ['sqlStatement'=>$query]);        }
-        $ret = parent::exec($query);
+        $ret = $this->connection->exec($query);
         return $ret;
     }
 
@@ -315,7 +322,7 @@ class Handler extends PDO {   //implements HandlerInterface { //
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' rollBack()');
         }
-        $ret = parent::rollBack();
+        $ret = $this->connection->rollBack();
         return $ret;
     }
 
@@ -344,7 +351,7 @@ class Handler extends PDO {   //implements HandlerInterface { //
 
         try {
             /* @var $prepStatement StatementInterface */
-            $prepStatement = parent::prepare($sqlStatement, $driver_options);
+            $prepStatement = $this->connection->prepare($sqlStatement, $driver_options);
         } catch (\PDOException $pdoException) {
             if ($this->logger) {
                 $this->logger->error($this->getInstanceInfo().' selhal prepare({sqlStatement}), nebyl vytvořen statement objekt.',
@@ -389,12 +396,11 @@ class Handler extends PDO {   //implements HandlerInterface { //
                 $this->logger->debug($this->getInstanceInfo()." query $query");
         }        
         /* @var $statement StatementInterface */
-        $statement =  parent::query($query);
+        $statement =  $this->connection->query($query, $fetchMode);
         if ($statement) {
             $message = $this->getInstanceInfo().' query({sqlStatement}). Vytvořen {statementInfo}. {fetchMode}';
             $replace = ["fetchMode"=>"Nastaven default fetch mode $fetchMode."];
             if (isset($fetchMode)) {
-                $statement->setFetchMode($fetchMode);
                 $replace +=[];
             }
             if ($statement instanceof StatementInterface) {   // typ $prepStatement je dán nastavením atributů -> nemusí to být StatementInterface, ten je nastavován AttributeProviderDefault
