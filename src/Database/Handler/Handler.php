@@ -9,6 +9,7 @@
  */
 namespace Pes\Database\Handler;
 
+use PDO;
 use Pes\Database\Handler\AccountInterface;
 use Pes\Database\Handler\ConnectionInfoInterface;
 use Pes\Database\Handler\DsnProvider\DsnProviderInterface;

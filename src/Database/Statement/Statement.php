@@ -7,6 +7,7 @@
  */
 namespace Pes\Database\Statement;
 
+use PDOStatement;
 use Psr\Log\LoggerInterface;
 use Pes\Database\Statement\Exception\ExecuteException;
 use Pes\Database\Statement\Exception\BindParamException;
