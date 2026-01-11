@@ -57,8 +57,8 @@ class Statement extends PDOStatement {  // implements StatementInterface {
      * @param type $arg3
      * @return bool Success <p>Returns <b><code>TRUE</code></b> on success or <b><code>FALSE</code></b> on failure.</p>
      */
-    public function setFetchMode(int $mode): bool {
-        $success = parent::setFetchMode($mode);
+    public function setFetchMode(int $mode, mixed ...$args): bool {
+        $success = parent::setFetchMode($mode, $args);
         if ($this->logger) {
             $message = $this->getInstanceInfo().': setFetchMode({fetchMode})';
             $substitutes = array('fetchMode'=>$mode);
