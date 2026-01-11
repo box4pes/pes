@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author pes2704
  */
-interface HandlerInterface extends PDOInterface, LoggerAwareInterface {
+interface HandlerInterface extends LoggerAwareInterface {   //   extends PDOInterface, LoggerAwareInterface {
     /**
      * Metoda getInstanceInfo
      *
