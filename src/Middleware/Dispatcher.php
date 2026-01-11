@@ -51,7 +51,7 @@ class Dispatcher implements MiddlewareInterface
      *
      * @throws InvalidArgumentException if an empty middleware stack was given
      */
-    public function __construct($stack, callable $resolver = null, AppInterface $app=NULL)
+    public function __construct($stack, ?callable $resolver = null, ?AppInterface $app = null)
     {
         if (count($stack) === 0) {
             throw new \InvalidArgumentException("Zadáno prázdné pole middleware do zásobníku middleware.");

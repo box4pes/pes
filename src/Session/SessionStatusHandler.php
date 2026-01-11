@@ -99,7 +99,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      */
     public function __construct(
             $sessionName = self::SESSION_NAME,
-            SessionHandlerInterface $sessionSaveHandler = null,
+            ?SessionHandlerInterface $sessionSaveHandler = null,
             $fingerprintBasedAutodestuction = true,
             $lockToUserAgent = true,
             $lockToIp = false,

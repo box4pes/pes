@@ -32,7 +32,7 @@ class BodyParser implements BodyParserInterface {
 
     private $bodyParsers;
 
-    public function __construct(MediaContentResolverInterface $requestMediaContentResolver=NULL) {
+    public function __construct(?MediaContentResolverInterface $requestMediaContentResolver=NULL) {
 
         $this->mediaContentResolver = $requestMediaContentResolver ? $requestMediaContentResolver : new MediaContentResolver();
 

@@ -20,7 +20,7 @@ use Pes\Application\AppInterface;
  */
 interface SelectorItemInterface {
     public function getPrefix();
-    public function getMiddleware(AppInterface $app=NULL): MiddlewareInterface;
+    public function getMiddleware(?AppInterface $app = null): MiddlewareInterface;
     public function setPrefix($prefix): SelectorItem;
-    public function setStack($stack, callable $resolver = NULL): SelectorItem;
+    public function setStack($stack, ?callable $resolver = null): SelectorItem;
 }

@@ -48,7 +48,7 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
      * @param type $stack Definice zásobníku Middelware.
      * @param \Pes\Middleware\callable $resolver
      */
-    public function addItem($prefix, $stack, callable $resolver=NULL): SelectorInterface{
+    public function addItem($prefix, $stack, ?callable $resolver=NULL): SelectorInterface{
         $this->items[] = (new SelectorItem())->setPrefix($prefix)->setStack($stack, $resolver);
         return $this;
     }

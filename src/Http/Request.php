@@ -171,8 +171,8 @@ class Request extends Message implements ServerRequestInterface
         array $serverParams,
         StreamInterface $body,
         array $uploadedFiles = [],
-        MediaContentResolverInterface $requestMediaContentResolver=NULL,
-        BodyParserInterface $bodyParser=NULL
+        ?MediaContentResolverInterface $requestMediaContentResolver= null,
+        ?BodyParserInterface $bodyParser=null
     ) {
         $this->originalMethod = $this->filterMethod($method);
         $this->uri = $uri;

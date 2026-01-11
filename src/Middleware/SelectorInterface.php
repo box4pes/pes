@@ -33,7 +33,7 @@ interface SelectorInterface extends MiddlewareInterface {
      * @param type $stack Definice zásobníku Middelware.
      * @param \Pes\Middleware\callable $resolver
      */
-    public function addItem($prefix, $stack, callable $resolver=NULL): SelectorInterface;
+    public function addItem($prefix, $stack, ?callable $resolver=NULL): SelectorInterface;
 
     public function addItemsArray(array $items): SelectorInterface;
 }
