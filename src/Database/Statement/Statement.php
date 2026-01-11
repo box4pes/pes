@@ -55,7 +55,7 @@ class Statement extends \PDOStatement implements StatementInterface {
      * @param type $arg3
      * @return bool Success <p>Returns <b><code>TRUE</code></b> on success or <b><code>FALSE</code></b> on failure.</p>
      */
-    public function setFetchMode($fetchMode, $arg2 = null, $arg3 = null) {
+    public function setFetchMode($fetchMode, $arg2 = null, $arg3 = null): bool {
         // This thin wrapper is necessary to shield against the weird signature
         // of PDOStatement::setFetchMode(): even if the second and third
         // parameters are optional, PHP will not let us remove it from this
@@ -97,7 +97,7 @@ class Statement extends \PDOStatement implements StatementInterface {
      * @param type $cursor_offset
      * @return type
      */
-    public function fetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0) {
+    public function fetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0): mixed {
         $result = parent::fetch($fetch_style, $cursor_orientation, $cursor_offset);
         if ($this->logger) {
             $message = $this->getInstanceInfo().': fetch({fetch_style}, {cursor_orientation}, {cursor_offset})';
@@ -113,7 +113,7 @@ class Statement extends \PDOStatement implements StatementInterface {
         return $result;
     }
 
-    public function fetchAll($fetch_style = NULL, $fetch_argument = NULL, $ctor_args = NULL) {
+    public function fetchAll($fetch_style = NULL, $fetch_argument = NULL, $ctor_args = NULL): array {
         // This thin wrapper is necessary to shield against the weird signature
         // of PDOStatement::setFetchMode(): even if the second and third
         // parameters are optional, PHP will not let us remove it from this
@@ -155,7 +155,7 @@ class Statement extends \PDOStatement implements StatementInterface {
      * @return type
      * @throws ExecuteException
      */
-    public function execute($input_parameters = NULL) {
+    public function execute($input_parameters = NULL): bool {
         try {
         $success = parent::execute($input_parameters);
         } catch (\PDOException $pdoException) {
@@ -199,7 +199,7 @@ class Statement extends \PDOStatement implements StatementInterface {
      * @return type
      * @throws BindParamException
      */
-    public function bindParam($parameter, &$variable, $data_type=\PDO::PARAM_STR, $length=NULL, $driver_options=NULL) {
+    public function bindParam($parameter, &$variable, $data_type=\PDO::PARAM_STR, $length=NULL, $driver_options=NULL): bool {
         try {
             $success = parent::bindParam($parameter, $variable, $data_type, $length, $driver_options);
         } catch (\PDOException $pdoException) {
@@ -229,7 +229,7 @@ class Statement extends \PDOStatement implements StatementInterface {
      * @return bool
      * @throws BindValueException
      */
-    public function bindValue($parameter, $value, $data_type=\PDO::PARAM_STR) {
+    public function bindValue($parameter, $value, $data_type=\PDO::PARAM_STR): bool {
         try {
             $success = parent::bindValue ($parameter, $value, $data_type);
         } catch (\PDOException $pdoException) {

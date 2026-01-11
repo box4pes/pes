@@ -286,7 +286,7 @@ class Handler extends \PDO implements HandlerInterface {
 
 ######### PŘETÍŽENÉ METODY PDO ( metody PDO Interface) #######################################################################
 
-    public function beginTransaction() {
+    public function beginTransaction(): bool {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' beginTransaction()');
         }
@@ -294,7 +294,7 @@ class Handler extends \PDO implements HandlerInterface {
         return $ret;
     }
 
-    public function commit() {
+    public function commit(): bool {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' commit()');
         }
@@ -302,7 +302,7 @@ class Handler extends \PDO implements HandlerInterface {
         return $ret;
     }
 
-    public function exec($query) {
+    public function exec($query): int|false {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' exec({sqlStatement})',
                     ['sqlStatement'=>$query]);        }
@@ -310,7 +310,7 @@ class Handler extends \PDO implements HandlerInterface {
         return $ret;
     }
 
-    public function rollBack() {
+    public function rollBack(): bool {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' rollBack()');
         }
@@ -327,7 +327,7 @@ class Handler extends \PDO implements HandlerInterface {
      * @param type $driver_options
      * @return StatementInterface
      */
-    public function prepare($sqlStatement, $driver_options = array()) {
+    public function prepare($sqlStatement, $driver_options = array()): \PDOStatement|false {
         //TODO: Svoboda
 //        a - nutno zařídit, aby handler i statement byly vždy v režimu vyhazování výjimek
 //        b - zabalit prepare i query do try-catch bloku, odchytit PDOException a logovat něco jako:
@@ -383,7 +383,7 @@ class Handler extends \PDO implements HandlerInterface {
      * @param string $sqlStatement
      * @return type
      */
-    public function query(string $sqlStatement='') {
+    public function query(string $sqlStatement=''): \PDOStatement|false {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo()." query $sqlStatement");
         }        
