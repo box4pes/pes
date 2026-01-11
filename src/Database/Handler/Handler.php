@@ -380,21 +380,26 @@ class Handler extends \PDO implements HandlerInterface {
      * {@inheritDoc}
      * Pokud má handler nastaven logger (metodou setLogger()), je tento logger nastaven jako logger i vytvořenémmu objektu Statement. Statement objekt "zdědí" logger z Handleru.
      *
-     * @param string $sqlStatement
+     * @param string $query
      * @return type
      */
-    public function query(string $sqlStatement=''): \PDOStatement|false {
+    public function query(string $query='', ?int $fetchMode = null): \PDOStatement|false {
         if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo()." query $sqlStatement");
+                $this->logger->debug($this->getInstanceInfo()." query $query");
         }        
         /* @var $statement StatementInterface */
-        $statement =  parent::query($sqlStatement);
+        $statement =  parent::query($query);
         if ($statement) {
-            $message = $this->getInstanceInfo().' query({sqlStatement}). Vytvořen {statementInfo}.';
+            $message = $this->getInstanceInfo().' query({sqlStatement}). Vytvořen {statementInfo}. {fetchMode}';
+            $replace = ["fetchMode"=>"Nastaven default fetch mode $fetchMode."];
+            if (isset($fetchMode)) {
+                $statement->setFetchMode($fetchMode);
+                $replace +=[];
+            }
             if ($statement instanceof StatementInterface) {   // typ $prepStatement je dán nastavením atributů -> nemusí to být StatementInterface, ten je nastavován AttributeProviderDefault
-                $replace = ['sqlStatement'=>$sqlStatement, 'statementInfo'=>$statement->getInstanceInfo()];
+                $replace += ['sqlStatement'=>$query, 'statementInfo'=>$statement->getInstanceInfo()];
             } else {
-                $replace = ['sqlStatement'=>$sqlStatement, 'statementInfo'=> get_class($statement)];
+                $replace += ['sqlStatement'=>$query, 'statementInfo'=> get_class($statement)];
             }
             if ($this->logger) {
                 $this->logger->debug($message, $replace);
@@ -406,7 +411,7 @@ class Handler extends \PDO implements HandlerInterface {
         } else {
             if ($this->logger) {
                 $this->logger->warning($this->getInstanceInfo().' selhal query({sqlStatement}), nebyl vytcořen statement objekt.',
-                    ['sqlStatement'=>$sqlStatement]);
+                    ['sqlStatement'=>$query]);
             }
         }
         return $statement;
