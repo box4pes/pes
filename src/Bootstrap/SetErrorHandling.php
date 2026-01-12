@@ -228,7 +228,7 @@ function loggingErrorHandler($errno, $errstr, $errfile, $errline) {
             break;
         default:
             if (function_exists('erroNumbeRrToType')) {
-                $errType = erroNumbeRrToType($errno);
+                $errType = erroNumbeRrToType($errno);  //
             } else {
                 $errType = '??';
             }
