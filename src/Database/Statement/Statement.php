@@ -58,6 +58,25 @@ class Statement extends PDOStatement {  // implements StatementInterface {
      * @return bool Success <p>Returns <b><code>TRUE</code></b> on success or <b><code>FALSE</code></b> on failure.</p>
      */
     public function setFetchMode(int $mode, mixed ...$args): bool {
+        
+//        public setFetchMode(int $mode): bool
+//        public setFetchMode(int $mode = PDO::FETCH_COLUMN, int $colno): bool
+//        public setFetchMode(int $mode = PDO::FETCH_CLASS, string $class, ?array $constructorArgs = null): bool        
+        if (count($args) === 1 && is_int($args[0])) {
+            $result = parent::setFetchMode($args[0]);
+            $argsOk = true;
+        }
+        if (count($args) === 2 && is_int($args[0]) && is_int($args[1]) ) {
+            $result = parent::setFetchMode($args[0], $args[1]);
+            $argsOk = true;
+        }
+        if (count($args) === 3 && is_int($args[0]) && is_string($args[1]) && ((null === $args[2]) || is_array($args[2])) ) {
+            $result = parent::setFetchMode($args[0], $args[1], $args[2]);
+            $argsOk = true;
+        }
+        if (true !== $argsOk) {
+            throw new InvalidArgumentException('Neplatná kombinace argumentů');
+        }        
         $success = parent::setFetchMode($mode, $args);
         if ($this->logger) {
             $message = $this->getInstanceInfo().': setFetchMode({fetchMode})';
@@ -79,10 +98,10 @@ class Statement extends PDOStatement {  // implements StatementInterface {
      */
 //    public function fetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0): mixed {
     public function fetch(int $mode = PDO::FETCH_DEFAULT, int $cursorOrientation = PDO::FETCH_ORI_NEXT, int $cursorOffset = 0): mixed  {     
-        $result = parent::fetch($mode, $cursor_orientation, $cursor_offset);
+        $result = parent::fetch($mode, $cursorOrientation, $cursorOffset);
         if ($this->logger) {
-            $message = $this->getInstanceInfo().': fetch({fetch_style}, {cursor_orientation}, {cursor_offset})';
-            $context = ['fetch_style'=>$fetch_style ?? 'null', 'cursor_orientation'=>$cursor_orientation, 'cursor_offset'=>$cursor_offset];
+            $message = $this->getInstanceInfo().': fetch({mode}, {cursor_orientation}, {cursor_offset})';
+            $context = ['mode'=>$mode ?? 'null', 'cursor_orientation'=>$cursorOrientation, 'cursor_offset'=>$cursorOffset];
             if ($result===FALSE) {
                 $message .= ' Metoda '.__METHOD__.' nevrátila žádná data.';
             } else {
@@ -95,12 +114,33 @@ class Statement extends PDOStatement {  // implements StatementInterface {
     }
 
 //    public function fetchAll($fetch_style = NULL, $fetch_argument = NULL, $ctor_args = NULL): array {
-    public function fetchAll(int $mode = PDO::FETCH_DEFAULT, mixed ...$args): array {        
-            $result = parent::fetchAll($mode, $args);
-            if ($this->logger) {
-                $message = $this->getInstanceInfo().': fetchAll({fetch_style})';
-                $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
-            }
+    public function fetchAll(int $mode = PDO::FETCH_DEFAULT, mixed ...$args): array {
+        
+//        public fetchAll(int $mode = PDO::FETCH_DEFAULT): array
+//        public fetchAll(int $mode = PDO::FETCH_COLUMN, int $column): array
+//        public fetchAll(int $mode = PDO::FETCH_CLASS, string $class, ?array $constructorArgs): array
+//        public fetchAll(int $mode = PDO::FETCH_FUNC, callable $callback): array 
+        
+        if (count($args) === 1 && is_int($args[0])) {
+            $result = parent::fetchAll($args[0]);
+            $argsOk = true;
+        }
+        if (count($args) === 2 && is_int($args[0]) && (is_int($args[1]) || is_callable($args[1]))) {
+            $result = parent::fetchAll($args[0], $args[1]);
+            $argsOk = true;
+        }
+        if (count($args) === 3 && is_int($args[0]) && is_string($args[1]) && ((null === $args[2]) || is_array($args[2])) ) {
+            $result = parent::fetchAll($args[0], $args[1], $args[2]);
+            $argsOk = true;
+        }
+        if (true !== $argsOk) {
+            throw new InvalidArgumentException('Neplatná kombinace argumentů');
+        }
+        
+        if ($this->logger) {
+            $message = $this->getInstanceInfo().': fetchAll({fetch_style})';
+            $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
+        }
         if ($this->logger) {
             if ($result===FALSE) {
                 $message .= 'Metoda '.__METHOD__.' selhala.';
