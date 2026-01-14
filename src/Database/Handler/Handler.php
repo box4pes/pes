@@ -391,7 +391,39 @@ class Handler implements HandlerInterface { //extends PDO {   // //
      * @param string $query
      * @return type
      */
-    public function query(string $query='', ?int $fetchMode = null): \PDOStatement|false {
+//    public function query(string $query='', ?int $fetchMode = null): \PDOStatement|false {
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): PDOStatement|false {
+        
+//        public query(string $query, ?int $fetchMode = null): PDOStatement|false
+//        public query(string $query, ?int $fetchMode = PDO::FETCH_COLUMN, int $colno): PDOStatement|false
+//        public query(
+//            string $query,
+//            ?int $fetchMode = PDO::FETCH_CLASS,
+//            string $classname,
+//            array $constructorArgs
+//        ): PDOStatement|false
+//        public query(string $query, ?int $fetchMode = PDO::FETCH_INTO, object $object): PDOStatement|false        
+        
+        if (count($args) === 1 && is_int($args[0])) {
+            $result = parent::query($args[0]);
+            $argsOk = true;
+        }
+        if (count($args) === 2 && is_int($args[0]) && is_int($args[1]) ) {
+            $result = parent::query($args[0], $args[1]);
+            $argsOk = true;
+        }
+        if (count($args) === 3 && is_int($args[0]) && is_string($args[1]) && ((null === $args[2]) || is_array($args[2])) ) {
+            $result = parent::query($args[0], $args[1], $args[2]);
+            $argsOk = true;
+        }
+        if (count($args) === 4 && is_int($args[0]) && is_string($args[1]) && ((null === $args[2]) || is_array($args[2])) ) {
+            $result = parent::query($args[0], $args[1], $args[2], $args[3]);
+            $argsOk = true;
+        }
+        if (true !== $argsOk) {
+            throw new InvalidArgumentException('Neplatná kombinace argumentů');
+        }     
+        
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo()." query $query");
         }        
