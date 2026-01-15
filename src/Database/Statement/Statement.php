@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Pes\Database\Statement\Exception\ExecuteException;
 use Pes\Database\Statement\Exception\BindParamException;
 use Pes\Database\Statement\Exception\BindValueException;
+use Pes\Database\Statement\Exception\InvalidArgumentException;
 
 class Statement extends PDOStatement {  // implements StatementInterface {
 
