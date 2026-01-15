@@ -73,13 +73,17 @@ class Statement extends PDOStatement {  // implements StatementInterface {
             $success = parent::setFetchMode($mode, $args[0]);
             $argsOk = true;
         }
-        if ($count === 2 && is_string($args[0]) && ((null === $args[1]) || is_array($args[1])) ) {
+        if ($count === 1 && is_string($args[0]) ) {
+            $success = parent::setFetchMode($mode, $args[0]);
+            $argsOk = true;
+        }
+        if ($count === 2 && is_string($args[0]) && is_array($args[1]) ) {
             $success = parent::setFetchMode($mode, $args[0], $args[1]);
             $argsOk = true;
         }
         if (true !== $argsOk) {
             $argsPrint = print_r($args, true);
-            throw new InvalidArgumentException("Neplatná kombinace argumentů: count=$count mode='$mode' argumets=$argsPrint");
+            throw new InvalidArgumentException("Neplatná kombinace argumentů: mode='$mode' count=$count argumets=$argsPrint");
         }        
         if ($this->logger) {
             $message = $this->getInstanceInfo().': setFetchMode({fetchMode})';
