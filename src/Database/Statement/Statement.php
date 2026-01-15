@@ -77,7 +77,8 @@ class Statement extends PDOStatement {  // implements StatementInterface {
             $argsOk = true;
         }
         if (true !== $argsOk) {
-            throw new InvalidArgumentException('Neplatná kombinace argumentů');
+            $argsPrint = print_r($args, true);
+            throw new InvalidArgumentException("Neplatná kombinace argumentů mode='$mode' argumets=$argsPrint");
         }        
         if ($this->logger) {
             $message = $this->getInstanceInfo().': setFetchMode({fetchMode})';
