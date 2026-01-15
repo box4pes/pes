@@ -16,6 +16,7 @@ use Pes\Database\Handler\DsnProvider\DsnProviderInterface;
 use Pes\Database\Handler\OptionsProvider\OptionsProviderInterface;
 use Pes\Database\Handler\AttributesProvider\AttributesProviderInterface;
 use Pes\Database\Statement\StatementInterface;
+use PDOStatement;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -333,7 +334,8 @@ class Handler implements HandlerInterface { //extends PDO {   // //
      *
      * @param string $sqlStatement SQL příkaz s případnými pojmenovanými nebo otazníkem značenými paramatery (SQL template)
      * @param type $driver_options
-     * @return StatementInterface
+     * @return \PDOStatement|false
+     * @throws Exception\PrepareException
      */
     public function prepare($sqlStatement, $driver_options = array()): \PDOStatement|false {
         //TODO: Svoboda
@@ -350,7 +352,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
 
 
         try {
-            /* @var $prepStatement StatementInterface */
+            /* @var $prepStatement PDOStatement */
             $prepStatement = $this->connection->prepare($sqlStatement, $driver_options);
         } catch (\PDOException $pdoException) {
             if ($this->logger) {
@@ -384,14 +386,18 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         return $prepStatement;
     }
 
+
+//    public function query(string $query='', ?int $fetchMode = null): \PDOStatement|false {
     /**
      * {@inheritDoc}
      * Pokud má handler nastaven logger (metodou setLogger()), je tento logger nastaven jako logger i vytvořenémmu objektu Statement. Statement objekt "zdědí" logger z Handleru.
      *
      * @param string $query
-     * @return type
+     * @param int|null $fetchMode
+     * @param mixed $fetchModeArgs
+     * @return PDOStatement|false
+     * @throws InvalidArgumentException
      */
-//    public function query(string $query='', ?int $fetchMode = null): \PDOStatement|false {
     public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): PDOStatement|false {
         
 //        public query(string $query, ?int $fetchMode = null): PDOStatement|false
@@ -427,7 +433,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo()." query $query");
         }        
-        /* @var $statement StatementInterface */
+        /* @var $statement PDOStatement */
         $statement =  $this->connection->query($query, $fetchMode);
         if ($statement) {
             $message = $this->getInstanceInfo().' query({sqlStatement}). Vytvořen {statementInfo}. {fetchMode}';
