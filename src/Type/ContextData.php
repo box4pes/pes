@@ -60,25 +60,25 @@ class ContextData extends \ArrayObject implements ContextDataInterface {
         return $this->contextStatus;
     }
 
-    public function offsetGet($index) {
-        $g = parent::offsetGet($index);
+    public function offsetGet(mixed $key): mixed {
+        $g = parent::offsetGet($key);
         if ($this->debugMode) {
             if (isset($g)) {
-                $this->contextStatus[$index][] = self::GET_EXISTING_VALUE;
+                $this->contextStatus[$key][] = self::GET_EXISTING_VALUE;
             } else {
-                $this->contextStatus[$index][] = self::GET_NONEXISTING_VALUE;
+                $this->contextStatus[$key][] = self::GET_NONEXISTING_VALUE;
             }
         }
         return $g;
     }
 
-    public function offsetExists($index) {
-        $e = parent::offsetExists($index);
+    public function offsetExists(mixed $offset): bool {
+        $e = parent::offsetExists($key);
         if ($this->debugMode) {
             if ($e) {
-                $this->contextStatus[$index][] = self::IS_EXISTING_VALUE;
+                $this->contextStatus[$key][] = self::IS_EXISTING_VALUE;
             } else {
-                $this->contextStatus[$index][] = self::IS_NONEXISTING_VALUE;
+                $this->contextStatus[$key][] = self::IS_NONEXISTING_VALUE;
             }
         }
         return $e;
