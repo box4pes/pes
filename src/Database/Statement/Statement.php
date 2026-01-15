@@ -133,22 +133,22 @@ class Statement extends PDOStatement implements StatementInterface {
             $result = parent::fetchAll($mode);
             $argsOk = true;
         }        
-//        if ($count === 1 && is_int($args[0])) {
-//            $result = parent::fetchAll($mode, $args[0]);
-//            $argsOk = true;
-//        }
-//        if ($count === 1 && is_string($args[0])) {
-//            $result = parent::fetchAll($mode, $args[0]);
-//            $argsOk = true;
-//        }
-//        if ($count === 1 && is_callable($args[0])) {
-//            $result = parent::fetchAll($mode, $args[0]);
-//            $argsOk = true;
-//        }
-//        if ($count === 2 && is_string($args[0]) && is_array($args[1]) ) {
-//            $result = parent::fetchAll($args[0], $args[1]);
-//            $argsOk = true;
-//        }
+        if ($count === 1 && is_int($args[0])) {
+            $result = parent::fetchAll($mode, $args[0]);
+            $argsOk = true;
+        }
+        if ($count === 1 && is_string($args[0])) {
+            $result = parent::fetchAll($mode, $args[0]);
+            $argsOk = true;
+        }
+        if ($count === 1 && is_callable($args[0])) {
+            $result = parent::fetchAll($mode, $args[0]);
+            $argsOk = true;
+        }
+        if ($count === 2 && is_string($args[0]) && is_array($args[1]) ) {
+            $result = parent::fetchAll($args[0], $args[1]);
+            $argsOk = true;
+        }
         if ($argsOk == false) {
             $argsPrint = $args ? print_r($args, true) : '';
             throw new InvalidArgumentException("Neplatná kombinace argumentů: mode=$mode count=$count argumets=$argsPrint");
