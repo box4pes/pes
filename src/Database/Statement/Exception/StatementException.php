@@ -22,6 +22,8 @@ class StatementException extends \PDOException {
     public function __construct(string $message = "", int $code = 0, ?Throwable $previous = NULL) {
         if (isset($previous)) {
             parent::__construct($message.PHP_EOL.$previous->getTraceAsString(), $code, $previous);
+        } else {
+            parent::__construct($message, $code, $previous);
         }
     }
 }
