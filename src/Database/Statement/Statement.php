@@ -153,17 +153,17 @@ class Statement extends PDOStatement implements StatementInterface {
             $argsPrint = $args ? print_r($args, true) : '';
             throw new InvalidArgumentException("Neplatná kombinace argumentů: mode=$mode count=$count argumets=$argsPrint");
         }
-//        
-//        if ($this->logger) {
-//            $message = $this->getInstanceInfo().': fetchAll({mode}, {arguments})';
-//            $context = array('mode'=>$mode ?? 'null', 'arguments'=> implode(', ', $args));
-//            if ($result===FALSE) {
-//                $message .= 'Metoda '.__METHOD__.' selhala.';
-//            } else {
-//                $message .= 'Result má {count} prvků.';
-//                $context = array_merge($context, ['count'=>count($result)]);
-//            }
-//        }
+        
+        if ($this->logger) {
+            $message = $this->getInstanceInfo().': fetchAll({mode}, {arguments})';
+            $context = array('mode'=>$mode ?? 'null', 'arguments'=> implode(', ', $args));
+            if ($result===FALSE) {
+                $message .= 'Metoda '.__METHOD__.' selhala.';
+            } else {
+                $message .= 'Result má {count} prvků.';
+                $context = array_merge($context, ['count'=>count($result)]);
+            }
+        }
         return $result;
     }
 
