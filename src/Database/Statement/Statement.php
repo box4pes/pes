@@ -59,26 +59,25 @@ class Statement extends PDOStatement {  // implements StatementInterface {
      * @return bool Success <p>Returns <b><code>TRUE</code></b> on success or <b><code>FALSE</code></b> on failure.</p>
      */
     public function setFetchMode(int $mode, mixed ...$args): bool {
-        
+        $success = false;
 //        public setFetchMode(int $mode): bool
 //        public setFetchMode(int $mode = PDO::FETCH_COLUMN, int $colno): bool
 //        public setFetchMode(int $mode = PDO::FETCH_CLASS, string $class, ?array $constructorArgs = null): bool        
         if (count($args) === 1 && is_int($args[0])) {
-            $result = parent::setFetchMode($args[0]);
+            $success = parent::setFetchMode($args[0]);
             $argsOk = true;
         }
         if (count($args) === 2 && is_int($args[0]) && is_int($args[1]) ) {
-            $result = parent::setFetchMode($args[0], $args[1]);
+            $success = parent::setFetchMode($args[0], $args[1]);
             $argsOk = true;
         }
         if (count($args) === 3 && is_int($args[0]) && is_string($args[1]) && ((null === $args[2]) || is_array($args[2])) ) {
-            $result = parent::setFetchMode($args[0], $args[1], $args[2]);
+            $success = parent::setFetchMode($args[0], $args[1], $args[2]);
             $argsOk = true;
         }
         if (true !== $argsOk) {
             throw new InvalidArgumentException('Neplatná kombinace argumentů');
         }        
-        $success = parent::setFetchMode($mode, $args);
         if ($this->logger) {
             $message = $this->getInstanceInfo().': setFetchMode({fetchMode})';
             $substitutes = array('fetchMode'=>$mode);
