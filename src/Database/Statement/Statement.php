@@ -149,9 +149,10 @@ class Statement extends PDOStatement implements StatementInterface {
 //            $result = parent::fetchAll($args[0], $args[1]);
 //            $argsOk = true;
 //        }
-//        if ($argsOk == false) {
-//            $argsPrint = $args ? print_r($args, true) : '';
-//            throw new InvalidArgumentException("Neplatná kombinace argumentů: mode=$mode count=$count argumets=$argsPrint");        }
+        if ($argsOk == false) {
+            $argsPrint = $args ? print_r($args, true) : '';
+            throw new InvalidArgumentException("Neplatná kombinace argumentů: mode=$mode count=$count argumets=$argsPrint");
+        }
 //        
 //        if ($this->logger) {
 //            $message = $this->getInstanceInfo().': fetchAll({mode}, {arguments})';
