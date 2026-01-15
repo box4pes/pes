@@ -54,11 +54,11 @@ class Statement extends PDOStatement implements StatementInterface {
      * - public PDOStatement::setFetchMode ( int $mode = PDO::FETCH_INTO , object $object ) : bool
      *
      * @param int $mode <p>The fetch mode must be one of the <i>PDO::FETCH_&#42;</i> constants.</p>
-     * @param type $arg2
-     * @param type $arg3
-     * @return bool Success <p>Returns <b><code>TRUE</code></b> on success or <b><code>FALSE</code></b> on failure.</p>
+     * @param mixed $args
+     * @return true Vrací true nebo Exception
+     * @throws InvalidArgumentException
      */
-    public function setFetchMode(int $mode, mixed ...$args): bool {
+    public function setFetchMode(int $mode, mixed ...$args): true {
         $success = false;
         $argsOk = false;
         $count = count($args);
