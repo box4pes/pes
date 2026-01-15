@@ -129,10 +129,10 @@ class Statement extends PDOStatement implements StatementInterface {
 //        public fetchAll(int $mode = PDO::FETCH_CLASS, string $class, ?array $constructorArgs): array
 //        public fetchAll(int $mode = PDO::FETCH_FUNC, callable $callback): array 
         
-//        if ($count === 0) {
+        if ($count === 0) {
             $result = parent::fetchAll($mode);
-//            $argsOk = true;
-//        }        
+            $argsOk = true;
+        }        
 //        if ($count === 1 && is_int($args[0])) {
 //            $result = parent::fetchAll($mode, $args[0]);
 //            $argsOk = true;
