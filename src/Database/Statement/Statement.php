@@ -61,24 +61,25 @@ class Statement extends PDOStatement {  // implements StatementInterface {
     public function setFetchMode(int $mode, mixed ...$args): bool {
         $success = false;
         $argsOk = false;
+        $count = count($args);
 //        public setFetchMode(int $mode): bool
 //        public setFetchMode(int $mode = PDO::FETCH_COLUMN, int $colno): bool
 //        public setFetchMode(int $mode = PDO::FETCH_CLASS, string $class, ?array $constructorArgs = null): bool        
-        if (count($args) === 0) {
+        if ($count === 0) {
             $success = parent::setFetchMode($mode);
             $argsOk = true;
         }
-        if (count($args) === 1 && is_int($args[0]) ) {
+        if ($count === 1 && is_int($args[0]) ) {
             $success = parent::setFetchMode($mode, $args[0]);
             $argsOk = true;
         }
-        if (count($args) === 2 && is_string($args[0]) && ((null === $args[1]) || is_array($args[1])) ) {
+        if ($count === 2 && is_string($args[0]) && ((null === $args[1]) || is_array($args[1])) ) {
             $success = parent::setFetchMode($mode, $args[0], $args[1]);
             $argsOk = true;
         }
         if (true !== $argsOk) {
             $argsPrint = print_r($args, true);
-            throw new InvalidArgumentException("Neplatná kombinace argumentů mode='$mode' argumets=$argsPrint");
+            throw new InvalidArgumentException("Neplatná kombinace argumentů: count=$count mode='$mode' argumets=$argsPrint");
         }        
         if ($this->logger) {
             $message = $this->getInstanceInfo().': setFetchMode({fetchMode})';
