@@ -18,38 +18,38 @@ namespace Pes\Session\SaveHandler;
  */
 class PhpSaveHandler extends \SessionHandler implements \SessionHandlerInterface {
 
-    public function close() {
+    public function close(): bool {
         $close = parent::close();
         return $close;
     }
 
-    public function read($id) {
+    public function read(string $id): string|false {
         $read = parent::read($id);
         return $read;
     }
 
-    public function write($id, $data) {
+    public function write(string $id, string $data): bool {
         $write = parent::write($id, $data);
         return $write;
     }
 
-    public function create_sid() {
+    public function create_sid(): string {
         $sid = parent::create_sid();
         return $sid;
     }
 
-    public function destroy($session_id) {
-        $destroy = parent::destroy($session_id);
+    public function destroy(string $id): bool {
+        $destroy = parent::destroy($id);
         return $destroy;
     }
 
-    public function gc($maxlifetime) {
-        $gc = parent::gc($maxlifetime);
+    public function gc(int $max_lifetime): int|false {
+        $gc = parent::gc($max_lifetime);
         return $gc;
     }
 
-    public function open($save_path, $session_name) {
-        $open = parent::open($save_path, $session_name);
+    public function open(string $path, string $name): bool {
+        $open = parent::open($path, $name);
         return $open;
     }
 
