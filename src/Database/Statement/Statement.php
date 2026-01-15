@@ -60,19 +60,20 @@ class Statement extends PDOStatement {  // implements StatementInterface {
      */
     public function setFetchMode(int $mode, mixed ...$args): bool {
         $success = false;
+        $argsOk = false;
 //        public setFetchMode(int $mode): bool
 //        public setFetchMode(int $mode = PDO::FETCH_COLUMN, int $colno): bool
 //        public setFetchMode(int $mode = PDO::FETCH_CLASS, string $class, ?array $constructorArgs = null): bool        
-        if (count($args) === 1 && is_int($args[0])) {
-            $success = parent::setFetchMode($args[0]);
+        if (count($args) === 0) {
+            $success = parent::setFetchMode($mode);
             $argsOk = true;
         }
-        if (count($args) === 2 && is_int($args[0]) && is_int($args[1]) ) {
-            $success = parent::setFetchMode($args[0], $args[1]);
+        if (count($args) === 1 && is_int($args[0]) ) {
+            $success = parent::setFetchMode($mode, $args[0]);
             $argsOk = true;
         }
-        if (count($args) === 3 && is_int($args[0]) && is_string($args[1]) && ((null === $args[2]) || is_array($args[2])) ) {
-            $success = parent::setFetchMode($args[0], $args[1], $args[2]);
+        if (count($args) === 2 && is_string($args[0]) && ((null === $args[1]) || is_array($args[1])) ) {
+            $success = parent::setFetchMode($mode, $args[0], $args[1]);
             $argsOk = true;
         }
         if (true !== $argsOk) {
