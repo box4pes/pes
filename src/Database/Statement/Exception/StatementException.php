@@ -11,13 +11,15 @@
 
 namespace Pes\Database\Statement\Exception;
 
+use Throwable;
+
 /**
  * StatementException extends PDOException
  *
  * @author pes2704
  */
 class StatementException extends \PDOException {
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = NULL) {
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = NULL) {
         parent::__construct($message.PHP_EOL.$previous->getTraceAsString(), $code, $previous);
     }
 }
