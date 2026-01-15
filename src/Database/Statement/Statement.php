@@ -15,7 +15,7 @@ use Pes\Database\Statement\Exception\BindParamException;
 use Pes\Database\Statement\Exception\BindValueException;
 use Pes\Database\Statement\Exception\InvalidArgumentException;
 
-class Statement extends PDOStatement {  // implements StatementInterface {
+class Statement extends PDOStatement implements StatementInterface {
 
     /**
      * Čítač instancí pro logování
