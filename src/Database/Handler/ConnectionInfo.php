@@ -13,7 +13,7 @@ use Pes\Database\Handler\DbTypeEnum;
  *
  * @author pes2704
  */
-final class ConnectionInfo implements ConnectionInfoInterface, \Serializable {
+final class ConnectionInfo implements ConnectionInfoInterface {
 
     private $dbNick;
     private $dbType;

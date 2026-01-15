@@ -21,7 +21,7 @@ namespace Pes\Database\Handler;
  *
  * @author pes2704
  */
-class Account implements AccountInterface, \Serializable  {
+class Account implements AccountInterface  {
 
     private $name;
     private $pass;
