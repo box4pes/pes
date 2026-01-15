@@ -81,7 +81,7 @@ class Statement extends PDOStatement implements StatementInterface {
             $success = parent::setFetchMode($mode, $args[0], $args[1]);
             $argsOk = true;
         }
-        if (true !== $argsOk) {
+        if ($argsOk == false) {
             $argsPrint = print_r($args, true);
             throw new InvalidArgumentException("Neplatná kombinace argumentů: mode='$mode' count=$count argumets=$argsPrint");
         }        
@@ -129,40 +129,40 @@ class Statement extends PDOStatement implements StatementInterface {
 //        public fetchAll(int $mode = PDO::FETCH_CLASS, string $class, ?array $constructorArgs): array
 //        public fetchAll(int $mode = PDO::FETCH_FUNC, callable $callback): array 
         
-        if ($count === 0) {
+//        if ($count === 0) {
             $result = parent::fetchAll($mode);
-            $argsOk = true;
-        }        
-        if ($count === 1 && is_int($args[0])) {
-            $result = parent::fetchAll($mode, $args[0]);
-            $argsOk = true;
-        }
-        if ($count === 1 && is_string($args[0])) {
-            $result = parent::fetchAll($mode, $args[0]);
-            $argsOk = true;
-        }
-        if ($count === 1 && is_callable($args[0])) {
-            $result = parent::fetchAll($mode, $args[0]);
-            $argsOk = true;
-        }
-        if ($count === 2 && is_string($args[0]) && is_array($args[1]) ) {
-            $result = parent::fetchAll($args[0], $args[1]);
-            $argsOk = true;
-        }
-        if (true !== $argsOk) {
-            $argsPrint = print_r($args, true);
-            throw new InvalidArgumentException("Neplatná kombinace argumentů: mode='$mode' count=$count argumets=$argsPrint");        }
-        
-        if ($this->logger) {
-            $message = $this->getInstanceInfo().': fetchAll({mode}, {arguments})';
-            $context = array('mode'=>$mode ?? 'null', 'arguments'=> implode(', ', $args));
-            if ($result===FALSE) {
-                $message .= 'Metoda '.__METHOD__.' selhala.';
-            } else {
-                $message .= 'Result má {count} prvků.';
-                $context = array_merge($context, ['count'=>count($result)]);
-            }
-        }
+//            $argsOk = true;
+//        }        
+//        if ($count === 1 && is_int($args[0])) {
+//            $result = parent::fetchAll($mode, $args[0]);
+//            $argsOk = true;
+//        }
+//        if ($count === 1 && is_string($args[0])) {
+//            $result = parent::fetchAll($mode, $args[0]);
+//            $argsOk = true;
+//        }
+//        if ($count === 1 && is_callable($args[0])) {
+//            $result = parent::fetchAll($mode, $args[0]);
+//            $argsOk = true;
+//        }
+//        if ($count === 2 && is_string($args[0]) && is_array($args[1]) ) {
+//            $result = parent::fetchAll($args[0], $args[1]);
+//            $argsOk = true;
+//        }
+//        if ($argsOk == false) {
+//            $argsPrint = $args ? print_r($args, true) : '';
+//            throw new InvalidArgumentException("Neplatná kombinace argumentů: mode=$mode count=$count argumets=$argsPrint");        }
+//        
+//        if ($this->logger) {
+//            $message = $this->getInstanceInfo().': fetchAll({mode}, {arguments})';
+//            $context = array('mode'=>$mode ?? 'null', 'arguments'=> implode(', ', $args));
+//            if ($result===FALSE) {
+//                $message .= 'Metoda '.__METHOD__.' selhala.';
+//            } else {
+//                $message .= 'Result má {count} prvků.';
+//                $context = array_merge($context, ['count'=>count($result)]);
+//            }
+//        }
         return $result;
     }
 
