@@ -16,11 +16,13 @@ $bootstrapLoggerArray = [];
 // soubor BootstrapSet.php (jako vzor můžeze použít BootstrapSetDefault.php).
 // Nastavení v tomto souboru mají přednost před nastaveními v BootstrapDefaults.php (Použije se jako první).
 include "SetBootstrapSettingsPath.php";
-$bootstrapLoggerArray[] = "Bootstrap: include \"SetBootstrapSettingsPath.php\" define(\"PES_BOOTSTRAP_SETINGS_PATH\";".PES_BOOTSTRAP_SETINGS_PATH.")";
+$bootstrapLoggerArray[] = "Bootstrap: include SetBootstrapSettingsPath.php -> define(\"PES_BOOTSTRAP_SETINGS_PATH\";".PES_BOOTSTRAP_SETINGS_PATH.")";
 $bootstrapVar = getcwd()."/".PES_BOOTSTRAP_SETINGS_PATH."SetBootstrap.php";
 if (is_readable($bootstrapVar)) {
-    $bootstrapLoggerArray[] = "Bootstrap: include $bootstrapVar";
+    $bootstrapLoggerArray[] = "Bootstrap: file $bootstrapVar found, include SetBootstrap settings.";
     include $bootstrapVar;
+} else {
+    $bootstrapLoggerArray[] = "Bootstrap: no file $bootstrapVar found, don't include SetBootstrap settings.";
 }
 $bootstrapLoggerArray[] = "Bootstrap: include SetBootstrapDefaults.php";
 include "SetBootstrapDefaults.php";   // definuje nedefinované konstanty
