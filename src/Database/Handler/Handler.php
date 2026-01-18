@@ -410,20 +410,20 @@ class Handler implements HandlerInterface { //extends PDO {   // //
 //        ): PDOStatement|false
 //        public query(string $query, ?int $fetchMode = PDO::FETCH_INTO, object $object): PDOStatement|false        
         
-        if (count($args) === 1 && is_int($args[0])) {
-            $result = $this->connection->query($args[0]);
+        if (count($fetchModeArgs) === 1 && is_int($fetchModeArgs[0])) {
+            $result = $this->connection->query($fetchModeArgs[0]);
             $argsOk = true;
         }
-        if (count($args) === 2 && is_int($args[0]) && is_int($args[1]) ) {
-            $result = $this->connection->query($args[0], $args[1]);
+        if (count($fetchModeArgs) === 2 && is_int($fetchModeArgs[0]) && is_int($fetchModeArgs[1]) ) {
+            $result = $this->connection->query($fetchModeArgs[0], $fetchModeArgs[1]);
             $argsOk = true;
         }
-        if (count($args) === 3 && is_int($args[0]) && is_string($args[1]) && ((null === $args[2]) || is_array($args[2])) ) {
-            $result = $this->connection->query($args[0], $args[1], $args[2]);
+        if (count($fetchModeArgs) === 3 && is_int($fetchModeArgs[0]) && is_string($fetchModeArgs[1]) && ((null === $fetchModeArgs[2]) || is_array($fetchModeArgs[2])) ) {
+            $result = $this->connection->query($fetchModeArgs[0], $fetchModeArgs[1], $fetchModeArgs[2]);
             $argsOk = true;
         }
-        if (count($args) === 4 && is_int($args[0]) && is_string($args[1]) && ((null === $args[2]) || is_array($args[2])) ) {
-            $result = $this->connection->query($args[0], $args[1], $args[2], $args[3]);
+        if (count($fetchModeArgs) === 4 && is_int($fetchModeArgs[0]) && is_string($fetchModeArgs[1]) && ((null === $fetchModeArgs[2]) || is_array($fetchModeArgs[2])) ) {
+            $result = $this->connection->query($fetchModeArgs[0], $fetchModeArgs[1], $fetchModeArgs[2], $fetchModeArgs[3]);
             $argsOk = true;
         }
         if (true !== $argsOk) {
