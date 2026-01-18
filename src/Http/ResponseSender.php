@@ -15,7 +15,7 @@ class ResponseSender implements ResponseSenderInterface {
 
     private $logger;
 
-    public function __construct(LoggerInterface $logger=NULL) {
+    public function __construct(?LoggerInterface $logger=NULL) {
         $this->logger = $logger;
     }
 

@@ -17,16 +17,16 @@ use Psr\Container\ContainerInterface;
  */
 interface ViewFactoryInterface {
     public function setRendererContainer(ContainerInterface $rendererContainer): viewFactoryInterface;
-    public function view(iterable $data=null);
-    public function compositeView(iterable $data=null);
+    public function view(?iterable $data=null);
+    public function compositeView(?iterable $data=null);
     
     /**
      * Vytvoří View s nastaveným rendererem ImplodeRenderer a nstavenými daty, pokud byla zadána.
      * 
      * @param iterable $data
      */
-    public function implodeView(iterable $data=null);
-    public function phpTemplateView($templateFilename, iterable $data=null): View;
-    public function phpTemplateCompositeView($templateFilename, iterable $data=null): View;
+    public function implodeView(?iterable $data=null);
+    public function phpTemplateView($templateFilename, ?iterable $data=null): View;
+    public function phpTemplateCompositeView($templateFilename, ?iterable $data=null): View;
     public function nodeTemplateView(NodeInterface $node): View;
 }

@@ -74,5 +74,5 @@ interface PhpTemplateFunctionsInterface {
      * @param iterable $data
      * @param string $emptyDataTemplateFilename
      */
-    public function insertIf($condition=false, $templateFilename, iterable $data=[], $emptyDataTemplateFilename='');
+    public function insertIf($condition, $templateFilename, iterable $data=[], $emptyDataTemplateFilename='');
 }

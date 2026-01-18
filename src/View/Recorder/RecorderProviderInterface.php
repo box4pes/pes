@@ -19,7 +19,7 @@ interface RecorderProviderInterface {
     /**
      * @return VariablesUsageRecorder
      */
-    public function provideRecorder($index, VariablesUsageRecorderInterface $parentRecorder = NULL):VariablesUsageRecorderInterface;
+    public function provideRecorder($index, ?VariablesUsageRecorderInterface $parentRecorder = NULL):VariablesUsageRecorderInterface;
     
     /**
      * @return VariablesUsageRecorderInterface array of

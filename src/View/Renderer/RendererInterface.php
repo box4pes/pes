@@ -13,5 +13,5 @@ namespace Pes\View\Renderer;
  * @author pes2704
  */
 interface RendererInterface {
-    public function render(iterable $data=NULL);
+    public function render(?iterable $data=NULL);
 }

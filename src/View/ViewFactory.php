@@ -35,17 +35,17 @@ class ViewFactory implements ViewFactoryInterface {
         return $this;
     }
     
-    public function view(iterable $data = null) {
+    public function view(?iterable $data = null) {
         $view = new View();
         $this->setDataAndRendererContainer($view, $data);
     }
     
-    public function compositeView(iterable $data = null) {
+    public function compositeView(?iterable $data = null) {
         $view = new CompositeView();
         $this->setDataAndRendererContainer($view, $data);
     }
     
-    public function implodeView(iterable $data = null) {
+    public function implodeView(?iterable $data = null) {
         $view = new View();
         if (isset($data)) {
             $view->setData($data);
@@ -66,14 +66,14 @@ class ViewFactory implements ViewFactoryInterface {
      * @param type $data
      * @return View
      */
-    public function phpTemplateView($templateFilename, iterable $data=null): View {
+    public function phpTemplateView($templateFilename, ?iterable $data=null): View {
         $template = new PhpTemplate($templateFilename);  // NoTemplateFileException
         $view = (new View())->setTemplate($template);
         $this->setDataAndRendererContainer($view, $data);
         return $view;
     }
 
-    public function phpTemplateCompositeView($templateFilename, iterable $data=null): View {
+    public function phpTemplateCompositeView($templateFilename, ?iterable $data=null): View {
         $template = new PhpTemplate($templateFilename);
         $view = (new CompositeView())->setTemplate($template);
         $this->setDataAndRendererContainer($view, $data);
@@ -94,7 +94,7 @@ class ViewFactory implements ViewFactoryInterface {
         return $view;
     }
     
-    private function setDataAndRendererContainer($view, iterable $data=null) {
+    private function setDataAndRendererContainer($view, ?iterable $data=null) {
         if(isset($data)) {
             $view->setData($data);
         }

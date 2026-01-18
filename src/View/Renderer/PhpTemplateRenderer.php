@@ -93,7 +93,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * @param iterable $data
      * @return string
      */
-    public function render(iterable $data=NULL) {
+    public function render(?iterable $data=NULL) {
 
         // unused vypnuto zde a na konci includeToProtectedScope()
         //        if (isset($recorderProvider)) {

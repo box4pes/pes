@@ -16,6 +16,8 @@ use Psr\Container\ContainerInterface;
 use Pes\View\Template\TemplateInterface;
 use Pes\Type\ContextDataInterface;
 
+use Pes\View\ViewInterface;
+
 /**
  *
  * @author pes2704
@@ -36,14 +38,14 @@ interface ViewInterface {
      * Nastaví objekt renderer kontejner.
      *
      * @param ContainerInterface $rendererContainer
-     * @return \Pes\View\ViewInterface
+     * @return ViewInterface
      */
     public function setRendererContainer(ContainerInterface $rendererContainer): ViewInterface;
 
     /**
      * Nastaví renderer. Pokud je nastaven, je použit při renderování přednostně před rendererem z kontejneru nebo default rendererem templaty.
      * @param RendererInterface $renderer
-     * @return \Pes\View\ViewInterface
+     * @return ViewInterface
      */
     public function setRenderer(RendererInterface $renderer): ViewInterface;
 
@@ -64,7 +66,7 @@ interface ViewInterface {
      * Nastaví template objekt pro renderování. Tato template bude použita metodou render().
      *
      * @param TemplateInterface $template
-     * @return \Pes\View\ViewInterface
+     * @return ViewInterface
      */
     public function setTemplate(TemplateInterface $template): ViewInterface;
 

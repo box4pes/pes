@@ -41,7 +41,7 @@ class RecorderProvider implements RecorderProviderInterface {
      * @param VariablesUsageRecorderInterface $parentRecorder
      * @return VariablesUsageRecorderInterface
      */
-    public function provideRecorder($index, VariablesUsageRecorderInterface $parentRecorder = NULL):VariablesUsageRecorderInterface {
+    public function provideRecorder($index, ?VariablesUsageRecorderInterface $parentRecorder = NULL):VariablesUsageRecorderInterface {
         $recorder = new VariablesUsageRecorder($index, $this->recordersRrecordLevel);
         if ($parentRecorder AND $this->recorders->offsetExists($parentRecorder)) {
             $this->recorders->attach($recorder, $parentRecorder);

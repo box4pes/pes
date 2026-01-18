@@ -121,7 +121,7 @@ class Response extends Message implements ResponseInterface
      * @param StreamInterface|null  $body    The response body.
      * @param string                $reasonPhrase Non standard reason phrase.
      */
-    public function __construct($status = 200, HeadersInterface $headers = null, StreamInterface $body = null, string $reasonPhrase = '')
+    public function __construct($status = 200, ?HeadersInterface $headers = null, ?StreamInterface $body = null, string $reasonPhrase = '')
     {
         if (!$this->isValidStatusCode($status)) {
             throw new InvalidArgumentException('Invalid HTTP status code');
