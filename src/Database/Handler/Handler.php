@@ -203,8 +203,8 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         foreach ($exception->getTrace() as $trace) {
 
             // pro výpis argumentů používá metodu self::varPrint() - volá array_map na všechny argumenty s metodou self::varPrint() jako mapovací funkcí
-            @$str2 .= '#'.$i.' '.$trace['file'].', line '.$trace['line'].': '.$trace['class'].$trace['type'].$trace['function']
-                 .'('.\implode(',', array_map('self::varPrint', $trace['args'])).')'.\PHP_EOL;
+            $str2 .= '#'.$i.' '.$trace['file'] ?? '(no file)'.', line '.$trace['line'] ?? '(no line)'.': '.$trace['class']??'(no class)'.$trace['type']??'(no type)'.$trace['function']??'(no function)'
+                 .'('.\implode(',', array_map('self::varPrint', $trace['args']??[])).')'.\PHP_EOL;
             $i++;
             // pokud jsou parametry handleru injektovány z kontejneru, pak výpis proměnných nad úroveň #1 vypisuje obsah kontejneru - log je obrovský
             if ($i>3) {
