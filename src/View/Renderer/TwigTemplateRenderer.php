@@ -30,7 +30,7 @@ class TwigTemplateRenderer extends TemplateRendererAbstract implements TwigTempl
      * @param iterable $data Pole nebo objekt Traversable
      * @return string
      */
-    public function render(iterable $data=NULL) {
+    public function render(?iterable $data=NULL) {
         return $this->template->render($data);
     }
 }

@@ -30,7 +30,7 @@ class PhpTalRenderer extends TemplateRendererAbstract implements PhpTalRendererI
      * @param mixed $data Pole nebo objekt Traversable nebo Closure, kterí vrací pole nebo objekt Traversable
      * @return string
      */
-    public function render(iterable $data=NULL) {
+    public function render(?iterable $data=NULL) {
         if ($data) {
             foreach($data as $klic => $hodnota) {
                 $this->template->$klic = $hodnota;

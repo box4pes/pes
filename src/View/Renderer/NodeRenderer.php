@@ -66,7 +66,7 @@ class NodeRenderer implements NodeRendererInterface, RendererRecordableInterface
      * @param mixed $data
      * @return string
      */
-    public function render( $data=NULL) {
+    public function render(?iterable $data=NULL) {
         return $this->renderNode($this->template->getNode($data, $this->classMap));
     }
 
