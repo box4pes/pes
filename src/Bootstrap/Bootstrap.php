@@ -22,7 +22,7 @@ if (is_readable($bootstrapVar)) {
     $bootstrapLoggerArray[] = "Bootstrap: file $bootstrapVar found, include SetBootstrap settings.";
     include $bootstrapVar;
 } else {
-    $bootstrapLoggerArray[] = "Bootstrap: no file $bootstrapVar found, don't include SetBootstrap settings.";
+    $bootstrapLoggerArray[] = "Bootstrap: no file $bootstrapVar found, don't include custom project SetBootstrap settings.";
 }
 $bootstrapLoggerArray[] = "Bootstrap: include SetBootstrapDefaults.php";
 include "SetBootstrapDefaults.php";   // definuje nedefinované konstanty
