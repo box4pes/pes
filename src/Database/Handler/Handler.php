@@ -306,7 +306,15 @@ class Handler implements HandlerInterface { //extends PDO {   // //
     public function inTransaction(): bool {
         return $this->connection->inTransaction();
     }
-
+    
+    public function lastInsertId(?string $name = null): string|false {
+        $ret = $this->connection->lastInsertId($name);
+        if ($this->logger) {
+            $this->logger->debug($this->getInstanceInfo().' lastInsertId({name})', ['name'=>$name ?? 'null']);
+        }
+        return $ret;
+    }
+    
     public function commit(): bool {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' commit()');
