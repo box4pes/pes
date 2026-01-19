@@ -302,6 +302,10 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         $ret = $this->connection->beginTransaction();
         return $ret;
     }
+    
+    public function inTransaction(): bool {
+        return $this->connection->inTransaction();
+    }
 
     public function commit(): bool {
         if ($this->logger) {
