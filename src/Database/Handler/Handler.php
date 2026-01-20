@@ -24,13 +24,11 @@ use Psr\Log\LoggerAwareInterface;
 class Handler implements HandlerInterface { //extends PDO {   // // 
 
     /**
-     * 
      * @var PDO
      */
     private $connection;
     
     /**
-     *
      * @var LoggerInterface
      */
     protected $logger;
@@ -183,7 +181,15 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         }
         return var_export($dump, TRUE);
     }
+    
+    private function setStatementLogger($statement) {
+        if ($statement instanceof LoggerAwareInterface) {
+            $statement->setLogger($this->logger);
+        }        
+    }
 
+    ########################################################
+    
     /**
      * Bezpečnostní exception handler obsluhuje pouze výjimky vyhozené v konstruktoru handleru - tedy výjimky při instancování PDO.
      *
@@ -325,8 +331,8 @@ class Handler implements HandlerInterface { //extends PDO {   // //
 
     public function exec($query): int|false {
         if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().' exec({sqlStatement})',
-                    ['sqlStatement'=>$query]);        }
+                $this->logger->debug($this->getInstanceInfo().' exec({query})',
+                    ['query'=>$query]);        }
         $ret = $this->connection->exec($query);
         return $ret;
     }
@@ -342,14 +348,16 @@ class Handler implements HandlerInterface { //extends PDO {   // //
 
     /**
      * {@inheritDoc}
+     * 
      * Pokud má handler nastaven logger (metodou setLogger()), je tento logger nastaven jako logger i vytvořenémmu objektu Statement. Statement objekt "zdědí" logger z Handleru.
      *
-     * @param string $sqlStatement SQL příkaz s případnými pojmenovanými nebo otazníkem značenými paramatery (SQL template)
-     * @param type $driver_options
+     * @param string $query SQL příkaz s případnými pojmenovanými nebo otazníkem značenými placeholdery (SQL template)
+     * @param array $options
      * @return \PDOStatement|false
      * @throws Exception\PrepareException
      */
-    public function prepare($sqlStatement, $driver_options = array()): \PDOStatement|false {
+    public function prepare($query, array $options = []): \PDOStatement|false {
+        // 		public function prepare(string $query, array $options = []): \PDOStatement|false
         //TODO: Svoboda
 //        a - nutno zařídit, aby handler i statement byly vždy v režimu vyhazování výjimek
 //        b - zabalit prepare i query do try-catch bloku, odchytit PDOException a logovat něco jako:
@@ -365,11 +373,11 @@ class Handler implements HandlerInterface { //extends PDO {   // //
 
         try {
             /* @var $prepStatement PDOStatement */
-            $prepStatement = $this->connection->prepare($sqlStatement, $driver_options);
+            $prepStatement = $this->connection->prepare($query, $options);
         } catch (\PDOException $pdoException) {
             if ($this->logger) {
                 $this->logger->error($this->getInstanceInfo().' selhal prepare({sqlStatement}), nebyl vytvořen statement objekt.',
-                        ['sqlStatement'=>$sqlStatement]);
+                        ['sqlStatement'=>$query]);
                 $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
                 $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
             }
@@ -380,17 +388,13 @@ class Handler implements HandlerInterface { //extends PDO {   // //
             if ($this->logger) {
                 if (isset($prepStatement)) {
                     if ($prepStatement instanceof StatementInterface) {   // typ $prepStatement je dán nastavením atributů -> nemusí to být StatementInterface, ten je nastavován AttributeProviderDefault
-                        $replace = ['sqlStatement'=>$sqlStatement, 'driver_options'=>$driver_options, 'statementInfo'=>$prepStatement->getInstanceInfo()];
+                        $replace = ['sqlStatement'=>$query, 'driver_options'=>$options, 'statementInfo'=>$prepStatement->getInstanceInfo()];
                     } else {
-                        $replace = ['sqlStatement'=>$sqlStatement, 'driver_options'=>$driver_options, 'statementInfo'=> get_class($prepStatement)];
+                        $replace = ['sqlStatement'=>$query, 'driver_options'=>$options, 'statementInfo'=> get_class($prepStatement)];
                     }
                     $this->logger->debug($this->getInstanceInfo().': prepare({sqlStatement}, {driver_options}). Vytvořen {statementInfo}.',
                         $replace);
-
-                    // !!! pokud má handler nastaven logger, Statement objekt ho "zdědí"
-                    if ($prepStatement instanceof LoggerAwareInterface) {
-                        $prepStatement->setLogger($this->logger);
-                    }
+                    $this->setStatementLogger($prepStatement);
                 }
             }
 
@@ -398,8 +402,6 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         return $prepStatement;
     }
 
-
-//    public function query(string $query='', ?int $fetchMode = null): \PDOStatement|false {
     /**
      * {@inheritDoc}
      * Pokud má handler nastaven logger (metodou setLogger()), je tento logger nastaven jako logger i vytvořenémmu objektu Statement. Statement objekt "zdědí" logger z Handleru.
@@ -414,12 +416,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         
 //        public query(string $query, ?int $fetchMode = null): PDOStatement|false
 //        public query(string $query, ?int $fetchMode = PDO::FETCH_COLUMN, int $colno): PDOStatement|false
-//        public query(
-//            string $query,
-//            ?int $fetchMode = PDO::FETCH_CLASS,
-//            string $classname,
-//            array $constructorArgs
-//        ): PDOStatement|false
+//        public query(string $query, ?int $fetchMode = PDO::FETCH_CLASS, string $classname, array $constructorArgs): PDOStatement|false
 //        public query(string $query, ?int $fetchMode = PDO::FETCH_INTO, object $object): PDOStatement|false        
         
         if (count($fetchModeArgs) === 1 && is_int($fetchModeArgs[0])) {
@@ -439,11 +436,11 @@ class Handler implements HandlerInterface { //extends PDO {   // //
             $argsOk = true;
         }
         if (true !== $argsOk) {
-            throw new InvalidArgumentException('Neplatná kombinace argumentů');
+            throw new InvalidArgumentException('Neplatná kombinace argumentů metody query.');
         }     
         
         if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo()." query $query");
+                $this->logger->debug($this->getInstanceInfo()." query ($query)");
         }        
         /* @var $statement PDOStatement */
         $statement =  $this->connection->query($query, $fetchMode);
@@ -460,10 +457,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
             }
             if ($this->logger) {
                 $this->logger->debug($message, $replace);
-                  // !!! pokud má handler nasteven logger, Statement objekt ho "zdědí"
-                if ($statement instanceof LoggerAwareInterface) {
-                    $statement->setLogger($this->logger);
-                }
+                $this->setStatementLogger($statement);
             }
         } else {
             if ($this->logger) {
