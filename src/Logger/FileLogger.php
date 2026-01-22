@@ -167,7 +167,7 @@ private static function getExcLogMessage( \Throwable $e) {
      * @param array $context Pole náhrad.
      * @return null
      */
-    public function log($level, $message, array $context = array()) {
+    public function log($level = 'no level', $message = 'no message', array $context = array()) {
         $time = date("Y-m-d H:i:s");
         $completedMessage = isset($context) ? Template::interpolate($message, $context) : $message;
         // https://stackoverflow.com/questions/42013372/remove-control-characters-from-string-in-php
