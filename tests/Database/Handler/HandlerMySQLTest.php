@@ -14,6 +14,7 @@ use Pes\Database\Handler\Handler;
 use Pes\Database\Statement\StatementInterface;
 
 use Pes\Logger\FileLogger;
+use Psr\Log\LoggerInterface;
 
 class AttributesProviderForTest extends AttributesProvider {
 
@@ -41,7 +42,7 @@ class StatementForTest extends \PDOStatement implements StatementInterface {
         return 'instance objektu StatementForTest';
     }
 
-    public function setLogger(\Psr\Log\LoggerInterface $logger) {
+    setLogger(LoggerInterface $logger): void {
         $this->logger = $logger;
     }
 }

@@ -57,9 +57,9 @@ class AttributesProviderMysqlTest extends TestCase {
         $optionsProvider = new OptionsProviderMysql();
         $logger = new NullLogger();
 
-        //test vrcení BASE_STATEMENT_TYPE místo PDO
+        //test vrácení BASE_STATEMENT_TYPE místo PDO
         //set s použitím AttributesProviderDefaultt - měl by vracet default typ AttributesProviderDefault::BASE_STATEMENT_TYPE, t.j. 'Pes\Database\Statement\Statement'
-        $attributesProviderDefault = new AttributesProvider($logger);
+        $attributesProviderDefault = new AttributesProvider();
         $dbh = new Handler($user, $connectionInfoUtf8, $dsnProvider, $optionsProvider, $attributesProviderDefault, $logger);
         $stmt = $dbh->query('SELECT name, surname FROM person');
         $this->assertNotFalse($stmt, 'Není statement z Handler->query.');

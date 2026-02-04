@@ -10,12 +10,14 @@ namespace Pes\Database\Statement;
 use PDO;
 use PDOStatement;
 use Psr\Log\LoggerInterface;
+
+use Psr\Log\LoggerAwareInterface;
 use Pes\Database\Statement\Exception\ExecuteException;
 use Pes\Database\Statement\Exception\BindParamException;
 use Pes\Database\Statement\Exception\BindValueException;
 use Pes\Database\Statement\Exception\InvalidArgumentException;
 
-class Statement extends PDOStatement implements StatementInterface {
+class Statement extends PDOStatement implements StatementInterface, LoggerAwareInterface {
 
     /**
      * Čítač instancí pro logování
@@ -34,7 +36,7 @@ class Statement extends PDOStatement implements StatementInterface {
         // bez toho nefunguje PDO::setAttribute(PDO::ATTR_STATEMENT_CLASS, ...
     }
 
-    public function setLogger(LoggerInterface $logger) {
+    public function setLogger(LoggerInterface $logger): void {
         $this->logger = $logger;
     }
 
@@ -85,13 +87,9 @@ class Statement extends PDOStatement implements StatementInterface {
             $argsPrint = print_r($args, true);
             throw new InvalidArgumentException("Neplatná kombinace argumentů: mode='$mode' count=$count argumets=$argsPrint");
         }        
-        if ($this->logger) {
-            $message = $this->getInstanceInfo().': setFetchMode({fetchMode})';
-            $substitutes = array('fetchMode'=>$mode);
-            $this->logger->debug($message, $substitutes);
-        }
-        if (!$success AND $this->logger) {
-            $this->logger->warning(' Metoda '.__METHOD__.' selhala.');
+        $this->logger?->debug($this->getInstanceInfo().': setFetchMode({fetchMode})', array('fetchMode'=>$mode));
+        if (!$success) {
+            $this->logger?->warning(' Metoda '.__METHOD__.' selhala.');
         }
         return $success;
     }
@@ -111,9 +109,14 @@ class Statement extends PDOStatement implements StatementInterface {
             $context = ['mode'=>$mode ?? 'null', 'cursor_orientation'=>$cursorOrientation, 'cursor_offset'=>$cursorOffset];
             if ($result===FALSE) {
                 $message .= ' Metoda '.__METHOD__.' nevrátila žádná data.';
-            } else {
-                $message .= ' Result má {count} prvků.';
+            } elseif(is_array($result)) {
+                $message .= ' Result je array {count} prvků.';
                 $context = array_merge($context, ['count'=>count($result)]);
+            } elseif (is_object($result)) {
+                $message .= ' Result je objekt {type}.';
+                $context = array_merge($context, ['type'=>gettype($result)]);
+            } else {
+                $message .= ' Metoda '.__METHOD__.' vratila neznámý typ dat.';                
             }
             $this->logger->debug($message, $context);
         }
@@ -177,26 +180,15 @@ class Statement extends PDOStatement implements StatementInterface {
         try {
         $success = parent::execute($params);
         } catch (\PDOException $pdoException) {
-            if ($this->logger) {
-                $this->logger->error($this->getInstanceInfo().': Selhal execute({input_parameters}).',
-                        ['input_parameters'=>$params ?? 'null']);
-                $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
-                $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
-                $errorInfo = $this->errorInfo();
-                $message = " Výpis errorInfo: ".print_r($errorInfo, TRUE);
-                $this->logger->error($message);
-            }
+            $this->logger?->error($this->getInstanceInfo().': Selhal execute({input_parameters}).', ['input_parameters'=>$params ?? 'null']);
+            $this->logger?->error(" Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.", ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
+            $this->logger?->error(" Výpis errorInfo: ".print_r($this->errorInfo(), TRUE));
             throw new ExecuteException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
-            if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().': execute({input_parameters}).',
-                    ['input_parameters'=>$params]);
-            }
-
+            $this->logger?->debug($this->getInstanceInfo().': execute({input_parameters}).', ['input_parameters'=>$params]);
         }
-        if($this->logger AND !$success) {
-                $message = ' Metoda '.__METHOD__.' selhala bez vyhození výjimky. Není nastaven mod PDO::ERRMODE_EXCEPTION nebo nastala systémová chyba.';
-                $this->logger->warning($message);
+        if(!$success) {
+            $this->logger?->warning(' Metoda '.__METHOD__.' selhala bez vyhození výjimky. Není nastaven mod PDO::ERRMODE_EXCEPTION nebo nastala systémová chyba.');
         }
         return $success;
     }
@@ -222,16 +214,11 @@ class Statement extends PDOStatement implements StatementInterface {
         try {
             $success = parent::bindParam($param, $var, $type, $maxLength, $driverOptions);
         } catch (\PDOException $pdoException) {
-            if ($this->logger) {
-                $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
-                $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
-            }
+            $this->logger?->error(" Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.", ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
             throw new BindParamException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
-            if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().': bindParam({parameter}, {variable}, {data_type}, {length}, {driver_options})',
-                    ['parameter'=>$param, 'variable'=>$var, 'data_type'=>$type, 'length'=>$maxLength=NULL, 'driver_options'=>$driverOptions]);
-            }
+            $this->logger?->debug($this->getInstanceInfo().': bindParam({parameter}, {variable}, {data_type}, {length}, {driver_options})',
+                ['parameter'=>$param, 'variable'=>$var, 'data_type'=>$type, 'length'=>$maxLength=NULL, 'driver_options'=>$driverOptions]);
         }
         return $success;
     }
@@ -253,16 +240,11 @@ class Statement extends PDOStatement implements StatementInterface {
         try {
             $success = parent::bindValue ($param, $value, $type);
         } catch (\PDOException $pdoException) {
-            if ($this->logger) {
-                $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
-                $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
-            }
+            $this->logger?->error(" Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.", ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
             throw new BindValueException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
-            if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().': bindValue({parameter}, {value}, {data_type})',
-                    ['parameter'=>$param, 'value'=>$value, 'data_type'=>$type]);
-            }
+            $this->logger?->debug($this->getInstanceInfo().': bindValue({parameter}, {value}, {data_type})',
+                ['parameter'=>$param, 'value'=>$value, 'data_type'=>$type]);
         }
         return $success;
     }

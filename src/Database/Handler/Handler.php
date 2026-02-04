@@ -10,13 +10,15 @@
 namespace Pes\Database\Handler;
 
 use PDO;
+use PDOStatement;
+
 use Pes\Database\Handler\AccountInterface;
 use Pes\Database\Handler\ConnectionInfoInterface;
 use Pes\Database\Handler\DsnProvider\DsnProviderInterface;
 use Pes\Database\Handler\OptionsProvider\OptionsProviderInterface;
 use Pes\Database\Handler\AttributesProvider\AttributesProviderInterface;
 use Pes\Database\Statement\StatementInterface;
-use PDOStatement;
+use Pes\Database\Handler\Exception\QueryInvalidArgumentException;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -85,7 +87,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
                                 DsnProviderInterface $dsnProvider,
                                 OptionsProviderInterface $optionsProvider,
                                 AttributesProviderInterface $attributesProvider,
-                                LoggerInterface $constructorExceptionsLogger
+                                ?LoggerInterface $constructorExceptionsLogger
             ) {
         $this->handlerNumber = ++self::$handlerCounter;
         self::$safeExceptionHandlerLogger = $constructorExceptionsLogger;  // pokud dojde k výjimce v konstruktoru, není objekt, není $this
@@ -121,7 +123,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         unset($userPassValue);
         // po volání PDO vrátí zpět předchozí exception handler
         restore_exception_handler();
-        $this->logger->debug("Vytvořen database handler {info}, name {name}, host {host}.", ['info'=>$this->getInstanceInfo(), 'name'=>$this->dbName, 'host'=>$this->dbHost]);
+        $this->logger?->debug("Vytvořen database handler {info}, name {name}, host {host}.", ['info'=>$this->getInstanceInfo(), 'name'=>$this->dbName, 'host'=>$this->dbHost]);
         if ($attributesProvider) {
             $this->setAttributes($attributesProvider->getAttributesArray());  // loguje se v metodě
         }
@@ -141,9 +143,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
             $succ = $this->connection->setAttribute($key, $value);
             if (!$succ) {
                 $dump = $this->dumpPDOParameters();
-                if ($this->logger) {
-                    $this->logger->alert($this->getInstanceInfo().' Selhalo nastavení hodnoty atributu handleru (PDO): {key} na hodnotu {value}', array('key'=>$key, 'value'=>print_r($dump, TRUE)));
-                }
+                $this->logger?->alert($this->getInstanceInfo().' Selhalo nastavení hodnoty atributu handleru (PDO): {key} na hodnotu {value}', array('key'=>$key, 'value'=>print_r($dump, TRUE)));
                 throw new \RuntimeException($this->getInstanceInfo().' Selhalo nastavení atributu '.$key.'. '.$dump);
             }
         }
@@ -226,7 +226,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
 
 ######## metody HandlerInterface ######################################################
 
-    public function setLogger(LoggerInterface $logger) {
+    public function setLogger(LoggerInterface $logger): void {
         $this->logger = $logger;
     }
     
@@ -329,7 +329,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         return $ret;
     }
 
-    public function exec($query): int|false {
+    public function exec(string $query): int|false {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' exec({query})',
                     ['query'=>$query]);        }
@@ -385,17 +385,15 @@ class Handler implements HandlerInterface { //extends PDO {   // //
 //            throw new HandlerFailureException($einfo[2].PHP_EOL.". Nevznikl PDO statement z sql příkazu: $sql", $einfo[1]);
             throw new Exception\PrepareException($einfo[2]." Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
-            if ($this->logger) {
-                if (isset($prepStatement)) {
-                    if ($prepStatement instanceof StatementInterface) {   // typ $prepStatement je dán nastavením atributů -> nemusí to být StatementInterface, ten je nastavován AttributeProviderDefault
-                        $replace = ['sqlStatement'=>$query, 'driver_options'=>$options, 'statementInfo'=>$prepStatement->getInstanceInfo()];
-                    } else {
-                        $replace = ['sqlStatement'=>$query, 'driver_options'=>$options, 'statementInfo'=> get_class($prepStatement)];
-                    }
-                    $this->logger->debug($this->getInstanceInfo().': prepare({sqlStatement}, {driver_options}). Vytvořen {statementInfo}.',
-                        $replace);
-                    $this->setStatementLogger($prepStatement);
+            if ($this->logger && isset($prepStatement)) {
+                if ($prepStatement instanceof StatementInterface) {   // typ $prepStatement je dán nastavením atributů -> nemusí to být StatementInterface, ten je nastavován AttributeProviderDefault
+                    $replace = ['sqlStatement'=>$query, 'driver_options'=>$options, 'statementInfo'=>$prepStatement->getInstanceInfo()];
+                } else {
+                    $replace = ['sqlStatement'=>$query, 'driver_options'=>$options, 'statementInfo'=> get_class($prepStatement)];
                 }
+                $this->logger->debug($this->getInstanceInfo().': prepare({sqlStatement}, {driver_options}). Vytvořen {statementInfo}.',
+                    $replace);
+                $this->setStatementLogger($prepStatement);
             }
 
         }
@@ -419,24 +417,27 @@ class Handler implements HandlerInterface { //extends PDO {   // //
 //        public query(string $query, ?int $fetchMode = PDO::FETCH_CLASS, string $classname, array $constructorArgs): PDOStatement|false
 //        public query(string $query, ?int $fetchMode = PDO::FETCH_INTO, object $object): PDOStatement|false        
         
+        $argsOk = false;
+        
+        if (count($fetchModeArgs) === 0) {
+            $result = $this->connection->query($query, $fetchMode);
+            $argsOk = true;
+        }
         if (count($fetchModeArgs) === 1 && is_int($fetchModeArgs[0])) {
-            $result = $this->connection->query($fetchModeArgs[0]);
+            $result = $this->connection->query($query, $fetchMode, $fetchModeArgs[0]);
             $argsOk = true;
         }
-        if (count($fetchModeArgs) === 2 && is_int($fetchModeArgs[0]) && is_int($fetchModeArgs[1]) ) {
-            $result = $this->connection->query($fetchModeArgs[0], $fetchModeArgs[1]);
+        if (count($fetchModeArgs) === 1 && is_object($fetchModeArgs[0])) {
+            $result = $this->connection->query($query, $fetchMode, $fetchModeArgs[0]);
             $argsOk = true;
         }
-        if (count($fetchModeArgs) === 3 && is_int($fetchModeArgs[0]) && is_string($fetchModeArgs[1]) && ((null === $fetchModeArgs[2]) || is_array($fetchModeArgs[2])) ) {
-            $result = $this->connection->query($fetchModeArgs[0], $fetchModeArgs[1], $fetchModeArgs[2]);
+        if (count($fetchModeArgs) === 2 && is_string($fetchModeArgs[0]) && ((null === $fetchModeArgs[1]) || is_array($fetchModeArgs[1])) ) {
+            $result = $this->connection->query($query, $fetchMode, $fetchModeArgs[0], $fetchModeArgs[1]);
             $argsOk = true;
         }
-        if (count($fetchModeArgs) === 4 && is_int($fetchModeArgs[0]) && is_string($fetchModeArgs[1]) && ((null === $fetchModeArgs[2]) || is_array($fetchModeArgs[2])) ) {
-            $result = $this->connection->query($fetchModeArgs[0], $fetchModeArgs[1], $fetchModeArgs[2], $fetchModeArgs[3]);
-            $argsOk = true;
-        }
+
         if (true !== $argsOk) {
-            throw new InvalidArgumentException('Neplatná kombinace argumentů metody query.');
+            throw new QueryInvalidArgumentException('Neplatná kombinace argumentů metody query.');
         }     
         
         if ($this->logger) {
@@ -455,15 +456,10 @@ class Handler implements HandlerInterface { //extends PDO {   // //
             } else {
                 $replace += ['sqlStatement'=>$query, 'statementInfo'=> get_class($statement)];
             }
-            if ($this->logger) {
-                $this->logger->debug($message, $replace);
+                $this->logger?->debug($message, $replace);
                 $this->setStatementLogger($statement);
-            }
         } else {
-            if ($this->logger) {
-                $this->logger->warning($this->getInstanceInfo().' selhal query({sqlStatement}), nebyl vytcořen statement objekt.',
-                    ['sqlStatement'=>$query]);
-            }
+            $this->logger?->warning($this->getInstanceInfo().' selhal query({sqlStatement}), nebyl vytcořen statement objekt.', ['sqlStatement'=>$query]);
         }
         return $statement;
     }

@@ -12,7 +12,7 @@ abstract class AttributesProviderAbstract implements AttributesProviderInterface
     protected $attributes = [];
     protected $logger;
 
-    public function setLogger(LoggerInterface $logger) {
+    public function setLogger(LoggerInterface $logger): void {
         $this->logger = $logger;
     }
 

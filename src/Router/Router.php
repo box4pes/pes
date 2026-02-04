@@ -43,7 +43,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
      */
     private $matchedRequest;
 
-    public function setLogger(LoggerInterface $logger) {
+    public function setLogger(LoggerInterface $logger): void {
         $this->logger = $logger;
     }
 
@@ -142,9 +142,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
                 $matches = array();
                 // původně: if($httpMethod == $route->getMethod() && preg_match($route->getPattern(), $path, $matches)) {
                 if(preg_match($route->getPatternPreg(), $restUri, $matches)) {
-                    if ($this->logger) {
-                        $this->logger->debug("Router: restUri $restUri => route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource()->getHttpMethod(), 'url'=>$route->getResource()->getUrlPattern()]);
-                    }
+                    $this->logger?->debug("Router: restUri $restUri => route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource()->getHttpMethod(), 'url'=>$route->getResource()->getUrlPattern()]);
                     $this->matchedRoute = $route;
                     $this->matches = $matches;
                     $this->matchedRequest = $request->withAttribute('route', $route);
@@ -162,32 +160,28 @@ class Router implements RouterInterface, LoggerAwareInterface {
 //        // bind container
 //        $action = $this->bindToContainer($route->getAction());
 
-        if ($this->logger) {
-            $this->logBefore($action);
-        }
+        $this->logBefore($action);
 
         // jako první prvek pole matches vloží $request -> první parametr předaný volané action callable routy je pak $request
         // užití v callable: function(ServerRequestInterface $request, $uid) { ... }
         $this->matches[0] = $this->matchedRequest;
         $ret = call_user_func_array($action, $this->matches);
 
-        if ($this->logger) {
-            $this->logAfter($ret);
-        }
+        $this->logAfter($ret);
         return $ret;
     }
 
     private function logBefore($action) {
-        $this->logger->debug("Router: Volá se {actionType} s parametry {parameters}", ['actionType'=> $this->getDebugType($action), 'parameters'=> implode(', ', $this->matches)]);
+        $this->logger?->debug("Router: Volá se {actionType} s parametry {parameters}", ['actionType'=> $this->getDebugType($action), 'parameters'=> implode(', ', $this->matches)]);
     }
 
     private function logAfter($ret) {
         if($ret===FALSE) {
-            $this->logger->warning("Router: Akce routy nevrátila návratovou hodnotu.");
+            $this->logger?->warning("Router: Akce routy nevrátila návratovou hodnotu.");
         } elseif(! $ret instanceof ResponseInterface) {
-            $this->logger->debug("Router: Akce routy nevrátile Response, vrátila: {retType}", ['retType'=> $this->getDebugType($ret)]);
+            $this->logger?->debug("Router: Akce routy nevrátile Response, vrátila: {retType}", ['retType'=> $this->getDebugType($ret)]);
         } else {
-            $this->logger->notice("Router: Akce routy vrátila: {retType}, {status}, {reasonPhrase}",
+            $this->logger?->notice("Router: Akce routy vrátila: {retType}, {status}, {reasonPhrase}",
                     [
                         'retType'=> $this->getDebugType($ret),
                         'status'=>$ret->getStatusCode(),

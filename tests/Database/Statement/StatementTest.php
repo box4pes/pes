@@ -71,7 +71,7 @@ class StatementTest extends TestCase {
         $dsnProvider = new DsnProviderMysql();
         $optionsProvider = new OptionsProviderMysql();
         $logger = new NullLogger();
-        $attributesProviderDefault = new AttributesProvider($logger);
+        $attributesProviderDefault = new AttributesProvider();
         $dbh = new Handler($user, $connectionInfoUtf8, $dsnProvider, $optionsProvider, $attributesProviderDefault, $logger);
         // čtu 2 sloupce -> fetch() (default \PDO::FETCH_BOTH) vrací pole se 4. položkami s \PDO::FETCH_ASSOC pole s 2. položkami
         $stmt = $dbh->query('SELECT name, surname FROM person');
@@ -106,9 +106,9 @@ class StatementTest extends TestCase {
 
         $user = new Account(self::USER, self::PASS);
         $connectionInfoUtf8 = new ConnectionInfo(DbTypeEnum::MySQL, self::DB_HOST, self::DB_NAME, self::CHARSET_UTF8, self::COLLATION_UTF8, self::DB_PORT);
-        $dsnProvider = new DsnProviderMysql($logger);
-        $optionsProvider = new OptionsProviderMysql($logger);
-        $attributesProviderDefault = new AttributesProvider($logger);
+        $dsnProvider = new DsnProviderMysql();
+        $optionsProvider = new OptionsProviderMysql();
+        $attributesProviderDefault = new AttributesProvider();
         $dbh = new Handler($user, $connectionInfoUtf8, $dsnProvider, $optionsProvider, $attributesProviderDefault, $logger);
 
         for ($i = 1; $i <= 3; $i++) {
