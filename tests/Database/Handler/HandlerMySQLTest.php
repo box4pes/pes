@@ -42,7 +42,7 @@ class StatementForTest extends \PDOStatement implements StatementInterface {
         return 'instance objektu StatementForTest';
     }
 
-    setLogger(LoggerInterface $logger): void {
+    public function setLogger(LoggerInterface $logger): void {
         $this->logger = $logger;
     }
 }

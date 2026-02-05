@@ -162,16 +162,19 @@ private static function getExcLogMessage( \Throwable $e) {
      *     v souboru Ukázka.ext autora Kukačka.
      * </pre>
      *
-     * @param string $level Prefix záznamu zdůrazněný uzavřením do hranatých závorek
+     * @param string $level Prefix záznamu zdůrazněný uzavřením do hranatých závorek, obvykle hodnota Psr\Log\logLevel
      * @param string $message Zpráva pro zaznamenání do logu
      * @param array $context Pole náhrad.
-     * @return null
+     * @return void
      */
-    public function log($level = 'no level', $message = 'no message', array $context = array()) {
+    public function log($level, string|\Stringable $message, array $context = []): void {
+        if (!is_string($level) || !$level) {
+            $level = "unknown";
+        }
         $time = date("Y-m-d H:i:s");
-        $completedMessage = isset($context) ? Template::interpolate($message, $context) : $message;
+        $completedMessage = trim(isset($context) ? Template::interpolate($message, $context) : $message);
         // https://stackoverflow.com/questions/42013372/remove-control-characters-from-string-in-php
-//        \p{Cc} is the unicode character class for control characters. \P{Cc} is the opposite (all that is not a control character).
+//        \p{Cc} is the unicode character class for control characters. ^\P{Cc} is the opposite (all that is not a control character).
 //        [^\P{Cc}\r\n] is all that isn't \P{Cc}, \r and \n.
 //        The u modifier ensures that the string and the pattern are read as utf8 strings.
 //        If you want to preserve an other control character, for example the TAB, add it to the negated character class: [^\P{Cc}\r\n\t]

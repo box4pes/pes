@@ -37,9 +37,11 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
      *
      * Pokud služba není definovaná, metoda se pokusí vytvořit factory v autowiring kontejneru na základě jména třídy, které použije jako jméno služby.
      * Pokud uspěje vrací TRUE, jinak dojde k vyhození výjimky v metodě, která se pokouší vytvořit factory pomocí autowiringu.
-     *
+     * 
+     * @param string $serviceName
+     * @return bool
      */
-    public function has(string $serviceName) {
+    public function has(string $serviceName): bool {
         $realName = $this->realName($serviceName);
         return parent::has($realName);
     }

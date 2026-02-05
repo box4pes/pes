@@ -79,10 +79,11 @@ class Container implements ContainerSettingsAwareInterface {
     }
 
     /**
-     * Nastaví kontejneru vlastnost jméno. Tato metoda slouží pouze pro ladění - umožňuje udžet si přehled, ve kterém konteneru se hledá služba
+     * Nastaví kontejneru info. Tato metoda slouží pouze pro ladění - umožňuje udržet si přehled, ve kterém konteneru se hledá služba
      * i v případě použití více zanořených delegete kontejnerů
      * @param string $containerInfo
      */
+    #[\Override]
     public function addContainerInfo($containerInfo): ContainerSettingsAwareInterface {
         $this->containerInfo = ($this->containerInfo ? $this->containerInfo.' & ' : '').$containerInfo;
         return $this;
@@ -92,6 +93,7 @@ class Container implements ContainerSettingsAwareInterface {
      * Metoda uzamkne kontener, pokud byl kontejner uzamčen voláním metody lock(), nelze mu již nastavovat žádné služby.
      * @return \Pes\Container\ContainerSettingsAwareInterface
      */
+    #[\Override]
     public function lock(): ContainerSettingsAwareInterface {
         $this->locked = true;
         return $this;
@@ -120,6 +122,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @throws Exception\LockedContainerException
      * @throws Exception\UnableToSetServiceException
      */
+    #[\Override]
     public function set(string $serviceName, $service) : ContainerSettingsAwareInterface {
         if ($this->locked) {
             $cName = $this->containerInfo ?? "";
@@ -162,6 +165,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @throws Exception\LockedContainerException
      * @throws Exception\UnableToSetServiceException
      */
+    #[\Override]
     public function setOverride(string $serviceName, $service): ContainerSettingsAwareInterface {
         if ($this->locked) {
             $cName = $this->containerInfo ?? "";
@@ -191,6 +195,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @throws Exception\LockedContainerException
      * @throws Exception\UnableToSetServiceException
      */
+    #[\Override]
     public function param(string $parameterName, $value): ContainerSettingsAwareInterface {
         if ($this->locked) {
             $cName = $this->containerInfo ?? "";
@@ -220,6 +225,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @param string $serviceName
      * @return \Pes\Container\ContainerSettingsAwareInterface
      */
+    #[\Override]
     public function reset(string $serviceName)  : ContainerSettingsAwareInterface{
         if (isset($this->instances[$serviceName] )) {
             unset($this->instances[$serviceName] );
@@ -247,6 +253,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @param mixed $service Closure nebo hodnota
      * @return ContainerSettingsAwareInterface
      */
+    #[\Override]
     public function factory(string $factoryName, $service) : ContainerSettingsAwareInterface {
         if ($this->locked) {
             $cName = $this->containerInfo ?? "";
@@ -276,6 +283,7 @@ class Container implements ContainerSettingsAwareInterface {
      * @param string $name
      * @return ContainerSettingsAwareInterface
      */
+    #[\Override]
     public function alias(string $alias, string $name) : ContainerSettingsAwareInterface {
         if (array_key_exists($alias, $this->aliases)) {
             $cName = $this->containerInfo ?? "";
@@ -288,13 +296,13 @@ class Container implements ContainerSettingsAwareInterface {
     private function setGenerator(string $serviceName, $service) {
         if ($service instanceof \Closure) {
             $this->generators[$serviceName] = function() use ($serviceName, $service) {
-                        // ještě není instance?
-                        if (!isset($this->instances[$serviceName])) {
-                            // vytvoř instanci
-                            $this->instances[$serviceName] = $service($this);
-                        }
-                        return $this->instances[$serviceName];
-                    };
+                    // ještě není instance?
+                    if (!isset($this->instances[$serviceName])) {
+                        // vytvoř instanci
+                        $this->instances[$serviceName] = $service($this);
+                    }
+                    return $this->instances[$serviceName];
+                };
         } else {
             $this->setParam($serviceName, $service);
         }
@@ -306,7 +314,7 @@ class Container implements ContainerSettingsAwareInterface {
                         return $service($this);
                     };
         } else {
-            $this->setParam($serviceName, $service);
+            $this->setParam($factoryName, $service);
         }
     }
 
@@ -328,7 +336,8 @@ class Container implements ContainerSettingsAwareInterface {
      * @param string $serviceName Jméno hledané služby
      * @return bool
      */
-    public function has(string $serviceName) {
+    #[\Override]
+    public function has(string $serviceName): bool {
         if ($this->hasSelf($serviceName)) {
             return TRUE;
         }
@@ -369,9 +378,10 @@ class Container implements ContainerSettingsAwareInterface {
      * kontejneru poté, kdy již byla nějaká služba kontejneru použita.
      *
      * @param string $serviceName Jméno volané služby.
-     * @return mixed Návratová hodnota vracená službou.
+     * @return mixed Návratová hodnota vracená službou (vytvořený objekt nebo hodnota).
      * @throws NotFoundException Služba nenalezena
      */
+    #[\Override]
     public function get(string $serviceName) {
         if (isset($this->generators[$serviceName])) {
             $this->lock();

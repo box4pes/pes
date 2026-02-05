@@ -381,7 +381,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
                 $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
                 $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
             }
-            $einfo = $this->errorInfo();
+            $einfo = $this->connection->errorInfo();
 //            throw new HandlerFailureException($einfo[2].PHP_EOL.". Nevznikl PDO statement z sql příkazu: $sql", $einfo[1]);
             throw new Exception\PrepareException($einfo[2]." Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
@@ -467,7 +467,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
     ###############  METODY PRO DEBUG  ######################
 
     public function getDatabaseHandlerErrorInfo() {
-        return var_export($this->errorInfo(), TRUE);
+        return var_export($this->connection->errorInfo(), TRUE);
     }
 
 }
