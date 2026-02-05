@@ -24,42 +24,42 @@ interface ResponseStatusInterface {
      *
      * @return bool
      */
-    public function isEmpty(ResponseInterface $response);
+    public function isEmpty(ResponseInterface $response): bool;
 
     /**
      * Is this response informational?
      *
      * @return bool
      */
-    public function isInformational(ResponseInterface $response);
+    public function isInformational(ResponseInterface $response): bool;
 
     /**
      * Is this response OK?
      *
      * @return bool
      */
-    public function isOk(ResponseInterface $response);
+    public function isOk(ResponseInterface $response): bool;
 
     /**
      * Is this response successful?
      *
      * @return bool
      */
-    public function isSuccessful(ResponseInterface $response);
+    public function isSuccessful(ResponseInterface $response): bool;
 
     /**
      * Is this response a redirect?
      *
      * @return bool
      */
-    public function isRedirect(ResponseInterface $response);
+    public function isRedirect(ResponseInterface $response): bool;
 
     /**
      * Is this response a redirection?
      *
      * @return bool
      */
-    public function isRedirection(ResponseInterface $response);
+    public function isRedirection(ResponseInterface $response): bool;
 
     /**
      * Is this response forbidden?
@@ -67,26 +67,26 @@ interface ResponseStatusInterface {
      * @return bool
      * @api
      */
-    public function isForbidden(ResponseInterface $response);
+    public function isForbidden(ResponseInterface $response): bool;
 
     /**
      * Is this response not Found?
      *
      * @return bool
      */
-    public function isNotFound(ResponseInterface $response);
+    public function isNotFound(ResponseInterface $response): bool;
 
     /**
      * Is this response a client error?
      *
      * @return bool
      */
-    public function isClientError(ResponseInterface $response);
+    public function isClientError(ResponseInterface $response): bool;
     
     /**
      * Is this response a server error?
      *
      * @return bool
      */
-    public function isServerError();
+    public function isServerError(): bool;
 }

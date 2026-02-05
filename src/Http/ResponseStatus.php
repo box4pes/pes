@@ -20,123 +20,61 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ResponseStatus implements ResponseStatusInterface {
 
-    /**
-     * Is this response empty?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    public function isEmpty(ResponseInterface $response)
+    #[\Override]
+    public function isEmpty(ResponseInterface $response): bool
     {
         return in_array($response->getStatusCode(), [204, 205, 304]);
     }
 
-    /**
-     * Is this response informational?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    public function isInformational(ResponseInterface $response)
+    public function isInformational(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 100 && $response->getStatusCode() < 200;
     }
 
-    /**
-     * Is this response OK?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    public function isOk(ResponseInterface $response)
+    public function isOk(ResponseInterface $response): bool
     {
         return $response->getStatusCode() === 200;
     }
 
-    /**
-     * Is this response successful?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    public function isSuccessful(ResponseInterface $response)
+    #[\Override]
+    public function isSuccessful(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;
     }
 
-    /**
-     * Is this response a redirect?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    public function isRedirect(ResponseInterface $response)
+
+    #[\Override]
+    public function isRedirect(ResponseInterface $response): bool
     {
         return in_array($response->getStatusCode(), [301, 302, 303, 307]);
     }
 
-    /**
-     * Is this response a redirection?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    public function isRedirection(ResponseInterface $response)
+    #[\Override]
+    public function isRedirection(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 300 && $response->getStatusCode() < 400;
     }
 
-    /**
-     * Is this response forbidden?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     * @api
-     */
-    public function isForbidden(ResponseInterface $response)
+    #[\Override]
+    public function isForbidden(ResponseInterface $response): bool
     {
         return $response->getStatusCode() === 403;
     }
 
-    /**
-     * Is this response not Found?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    public function isNotFound(ResponseInterface $response)
+    #[\Override]
+    public function isNotFound(ResponseInterface $response): bool
     {
         return $response->getStatusCode() === 404;
     }
 
-    /**
-     * Is this response a client error?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    public function isClientError(ResponseInterface $response)
+    #[\Override]
+    public function isClientError(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 400 && $response->getStatusCode() < 500;
     }
 
-    /**
-     * Is this response a server error?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    public function isServerError(ResponseInterface $response)
+    #[\Override]
+    public function isServerError(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 500 && $response->getStatusCode() < 600;
     }

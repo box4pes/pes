@@ -166,43 +166,13 @@ class Response extends Message implements ResponseInterface
      * Status
      ******************************************************************************/
 
-    /**
-     * Gets the response status code.
-     *
-     * The status code is a 3-digit integer result code of the server's attempt
-     * to understand and satisfy the request.
-     *
-     * @return int Status code.
-     */
-    public function getStatusCode()
-    {
+    #[\Override]
+    public function getStatusCode(): int {
         return $this->status;
     }
 
-    /**
-     * Return an instance with the specified status code and, optionally, reason phrase.
-     *
-     * If no reason phrase is specified, implementations MAY choose to default
-     * to the RFC 7231 or IANA recommended reason phrase for the response's
-     * status code.
-     *
-     * This method MUST be implemented in such a way as to retain the
-     * immutability of the message, and MUST return an instance that has the
-     * updated status and reason phrase.
-     *
-     * @link http://tools.ietf.org/html/rfc7231#section-6
-     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     *
-     * @param int $code HTTP result status code to set. Must be he 3-digit integer from 100 to 599.
-     * @param string $reasonPhrase The reason phrase to use with the provided status code;
-     *      if none is provided, the default reason phrase as suggested in the HTTP specification is used.
-     *
-     * @return \Pes\Http\Response
-     * @throws InvalidArgumentException Form invalid HTTP status code and invalid reason phrase
-     *      and for status code which not specifiad in HTTP specification with no supplied reason phrase.
-     */
-    public function withStatus($code, $reasonPhrase = '')
-    {
+    #[\Override]
+    public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface {
         if (!$this->isValidStatusCode($code)) {
             throw new InvalidArgumentException('Invalid HTTP status code');
         }
@@ -227,37 +197,24 @@ class Response extends Message implements ResponseInterface
     /**
      * Validate HTTP status code. Code must be integer with value from 100 to 599.
      * @param int $status
-     * @return boolean
+     * @return bool
      */
-    protected function isValidStatusCode($status)
-    {
+    protected function isValidStatusCode(int $status): bool {
         return is_integer($status) AND $status>=100 AND $status<=599 ? TRUE : FALSE;
     }
 
     /**
      * Validate reason phrase. Reason phrase must be string or object convertible to string (has __toString() method).
-     * @param type $reasonPhrase
-     * @return type
+     * 
+     * @param string|\Stringable $reasonPhrase
+     * @return bool
      */
-    protected function isValidReasonPhrase($reasonPhrase) {
+    protected function isValidReasonPhrase(string |\Stringable $reasonPhrase): bool {
         return is_string($reasonPhrase) OR method_exists($reasonPhrase, '__toString') ? TRUE : FALSE;
     }
 
-    /**
-     * Gets the response reason phrase associated with the status code.
-     *
-     * Because a reason phrase is not a required element in a response
-     * status line, the reason phrase value MAY be null. Implementations MAY
-     * choose to return the default RFC 7231 recommended reason phrase (or those
-     * listed in the IANA HTTP Status Code Registry) for the response's
-     * status code.
-     *
-     * @link http://tools.ietf.org/html/rfc7231#section-6
-     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
-     * @return string Reason phrase; must return an empty string if none present.
-     */
-    public function getReasonPhrase()
-    {
+    #[\Override]
+    public function getReasonPhrase(): string {
         if ($this->reasonPhrase) {
             $phrase = $this->reasonPhrase;
         } elseif (isset(static::$messages[$this->status])) {

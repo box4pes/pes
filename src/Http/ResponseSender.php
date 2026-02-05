@@ -19,11 +19,7 @@ class ResponseSender implements ResponseSenderInterface {
         $this->logger = $logger;
     }
 
-    /**
-     * Send the response to the client
-     *
-     * @param ResponseInterface $response
-     */
+    #[\Override]
     public function send(ResponseInterface $response) {
         // Send response
         if (!headers_sent()) {

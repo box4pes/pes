@@ -13,5 +13,5 @@ use Pes\Collection\MapCollectionInterface;
 
 interface HeadersInterface extends MapCollectionInterface {
     public function appendValue($key, $value);
-    public function all();
+    public function all(): array;
 }
