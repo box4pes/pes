@@ -147,7 +147,8 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.1
      * @return string The URI scheme.
      */
-    public function getScheme()
+    #[\Override]
+    public function getScheme(): string
     {
         return $this->scheme;
     }
@@ -167,7 +168,8 @@ class Uri implements UriInterface
      * @return self A new instance with the specified scheme.
      * @throws \InvalidArgumentException for invalid or unsupported schemes.
      */
-    public function withScheme($scheme)
+    #[\Override]
+    public function withScheme(string $scheme): UriInterface
     {
         $clone = clone $this;
         $clone->scheme = $this->filterScheme($scheme);
@@ -226,7 +228,8 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.2
      * @return string The URI authority, in "[user-info@]host[:port]" format.
      */
-    public function getAuthority()
+    #[\Override]
+    public function getAuthority(): string
     {
         $userInfo = $this->getUserInfo();
         $host = $this->getHost();
@@ -250,7 +253,8 @@ class Uri implements UriInterface
      *
      * @return string The URI user information, in "username[:password]" format.
      */
-    public function getUserInfo()
+    #[\Override]
+    public function getUserInfo(): string
     {
         return $this->user . ($this->password ? ':' . $this->password : '');
     }
@@ -269,7 +273,8 @@ class Uri implements UriInterface
      * @param null|string $password The password associated with $user.
      * @return self A new instance with the specified user information.
      */
-    public function withUserInfo($user, $password = null)
+    #[\Override]
+    public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
         $clone = clone $this;
         $clone->user = $user;
@@ -289,7 +294,8 @@ class Uri implements UriInterface
      * @see http://tools.ietf.org/html/rfc3986#section-3.2.2
      * @return string The URI host.
      */
-    public function getHost()
+    #[\Override]
+    public function getHost(): string
     {
         return $this->host;
     }
@@ -306,7 +312,8 @@ class Uri implements UriInterface
      * @return self A new instance with the specified host.
      * @throws \InvalidArgumentException for invalid hostnames.
      */
-    public function withHost($host)
+    #[\Override]
+    public function withHost(string $host): UriInterface
     {
         $clone = clone $this;
         $clone->host = $host;
@@ -329,7 +336,8 @@ class Uri implements UriInterface
      *
      * @return null|int The URI port.
      */
-    public function getPort()
+    #[\Override]
+    public function getPort(): ?int
     {
         return $this->port && !$this->hasStandardPort() ? $this->port : null;
     }
@@ -351,7 +359,8 @@ class Uri implements UriInterface
      * @return self A new instance with the specified port.
      * @throws \InvalidArgumentException for invalid ports.
      */
-    public function withPort($port)
+    #[\Override]
+    public function withPort(?int $port): UriInterface
     {
         $port = $this->filterPort($port);
         $clone = clone $this;
@@ -416,7 +425,8 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.3
      * @return string The URI path.
      */
-    public function getPath()
+    #[\Override]
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -443,7 +453,8 @@ class Uri implements UriInterface
      * @return self A new instance with the specified path.
      * @throws \InvalidArgumentException for invalid paths.
      */
-    public function withPath($path)
+    #[\Override]
+    public function withPath(string $path): UriInterface
     {
         if (!is_string($path)) {
             throw new InvalidArgumentException('Uri path must be a string');
@@ -506,7 +517,8 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.4
      * @return string The URI query string.
      */
-    public function getQuery()
+    #[\Override]
+    public function getQuery(): string
     {
         return $this->query;
     }
@@ -526,7 +538,8 @@ class Uri implements UriInterface
      * @return self A new instance with the specified query string.
      * @throws \InvalidArgumentException for invalid query strings.
      */
-    public function withQuery($query)
+    #[\Override]
+    public function withQuery(string $query): UriInterface
     {
         if (!is_string($query) && !method_exists($query, '__toString')) {
             throw new InvalidArgumentException('Uri query must be a string');
@@ -575,7 +588,8 @@ class Uri implements UriInterface
      * @see https://tools.ietf.org/html/rfc3986#section-3.5
      * @return string The URI fragment.
      */
-    public function getFragment()
+    #[\Override]
+    public function getFragment(): string
     {
         return $this->fragment;
     }
@@ -594,7 +608,8 @@ class Uri implements UriInterface
      * @param string $fragment The fragment to use with the new instance.
      * @return self A new instance with the specified fragment.
      */
-    public function withFragment($fragment)
+    #[\Override]
+    public function withFragment(string $fragment): UriInterface
     {
         if (!is_string($fragment) && !method_exists($fragment, '__toString')) {
             throw new InvalidArgumentException('Uri fragment must be a string');
@@ -629,7 +644,8 @@ class Uri implements UriInterface
      * @see http://tools.ietf.org/html/rfc3986#section-4.1
      * @return string
      */
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         $scheme = $this->getScheme();
         $authority = $this->getAuthority();
