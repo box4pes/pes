@@ -8,6 +8,9 @@
 namespace Pes\Database\Security;
 
 use Pes\Database\Handler\HandlerInterface;
+use Pes\Database\Security\DatabaseWhitelistValidator;
+use Pes\Database\Security\IdentifierQuoter;
+
 use InvalidArgumentException;
 
 class SecureQueryBuilder {

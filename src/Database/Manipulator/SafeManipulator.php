@@ -5,10 +5,15 @@
  * 
  * @author Security Enhancement
  */
-namespace Pes\Database\Security;
+namespace Pes\Database\Manipulator;
 
 use Pes\Database\Handler\HandlerInterface;
 use Pes\Database\Manipulator\Manipulator;
+use Pes\Database\Security\DatabaseWhitelistValidator;
+use Pes\Database\Security\DatabaseWhitelistValidatorExtension;
+use Pes\Database\Security\IdentifierQuoter;
+
+
 use Psr\Log\LoggerInterface;
 use InvalidArgumentException;
 
