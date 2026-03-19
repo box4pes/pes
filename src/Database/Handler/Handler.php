@@ -23,7 +23,11 @@ use Pes\Database\Handler\Exception\QueryInvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 
-class Handler implements HandlerInterface { //extends PDO {   // // 
+use ReflectionException;
+use UnexpectedValueException;
+use RuntimeException;
+
+class Handler implements HandlerInterface {
 
     /**
      * @var PDO
@@ -101,9 +105,9 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         try {
             $userNameProperty = $rc->getProperty('name');
             $userPassProperty = $rc->getProperty('pass');
-        } catch (\ReflectionException $re) {
+        } catch (ReflectionException $re) {
             // Pravděpodobně se změnilo jméno vlastnosti name nebo pass ve třídě User
-            throw new \UnexpectedValueException('Nepodařilo se získat skryté údaje z objektu User.');
+            throw new UnexpectedValueException('Nepodařilo se získat skryté údaje z objektu ConnectionInfo.');
         }
         $userNameProperty->setAccessible(TRUE);
         $userNameValue = $userNameProperty->getValue($account);
@@ -136,7 +140,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
      * pak metoda doplní zprávu ve výjimce o podrobný důvod.
      *
      * @param array $attributes
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     private function setAttributes($attributes) {
         foreach ($attributes as $key => $value) {
@@ -144,7 +148,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
             if (!$succ) {
                 $dump = $this->dumpPDOParameters();
                 $this->logger?->alert($this->getInstanceInfo().' Selhalo nastavení hodnoty atributu handleru (PDO): {key} na hodnotu {value}', array('key'=>$key, 'value'=>print_r($dump, TRUE)));
-                throw new \RuntimeException($this->getInstanceInfo().' Selhalo nastavení atributu '.$key.'. '.$dump);
+                throw new RuntimeException($this->getInstanceInfo().' Selhalo nastavení atributu '.$key.'. '.$dump);
             }
         }
     }
@@ -221,7 +225,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         self::$safeExceptionHandlerLogger->critical('Chyba při instancování db handleru. '.$exception->getMessage().\PHP_EOL.\PHP_EOL.'Trace string:'.\PHP_EOL.$exception->getTraceAsString().\PHP_EOL.$str2);
 
         // Output the exception details
-        throw new \UnexpectedValueException(' Problém s připojením k databázi - chyba při instancování Handleru. Info v logu. Kontaktujte správce systému.', 0, $exception);//. $exception->getMessage()); //????? getMessage
+        throw new UnexpectedValueException(' Problém s připojením k databázi - chyba při instancování Handleru. Info v logu. Kontaktujte správce systému.', 0, $exception);//. $exception->getMessage()); //????? getMessage
     }
 
 ######## metody HandlerInterface ######################################################
