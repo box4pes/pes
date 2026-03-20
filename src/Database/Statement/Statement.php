@@ -36,7 +36,7 @@ class Statement extends PDOStatement implements StatementInterface, LoggerAwareI
         // bez toho nefunguje PDO::setAttribute(PDO::ATTR_STATEMENT_CLASS, ...
     }
 
-    public function setLogger(LoggerInterface $logger): void {
+    public function setLogger(?LoggerInterface $logger): void {
         $this->logger = $logger;
     }
 
