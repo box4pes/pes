@@ -9,13 +9,14 @@
  */
 namespace Pes\Database\Handler;
 
-use PDO;
 use Pes\Database\Handler\AccountInterface;
 use Pes\Database\Handler\ConnectionInfoInterface;
 use Pes\Database\Handler\DsnProvider\DsnProviderInterface;
 use Pes\Database\Handler\OptionsProvider\OptionsProviderInterface;
 use Pes\Database\Handler\AttributesProvider\AttributesProviderInterface;
 use Pes\Database\Statement\StatementInterface;
+
+use PDO;
 use PDOStatement;
 
 use Psr\Log\LoggerInterface;
@@ -26,7 +27,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
     /**
      * @var PDO
      */
-    private $connection;
+    protected $connection;
     
     /**
      * @var LoggerInterface
@@ -51,7 +52,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
      */
     protected static $handlerCounter=0;
 
-    private $handlerNumber;
+    protected $handlerNumber;
 
     /**
      *
@@ -126,7 +127,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
             $this->setAttributes($attributesProvider->getAttributesArray());  // loguje se v metodě
         }
    }
-
+   
     /**
      * PRIVÁTNÍ Metoda se pokusí nastavit handleru atributy voláním PDO metody setAttrinutes().
      * Pokud se nepodaří některý atribut nastavit, metoda vyhazuje výjimku.
@@ -300,6 +301,10 @@ class Handler implements HandlerInterface { //extends PDO {   // //
     }
 
 ######### PŘETÍŽENÉ METODY PDO ( metody PDO Interface) #######################################################################
+    
+    public function errorInfo(): array {
+        return $this->connection->errorInfo();
+    }
 
     public function beginTransaction(): bool {
         if ($this->logger) {
