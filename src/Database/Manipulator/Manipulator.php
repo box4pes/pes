@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 
 use PDOException;
 use LogicException;
+use RuntimeException;
 use UnexpectedValueException;
 use Pes\Database\Manipulator\Exception\ErrorRollbackException;
 use Pes\Database\Manipulator\Exception\ForcedRollbackException;
@@ -176,10 +177,16 @@ class Manipulator {
         }
         try {
             $dbhTransact->beginTransaction();
+            if ($dbhTransact->inTransaction()) {
+                throw new LogicException('Nepodařilo se spustit databázovou transakci.');
+            }
             foreach ($queries as $query) {
                 if (trim($query)) {
 //                    $this->logger->info($query);
                     $dbhTransact->exec($query);
+                    if ($dbhTransact->inTransaction()) {
+                        throw new RuntimeException('Poslední příkaz provedený metodou PDO->exec() ukončil spuštěnou databázovou transakci.');
+                    }                    
                 }
             }
             if ($rollback) {
