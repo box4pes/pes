@@ -164,7 +164,7 @@ class Manipulator {
      * @return bool TRUE, pokud transakce skončila úspěšně, jinak FALSE.
      * @throws LogicException Pokud nelze přečíst zadaný soubor. Při volání uprostřed již spuštěné transakce.
      * @throws ErrorRollbackException Výjimka při vykonávání transakce.
-     * @throws ForcedRollbackException Rollbak byl vynucen parametrem rollback.
+     * @throws ForcedRollbackException Rollback byl vynucen parametrem rollback.
      */
     public function exec($sql, $rollback=false) {
         if (!$sql) {
