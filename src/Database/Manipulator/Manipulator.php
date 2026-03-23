@@ -184,7 +184,7 @@ class Manipulator {
                 if (trim($query)) {
 //                    $this->logger->info($query);
                     $dbhTransact->exec($query);
-                    if ($dbhTransact->inTransaction()) {
+                    if (!$dbhTransact->inTransaction()) {
                         throw new RuntimeException('Poslední příkaz provedený metodou PDO->exec() ukončil spuštěnou databázovou transakci.');
                     }                    
                 }
