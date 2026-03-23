@@ -8,6 +8,7 @@
 namespace Pes\Database\Handler;
 
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  *
