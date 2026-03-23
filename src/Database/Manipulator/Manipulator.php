@@ -176,7 +176,7 @@ class Manipulator {
             throw new LogicException('Nelze volat tuto metodu exec() uprostřed spuštěné databázové transakce.');
         }
         try {
-            $dbhTransact->beginTransaction();
+            $succ = $dbhTransact->beginTransaction();
             if ($dbhTransact->inTransaction()) {
                 throw new LogicException('Nepodařilo se spustit databázovou transakci.');
             }
