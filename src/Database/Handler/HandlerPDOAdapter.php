@@ -26,7 +26,7 @@ use ReflectionException;
 use UnexpectedValueException;
 use RuntimeException;
 
-class HandlerPDOAdapter {
+class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
 
     /**
      * @var PDO
