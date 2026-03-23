@@ -177,7 +177,7 @@ class Manipulator {
         }
         try {
             $succ = $dbhTransact->beginTransaction();
-            if ($dbhTransact->inTransaction()) {
+            if (!$dbhTransact->inTransaction()) {
                 throw new LogicException('Nepodařilo se spustit databázovou transakci.');
             }
             foreach ($queries as $query) {
