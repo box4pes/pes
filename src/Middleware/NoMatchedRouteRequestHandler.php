@@ -26,7 +26,7 @@ use Pes\Http\Factory\ResponseFactory;
 class NoMatchedRouteRequestHandler extends RequestHandler {
 
     public function __construct(
-            LoggerInterface $logger = null
+            ?LoggerInterface $logger = null
     ) {
         if(isset($logger)) {
             parent::__construct(

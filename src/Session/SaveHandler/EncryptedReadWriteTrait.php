@@ -17,7 +17,7 @@ namespace Pes\Session\SaveHandler;
  */
 trait EncryptedReadWriteTrait {
     
-    public function read($id) {
+    public function read(string $id): string|false {
         $data = parent::read($id);
         if (!$data) {
             return "";
@@ -27,7 +27,7 @@ trait EncryptedReadWriteTrait {
         }
     }
 
-    public function write($id, $data) {
+    public function write(string $id, string $data): bool {
         $ret = $this->cryptor->encrypt($data);
         return parent::write($id, $ret);
     }

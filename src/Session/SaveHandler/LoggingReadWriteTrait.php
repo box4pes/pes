@@ -17,17 +17,17 @@ namespace Pes\Session\SaveHandler;
  */
 trait LoggingReadWriteTrait {
 
-    public function read($session_id) {
-        $read = parent::read($session_id);
-        $this->logger->debug('Session save handler: read({session_id}) - success:{read}', ['session_id'=>$session_id, 'read'=>$read]);
+    public function read(string $id): string|false {
+        $read = parent::read($id);
+        $this->logger->debug('Session save handler: read({id}) - success:{read}', ['id'=>$id, 'read'=>$read]);
         $this->logger->debug('After read: $_SESSION: {session}', ['session'=> print_r($_SESSION, true)]);
         return $read;
     }
 
-    public function write($session_id, $session_data) {
-        $write = parent::write($session_id, $session_data);
+    public function write(string $id, string $data): bool {
+        $write = parent::write($id, $data);
         $this->logger->debug('Before wite: $_SESSION: {session}', ['session'=> print_r($_SESSION, true)]);
-        $this->logger->debug('Session save handler: write({session_id}, {session_data}) - success:{write}', ['session_id'=>$session_id, 'session_data'=>$session_data, 'write'=>$write]);
+        $this->logger->debug('Session save handler: write({session_id}, {session_data}) - success:{write}', ['session_id'=>$id, 'session_data'=>$data, 'write'=>$write]);
         return $write;
     }
 

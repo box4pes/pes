@@ -29,7 +29,7 @@ class Headers extends KeyNormalizedMapCollection implements HeadersInterface {
      *
      * @param array $data Pole HTTP hlaviček
      */
-    public function __construct(array $data=[]) {
+    public function __construct(?array $data=[]) {
         parent::__construct(new HeaderKeyNormalizer(), $data);
     }
 
@@ -58,7 +58,7 @@ class Headers extends KeyNormalizedMapCollection implements HeadersInterface {
      *
      * @return array
      */
-    public function all() {
+    public function all(): array {
         return $this->getArrayCopy();
     }
 

@@ -63,7 +63,7 @@ class ResponseCookie implements ResponseCookieInterface {
      *  <ul><li>Hodnota může být zadána jako instance \DateTimeInterface, pak je z ní získán správný GMT datum a čas v závislosti na nastavené časové zóně systému. </li>
      * <li>Hodnota může být zadána jako integer, pak se chápe jako počet sekund a současnosti a datum je vypočítáno. </li>
      * <li>Hodnota múže být zadána zako řetězec a to ve formátu, který je vyhodnotitelný funkcí strtotime(). Datum a čas Expires je vytvořen právě funkcí strtotime()
-     * ze zadané hodnoty atributu. Doporučuji přečíst dokumentaci, zajímavé jsou relativní formáty data. Funkce strtotime() hlásí E_NOTICE anebo E_STRICT nebo E_WARNING
+     * ze zadané hodnoty atributu. Doporučuji přečíst dokumentaci, zajímavé jsou relativní formáty data. Funkce strtotime() hlásí E_NOTICE anebo E_WARNING
      * pro něsprávně nastavenou časovou zónu. </li></ul></li>
      * <li>'Secure' Boolean. Pokud je zadána hodnota TRUE, je cookie klientem odesílána je při použití zabezpečeného (https) spojení
      * pro odeslání requestu. Nové verze prohlížečů navíc cookie s nastaveným atributem Secure zahazují už kdyř je taková cookie přijatá v responsu, který byl poskutnut nezabezpečeným kanálem

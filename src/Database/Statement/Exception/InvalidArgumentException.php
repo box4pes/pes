@@ -8,19 +8,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
-
-namespace Pes\Middleware;
-
-use Psr\Http\Server\MiddlewareInterface;
-use Pes\Application\AppInterface;
+namespace Pes\Database\Statement\Exception;
 
 /**
+ * Description of BindParamException
  *
  * @author pes2704
  */
-interface SelectorItemInterface {
-    public function getPrefix();
-    public function getMiddleware(?AppInterface $app = null): MiddlewareInterface;
-    public function setPrefix($prefix): SelectorItem;
-    public function setStack($stack, ?callable $resolver = null): SelectorItem;
+class InvalidArgumentException extends StatementException implements StatementExceptionInterface {
+
 }

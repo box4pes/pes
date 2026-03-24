@@ -58,7 +58,7 @@ class SelectorItem implements SelectorItemInterface {
      * @return MiddlewareInterface
      * @throws \UnexpectedValueException
      */
-    public function getMiddleware(AppInterface $app=NULL): MiddlewareInterface {
+    public function getMiddleware(?AppInterface $app=null): MiddlewareInterface {
         if (is_callable($this->stack)) {
             $stack = $this->stack;
             $this->stack = $stack($app);
@@ -92,7 +92,7 @@ class SelectorItem implements SelectorItemInterface {
      * @param \Pes\Middleware\callable $resolver
      * @return \Pes\Middleware\SelectorItem
      */
-    public function setStack($stack, callable $resolver = NULL): SelectorItem {
+    public function setStack($stack, ?callable $resolver = NULL): SelectorItem {
         $this->stack = $stack;
         $this->resolver = $resolver;
         return $this;

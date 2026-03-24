@@ -7,12 +7,17 @@
  */
 namespace Pes\Database\Statement;
 
+use PDO;
+use PDOStatement;
 use Psr\Log\LoggerInterface;
+
+use Psr\Log\LoggerAwareInterface;
 use Pes\Database\Statement\Exception\ExecuteException;
 use Pes\Database\Statement\Exception\BindParamException;
 use Pes\Database\Statement\Exception\BindValueException;
+use Pes\Database\Statement\Exception\InvalidArgumentException;
 
-class Statement extends \PDOStatement implements StatementInterface {
+class Statement extends PDOStatement implements StatementInterface, LoggerAwareInterface {
 
     /**
      * Čítač instancí pro logování
@@ -31,7 +36,7 @@ class Statement extends \PDOStatement implements StatementInterface {
         // bez toho nefunguje PDO::setAttribute(PDO::ATTR_STATEMENT_CLASS, ...
     }
 
-    public function setLogger(LoggerInterface $logger) {
+    public function setLogger(?LoggerInterface $logger): void {
         $this->logger = $logger;
     }
 
@@ -50,43 +55,42 @@ class Statement extends \PDOStatement implements StatementInterface {
      * - public PDOStatement::setFetchMode ( int $mode = PDO::FETCH_CLASS , string $classname , array $ctorargs ) : bool
      * - public PDOStatement::setFetchMode ( int $mode = PDO::FETCH_INTO , object $object ) : bool
      *
-     * @param int $fetchMode <p>The fetch mode must be one of the <i>PDO::FETCH_&#42;</i> constants.</p>
-     * @param type $arg2
-     * @param type $arg3
-     * @return bool Success <p>Returns <b><code>TRUE</code></b> on success or <b><code>FALSE</code></b> on failure.</p>
+     * @param int $mode <p>The fetch mode must be one of the <i>PDO::FETCH_&#42;</i> constants.</p>
+     * @param mixed $args
+     * @return true Vrací true nebo Exception
+     * @throws InvalidArgumentException
      */
-    public function setFetchMode($fetchMode, $arg2 = null, $arg3 = null) {
-        // This thin wrapper is necessary to shield against the weird signature
-        // of PDOStatement::setFetchMode(): even if the second and third
-        // parameters are optional, PHP will not let us remove it from this
-        // declaration.
-        if ($arg2 === null && $arg3 === null) {
-            $success = parent::setFetchMode($fetchMode);
-            if ($this->logger) {
-                $message = $this->getInstanceInfo().': setFetchMode({fetchMode})';
-                $substitutes = array('fetchMode'=>$fetchMode);
-                $this->logger->debug($message, $substitutes);
-            }
-        } elseif ($arg3 === null) {
-            $success = parent::setFetchMode($fetchMode, $arg2);
-            if ($this->logger) {
-                $message = $this->getInstanceInfo().': setFetchMode({fetchMode}, {arg2})';
-                $substitutes = array('fetchMode'=>$fetchMode, 'arg2'=>$arg2);
-                $this->logger->debug($message, $substitutes);
-            }
-        } else {
-            $success = parent::setFetchMode($fetchMode, $arg2, $arg3);
-            if ($this->logger) {
-                $message = $this->getInstanceInfo().': setFetchMode({fetchMode}, {arg2}, {arg3})';
-                $substitutes = array('fetchMode'=>$fetchMode, 'arg2'=>$arg2, 'arg3'=>$arg3);
-                $this->logger->debug($message, $substitutes);
-            }
+    public function setFetchMode(int $mode, mixed ...$args): true {
+        $success = false;
+        $argsOk = false;
+        $count = count($args);
+//        public setFetchMode(int $mode): bool
+//        public setFetchMode(int $mode = PDO::FETCH_COLUMN, int $colno): bool
+//        public setFetchMode(int $mode = PDO::FETCH_CLASS, string $class, ?array $constructorArgs = null): bool        
+        if ($count === 0) {
+            $success = parent::setFetchMode($mode);
+            $argsOk = true;
         }
-
-        if (!$success AND $this->logger) {
-            $this->logger->warning(' Metoda '.__METHOD__.' selhala.');
+        if ($count === 1 && is_int($args[0]) ) {
+            $success = parent::setFetchMode($mode, $args[0]);
+            $argsOk = true;
         }
-
+        if ($count === 1 && is_string($args[0]) ) {
+            $success = parent::setFetchMode($mode, $args[0]);
+            $argsOk = true;
+        }
+        if ($count === 2 && is_string($args[0]) && is_array($args[1]) ) {
+            $success = parent::setFetchMode($mode, $args[0], $args[1]);
+            $argsOk = true;
+        }
+        if ($argsOk == false) {
+            $argsPrint = print_r($args, true);
+            throw new InvalidArgumentException("Neplatná kombinace argumentů: mode='$mode' count=$count argumets=$argsPrint");
+        }        
+        $this->logger?->debug($this->getInstanceInfo().': setFetchMode({fetchMode})', array('fetchMode'=>$mode));
+        if (!$success) {
+            $this->logger?->warning(' Metoda '.__METHOD__.' selhala.');
+        }
         return $success;
     }
 
@@ -97,48 +101,65 @@ class Statement extends \PDOStatement implements StatementInterface {
      * @param type $cursor_offset
      * @return type
      */
-    public function fetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0) {
-        $result = parent::fetch($fetch_style, $cursor_orientation, $cursor_offset);
+//    public function fetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0): mixed {
+    public function fetch(int $mode = PDO::FETCH_DEFAULT, int $cursorOrientation = PDO::FETCH_ORI_NEXT, int $cursorOffset = 0): mixed  {     
+        $result = parent::fetch($mode, $cursorOrientation, $cursorOffset);
         if ($this->logger) {
-            $message = $this->getInstanceInfo().': fetch({fetch_style}, {cursor_orientation}, {cursor_offset})';
-            $context = ['fetch_style'=>$fetch_style ?? 'null', 'cursor_orientation'=>$cursor_orientation, 'cursor_offset'=>$cursor_offset];
+            $message = $this->getInstanceInfo().': fetch({mode}, {cursor_orientation}, {cursor_offset})';
+            $context = ['mode'=>$mode ?? 'null', 'cursor_orientation'=>$cursorOrientation, 'cursor_offset'=>$cursorOffset];
             if ($result===FALSE) {
                 $message .= ' Metoda '.__METHOD__.' nevrátila žádná data.';
-            } else {
-                $message .= ' Result má {count} prvků.';
+            } elseif(is_array($result)) {
+                $message .= ' Result je array {count} prvků.';
                 $context = array_merge($context, ['count'=>count($result)]);
+            } elseif (is_object($result)) {
+                $message .= ' Result je objekt {type}.';
+                $context = array_merge($context, ['type'=>gettype($result)]);
+            } else {
+                $message .= ' Metoda '.__METHOD__.' vratila neznámý typ dat.';                
             }
             $this->logger->debug($message, $context);
         }
         return $result;
     }
 
-    public function fetchAll($fetch_style = NULL, $fetch_argument = NULL, $ctor_args = NULL) {
-        // This thin wrapper is necessary to shield against the weird signature
-        // of PDOStatement::setFetchMode(): even if the second and third
-        // parameters are optional, PHP will not let us remove it from this
-        // declaration.
-        if ($fetch_argument === NULL && $ctor_args === NULL) {
-            $result = parent::fetchAll($fetch_style);
-            if ($this->logger) {
-                $message = $this->getInstanceInfo().': fetchAll({fetch_style})';
-                $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
-            }
-        } elseif ($ctor_args === NULL) {
-            $result = parent::fetchAll($fetch_style, $fetch_argument);
-            if ($this->logger) {
-                $message = $this->getInstanceInfo().': fetchAll({fetch_style}, {fetch_argument})';
-                $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
-            }
-        } else {
-            $result = parent::fetchAll($fetch_style, $fetch_argument, $ctor_args);
-            if ($this->logger) {
-                $message = $this->getInstanceInfo().': fetchAll({fetch_style}, {fetch_argument}, {ctor_args})';
-                $context = array('fetch_style'=>$fetch_style ?? 'null', 'fetch_argument'=>$fetch_argument, 'ctor_args'=>$ctor_args);
-            }
+//    public function fetchAll($fetch_style = NULL, $fetch_argument = NULL, $ctor_args = NULL): array {
+    public function fetchAll(int $mode = PDO::FETCH_DEFAULT, mixed ...$args): array {
+        $argsOk = false;
+        $count = count($args);
+//        public fetchAll(int $mode = PDO::FETCH_DEFAULT): array
+//        public fetchAll(int $mode = PDO::FETCH_COLUMN, int $column): array
+//        public fetchAll(int $mode = PDO::FETCH_CLASS, string $class, ?array $constructorArgs): array
+//        public fetchAll(int $mode = PDO::FETCH_FUNC, callable $callback): array 
+        
+        if ($count === 0) {
+            $result = parent::fetchAll($mode);
+            $argsOk = true;
+        }        
+        if ($count === 1 && is_int($args[0])) {
+            $result = parent::fetchAll($mode, $args[0]);
+            $argsOk = true;
         }
-
+        if ($count === 1 && is_string($args[0])) {
+            $result = parent::fetchAll($mode, $args[0]);
+            $argsOk = true;
+        }
+        if ($count === 1 && is_callable($args[0])) {
+            $result = parent::fetchAll($mode, $args[0]);
+            $argsOk = true;
+        }
+        if ($count === 2 && is_string($args[0]) && is_array($args[1]) ) {
+            $result = parent::fetchAll($args[0], $args[1]);
+            $argsOk = true;
+        }
+        if ($argsOk == false) {
+            $argsPrint = $args ? print_r($args, true) : '';
+            throw new InvalidArgumentException("Neplatná kombinace argumentů: mode=$mode count=$count argumets=$argsPrint");
+        }
+        
         if ($this->logger) {
+            $message = $this->getInstanceInfo().': fetchAll({mode}, {arguments})';
+            $context = array('mode'=>$mode ?? 'null', 'arguments'=> implode(', ', $args));
             if ($result===FALSE) {
                 $message .= 'Metoda '.__METHOD__.' selhala.';
             } else {
@@ -151,34 +172,23 @@ class Statement extends \PDOStatement implements StatementInterface {
 
     /**
      *
-     * @param type $input_parameters
+     * @param type $params
      * @return type
      * @throws ExecuteException
      */
-    public function execute($input_parameters = NULL) {
+    public function execute(?array $params = null): bool {
         try {
-        $success = parent::execute($input_parameters);
+        $success = parent::execute($params);
         } catch (\PDOException $pdoException) {
-            if ($this->logger) {
-                $this->logger->error($this->getInstanceInfo().': Selhal execute({input_parameters}).',
-                        ['input_parameters'=>$input_parameters ?? 'null']);
-                $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
-                $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
-                $errorInfo = $this->errorInfo();
-                $message = " Výpis errorInfo: ".print_r($errorInfo, TRUE);
-                $this->logger->error($message);
-            }
+            $this->logger?->error($this->getInstanceInfo().': Selhal execute({input_parameters}).', ['input_parameters'=>$params ?? 'null']);
+            $this->logger?->error(" Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.", ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
+            $this->logger?->error(" Výpis errorInfo: ".print_r($this->errorInfo(), TRUE));
             throw new ExecuteException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
-            if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().': execute({input_parameters}).',
-                    ['input_parameters'=>$input_parameters]);
-            }
-
+            $this->logger?->debug($this->getInstanceInfo().': execute({input_parameters}).', ['input_parameters'=>$params]);
         }
-        if($this->logger AND !$success) {
-                $message = ' Metoda '.__METHOD__.' selhala bez vyhození výjimky. Není nastaven mod PDO::ERRMODE_EXCEPTION nebo nastala systémová chyba.';
-                $this->logger->warning($message);
+        if(!$success) {
+            $this->logger?->warning(' Metoda '.__METHOD__.' selhala bez vyhození výjimky. Není nastaven mod PDO::ERRMODE_EXCEPTION nebo nastala systémová chyba.');
         }
         return $success;
     }
@@ -199,20 +209,16 @@ class Statement extends \PDOStatement implements StatementInterface {
      * @return type
      * @throws BindParamException
      */
-    public function bindParam($parameter, &$variable, $data_type=\PDO::PARAM_STR, $length=NULL, $driver_options=NULL) {
+//    public function bindParam($parameter, &$variable, $data_type=\PDO::PARAM_STR, $length=NULL, $driver_options=NULL): bool {
+    public function bindParam(string|int $param, mixed &$var, int $type = PDO::PARAM_STR, int $maxLength = 0, mixed $driverOptions = null): bool {        
         try {
-            $success = parent::bindParam($parameter, $variable, $data_type, $length, $driver_options);
+            $success = parent::bindParam($param, $var, $type, $maxLength, $driverOptions);
         } catch (\PDOException $pdoException) {
-            if ($this->logger) {
-                $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
-                $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
-            }
+            $this->logger?->error(" Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.", ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
             throw new BindParamException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
-            if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().': bindParam({parameter}, {variable}, {data_type}, {length}, {driver_options})',
-                    ['parameter'=>$parameter, 'variable'=>$variable, 'data_type'=>$data_type, 'length'=>$length=NULL, 'driver_options'=>$driver_options]);
-            }
+            $this->logger?->debug($this->getInstanceInfo().': bindParam({parameter}, {variable}, {data_type}, {length}, {driver_options})',
+                ['parameter'=>$param, 'variable'=>$var, 'data_type'=>$type, 'length'=>$maxLength=NULL, 'driver_options'=>$driverOptions]);
         }
         return $success;
     }
@@ -229,20 +235,16 @@ class Statement extends \PDOStatement implements StatementInterface {
      * @return bool
      * @throws BindValueException
      */
-    public function bindValue($parameter, $value, $data_type=\PDO::PARAM_STR) {
+//    public function bindValue($parameter, $value, $data_type=\PDO::PARAM_STR): bool {
+    public function bindValue(string|int $param, mixed $value, int $type = PDO::PARAM_STR): bool {
         try {
-            $success = parent::bindValue ($parameter, $value, $data_type);
+            $success = parent::bindValue ($param, $value, $type);
         } catch (\PDOException $pdoException) {
-            if ($this->logger) {
-                $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
-                $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
-            }
+            $this->logger?->error(" Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.", ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
             throw new BindValueException(" Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
-            if ($this->logger) {
-                $this->logger->debug($this->getInstanceInfo().': bindValue({parameter}, {value}, {data_type})',
-                    ['parameter'=>$parameter, 'value'=>$value, 'data_type'=>$data_type]);
-            }
+            $this->logger?->debug($this->getInstanceInfo().': bindValue({parameter}, {value}, {data_type})',
+                ['parameter'=>$param, 'value'=>$value, 'data_type'=>$type]);
         }
         return $success;
     }

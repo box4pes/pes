@@ -43,7 +43,7 @@ class InterpolateRenderer implements InterpolateRendererInterface {
      * @return string
      * @throws NoTemplateFileException
      */
-    public function render(iterable $data=NULL) {
+    public function render(?iterable $data=NULL) {
         $text = $this->template->getTemplateString();
         if ($text) {
             if (isset($data)) {

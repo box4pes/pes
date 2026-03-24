@@ -1,2 +1,4 @@
 /Tests_logs/
 /Test_reports/
+/vendor/
+/nbproject/private/

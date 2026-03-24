@@ -11,15 +11,11 @@
 
 namespace Pes\Database\Handler;
 
-use Psr\Log\LoggerAwareInterface;
-
-use Psr\Log\LoggerInterface;
-
 /**
  *
  * @author pes2704
  */
-interface HandlerInterface extends PDOInterface, LoggerAwareInterface {
+interface HandlerInterface {
     /**
      * Metoda getInstanceInfo
      *
@@ -37,10 +33,6 @@ interface HandlerInterface extends PDOInterface, LoggerAwareInterface {
      */
     public function getSchemaName(): string;
     
-    /**
-     * Vrací objekt Logger nastavený v konstruktoru. Umožňuje přidat zprávy do logu, který je vytvářen objektem Handler.
-     * 
-     * @return LoggerInterface|null
-     */
-    public function getLogger(): ?LoggerInterface;    
+    public function getDatabaseHandlerErrorInfo(): string;    
+       
 }

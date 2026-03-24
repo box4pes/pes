@@ -33,7 +33,7 @@ class AppFactory implements AppFactoryInterface {
 
     protected $appContainer;
 
-    public function __construct(ContainerInterface $appContainer=NULL) {
+    public function __construct(?ContainerInterface $appContainer=NULL) {
         $this->appContainer = $appContainer;
     }
 
