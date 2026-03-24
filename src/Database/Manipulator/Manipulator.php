@@ -67,14 +67,13 @@ class Manipulator {
             throw new LogicException("Zakázané nebezpečné chování - cílová tabulka kopírování '$targetTableName'již existuje. Nelze přepsat existující tabulku.");
         }
 
-        $dbhTransact = $this->handler;
         try {
-            $dbhTransact->beginTransaction();
-            $dbhTransact->exec("CREATE TABLE $targetTableName LIKE $sourceTableName");
-            $dbhTransact->exec("INSERT $targetTableName SELECT * FROM $sourceTableName");
-            $succ = $dbhTransact->commit();
+            $this->handler->beginTransaction();
+            $this->handler->exec("CREATE TABLE $targetTableName LIKE $sourceTableName");
+            $this->handler->exec("INSERT $targetTableName SELECT * FROM $sourceTableName");
+            $succ = $this->handler->commit();
         } catch(PDOException $e) {
-            $dbhTransact->rollBack();
+            $this->handler->rollBack();
             throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
         return $succ ? TRUE : FALSE;
@@ -100,15 +99,14 @@ class Manipulator {
         //To copy just structure and data use this one:
         //CREATE TABLE tbl_new AS SELECT * FROM tbl_old;
 
-        $dbhTransact = $this->handler;
         try {
-            $dbhTransact->beginTransaction();
-            $dbhTransact->exec("DROP TABLE IF EXISTS $targetTableName");
-            $dbhTransact->exec("CREATE TABLE $targetTableName LIKE $souceTableName");
-            $dbhTransact->exec("INSERT $targetTableName SELECT * FROM $souceTableName");
-            $succ = $dbhTransact->commit();
+            $this->handler->beginTransaction();
+            $this->handler->exec("DROP TABLE IF EXISTS $targetTableName");
+            $this->handler->exec("CREATE TABLE $targetTableName LIKE $souceTableName");
+            $this->handler->exec("INSERT $targetTableName SELECT * FROM $souceTableName");
+            $succ = $this->handler->commit();
         } catch(PDOException $e) {
-            $dbhTransact->rollBack();
+            $this->handler->rollBack();
             throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
         return $succ ? TRUE : FALSE;
@@ -121,11 +119,10 @@ class Manipulator {
      * @throws UnexpectedValueException
      */
     public function tableExists($tableName) {
-        $dbh = $this->handler;
         $nameChunks = explode(".", $tableName);
         switch (count($nameChunks)) {
             case 1:
-                $dbName = $dbh->getSchemaName();  // musím udělat proměnnou - předává se do bindParam referencí
+                $dbName = $this->handler->getSchemaName();  // musím udělat proměnnou - předává se do bindParam referencí
                 break;
             case 2:
                 $dbName = $nameChunks[0];
@@ -135,7 +132,7 @@ class Manipulator {
                 throw new UnexpectedValueException("Zadané jméno tabulky musí být ve tvaru jednoho slova nebo dvou slov spojených tečkou. Jméno $tableName neumím zpracovat.");
         }
 
-        $stmt = $dbh->prepare(
+        $stmt = $this->handler->prepare(
             "SELECT table_name
             FROM information_schema.TABLES
             WHERE (TABLE_SCHEMA = :db_name) AND (TABLE_NAME = :table_name)"
@@ -149,12 +146,14 @@ class Manipulator {
     }
 
     /**
-     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů v jedné transakci. Jednotlivé SQL příkazy vykoná pomocé metody PDO->exec(), 
-     * která jako návratovou hodnotu vrací bool. Metoda tak nevrací žádný výsledek jen informuje o úspěchu.
+     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů v jedné transakci. Nevrací žádná data.
+     * 
+     * Metoda vyhodí výjimku, pokud příkaz ukončil spuštěnou databázovou transakci - typicky DDL příkaz, který vynutí autocommit transakce a tím ji ukončí - to znamená, že 
+     * všechny příkazy až po ten, který okončil transakci proběhly.
      * Lze zadat parametr rollback, který vynutí, že se po provedení příkazů v trasakci nikdy neprovede commit, vždy se volá rollback. 
      * Tím není ovlivněno chování v průběhu trasakce, pokud dojde v průběhu transakce k chybě, proběhne samozřejmě rollback zcela standartně.
      *
-     * Předpokládá, že SQL příkazy v souboru jsou odděleny středníkem ";".
+     * Předpokládá, že SQL příkazy v parametru $sql jsou odděleny středníkem ";".
      * Příkazy vykonává v rámci jedné transakce, kterou spouští.
      * Při pokusu o volání metody uprostřed již spuštěné transakce by vykonání neznámé posloupnosti SQL příkazů mohlo vést
      * k nepředvídaným výsledkům. Proto v případě pokusu o volání metody uprostřed již spuštěné transakce metoda vyhodí výjimku.
@@ -162,41 +161,42 @@ class Manipulator {
      * @param string $sql Řetězec s posloupností SQL příkazů oddělených středníky.
      * @param bool $rollback Pokud je true, pak se po provedení příkazů v trasakci nikdy neprovede commit, vždy se volá rollback.
      * @return bool TRUE, pokud transakce skončila úspěšně, jinak FALSE.
-     * @throws LogicException Pokud nelze přečíst zadaný soubor. Při volání uprostřed již spuštěné transakce.
+     * @throws LogicException Pokud nelze přečíst zadaný soubor, při volání uprostřed již spuštěné transakce, nepodařilo se spustit transakci.
      * @throws ErrorRollbackException Výjimka při vykonávání transakce.
+     * @throws RuntimeException Pokud příkaz ukončil spuštěnou databázovou transakci.
      * @throws ForcedRollbackException Rollback byl vynucen parametrem rollback.
      */
-    public function exec($sql, $rollback=false) {
+    public function execTransaction($sql, $rollback=false) {
         if (!$sql) {
             throw new LogicException('Zadaný soubor je prázdný.');
         }
         $queries = $this->mysqlExplode($sql);
-        $dbhTransact = $this->handler;
-        if ($dbhTransact->inTransaction()) {
+        if ($this->handler->inTransaction()) {
             throw new LogicException('Nelze volat tuto metodu exec() uprostřed spuštěné databázové transakce.');
         }
         try {
-            $succ = $dbhTransact->beginTransaction();
-            if (!$dbhTransact->inTransaction()) {
+            $succ = $this->handler->beginTransaction();
+            if (!$this->handler->inTransaction()) {
                 throw new LogicException('Nepodařilo se spustit databázovou transakci.');
             }
             foreach ($queries as $query) {
                 if (trim($query)) {
 //                    $this->logger->info($query);
-                    $dbhTransact->exec($query);
-                    if (!$dbhTransact->inTransaction()) {
+                    $stmt = $this->handler->prepare($sql);
+                    $stmt->execute();
+                    if (!$this->handler->inTransaction()) {
                         throw new RuntimeException("Poslední příkaz provedený metodou PDO->exec($query) ukončil spuštěnou databázovou transakci.");
                     }                    
                 }
             }
             if ($rollback) {
 //            $this->logger->info('Forced rollback: '.$e->getMessage());
-                $succ = $dbhTransact->rollBack();
+                $succ = $this->handler->rollBack();
                 throw new ForcedRollbackException("Proveden přikázaný rollback transakce.");
                 
             } else {
 //                $this->logger->info('Commit.');
-                $succ = $dbhTransact->commit();
+                $succ = $this->handler->commit();
             }
         } catch(PDOException $e) {
             $handlerLogger = $this->handler->getLogger();
@@ -205,15 +205,13 @@ class Manipulator {
                 $handlerLogger->error("Vyhozena PDOException: {$e->getMessage()}");
             }
 //            $this->logger->error('Rollback: '.$e->getMessage());
-            $dbhTransact->rollBack();
+            $this->handler->rollBack();
             throw new ErrorRollbackException($e->getMessage(), 0, $e);
         }
         return $succ ? TRUE : FALSE;
     }
-
     /**
-     * Metoda očekává string obsahující jeden sql příkaz. Tento příkaz provede pomocí PDO->query() a vrací objekt StatementInterface.
-     * Pokud provedení selže, vrací null (nikoli false).
+     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů. Nespouští transakci a nevrací žádná data.
      *
      *
      * @param string $sql
@@ -223,7 +221,43 @@ class Manipulator {
      */
     /**
      * 
-     * @param type $sql
+     * @param string $sql
+     * @return void
+     * @throws LogicException Zadaný SQL řetězec je prázdný. Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.
+     * @throws PDOException Výjimka při vykonávání SQL
+     */
+    public function executeSequence($sql): void {
+        if (!$sql) {
+            throw new LogicException('Zadaný SQL řetězec je prázdný.');
+        }
+        $queries = $this->mysqlExplode($sql);
+        try {
+            foreach ($queries as $query) {
+                if (trim($query)) {
+//                    $this->logger->info($query);
+                    $stmt = $this->handler->prepare($sql);
+                    $stmt->execute();            
+                }
+            }            
+        } catch(PDOException $e) {
+//            $this->logger->info('Error: '.$e->getMessage());
+            $this->logger->error('Error: '.$e->getMessage());
+            throw $e;
+        }
+    }
+    
+    /**
+     * Metoda očekává string obsahující jeden sql příkaz. Tento příkaz provede pomocí PDO->query() a vrací objekt StatementInterface.
+     * Pokud provedení selže, vrací null (nikoli false).
+     *
+     * @param string $sql
+     * @return StatementInterface|null
+     * @throws LogicException
+     * @throws \RuntimeException
+     */
+    /**
+     * 
+     * @param string $sql
      * @return StatementInterface|null
      * @throws LogicException Zadaný SQL řetězec je prázdný. Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.
      * @throws ErrorRollbackException Výjimka při vykonávání transakce.
