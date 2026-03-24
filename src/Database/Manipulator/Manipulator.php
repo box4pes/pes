@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 
 use PDOException;
 use LogicException;
+use RuntimeException;
 use UnexpectedValueException;
 use Pes\Database\Manipulator\Exception\ErrorRollbackException;
 use Pes\Database\Manipulator\Exception\ForcedRollbackException;
@@ -148,12 +149,14 @@ class Manipulator {
     }
 
     /**
-     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů v jedné transakci. Jednotlivé SQL příkazy vykoná pomocé metody PDO->exec(), 
-     * která jako návratovou hodnotu vrací bool. Metoda tak nevrací žádný výsledek jen informuje o úspěchu.
+     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů v jedné transakci. Nevrací žádná data.
+     * 
+     * Metoda vyhodí výjimku, pokud příkaz ukončil spuštěnou databázovou transakci - typicky DDL příkaz, který vynutí autocommit transakce a tím ji ukončí - to znamená, že 
+     * všechny příkazy až po ten, který okončil transakci proběhly.
      * Lze zadat parametr rollback, který vynutí, že se po provedení příkazů v trasakci nikdy neprovede commit, vždy se volá rollback. 
      * Tím není ovlivněno chování v průběhu trasakce, pokud dojde v průběhu transakce k chybě, proběhne samozřejmě rollback zcela standartně.
      *
-     * Předpokládá, že SQL příkazy v souboru jsou odděleny středníkem ";".
+     * Předpokládá, že SQL příkazy v parametru $sql jsou odděleny středníkem ";".
      * Příkazy vykonává v rámci jedné transakce, kterou spouští.
      * Při pokusu o volání metody uprostřed již spuštěné transakce by vykonání neznámé posloupnosti SQL příkazů mohlo vést
      * k nepředvídaným výsledkům. Proto v případě pokusu o volání metody uprostřed již spuštěné transakce metoda vyhodí výjimku.
@@ -161,25 +164,33 @@ class Manipulator {
      * @param string $sql Řetězec s posloupností SQL příkazů oddělených středníky.
      * @param bool $rollback Pokud je true, pak se po provedení příkazů v trasakci nikdy neprovede commit, vždy se volá rollback.
      * @return bool TRUE, pokud transakce skončila úspěšně, jinak FALSE.
-     * @throws LogicException Pokud nelze přečíst zadaný soubor. Při volání uprostřed již spuštěné transakce.
+     * @throws LogicException Pokud nelze přečíst zadaný soubor, při volání uprostřed již spuštěné transakce, nepodařilo se spustit transakci.
      * @throws ErrorRollbackException Výjimka při vykonávání transakce.
-     * @throws ForcedRollbackException Rollbak byl vynucen parametrem rollback.
+     * @throws RuntimeException Pokud příkaz ukončil spuštěnou databázovou transakci.
+     * @throws ForcedRollbackException Rollback byl vynucen parametrem rollback.
      */
-    public function exec($sql, $rollback=false) {
+    public function execTransaction($sql, $rollback=false) {
         if (!$sql) {
             throw new LogicException('Zadaný soubor je prázdný.');
         }
-        $queries = $this->mysql_explode($sql);
+        $queries = $this->mysqlExplode($sql);
         $dbhTransact = $this->handler;
         if ($dbhTransact->inTransaction()) {
             throw new LogicException('Nelze volat tuto metodu exec() uprostřed spuštěné databázové transakce.');
         }
         try {
-            $dbhTransact->beginTransaction();
+            $succ = $dbhTransact->beginTransaction();
+            if (!$dbhTransact->inTransaction()) {
+                throw new LogicException('Nepodařilo se spustit databázovou transakci.');
+            }
             foreach ($queries as $query) {
                 if (trim($query)) {
 //                    $this->logger->info($query);
-                    $dbhTransact->exec($query);
+                    $stmt = $dbhTransact->prepare($sql);
+                    $stmt->execute();
+                    if (!$dbhTransact->inTransaction()) {
+                        throw new RuntimeException("Poslední příkaz provedený metodou PDO->exec($query) ukončil spuštěnou databázovou transakci.");
+                    }                    
                 }
             }
             if ($rollback) {
@@ -203,11 +214,46 @@ class Manipulator {
         }
         return $succ ? TRUE : FALSE;
     }
-
+    /**
+     * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů. Nespouští transakci a nevrací žádná data.
+     *
+     *
+     * @param string $sql
+     * @return StatementInterface|null
+     * @throws LogicException
+     * @throws \RuntimeException
+     */
+    /**
+     * 
+     * @param type $sql
+     * @return StatementInterface|null
+     * @throws LogicException Zadaný SQL řetězec je prázdný. Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.
+     * @throws ErrorRollbackException Výjimka při vykonávání transakce.
+     */
+    public function executeSequence($sql): ?StatementInterface {
+        if (!$sql) {
+            throw new LogicException('Zadaný SQL řetězec je prázdný.');
+        }
+        $queries = $this->mysqlExplode($sql);
+        try {
+            foreach ($queries as $query) {
+                if (trim($query)) {
+//                    $this->logger->info($query);
+                    $stmt = $dbhTransact->prepare($sql);
+                    $stmt->execute();            
+                }
+            }            
+        } catch(PDOException $e) {
+//            $this->logger->info('Error: '.$e->getMessage());
+            $this->logger->error('Error: '.$e->getMessage());
+            throw $e;
+        }
+        return $stat ? $stat : null;
+    }
+    
     /**
      * Metoda očekává string obsahující jeden sql příkaz. Tento příkaz provede pomocí PDO->query() a vrací objekt StatementInterface.
      * Pokud provedení selže, vrací null (nikoli false).
-     *
      *
      * @param string $sql
      * @return StatementInterface|null
@@ -225,7 +271,7 @@ class Manipulator {
         if (!$sql) {
             throw new LogicException('Zadaný SQL řetězec je prázdný.');
         }
-        $queries = $this->mysql_explode($sql);
+        $queries = $this->mysqlExplode($sql);
         if (count($queries)>1) {
             throw new LogicException('Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.');
         }
@@ -276,9 +322,9 @@ class Manipulator {
      * @param type $sql
      * @return type
      */
-    private function mysql_explode($sql) {
+    private function mysqlExplode($sql) {
         $sql = str_replace("\'", "''", $sql);
-        return $this->sql_explode($sql);
+        return $this->sqlExplode($sql);
     }
 
     /**
@@ -286,7 +332,7 @@ class Manipulator {
      * @param type $sql
      * @return type
      */
-    private function sql_explode($sql) {
+    private function sqlExplode($sql) {
         $sql = \trim(\trim($sql), ";").";";
         $separator = ";";
         $leftBracket = "'";
