@@ -166,25 +166,26 @@ class Manipulator {
      * @throws RuntimeException Pokud příkaz ukončil spuštěnou databázovou transakci.
      * @throws ForcedRollbackException Rollback byl vynucen parametrem rollback.
      */
-    public function execTransaction($sql, $rollback=false) {
+    public function executeTransaction($sql, $rollback=false): bool {
         if (!$sql) {
             throw new LogicException('Zadaný soubor je prázdný.');
         }
         $queries = $this->mysqlExplode($sql);
-        if ($this->handler->inTransaction()) {
+        $dbhTransact = $this->handler;
+        if ($dbhTransact->inTransaction()) {
             throw new LogicException('Nelze volat tuto metodu exec() uprostřed spuštěné databázové transakce.');
         }
         try {
-            $succ = $this->handler->beginTransaction();
-            if (!$this->handler->inTransaction()) {
+            $succ = $dbhTransact->beginTransaction();
+            if (!$dbhTransact->inTransaction()) {
                 throw new LogicException('Nepodařilo se spustit databázovou transakci.');
             }
             foreach ($queries as $query) {
                 if (trim($query)) {
 //                    $this->logger->info($query);
-                    $stmt = $this->handler->prepare($sql);
+                    $stmt = $dbhTransact->prepare($sql);
                     $stmt->execute();
-                    if (!$this->handler->inTransaction()) {
+                    if (!$dbhTransact->inTransaction()) {
                         throw new RuntimeException("Poslední příkaz provedený metodou PDO->exec($query) ukončil spuštěnou databázovou transakci.");
                     }                    
                 }
@@ -210,17 +211,10 @@ class Manipulator {
         }
         return $succ ? TRUE : FALSE;
     }
+    
     /**
      * Vykoná obsah zadaného řetězce jako posloupnost SQL příkazů. Nespouští transakci a nevrací žádná data.
      *
-     *
-     * @param string $sql
-     * @return StatementInterface|null
-     * @throws LogicException
-     * @throws \RuntimeException
-     */
-    /**
-     * 
      * @param string $sql
      * @return void
      * @throws LogicException Zadaný SQL řetězec je prázdný. Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.
@@ -235,7 +229,7 @@ class Manipulator {
             foreach ($queries as $query) {
                 if (trim($query)) {
 //                    $this->logger->info($query);
-                    $stmt = $this->handler->prepare($sql);
+                    $stmt = $this->handler->prepare($query);
                     $stmt->execute();            
                 }
             }            
