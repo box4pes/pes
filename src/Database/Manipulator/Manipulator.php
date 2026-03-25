@@ -183,7 +183,7 @@ class Manipulator {
             foreach ($queries as $query) {
                 if (trim($query)) {
 //                    $this->logger->info($query);
-                    $stmt = $dbhTransact->prepare($sql);
+                    $stmt = $dbhTransact->prepare($query);
                     $stmt->execute();
                     if (!$dbhTransact->inTransaction()) {
                         throw new RuntimeException("Poslední příkaz provedený metodou PDO->exec($query) ukončil spuštěnou databázovou transakci.");
