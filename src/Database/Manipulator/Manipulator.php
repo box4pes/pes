@@ -118,7 +118,7 @@ class Manipulator {
      * @return bool TRUE, pokud tabulka existuje a lze z ní číst, jinak FALSE.
      * @throws UnexpectedValueException
      */
-    public function tableExists($tableName) {
+    public function tableExists(string $tableName) {
         $nameChunks = explode(".", $tableName);
         switch (count($nameChunks)) {
             case 1:
@@ -166,7 +166,7 @@ class Manipulator {
      * @throws RuntimeException Pokud příkaz ukončil spuštěnou databázovou transakci.
      * @throws ForcedRollbackException Rollback byl vynucen parametrem rollback.
      */
-    public function executeTransaction($sql, $rollback=false): bool {
+    public function executeTransaction(string $sql, $rollback=false): bool {
         if (!$sql) {
             throw new LogicException('Zadaný soubor je prázdný.');
         }
@@ -220,7 +220,7 @@ class Manipulator {
      * @throws LogicException Zadaný SQL řetězec je prázdný. Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.
      * @throws PDOException Výjimka při vykonávání SQL
      */
-    public function executeSequence($sql): void {
+    public function executeSequence(string $sql): void {
         if (!$sql) {
             throw new LogicException('Zadaný SQL řetězec je prázdný.');
         }
@@ -241,22 +241,46 @@ class Manipulator {
     }
     
     /**
+     * Metoda očekává string obsahující jeden sql příkaz. 
+     * Pokud provedení selže, vyhodí výjimku nebo vrací false pokud není nastaveno PDO::ATTR_ERRMODE = PDO::ERRMODE_EXCEPTION
+     *
+     * @param string $sql
+     * @return bool Jen pokud není nastaveno PDO::ATTR_ERRMODE = PDO::ERRMODE_EXCEPTION - jinak při selhání vždy vyhodí výjimku
+     * @throws LogicException Zadaný SQL řetězec je prázdný. Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.
+     * @throws PDOException Výjimka při vykonávání SQL
+     */
+    public function exec(string $sql): bool {
+        if (!$sql) {
+            throw new LogicException('Zadaný SQL řetězec je prázdný.');
+        }
+        $queries = $this->mysqlExplode($sql);
+        if (count($queries)>1) {
+            throw new LogicException('Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.');
+        }
+        try {
+            if (trim($queries[0])) {
+//                $this->logger->info($queries[0]);
+                $stmt = $this->handler->prepare($queries[0]);
+                $succ = $stmt->execute();                  
+            }
+        } catch(PDOException $e) {
+//            $this->logger->info('Error: '.$e->getMessage());
+            $this->logger->error('Error: '.$e->getMessage());
+            throw $e;
+        }
+        return $succ;
+    }
+    
+    /**
      * Metoda očekává string obsahující jeden sql příkaz. Tento příkaz provede pomocí PDO->query() a vrací objekt StatementInterface.
      * Pokud provedení selže, vrací null (nikoli false).
      *
      * @param string $sql
      * @return StatementInterface|null
-     * @throws LogicException
-     * @throws \RuntimeException
-     */
-    /**
-     * 
-     * @param string $sql
-     * @return StatementInterface|null
      * @throws LogicException Zadaný SQL řetězec je prázdný. Nelze volat tuto metodu pro provedení více než jednoho příkazu SQL.
-     * @throws ErrorRollbackException Výjimka při vykonávání transakce.
+     * @throws PDOException Výjimka při vykonávání SQL
      */
-    public function query($sql): ?StatementInterface {
+    public function query(string $sql): ?StatementInterface {
         if (!$sql) {
             throw new LogicException('Zadaný SQL řetězec je prázdný.');
         }
@@ -272,7 +296,7 @@ class Manipulator {
         } catch(PDOException $e) {
 //            $this->logger->info('Error: '.$e->getMessage());
             $this->logger->error('Error: '.$e->getMessage());
-            throw new ErrorRollbackException($e->getMessage(), 0, $e);
+            throw $e;
         }
         return $stat ? $stat : null;
     }
