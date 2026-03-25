@@ -68,8 +68,8 @@ class Manipulator {
         }
 
         try {
-            $this->handler->beginTransaction();
             $this->handler->exec("CREATE TABLE $targetTableName LIKE $sourceTableName");
+            $this->handler->beginTransaction();
             $this->handler->exec("INSERT $targetTableName SELECT * FROM $sourceTableName");
             $succ = $this->handler->commit();
         } catch(PDOException $e) {
@@ -100,9 +100,9 @@ class Manipulator {
         //CREATE TABLE tbl_new AS SELECT * FROM tbl_old;
 
         try {
-            $this->handler->beginTransaction();
             $this->handler->exec("DROP TABLE IF EXISTS $targetTableName");
             $this->handler->exec("CREATE TABLE $targetTableName LIKE $souceTableName");
+            $this->handler->beginTransaction();
             $this->handler->exec("INSERT $targetTableName SELECT * FROM $souceTableName");
             $succ = $this->handler->commit();
         } catch(PDOException $e) {
