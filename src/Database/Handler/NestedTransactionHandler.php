@@ -33,7 +33,7 @@ class NestedTransactionHandler extends Handler {
     public function beginTransaction()
     {
         if (!$this->savepointCounter++) {
-            $success = parent::beginTransaction();
+            $success = $this->beginTransaction();
             $message = $this->getInstanceInfo().' beginTransaction(). Proveden start transakce PDO::beginTransaction().';
             if (!$success) {
                 $message .= '. Metoda PDO::beginTransaction() selhala.';
@@ -58,7 +58,7 @@ class NestedTransactionHandler extends Handler {
     public function commit()
     {
         if (!--$this->savepointCounter) {
-            $success = parent::commit();
+            $success = $this->commit();
             $message = $this->getInstanceInfo().' commit(). Proveden commit transakce PDO::commit().';
             if (!$success) {
                 $message .= '. Metoda PDO::commit() selhala.';
@@ -85,7 +85,7 @@ class NestedTransactionHandler extends Handler {
             $this->logger->debug($message, array('point'=>$this->savepointCounter));
             return true;
         }
-        $success = parent::rollback();
+        $success = $this->rollback();
         $message = $this->getInstanceInfo().' rollback(). Proveden rollback transakce PDP::rollback().';
         if (!$success) {
             $message .= '. Metoda PDO::rollback() selhala.';

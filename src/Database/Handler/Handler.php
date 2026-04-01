@@ -22,6 +22,7 @@ use Pes\Database\Statement\StatementInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 
+<<<<<<< HEAD
 class Handler implements HandlerInterface { //extends PDO {   // // 
     private const UNSUPPORTED_ATTRIBUTE_MESSAGE = 'driver does not support that attribute';
 
@@ -235,25 +236,29 @@ class Handler implements HandlerInterface { //extends PDO {   // //
      *
      * {@inheritdoc}
      *
-     * Vrací hodnotu počítadla instancí hadleru pro logování.
-     *
-     * @return integer
+     * @return string
      */
+    #[\Override]
     public function getInstanceInfo() {
         return "Handler $this->dbName ($this->handlerNumber)";
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return string
+     */
+    #[\Override]
     public function getSchemaName(): string {
         return $this->dbName;
     }
 
     /**
-     * Metoda JE použita!
-     * Volána jako funkce v metodě safeExceptionHandler()
+     * {@inheritdoc}
      *
-     * @param type $param
-     * @return type
+     * @return string
      */
+<<<<<<< HEAD
     private static function varPrint($param) {
         $pr = [];
         foreach ($param as $var) {
@@ -432,6 +437,10 @@ class Handler implements HandlerInterface { //extends PDO {   // //
     ###############  METODY PRO DEBUG  ######################
 
     public function getDatabaseHandlerErrorInfo() {
+=======
+    #[\Override]
+    public function getDatabaseHandlerErrorInfo(): string {
+>>>>>>> a0d58b2745455a7b36d1b16c438fec3f42bebcb8
         return var_export($this->connection->errorInfo(), TRUE);
     }
 

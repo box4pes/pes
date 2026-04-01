@@ -17,9 +17,9 @@ namespace Pes\Session\SaveHandler;
  */
 trait EncryptedLoggingReadWriteTrait {
 
-    public function read($session_id) {
-        $readed = parent::read($session_id);
-        $this->logger->debug('Session save handler: read({session_id}) - readed {readed}', ['session_id'=>$session_id, 'readed'=>$readed]);
+    public function read(string $id): string|false {
+        $readed = parent::read($id);
+        $this->logger->debug('Session save handler: read({session_id}) - readed {readed}', ['session_id'=>$id, 'readed'=>$readed]);
         if (!$readed) {
             return "";
         } else {
@@ -31,13 +31,13 @@ trait EncryptedLoggingReadWriteTrait {
         }
     }
 
-    public function write($session_id, $data) {
+    public function write(string $id, string $data): bool {
         if (PES_DEVELOPMENT) {
             $this->logger->debug('Session save handler: data to write {data}', ['data'=>$data]);
         }
         $encrypted = $this->cryptor->encrypt($data);
-        $write = parent::write($session_id, $encrypted);
-        $this->logger->debug('Session save handler: write({session_id}, {session_data}) - success:{write}', ['session_id'=>$session_id, 'session_data'=>$encrypted, 'write'=>$write]);
+        $write = parent::write($id, $encrypted);
+        $this->logger->debug('Session save handler: write({session_id}, {session_data}) - success:{write}', ['session_id'=>$id, 'session_data'=>$encrypted, 'write'=>$write]);
         return $write;
     }
 

@@ -42,7 +42,7 @@ class ImplodeRenderer implements TemplateRendererInterface {
      * @return string
      * @throws \UnexpectedValueException
      */
-    public function render(iterable $data=NULL) {
+    public function render(?iterable $data=NULL) {
         if (isset($this->template)) {
             $separator = $this->template->getSeparator();
         } else {

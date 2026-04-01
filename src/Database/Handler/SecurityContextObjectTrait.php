@@ -23,7 +23,7 @@ trait SecurityContextObjectTrait {
      * Objekt může obsahovat citlivá data, pro jistotu bráním jeko serializaci. Nevrací nic, nevyhazuje výjimku.
      * @return NULL
      */
-    final public function serialize() {
+    public function __serialize(): array {
         ;
     }
 
@@ -32,7 +32,7 @@ trait SecurityContextObjectTrait {
      * @param string $serialized
      * @return NULL
      */
-    final public function unserialize($serialized) {
+    public function __unserialize(array $serialized): void {
         ;
     }
 

@@ -25,7 +25,7 @@ class StringRenderer implements RendererInterface {
      * @param type $data
      * @return type
      */
-    public function render(iterable $data=NULL) {
+    public function render(?iterable $data=NULL) {
         if ($data) {
             $str = (string) $data;
         }

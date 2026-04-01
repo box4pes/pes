@@ -102,11 +102,8 @@ class UploadedFile implements UploadedFileInterface
         $this->clientMediaType = $clientMediaType;
     }
 
-    /**
-     * {@inheritdoc}
-     * @throws \RuntimeException if the upload was not successful.
-     */
-    public function getStream()
+    #[\Override]
+    public function getStream(): StreamInterface 
     {
         if ($this->error !== UPLOAD_ERR_OK) {
             throw new UploadException('Cannot retrieve stream due to upload error', $this->error);
@@ -124,38 +121,21 @@ class UploadedFile implements UploadedFileInterface
         return $this->stream;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @see http://php.net/is_uploaded_file
-     * @see http://php.net/move_uploaded_file
-     * @param string $targetPath Path to which to move the uploaded file.
-     * @throws RuntimeException
-     * @throws UploadException
-     * @throws InvalidArgumentException
-     */
-    public function moveTo($targetPath)
+    #[\Override]
+    public function moveTo(string $targetPath): void
     {
         if ($this->moved) {
             throw new RuntimeException('Cannot move file; already moved!');
         }
-
         if ($this->error !== UPLOAD_ERR_OK) {
             throw new UploadException('Cannot retrieve stream due to upload error', $this->error);
         }
-
         if (! is_string($targetPath) || empty($targetPath)) {
-            throw new InvalidArgumentException(
-                'Invalid path provided for move operation; must be a non-empty string'
-            );
+            throw new InvalidArgumentException('Invalid path provided for move operation; must be a non-empty string');
         }
-
         $targetDirectory = dirname($targetPath);
         if (! is_dir($targetDirectory) || ! is_writable($targetDirectory)) {
-            throw new RuntimeException(sprintf(
-                'The target directory `%s` does not exists or is not writable',
-                $targetDirectory
-            ));
+            throw new RuntimeException(sprintf('The target directory `%s` does not exists or is not writable', $targetDirectory));
         }
 
         // PHP_SAPI - lowercase string that describes the type of interface (the Server API, SAPI) that PHP is using. For example,
@@ -174,42 +154,22 @@ class UploadedFile implements UploadedFileInterface
         $this->moved = true;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return int|null The file size in bytes or null if unknown.
-     */
-    public function getSize()
+    public function getSize(): ?int
     {
         return $this->size;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @see http://php.net/manual/en/features.file-upload.errors.php
-     * @return int One of PHP's UPLOAD_ERR_XXX constants.
-     */
-    public function getError()
+    public function getError(): int
     {
         return $this->error;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return string|null The filename sent by the client or null if none
-     *     was provided.
-     */
-    public function getClientFilename()
+    public function getClientFilename(): ?string
     {
         return $this->clientFilename;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getClientMediaType()
+    public function getClientMediaType(): ?string
     {
         return $this->clientMediaType;
     }

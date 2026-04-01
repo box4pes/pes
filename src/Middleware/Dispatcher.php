@@ -87,25 +87,20 @@ class Dispatcher implements MiddlewareInterface
      * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-//        $this->stack[] = function (ServerRequestInterface $request) use ($handler) {
-//            return $handler->handle($request);
-//        };
         $this->stack[] = $handler;
-//        $response = $this->dispatch($request);
         $resolved = $this->resolve(0);
         return $resolved($request);
-//        array_pop($this->stack);
-//        return $response;
     }
 
     /**
-     * Vytvoří request handler. Tento request handler po zavolání vytváří response rekurzivním projitím zásobníku middleware předaného do konstruktoru dispatcheru.
+     * Vytvoří request handler. Request handler vytváří response. 
+     * Handler vytváří response rekurzivním projitím zásobníku middleware předaného do konstruktoru dispatcheru.
      * <p>Request handler REKURZIVNÉ projde celý zásobník takto:
      * <ul>
      * <li>pokud je zadán resolver položku zásobníku nejprve resolvuje, resolver je funkce, která příjímá parametr a vrací
      * middleware - objekt typu Psr\Http\Server\MiddlewareInterface.
      * <li>Pro výsledek vrácený resolverem nebo položku přímo: pokud je výsledek nebo položka Middleware - volá metodu položka->process(), jinak vyhodí výjimku</li>
-     *    Jako druhý parament při voláníí middleware předá rekurzivní volání resolve() s další položkou zásobníku.</li>
+     *    Jako druhý parametr při volání middleware předá rekurzivní volání resolve() s další položkou zásobníku.</li>
      * <li>Pokud volání položky zásobníku vrací response, rekurze končí.</li></ul>
      * </p>
      * @param int $index middleware stack index
@@ -117,26 +112,32 @@ class Dispatcher implements MiddlewareInterface
             if ($this->stack[$index] instanceof RequestHandlerInterface) {
                 return $this->stack[$index];
             } else {
-                return new RequestHandler(
-                    function (ServerRequestInterface $request) use ($index) {
-                        //zavolá na položku resolver (výsledek musí být middleware nebo callable) nebo použije položku
-                        $middleware = $this->resolver ? call_user_func($this->resolver, $this->stack[$index]) : $this->stack[$index];
-                        if ($middleware instanceof MiddlewareInterface) {
-                            if ($middleware instanceof AppMiddlewareInterface) {
-                                $middleware->setApp($this->app);
-                            }
-                            $result = $middleware->process($request, $this->resolve($index + 1));
-                            if (! $result instanceof ResponseInterface) {
-                                throw new \DomainException("Middleware v zásobníku s indexem $index nevrátilo objekt typu ResponseInterface.");
-                            }
-                        } else {
-                            throw new \UnexpectedValueException("Nepodporovaný typ middleware ".get_class($this->stack[$index])." v zásobníku s indexem $index. Podporované jsou objekty typu MiddlewareInterface.");
-                        }
-                        return $result;
-                    }
-                );
+                return $this->newRequestHandler($index);
             }
         }
         return new UnprocessedRequestHandler();
+    }
+    
+    private function newRequestHandler($index) {
+        return new RequestHandler(
+            function (ServerRequestInterface $request) use ($index) {
+                //zavolá na položku resolver (výsledek musí být middleware nebo callable) nebo použije položku
+                $middleware = $this->resolver ? call_user_func($this->resolver, $this->stack[$index]) : $this->stack[$index];
+                if ($middleware instanceof MiddlewareInterface) {
+                    if ($middleware instanceof AppMiddlewareInterface) {
+                        $middleware->setApp($this->app);
+                    }
+                    // rekurze - jako druhý parametr při volání middleware->process() předá rekurzivní volání resolve() s další položkou zásobníku
+                    $result = $middleware->process($request, $this->resolve($index + 1));
+
+                } else {
+                    throw new \UnexpectedValueException("Nepodporovaný typ middleware ".get_class($this->stack[$index])." v zásobníku s indexem $index. Podporované jsou objekty typu MiddlewareInterface.");
+                }
+                if (! $result instanceof ResponseInterface) {
+                    throw new \DomainException("Middleware v zásobníku s indexem $index nevrátilo objekt typu ResponseInterface.");
+                }
+                return $result;
+            }
+        );        
     }
 }

@@ -33,7 +33,7 @@ abstract class OptionsProviderAbstract implements OptionsProviderInterface {
         $this->options = $options;
     }
     
-    public function setLogger(LoggerInterface $logger) {
+    public function setLogger(LoggerInterface $logger): void {
         $this->logger = $logger;
     }
 }

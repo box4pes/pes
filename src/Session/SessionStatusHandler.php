@@ -380,7 +380,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      *
      * Na začátku trvání sezení, t.j. při prvním  instancování session handleru v průběhu sezení, session handler automaticky nastaví otisk a
      * při dalších voláních v průběhu trvání sezení klienta kontroluje shodu otisku.
-     * Otisk je založen na jménu aplikace - klienta (HTTP_USER_AGENT) a případně horních 16 bbitech IP adresy klienta. Skutečný obsah otisky je dán
+     * Otisk je založen na jménu aplikace - klienta (HTTP_USER_AGENT) a případně horních 16 bbitech IP adresy klienta. Skutečný obsah otisku je dán
      * nastavením parametrů konstruktoru. V konstruktoru je také nastaveno, že session bude automaticky zrušena, pokud dojde ke změně otisku. Tuto volbu
      * lze parametrem konstruktoru změnit a pak kontrolovat otisk touto metodou.
      *
@@ -486,10 +486,11 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      */
     private function getFingerprintHash() {
         if ($this->lockToUserAgent) {
+            $agent = ( isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'anonymous user agent' );
             if ($this->lockToIp) {
-                $hash = hash('sha1', $_SERVER['HTTP_USER_AGENT'] . (ip2long($_SERVER['REMOTE_ADDR']) & ip2long(self::IP_MASK)));
+                $hash = hash('sha1', $agent . (ip2long($_SERVER['REMOTE_ADDR']) & ip2long(self::IP_MASK)));
             } else {
-                $hash = hash('sha1', $_SERVER['HTTP_USER_AGENT']);
+                $hash = hash('sha1', $agent);
             }
         } else {
             if ($this->lockToIp) {

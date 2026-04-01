@@ -72,7 +72,7 @@ interface TextInterface {
      * @param string $textOnFalse
      * @return string
      */
-    public static function resolve($condition = true, string $textOnTrue, string $textOnFalse = ''): string;
+    public static function resolve($condition, string $textOnTrue, string $textOnFalse = ''): string;
 
     /**
      * Alias k metodě esc().

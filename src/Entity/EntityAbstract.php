@@ -10,7 +10,7 @@ namespace Pes\Entity;
  * 
  * Description of Projektor2_Model_RowModelAbstract
  *
- * @author pes2704
+ * @author pes2704 
  */
 abstract class EntityAbstract implements EntityInterface, \IteratorAggregate {
        

@@ -155,7 +155,7 @@ class View implements ViewInterface {
      * @param TemplateInterface $template
      * @return \Pes\View\ViewInterface
      */
-    public function setTemplate(TemplateInterface $template = null): ViewInterface {
+    public function setTemplate(TemplateInterface $template): ViewInterface {
         $this->template = $template;
         return $this;
     }
@@ -296,7 +296,7 @@ class View implements ViewInterface {
         }
     }
 
-    private function setRendererTemplate(RendererInterface $renderer, TemplateInterface $template=null) {
+    private function setRendererTemplate(RendererInterface $renderer, ?TemplateInterface $template=null) {
         if ($renderer instanceof TemplateRendererInterface) {
             if ($template) {
                 $this->checkRendererTemplateCompatibility($renderer, $this->template);
