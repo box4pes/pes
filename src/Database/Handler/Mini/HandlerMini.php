@@ -8,21 +8,24 @@ class HandlerMini extends \PDO implements HandlerMiniInterface {
      */
     private $dsn;
 
-    public function __construct(DsnInterface $dsn, $user, $password, array $options=NULL) {
+    private $connection;
+
+
+    public function __construct(DsnInterface $dsn, $user, $password, ?array $options = null) {
         $this->dsn = $dsn;
-        parent::__construct($dsn->getDsnString(), $user, $password, $options);
+        $this->connection = \PDO::connect($dsn->getDsnString(), $user, $password, $options);
     }
 
     /**
      * Metoda mění adapter na kombinaci adapteru a wrapperu. Pro metody implementované v této třídě se objekt chová jako adapter,
      * volá se implementovaná metoda třídy. Pro neimplementované metody se volá metoda "obaleného" objektu, v tomto případě tedy metoda PDO.
-     * @param type $method
+     * @param string $method
      * @param array $arguments
-     * @return type
+     * @return mixed
      */
-    public function __call($method, array $arguments )
+    public function __call(string$method, array $arguments )
     {
-        return \call_user_func_array(array($this, $method), $arguments);
+        return \call_user_func_array([$this->connection, $method], $arguments);
     }
 
    /**
