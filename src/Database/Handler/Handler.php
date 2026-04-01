@@ -10,6 +10,8 @@
 namespace Pes\Database\Handler;
 
 use PDO;
+use PDOException;
+use Throwable;
 use Pes\Database\Handler\AccountInterface;
 use Pes\Database\Handler\ConnectionInfoInterface;
 use Pes\Database\Handler\DsnProvider\DsnProviderInterface;
@@ -21,6 +23,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 
 class Handler implements HandlerInterface { //extends PDO {   // // 
+    private const UNSUPPORTED_ATTRIBUTE_MESSAGE = 'driver does not support that attribute';
 
     /**
      * 
@@ -173,10 +176,10 @@ class Handler implements HandlerInterface { //extends PDO {   // //
                 $attr = $this->connection->getAttribute(constant("\PDO::$attribute"));
                 $dump[] = "PDO::$attribute: (atribut číslo ".constant("\PDO::$attribute").") má hodnotu ".$attr;
             } catch (PDOException $pdoex) {
-                if (strpos($pdoex->getMessage, self::CATCHED_ERROR_MESSAGE) !== FALSE) {
+                if (strpos($pdoex->getMessage(), self::UNSUPPORTED_ATTRIBUTE_MESSAGE) !== FALSE) {
                     $dump[] = "Použitý PHP interpret neakceptuje atribut PDO::$attribute";
                 } else {
-                    throwException($pdoex);
+                    throw $pdoex;
                 }
             }
         }
@@ -196,7 +199,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
      *
      * @param type $exception
      */
-    public static function safeExceptionHandler(\Exception $exception) {
+    public static function safeExceptionHandler(Throwable $exception) {
         $str2 = '';
         $i = 0;
         foreach ($exception->getTrace() as $trace) {
@@ -278,9 +281,11 @@ class Handler implements HandlerInterface { //extends PDO {   // //
                 $rendered = $vartype." ".count($var)." elements";
                 break;
             case "object":
+                $rendered = $vartype." ". get_class($var);
+                break;
             case "resource":
             case "resource (closed)":  // as of PHP 7.2.0
-                $rendered = $vartype." ". get_class($var);
+                $rendered = $vartype;
                 break;
             case "NULL":
             case "unknown type":
@@ -427,7 +432,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
     ###############  METODY PRO DEBUG  ######################
 
     public function getDatabaseHandlerErrorInfo() {
-        return var_export($this->errorInfo(), TRUE);
+        return var_export($this->connection->errorInfo(), TRUE);
     }
 
 }
