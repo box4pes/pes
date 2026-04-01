@@ -7,7 +7,7 @@ namespace Pes\Database\Handler\Mini;
  */
 interface HandlerMiniFactoryInterface {
     /**
-     * @return HandlerMini
+     * @return ?HandlerMini
      */
-    public function get();
+    public function get(): ?HandlerMini;
 }
