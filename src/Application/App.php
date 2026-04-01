@@ -64,7 +64,7 @@ class App implements AppInterface {
     /**
      * {@inheritdoc}
      * @param ServerRequestInterface $appRequest
-     * @return \Pes\Application\AppInterface
+     * @return AppInterface
      */
     public function setServerRequest(ServerRequestInterface $appRequest): AppInterface {
         $this->serverRequest = $appRequest;
@@ -108,9 +108,9 @@ class App implements AppInterface {
     /**
      * {@inheritdoc}
      * @param LoggerInterface $logger
-     * @return \Pes\Middleware\AppMiddlewareInterface
+     * @return AppInterface
      */
-    public function setLogger(LoggerInterface $logger): AppMiddlewareInterface {
+    public function setLogger(LoggerInterface $logger): AppInterface {
         $this->logger = $logger;
         return $this;
     }
