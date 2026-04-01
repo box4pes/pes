@@ -27,13 +27,13 @@ interface AppInterface {
 
     /**
      * Výchozí http request, se kterým byl spuštěn skript
-     * @return RequestInterface
+     * @return ServerRequestInterface
      */
     public function getServerRequest(): ServerRequestInterface;
 
     /**
      * Výchozí http request, se kterým byl spuštěn skript
-     * @param RequestInterface $request
+     * @param ServerRequestInterface $request
      * @return AppInterface
      */
     public function setServerRequest(ServerRequestInterface $request): AppInterface;

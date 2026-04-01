@@ -110,7 +110,7 @@ class App implements AppInterface {
      * @param LoggerInterface $logger
      * @return \Pes\Middleware\AppMiddlewareInterface
      */
-    public function setLogger(LoggerInterface $logger): AppMiddlewareInterface {
+    public function setLogger(LoggerInterface $logger): AppInterface {
         $this->logger = $logger;
         return $this;
     }
