@@ -18,7 +18,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Pes\Middleware\AppMiddlewareInterface;
 
 /**
  *
@@ -67,9 +66,9 @@ interface AppInterface {
     /**
      * Nastaví logger.
      * @param LoggerInterface $logger
-     * @return \Pes\Application\AppMiddlewareInterface
+     * @return AppInterface
      */
-    public function setLogger(LoggerInterface $logger): AppMiddlewareInterface;
+    public function setLogger(LoggerInterface $logger): AppInterface;
 
     /**
      * Vykoná middleware.
