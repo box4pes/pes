@@ -34,7 +34,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "8.26.x-dev"
+            "dev-master-php8": "8.26.x-dev"
         }
     }
 }
