@@ -262,6 +262,8 @@ class Manipulator {
 //                $this->logger->info($queries[0]);
                 $stmt = $this->handler->prepare($queries[0]);
                 $succ = $stmt->execute();                  
+            } else{
+                throw new LogicException('Zadaný SQL řetězec před prvním znakem ; je prázdný nebo obsahuje pouze mezery.');
             }
         } catch(PDOException $e) {
 //            $this->logger->info('Error: '.$e->getMessage());
