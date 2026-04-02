@@ -42,7 +42,7 @@ interface AppInterface {
      * Kontejner aplikace - kontejner poskytující služby společné pro celou aplikaci nebo jediný kontejner použtý v aplikaci
      * @return ContainerInterface
      */
-    public function getAppContainer();
+    public function getAppContainer(): ContainerInterface;
 
     /**
      * Kontejner aplikace - kontejner poskytující služby společné pro celou aplikaci nebo jediný kontejner použtý v aplikaci

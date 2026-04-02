@@ -57,6 +57,7 @@ class App implements AppInterface {
      * {@inheritdoc}
      * @return ServerRequestInterface
      */
+    #[\Override]
     public function getServerRequest(): ServerRequestInterface {
         return $this->serverRequest;
     }
@@ -66,6 +67,7 @@ class App implements AppInterface {
      * @param ServerRequestInterface $appRequest
      * @return AppInterface
      */
+    #[\Override]
     public function setServerRequest(ServerRequestInterface $appRequest): AppInterface {
         $this->serverRequest = $appRequest;
         return $this;
@@ -75,7 +77,8 @@ class App implements AppInterface {
      * {@inheritdoc}
      * @return ContainerInterface
      */
-    public function getAppContainer() {
+    #[\Override]
+    public function getAppContainer(): ContainerInterface {
         return $this->appContainer;
     }
 
@@ -84,6 +87,7 @@ class App implements AppInterface {
      * @param ContainerInterface $appContainer
      * @return AppInterface
      */
+    #[\Override]
     public function setAppContainer(ContainerInterface $appContainer): AppInterface {
         $this->appContainer = $appContainer;
         return $this;
@@ -93,6 +97,7 @@ class App implements AppInterface {
      * {@inheritdoc}
      * @return bool
      */
+    #[\Override]
     public function hasLogger(): bool {
         return isset($this->logger);
     }
@@ -101,6 +106,7 @@ class App implements AppInterface {
      * {@inheritdoc}
      * @return LoggerInterface|null
      */
+    #[\Override]
     public function getLogger(): ?LoggerInterface {
         return $this->logger;
     }
@@ -110,6 +116,7 @@ class App implements AppInterface {
      * @param LoggerInterface $logger
      * @return AppInterface
      */
+    #[\Override]
     public function setLogger(LoggerInterface $logger): AppInterface {
         $this->logger = $logger;
         return $this;
@@ -125,6 +132,7 @@ class App implements AppInterface {
      * @param RequestHandlerInterface $fallbackHandler Handler pro vrácení korektního response v případě, že middleware nedokáže request zpracovat.
      * @return ResponseInterface Http response
      */
+    #[\Override]
     public function run(MiddlewareInterface $middleware, RequestHandlerInterface $fallbackHandler): ResponseInterface {
         if ($middleware instanceof AppMiddlewareInterface) {
             $middleware->setApp($this);
