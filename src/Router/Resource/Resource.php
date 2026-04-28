@@ -38,11 +38,11 @@ class Resource implements ResourceInterface {
 
     /**
      *
-     * @param type $httpMethod
+     * @param string $httpMethod
      * @return \Pes\Router\Resource\ResourceInterface
      * @throws ResourceHttpMethodNotValid
      */
-    public function withHttpMethod($httpMethod): ResourceInterface {
+    public function withHttpMethod(string $httpMethod): ResourceInterface {
         try {
             $httpMethodValue = ($this->methodsEnum)($httpMethod);
         } catch (TypeExceptionInterface $e) {
@@ -85,7 +85,7 @@ class Resource implements ResourceInterface {
      *
      * @param array $pathParams
      * @return string
-     * @throws UnexpectedValueException
+     * @throws ResourcePathParameterDoesNotMatch
      */
     public function getPathFor(array $pathParams) {
         $replaced = 0;

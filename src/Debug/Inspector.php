@@ -38,8 +38,11 @@ class Inspector {
         $varname = "";
         $c = 0;
         for($i = 0; $i < $max; $i++){
-            if(     $match[1]{$i} == "(" ) $c++;
-            elseif( $match[1]{$i} == ")" ) $c--;
+            if(     $match[1][$i] == "(" ) {
+                $c++;
+            } elseif ( $match[1][$i] == ")" ) {
+                $c--;
+            }
             if($c < 0) break;
             $varname .=  $match[1]{$i};
         }

@@ -29,9 +29,9 @@ interface PhpTemplateFunctionsInterface {
      *
      * @param string $templateFilename Plné jméno souboru s php šablonou
      * @param iterable $data Iterovatelná data.
-     * @param type $emptyDataTemplateFilename
+     * @param string $emptyDataTemplateFilename
      */
-    public function insert($templateFilename, iterable $data=[], $emptyDataTemplateFilename='');
+    public function insert(string $templateFilename, iterable $data=[], string $emptyDataTemplateFilename='');
 
     /**
      * <p>Pokud jsou zadána data iteruje data, při každé iteraci vloží šablonu a renderuje ji s použitím jedné položky těchto dat.</p><p>
@@ -55,7 +55,7 @@ interface PhpTemplateFunctionsInterface {
      * @param iterable $data
      * @param string $emptyDataTemplateFilename Plné jméno souboru s šablonou pro prázdná data
      */
-    public function repeat($templateFilename, iterable $data=[], $variableName='item', $emptyDataTemplateFilename='');
+    public function repeat(string $templateFilename, iterable $data=[], string $variableName='item', string $emptyDataTemplateFilename='');
 
     /**
      * Pokud je zadaná podmínka vyhodnocena jako true, vloží šablonu, pokud jsou zadána data renderuje ji s použitím těchto dat. Pokud data nejsou zadána a je zadán třetí parametr - šablona pro případ prázdných dat,
@@ -74,5 +74,5 @@ interface PhpTemplateFunctionsInterface {
      * @param iterable $data
      * @param string $emptyDataTemplateFilename
      */
-    public function insertIf($condition, $templateFilename, iterable $data=[], $emptyDataTemplateFilename='');
+    public function insertIf(bool $condition, string $templateFilename, iterable $data=[], string $emptyDataTemplateFilename='');
 }

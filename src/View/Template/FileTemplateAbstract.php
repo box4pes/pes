@@ -54,6 +54,15 @@ abstract class FileTemplateAbstract implements FileTemplateInterface {
     }
 
     /**
+     * Alias pro kompatibilitu se starším API rendereru.
+     *
+     * @return string
+     */
+    public function getTemplatePath() {
+        return $this->getTemplateFilename();
+    }
+
+    /**
      * Vrací obsah souboru template jako string. Pokud soubor neexistuje, vrací prázdný řetězec.
      * @return string
      */

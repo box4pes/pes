@@ -16,7 +16,6 @@ use Psr\Container\ContainerInterface;
 use Pes\View\Template\TemplateInterface;
 use Pes\Type\ContextDataInterface;
 
-use Pes\View\ViewInterface;
 
 /**
  *

@@ -15,7 +15,15 @@ namespace Pes\View\Template;
  *
  * @author pes2704
  */
-interface PhpTemplateInterface extends TemplateInterface {
+interface PhpTemplateInterface extends FileTemplateInterface {
+
+    /**
+     * Vrací úplnou cestu k souboru šablony.
+     * Alias pro getTemplateFilename() kvůli kompatibilitě rendereru.
+     *
+     * @return string
+     */
+    public function getTemplatePath();
 
     /**
      * Nastaví data sdílená všemi šablonami. Tato data jsou extrahována vždy při renderování každé šablony. Při opakovaném renderování šablony jsou opakovaně extrahována, extrahované proměnné

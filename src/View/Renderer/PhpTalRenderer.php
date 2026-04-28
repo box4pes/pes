@@ -12,7 +12,7 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
  *
  * @author pes2704
  */
-class PhpTalRenderer extends TemplateRendererAbstract implements PhpTalRendererInterface {
+class PhpTalRenderer implements PhpTalRendererInterface {
 
     private $template;
 

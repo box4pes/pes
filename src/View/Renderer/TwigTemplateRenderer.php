@@ -3,7 +3,6 @@
 namespace Pes\View\Renderer;
 
 use Pes\View\Template\TemplateInterface;
-use Pes\View\Template\TemplateInterface;
 use Pes\View\Renderer\Exception\UnsupportedTemplateException;
 
 /**
@@ -12,7 +11,7 @@ use Pes\View\Renderer\Exception\UnsupportedTemplateException;
  *
  * @author pes2704
  */
-class TwigTemplateRenderer extends TemplateRendererAbstract implements TwigTemplateRendererInterface {
+class TwigTemplateRenderer implements TwigTemplateRendererInterface {
 
     private $template;
 

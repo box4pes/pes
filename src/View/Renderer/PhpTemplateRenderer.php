@@ -5,6 +5,7 @@ namespace Pes\View\Renderer;
 use Pes\View\Template\TemplateInterface;
 use Pes\View\Template\PhpTemplateInterface;
 use Pes\View\Recorder\RecorderProviderInterface;
+use Pes\View\Recorder\VariablesUsageRecorderInterface;
 use Pes\View\Renderer\Exception\UnsupportedTemplateException;
 use Pes\View\Renderer\Exception\TemplateRenderingException;
 
@@ -43,7 +44,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
 
     /**
      * Pro record info
-     * @var string
+     * @var array
      */
     private $templateFileNamesStack = [];
 
@@ -102,7 +103,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
         //        }
         //        $this->catchTemplateVars($this->templateFileName);
 
-        $templateFilename = $this->template->getTemplateFilename();
+        $templateFilename = $this->template->getTemplatePath();
         $this->sharedData = $this->template->getSharedData();
 
         return $this->includeToProtectedScope($templateFilename, $data ?? []);
@@ -128,10 +129,10 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      *
      * @param string $templateFileName
      * @param iterable $context
-     * @return type
+     * @return string
      * @throws \Throwable
      */
-    private function includeToProtectedScope($templateFileName, $context) {
+    private function includeToProtectedScope(string $templateFileName, iterable $context): string {
         // v kontextu se nesmí použít jméno $bagForMethodVars___, $extractedVarName___, $extractedVarValue___
         $bagForMethodVars___ = new \stdClass();
 
@@ -212,7 +213,7 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
             //$recorder->setUnusedVars($this->unusedVars(get_defined_vars(), $numberOfVarsBefore, $this->actualTemplateVars));
         }
 
-        return $ob;
+        return $ob === false ? '' : $ob;
     }
 
     private function unusedVars($definedVarsArray, $numberOfVarsBefore, $templateVars) {
@@ -227,10 +228,10 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
     /**
      * {@inheritdoc}
      *
-     * @param type $templateFilename
-     * @param type $data
-     * @param type $emptyDataTemplateFilename
-     * @return type
+     * @param string $templateFilename
+     * @param iterable $data
+     * @param string $emptyDataTemplateFilename
+     * @return string
      */
     public function insert($templateFilename, iterable $data=[], $emptyDataTemplateFilename='') {
         if ($data OR !$emptyDataTemplateFilename) {
@@ -245,12 +246,12 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * {@inheritdoc}
      * Tato metoda vrací jako náhradní hodnotu (pokud nejsou předána data ani náhradní šablona pro případ prázdných dat $emptyDataTemplateFilename) řetězec "..."
      *
-     * @param type $templateFilename
+     * @param string $templateFilename
      * @param \Traversable $data
-     * @param type $emptyDataTemplateFilename
+     * @param string $emptyDataTemplateFilename
      * @return string
      */
-    public function repeat($templateFilename, iterable $data=[], $variableName='repeatItem', $emptyDataTemplateFilename='') {
+    public function repeat($templateFilename, iterable $data=[], $variableName='item', $emptyDataTemplateFilename='') {
         if ($data) {
             foreach ($data as $item) {
                 if (is_array($item) OR $item instanceof \Traversable) {  // nečíselný klíč = položka ascociativní
@@ -292,13 +293,13 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * typu E_NOTICE a zjišťuje zda chybové hlášení začíná textem 'Undefined variable: '. Pokud ano, zaznamená výskyt nedefinované proměnné
      * do rekorderu.
      *
-     * @param type $errno
-     * @param type $errstr
-     * @param type $errfile
-     * @param type $errline
+     * @param int $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param int $errline
      * @return boolean
      */
-    function templateErrorHandler($errno, $errstr, $errfile, $errline) {
+    function templateErrorHandler(int $errno, string $errstr, string $errfile, int $errline) {
         if (!(error_reporting() & $errno)) {
             // This error code is not included in error_reporting, so let it fall through to the standard PHP error handler
             return FALSE;
@@ -337,10 +338,10 @@ class PhpTemplateRenderer implements PhpTemplateRendererInterface {
      * typu E_NOTICE a zjišťuje zda chybové hlášení začíná textem 'Undefined variable: '. Pokud ano, zaznamená výskyt nedefinované proměnné
      * do rekorderu.
      *
-     * @param type $errno
-     * @param type $errstr
-     * @param type $errfile
-     * @param type $errline
+     * @param int $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param int $errline
      * @return boolean
      */
     function unusedErrorHandler($errno, $errstr, $errfile, $errline) {

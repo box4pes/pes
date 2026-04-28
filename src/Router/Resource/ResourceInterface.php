@@ -14,7 +14,7 @@ namespace Pes\Router\Resource;
  */
 interface ResourceInterface {
     
-    public function withHttpMethod($httpMethod): ResourceInterface;
+    public function withHttpMethod(string $httpMethod): ResourceInterface;
 
     public function withUrlPattern($urlPattern): ResourceInterface;
 

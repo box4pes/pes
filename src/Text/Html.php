@@ -29,7 +29,7 @@ class Html implements HtmlInterface {
     static $escaper;
 
     public static function setEscaper(callable $escaper) {
-        self::$escaper = self::$escaper;
+        self::$escaper = $escaper;
     }
 
     private static function value() {
