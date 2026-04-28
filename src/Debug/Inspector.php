@@ -44,7 +44,7 @@ class Inspector {
                 $c--;
             }
             if($c < 0) break;
-            $varname .=  $match[1]{$i};
+            $varname .=  $match[1][$i];
         }
         return $varname;
 
