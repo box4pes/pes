@@ -8,8 +8,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-use Pes\Application\AppFactory;
-use Pes\Application\UriInfoInterface;
+//use Pes\Application\AppFactory;
+//use Pes\Application\UriInfoInterface;
 
 use Pes\Action\ResourceInterface;
 /**
@@ -133,9 +133,10 @@ class Router implements RouterInterface, LoggerAwareInterface {
     private function findRoute(ServerRequestInterface $request) {
         $httpMethod = $request->getMethod();
 //        $path = $request->getUri()->getPath();
-        /** @var UriInfoInterface $uriInfo */
-        $uriInfo = $request->getAttribute(AppFactory::URI_INFO_ATTRIBUTE_NAME, '');
-        $restUri = $uriInfo->getRestUri();
+        ///** @var UriInfoInterface $uriInfo */
+        //$uriInfo = $request->getAttribute(AppFactory::URI_INFO_ATTRIBUTE_NAME, '');
+        //$restUri = $uriInfo->getRestUri();
+        $restUri = $this->getRoutingPath($request);
         $restUriPrefix = $restUri[1] ?? '/';
         if(array_key_exists($httpMethod, $this->routes) AND array_key_exists($restUriPrefix, $this->routes[$httpMethod])) {
             foreach($this->routes[$httpMethod][ $restUriPrefix ] as  $route) {
@@ -151,6 +152,25 @@ class Router implements RouterInterface, LoggerAwareInterface {
             }
         }
         return false;
+    }
+
+    private function getRoutingPath(ServerRequestInterface $request): string {
+        $uri = $request->getUri()->getPath();
+        $serverParams = $request->getServerParams();
+    
+        // Získáme cestu k index.php (např. /projekt/public/index.php)
+        $scriptName = $serverParams['SCRIPT_NAME'] ?? '';
+    
+        // Získáme adresář, ve kterém index.php leží
+        $basePath = str_replace('\\', '/', dirname($scriptName));
+
+        // Odstraníme basePath ze začátku URI
+        if ($basePath !== '/' && strpos($uri, $basePath) === 0) {
+            $uri = substr($uri, strlen($basePath));
+        }
+
+        // Zajistíme, aby cesta začínala lomítkem a nebyla prázdná
+        return '/' . ltrim($uri, '/');
     }
 
     private function callMatchedRouteAction() {
