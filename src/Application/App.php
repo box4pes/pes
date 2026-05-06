@@ -21,7 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-use Pes\Middleware\AppMiddlewareInterface;
+use Pes\Application\Middleware\AppMiddlewareInterface;
 use Pes\Http\Factory\BodyFactory;
 
 /**
@@ -125,7 +125,7 @@ class App implements AppInterface {
     /**
      * Vykoná middleware.
      * Zadanému middleware předá request přijatý aplikací (předaný z HTTP serveru) a handler pro ošetření situace, kdy middleware není schpen request řádně zpracovat a pokusí se volat request handler.
-     * Tato implementace jako request handler pro takovou situaci nastaví Pes\Middleware\NoMatchSelectorItemRequestHandler.
+     * Tato implementace jako request handler pro takovou situaci nastaví Pes\Application\Middleware\NoMatchedRouteRequestHandler.
      * Následně volá metodu process() připraveného middleware.
      *
      * @param MiddlewareInterface $middleware Middleware pro zpracování requestu

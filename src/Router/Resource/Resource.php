@@ -10,7 +10,6 @@ namespace Pes\Router\Resource;
 
 use Pes\Router\MethodEnum;
 use Pes\Router\UrlPatternValidator;
-use Pes\Http\Uri\UriPath;
 
 use Pes\Type\Exception\TypeExceptionInterface;
 use Pes\Router\Resource\Exception\ResourceHttpMethodNotValid;

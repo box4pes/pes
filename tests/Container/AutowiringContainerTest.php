@@ -109,7 +109,7 @@ class AutowiringContainerTest extends TestCase {
             );
 
         try {
-            $h = $c->get(Pes\Middleware\RequestHandler::class);  // parametr callable
+            $h = $c->get(Pes\Application\Middleware\RequestHandler::class);  // parametr callable
         } catch (Exception\AutowireDependencyResolvingException $adrlExc) {
             $this->assertStringStartsWith("Nepodařilo se vytvořit parametr, proměnnou", $adrlExc->getMessage());
         }

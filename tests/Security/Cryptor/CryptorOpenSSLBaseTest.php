@@ -11,8 +11,8 @@
 
 use PHPUnit\Framework\TestCase;
 
-use Pes\Security\Cryptor\CryptorOpenSSLBase;
-use Pes\Security\Exception\DecryptionFailedException;
+use Pes\Core\Security\Cryptor\CryptorOpenSSLBase;
+use Pes\Core\Security\Exception\DecryptionFailedException;
 /**
  * Description of CryptorReversingTestTTT
  *

@@ -16,54 +16,53 @@ use Pes\Http\Factory\ServerRequestFactory;
 use Psr\Container\ContainerInterface;
 use Pes\Container\Container;
 
-use Pes\Session\SessionStatusHandlerInterface;
-use Pes\Session\SessionStatusHandler;
-use Pes\Session\SaveHandler\PhpSaveHandler;
-
 /**
  * Description of AppFactory
+ *
+ * <b>Jak session znovu zapojit</b>
+ *
+ * Kontejner musí být {@see \Pes\Container\ContainerSettingsAwareInterface} (např. {@see \Pes\Container\Container}):
+ *
+ * <code>
+ * use Pes\Application\AppFactory;
+ * use Pes\Container\Container;
+ * use Pes\Http\Factory\EnvironmentFactory;
+ * use Pes\Session\Container\SessionServicesConfigurator;
+ *
+ * $container = new Container();
+ * SessionServicesConfigurator::registerDefaults($container);
+ *
+ * $app = (new AppFactory($container))->createFromEnvironment((new EnvironmentFactory())->createFromGlobals());
+ * </code>
+ *
+ * Pokud nejdřív zavoláš <code>(new AppFactory())->createFromEnvironment(...)</code>, musíš před prvním použitím
+ * session služeb zavolat {@see \Pes\Session\Container\SessionServicesConfigurator::registerDefaults()} na instanci kontejneru,
+ * která implementuje {@see \Pes\Container\ContainerSettingsAwareInterface} (typ vrácený z {@see \Pes\Application\AppInterface::getAppContainer()}
+ * je jen {@see \Psr\Container\ContainerInterface}, takže je potřeba znát konkrétní typ nebo použít výše uvedený postup s vlastním {@see \Pes\Container\Container}).
  *
  * @author pes2704
  */
 class AppFactory implements AppFactoryInterface {
 
-    const SESSION_NAME_SERVICE='SESSION_NAME_SERVICE';
-    const DEFAULT_SESSION_NAME = 'AppSession';
     const URI_INFO_ATTRIBUTE_NAME = 'uriInfo';
 
     protected $appContainer;
 
-    public function __construct(?ContainerInterface $appContainer=NULL) {
+    public function __construct(?ContainerInterface $appContainer = null) {
         $this->appContainer = $appContainer;
     }
 
     /**
      * Factory metoda, vytváří a vrací objekt App
      *
-     * Objektu App nastaví vlastnosti request a pokud je v konstruktoru zadán kontejner, nastaví a nakonfiguruje ho jako kontejner aplikace.
-     * Requestu nastaví jako atribut se jménem daným konstantou URI_INFO_ATTRIBUTE_NAME objekt UriInfo.
-     * Vlastnosti request a kontejner jsou dostupné pomocí getterů objektu App.
+     * Objektu App nastaví vlastnosti request a pokud je v konstruktoru zadán kontejner, použije ho jako kontejner aplikace.
+     * Není-li kontejner zadán, vytvoří prázdný Pes\Container\Container.
      *
+     * Pro výchozí registraci služeb PHP session v kontejneru zavolejte
+     * {@see \Pes\Session\Container\SessionServicesConfigurator::registerDefaults()} (balíček pes/pes-session).
      *
-     * Vlastnosti request a UriInfo jsou vytvořeny z superglobálních proměnných PHP $_SERVER, $_POST, $_GET, $_FILES.
-     * Request je HTTP request došlý na server, tedy request, který spustil skript.
-     * Pokud je v konstruktoru zadán kontejner, třída jej nakonfiguruje tak, že vždy obsahuje alespoň session handler. Session handler je nastaven tak,
-     * že při použití (po zavolání služby kontejneru SessionStatusHandlerInterface::class) pracuje s daty session obsaženými v superglobální proměnné PHP $_SESSION.
+     * Vlastnosti request a UriInfo lze vytvořit z superglobálních proměnných PHP $_SERVER, $_POST, $_GET, $_FILES.
      *
-     * Kontejner aplikace je zde dále konfigurován takto:
-     * <ul>
-     * <li> Služby nastavené v kontejneru mají přednost před automaticky zde nastavovanými (dafault) službami.</li>
-     * <li> Pro práci se session musí být ve výsledném kontejneru nakonfigurovány dvě služby - služba, která vrací jméno session a služby, která vrací session handler.
-     *  <ul>
-     *  <li>Jméno session musí vracet služba kontejneru se jménem daným konstantou třídy App::SESSION_NAME_SERVICE. Pokud služba se jménem App::SESSION_NAME_SERVICE nebyla nastavena v konfigurátoru kontejneru,
-     * nastaví se zde tato služba tak, že vrací hodnotu danou konstantou třídy App::DEFAULT_SESSION_NAME.</li>
-     * <li>Služba, která vrací session handler má vždy jméno Pes\Session\SessionStatusHandlerInterface::class, pokud není nakonfigurována služba se jménem Pes\Session\SessionStatusHandlerInterface::class, nastaví ji jako alias tak, že vrací Pes\Session\SessionStatusHandler.
-     * Pokud není nakonfigurována služba Pes\Session\SessionStatusHandlerInterface::class, ale je nakonfigurována služba Pes\Session\SessionStatusHandler::class je nastaven jen tento alias.</li>
-     * <li>Pokud není nakonfigurována v konfigurátoru služba Pes\Session\SessionStatusHandlerInterface::class ani služba Pes\Session\SessionStatusHandler::class, nastaví se zde služba Pes\Session\SessionStatusHandler::class tak,
-     * že vrací Pes\Session\SessionStatusHandler s save handlerem typu Pes\Session\SaveHandler\PhpSaveHandler.</li>
-     * </ul>
-     *
-     * @param ContainerInterface $this->appContainer Kontejner aplikace
      * @return AppInterface
      */
     public function createFromEnvironment(Environment $environment): AppInterface {
@@ -73,34 +72,8 @@ class AppFactory implements AppFactoryInterface {
         $serverRequest = (new ServerRequestFactory())->createFromEnvironment($environment);
         //$app->setServerRequest($serverRequest->withAttribute(self::URI_INFO_ATTRIBUTE_NAME, (new UriInfoFactory())->create($environment, $serverRequest)));
 
-        // kontejner aplikace
-        if ($this->appContainer) {
-            // jméno session musí vracet služba kontejneru se jménem daným konstantou třídy App::SESSION_NAME_SERVICE, pokud není v konfigurátoru, definuji vlastní
-            if ( !$this->appContainer->has(self::SESSION_NAME_SERVICE) ) {
-                $this->appContainer->set(self::SESSION_NAME_SERVICE, self::DEFAULT_SESSION_NAME);
-            }
-
-            // session handler - pokud není v konfigurátoru, definuji vlastní
-            // když není interface - definuji handler i interface jako alias, když hadler je a není interface, dodefinuji k handleru interface alias
-            if ( !$this->appContainer->has(SessionStatusHandlerInterface::class)) {
-                if ( !$this->appContainer->has(SessionStatusHandler::class)) {
-                    $this->appContainer->set(SessionStatusHandler::class,
-                        function(ContainerInterface $c) {
-                                return new SessionStatusHandler($c->get(self::SESSION_NAME_SERVICE), new PhpSaveHandler() );
-                            }
-                        );
-                }
-                $this->appContainer->alias(SessionStatusHandlerInterface::class, SessionStatusHandler::class);
-            }
-        } else {
+        if (!$this->appContainer) {
             $this->appContainer = new Container();
-            $this->appContainer->set(self::SESSION_NAME_SERVICE, self::DEFAULT_SESSION_NAME);
-                $this->appContainer->set(SessionStatusHandler::class,
-                    function(ContainerInterface $c) {
-                            return new SessionStatusHandler($c->get(self::SESSION_NAME_SERVICE), new PhpSaveHandler() );
-                        }
-                    );
-            $this->appContainer->alias(SessionStatusHandlerInterface::class, SessionStatusHandler::class);
         }
         $app->setAppContainer($this->appContainer);
         return $app;

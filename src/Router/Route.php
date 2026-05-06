@@ -48,7 +48,7 @@ class Route implements RouteInterface {
     /**
      *
      * @param ResourceInterface $resource
-     * @return \Pes\Router\RouteInterface
+     * @return RouteInterface
      */
     public function setResource(ResourceInterface $resource): RouteInterface {
         $this->resource = $resource;
@@ -67,7 +67,7 @@ class Route implements RouteInterface {
     /**
      *
      * @param callable $action
-     * @return \Pes\Router\RouteInterface
+     * @return RouteInterface
      */
     public function setAction(callable $action): RouteInterface {
         $this->action = $action;

@@ -11,8 +11,16 @@
         }
     ],
     "version": "8.26.02",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "pes-session",
+            "options": { "symlink": true }
+        }
+    ],
     "require": {
         "php": "<8.5.0",
+        "pes/pes-session": "@dev",
         "psr/http-message": "^2.0",
         "psr/http-factory": "^1.0",
         "psr/container": "^2.0",

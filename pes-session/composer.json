@@ -1,0 +1,21 @@
+{
+    "name": "pes/pes-session",
+    "type": "library",
+    "description": "PHP session handling for Pes (SessionStatusHandler, save handlers).",
+    "license": "MIT",
+    "require": {
+        "php": "<8.5.0",
+        "psr/container": "^2.0",
+        "psr/log": "^3.0"
+    },
+    "suggest": {
+        "ext-session": "Native PHP sessions",
+        "pes/pes-core": "Encrypted/file save handlers use Pes\\Core\\Security and Pes\\Utils",
+        "pes/pes": "SessionServicesConfigurator::registerDefaults() expects Pes\\Container\\ContainerSettingsAwareInterface"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Session\\": "src/"
+        }
+    }
+}

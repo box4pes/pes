@@ -11,8 +11,8 @@
 
 use PHPUnit\Framework\TestCase;
 
-use Pes\Security\Coder\Coder;
-use Pes\Security\Coder\EnumEncoding;
+use Pes\Core\Security\Coder\Coder;
+use Pes\Core\Security\Coder\EnumEncoding;
 
 /**
  * Description of CoderTest

@@ -4,8 +4,40 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "15527fc0d0e8ad215f03f3c0f32d13fb",
+    "content-hash": "77caec036939b4964c39ae0c91583576",
     "packages": [
+        {
+            "name": "pes/pes-session",
+            "version": "dev-split",
+            "dist": {
+                "type": "path",
+                "url": "pes-session",
+                "reference": "6c8539c8c3aef229861ab635ca115080931e1886"
+            },
+            "require": {
+                "php": "<8.5.0",
+                "psr/container": "^2.0",
+                "psr/log": "^3.0"
+            },
+            "suggest": {
+                "ext-session": "Native PHP sessions",
+                "pes/pes-core": "Encrypted/file save handlers use Pes\\Core\\Security and Pes\\Utils"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pes\\Session\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP session handling for Pes (SessionStatusHandler, save handlers).",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
         {
             "name": "psr/container",
             "version": "2.0.2",
@@ -4619,7 +4651,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "pes/pes-session": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

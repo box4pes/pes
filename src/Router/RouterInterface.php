@@ -16,8 +16,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-use Pes\Action\ResourceInterface;
-
 /**
  *
  * @author pes2704

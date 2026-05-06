@@ -8,10 +8,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use Pes\Router\Exception\RouteNotFoundException;
 //use Pes\Application\AppFactory;
 //use Pes\Application\UriInfoInterface;
 
-use Pes\Action\ResourceInterface;
 /**
  * Description of Router
  *
@@ -21,10 +21,10 @@ class Router implements RouterInterface, LoggerAwareInterface {
 
 // router --> middleware : implements ContainerMiddlewareInterface
     /**
-     * Objekty Route indexované podle metoy a prvího znaku pattern
-     * @var Route array of
+     * Objekty Route indexované podle metody a prvího znaku pattern
+     * @var Route[]
      */
-    private $routes = array();
+    private $routes = [];
 
     /**
      * @var Route
@@ -70,7 +70,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
     /**
      * Vrací objekt Route, který byl použit při posledním routování.
      *
-     * @return \Pes\Router\RouteInterface
+     * @return RouteInterface
      */
     public function getMatchedRoute(): RouteInterface {
         return $this->matchedRoute;
@@ -173,7 +173,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
         return '/' . ltrim($uri, '/');
     }
 
-    private function callMatchedRouteAction() {
+    private function callMatchedRouteAction(): ResponseInterface {
 
         $action = $this->matchedRoute->getAction();
 

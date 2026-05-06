@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Security\Password\Password;
+use Pes\Core\Security\Password\Password;
 
 /**
  * Description of testOrder
