@@ -32,14 +32,9 @@ use Pes\Http\Factory\BodyFactory;
 class App implements AppInterface {
 
     /**
-     * @var RequestInterface
+     * @var ServerRequestInterface
      */
     protected $serverRequest;
-
-    /**
-     * @var UrlInfoInterface
-     */
-    protected $uriInfo;
 
     /**
      *

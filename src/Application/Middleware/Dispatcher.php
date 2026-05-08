@@ -126,7 +126,7 @@ class Dispatcher implements MiddlewareInterface
     private function newRequestHandler($index) {
         return new RequestHandler(
             function (ServerRequestInterface $request) use ($index) {
-                //zavolá na položku resolver (výsledek musí být middleware nebo callable) nebo použije položku
+                //zavolá na položku resolver (výsledek musí být middleware) nebo použije položku přímo - pak položka musí být middleware
                 $middleware = $this->resolver ? call_user_func($this->resolver, $this->stack[$index]) : $this->stack[$index];
                 if ($middleware instanceof MiddlewareInterface) {
                     if ($middleware instanceof AppMiddlewareInterface) {
