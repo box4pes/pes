@@ -274,7 +274,7 @@ class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
 ######### metody HandlerPDOAdapterInterface (LoggerAwareInterface) ##################################    
     
     #[\Override]
-    public function setLogger(LoggerInterface $logger) {
+    public function setLogger(LoggerInterface $logger): void {
         $this->logger = $logger;
     }
     
