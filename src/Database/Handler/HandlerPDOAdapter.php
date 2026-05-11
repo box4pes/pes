@@ -58,12 +58,6 @@ class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
 
     protected $handlerNumber;
 
-    /**
-     *
-     * @var LoggerInterface
-     */
-    private static $safeExceptionHandlerLogger;
-
 //    use SecurityContextObjectTrait;  //zdá se, že PDO má final public function __sleep() ačkoli v dolimentaci není nic (jen v Nette APi dokumentaci ??)
 
     /**
@@ -198,16 +192,6 @@ class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
         }
         return var_export($dump, TRUE);
     }
-    
-    /**
-     * Převezme handler logger, nastaví jako handler pro Statement logger z Handleru.
-     * @param LoggerAwareInterface $statement
-     */
-    private function inheritStatementLogger($statement) {
-        if ($statement instanceof LoggerAwareInterface) {
-            $statement->setLogger($this->logger);
-        }        
-    }
 
     ##### safeExceptionHandler ###################################################
     
@@ -250,12 +234,12 @@ class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
     private function varPrint($param) {
         $pr = [];
         foreach ($param as $var) {
-            $pr[] = $this->renderValueAsInfo($var);
+            $pr[] = static::renderValueAsInfo($var);
         }
         return print_r($pr, TRUE);
     }
 
-    private function renderValueAsInfo($var) {
+    private static function renderValueAsInfo($var) {
         $vartype = gettype($var);
         switch ($vartype) {
             case "boolean":
@@ -273,9 +257,11 @@ class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
                 $rendered = $vartype." ".count($var)." elements";
                 break;
             case "object":
+                $rendered = $vartype." ". get_class($var);
+                break;
             case "resource":
             case "resource (closed)":  // as of PHP 7.2.0
-                $rendered = $vartype." ". get_class($var);
+                $rendered = $vartype;
                 break;
             case "NULL":
             case "unknown type":
@@ -283,17 +269,6 @@ class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
                 break;
         }
         return $rendered;
-    }
-    
-######## metody HandlerInterface ######################################################
-
-    #[\Override]
-    public function setLogger(LoggerInterface $logger): void {
-        $this->logger = $logger;
-    }
-    
-    public function getLogger(): ?LoggerInterface {
-        return $this->logger;
     }
 
 ######### adaptér pro METODY PDO #######################################################################
