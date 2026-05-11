@@ -195,6 +195,16 @@ class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
         return var_export($dump, TRUE);
     }
 
+    /**
+     * Převezme handler logger, nastaví jako handler pro Statement logger z Handleru.
+     * @param LoggerAwareInterface $statement
+     */
+    private function inheritStatementLogger($statement) {
+        if ($statement instanceof LoggerAwareInterface) {
+            $statement->setLogger($this->logger);
+        }        
+    }
+
     ##### safeExceptionHandler ###################################################
     
     /**
