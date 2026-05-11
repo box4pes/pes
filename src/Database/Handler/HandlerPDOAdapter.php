@@ -27,6 +27,8 @@ use UnexpectedValueException;
 use RuntimeException;
 
 class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
+    
+    private const UNSUPPORTED_ATTRIBUTE_MESSAGE = 'driver does not support that attribute';
 
     /**
      * @var PDO
@@ -183,7 +185,7 @@ class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
                 $attr = $this->connection->getAttribute(constant("\PDO::$attribute"));
                 $dump[] = "PDO::$attribute: (atribut číslo ".constant("\PDO::$attribute").") má hodnotu ".$attr;
             } catch (PDOException $pdoex) {
-                if (strpos($pdoex->getMessage, self::CATCHED_ERROR_MESSAGE) !== FALSE) {
+                if (strpos($pdoex->getMessage, self::UNSUPPORTED_ATTRIBUTE_MESSAGE) !== FALSE) {
                     $dump[] = "Použitý PHP interpret neakceptuje atribut PDO::$attribute";
                 } else {
                     throwException($pdoex);

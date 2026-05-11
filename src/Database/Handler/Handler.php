@@ -24,40 +24,7 @@ use Psr\Log\LoggerAwareInterface;
 
 
 class Handler extends HandlerPDOAdapter implements HandlerInterface { 
-    private const UNSUPPORTED_ATTRIBUTE_MESSAGE = 'driver does not support that attribute';
-
-    /**
-     * 
-     * @var PDO
-     */
-    private $connection;
     
-    /**
-     *
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * Uschovaná hodnota pro identifikaci handleru při logování a debugování
-     * @var string
-     */
-    protected $dbName;
-
-    /**
-     * Uschovaná hodnota pro identifikaci handleru při logování a derbugování
-     * @var string
-     */
-    protected $dbHost;
-
-    /**
-     * Čítač instancí pro logování
-     * @var int
-     */
-    protected static $handlerCounter=0;
-
-    private $handlerNumber;
-
 ######## metody HandlerInterface ######################################################
     
     /**
