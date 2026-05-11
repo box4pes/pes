@@ -270,7 +270,19 @@ class HandlerPDOAdapter implements HandlerPDOAdapterInterface {
         }
         return $rendered;
     }
-
+    
+######### metody HandlerPDOAdapterInterface (LoggerAwareInterface) ##################################    
+    
+    #[\Override]
+    public function setLogger(LoggerInterface $logger) {
+        $this->logger = $logger;
+    }
+    
+    #[\Override]
+    public function getLogger(): ?LoggerInterface {
+        return $this->logger;
+    }
+    
 ######### adaptér pro METODY PDO #######################################################################
     
     public function errorInfo(): array {

@@ -59,16 +59,6 @@ class Handler extends HandlerPDOAdapter implements HandlerInterface {
     private $handlerNumber;
 
 ######## metody HandlerInterface ######################################################
-
-    #[\Override]
-    public function setLogger(LoggerInterface $logger) {
-        $this->logger = $logger;
-    }
-    
-    #[\Override]
-    public function getLogger(): ?LoggerInterface {
-        return $this->logger;
-    }
     
     /**
      * Metoda getInstanceInfo
