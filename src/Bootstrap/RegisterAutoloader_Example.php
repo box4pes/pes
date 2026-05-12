@@ -26,7 +26,6 @@ $pesAutoloader->addNamespace('Psr\Log', '../vendor/psr/log/Psr/Log'); //autoload
 ########## AUTOLOAD ###################################
 require "../../Pes/Pes/src/Autoloader/Autoloader.php";
 
-use Pes\Autoloader\Autoloader;
 
 $pesAutoloader = new Autoloader();
 $pesAutoloader->register();

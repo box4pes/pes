@@ -81,10 +81,11 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
      * Hodnoty parametrl získá metodou getConstructorDependencies() a nastaví kontejneru factory, která vytváří instance objektu s předáním
      * získaných hodnot parametrů (závislostí) konstruktoru.
      *
-     * @param type $realName
+     * @param string $realName
+     * @param bool $throwExceptions
      * @return boolean
      */
-    private function createFactory($realName, $throwExceptions) {
+    private function createFactory(string $realName, bool $throwExceptions) {
         if ( ! \class_exists($realName)) {
             if ($throwExceptions) {
                 throw new Exception\NotFoundException("Služba $realName není definována a třída se jménem $realName neexistuje.");
@@ -113,7 +114,7 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
             $dependencies = $this->getConstructorDependencies($constructor);
             // factory, která vytváří instanci s použitím vytvořených parametrů
             $this->factory($realName, function () use($reflector, $dependencies) {
-                return $reflector->newInstanceArgs($dependencies);
+                return $reflector->newInstanceArgs(array_values($dependencies));
             });
         }
         return TRUE;
@@ -121,7 +122,7 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
     /**
      * Vrací pole jmen tříd (FQN)
      * @param \ReflectionMethod $contructor
-     * @return type
+     * @return array
      * @throws Exception\AutowireDependencyResolvingException
      */
     private function getConstructorDependencies(\ReflectionMethod $contructor) {
@@ -151,5 +152,46 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
             }
         }
         return $dependencies;
+    }
+
+    /**
+     * Náhrada za ReflectionParameter::getClass() (deprecated od PHP 8.0).
+     */
+    private function reflectionParameterClass(\ReflectionParameter $parameter): ?\ReflectionClass {
+        $type = $parameter->getType();
+        if ($type instanceof \ReflectionUnionType) {
+            foreach ($type->getTypes() as $inner) {
+                if ($inner instanceof \ReflectionNamedType && !$inner->isBuiltin()) {
+                    return $this->reflectionNamedTypeToClass($parameter, $inner);
+                }
+            }
+
+            return null;
+        }
+        if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+            return $this->reflectionNamedTypeToClass($parameter, $type);
+        }
+
+        return null;
+    }
+
+    private function reflectionNamedTypeToClass(\ReflectionParameter $parameter, \ReflectionNamedType $namedType): ?\ReflectionClass {
+        $name = $namedType->getName();
+        if ($name === 'self') {
+            return $parameter->getDeclaringClass();
+        }
+        if ($name === 'parent') {
+            $parent = $parameter->getDeclaringClass()->getParentClass();
+
+            return $parent ?: null;
+        }
+        if ($name === 'static') {
+            return $parameter->getDeclaringClass();
+        }
+        try {
+            return new \ReflectionClass($name);
+        } catch (\ReflectionException) {
+            return null;
+        }
     }
 }
