@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Validator\IsSerializableValidator;
+use Pes\Core\Validator\IsSerializableValidator;
 
 class SerializableClassForTest implements \Serializable {
     public function serialize() {
@@ -29,7 +29,7 @@ class IsSerializableValidatorTest extends TestCase {
     }
 
     /**
-     * @expectedException Pes\Validator\Exception\NotSerialisableException
+     * @expectedException Pes\Core\Validator\Exception\NotSerialisableException
      */
     public function testNotSerialisableException() {
         $validator = new IsSerializableValidator();

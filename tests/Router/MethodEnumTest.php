@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Pes\Router\MethodEnum;
 
 /**
- * Test Pes\Type\ColumnAccessEnum
+ * Test Pes\Core\Type\ColumnAccessEnum
  *
  * @author pes2704
  */

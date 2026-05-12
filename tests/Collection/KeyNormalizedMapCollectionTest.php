@@ -1,9 +1,9 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Collection\KeyNormalizedMapCollection;
-use Pes\Collection\Normalizer\KeyNormalizerInterface;
-use Pes\Validator\IsObjectTypeValidator;
+use Pes\Core\Collection\KeyNormalizedMapCollection;
+use Pes\Core\Collection\Normalizer\KeyNormalizerInterface;
+use Pes\Core\Validator\IsObjectTypeValidator;
 
 interface InterfaceForNormalizedKeyMapCollectionTest {}
 
@@ -42,7 +42,7 @@ class KeyNormalizedMapCollectionTest extends TestCase {
 
     public function testConstructor() {
         $collection = new KeyNormalizedMapCollection(new LowerCaseKeyNormalizer());
-        $this->assertInstanceOf('Pes\Collection\KeyNormalizedMapCollection', $collection);
+        $this->assertInstanceOf('Pes\Core\Collection\KeyNormalizedMapCollection', $collection);
     }
 
     public function testSetGetRemove() {

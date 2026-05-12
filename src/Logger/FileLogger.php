@@ -3,7 +3,7 @@ namespace Pes\Logger;
 
 use Psr\Log\AbstractLogger;
 use Pes\Utils\Directory;
-use Pes\Text\Template;
+use Pes\Core\Text\Template;
 
 use Pes\Utils\Exception\CreateDirectoryFailedException;
 

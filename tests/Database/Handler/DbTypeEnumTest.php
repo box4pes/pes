@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Pes\Database\Handler\DbTypeEnum;
 
 /**
- * Test Pes\Type\DbTypeEnum
+ * Test Pes\Core\Type\DbTypeEnum
  *
  * @author pes2704
  */

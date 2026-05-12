@@ -4,13 +4,13 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Error\Notice;
 use PHPUnit\Framework\Error\Warning;
 
-use Pes\Text\Message;
+use Pes\Core\Text\Message;
 
 use Pes\Logger\FileLogger;
 
 /**
- * Test Pes\Text\Message.
- * Pes\Text\Message interně používá statickou třídu Pes\Text\Template.
+ * Test Pes\Core\Text\Message.
+ * Pes\Core\Text\Message interně používá statickou třídu Pes\Core\Text\Template.
  * Tento test používá Pes\Logger\FileLogger.
  *
  * @author pes2704

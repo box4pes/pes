@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Validator\IsArrayKeyValidator;
+use Pes\Core\Validator\IsArrayKeyValidator;
 
 /**
  * Description of IndexedCollectionTest
@@ -32,28 +32,28 @@ class IsArrayKeyValidatorTest extends TestCase {
     }
 
     /**
-     * @expectedException Pes\Validator\Exception\NotArrayKeyException
+     * @expectedException Pes\Core\Validator\Exception\NotArrayKeyException
      */
     public function testArray() {
         $this->validator->validate([654]);
     }
 
     /**
-     * @expectedException Pes\Validator\Exception\NotArrayKeyException
+     * @expectedException Pes\Core\Validator\Exception\NotArrayKeyException
      */
     public function testObject() {
         $this->validator->validate(new stdClass());
     }
 
     /**
-     * @expectedException Pes\Validator\Exception\NotArrayKeyException
+     * @expectedException Pes\Core\Validator\Exception\NotArrayKeyException
      */
     public function testBool() {
         $this->validator->validate(FALSE);
     }
 
     /**
-     * @expectedException Pes\Validator\Exception\NotArrayKeyException
+     * @expectedException Pes\Core\Validator\Exception\NotArrayKeyException
      */
     public function testNull() {
         $this->validator->validate(NULL);

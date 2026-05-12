@@ -1,10 +1,10 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Validator\IsObjectTypeValidator;
-use Pes\Validator\Exception\NotValidTypeException;
-use Pes\Validator\Exception\TypeNameNotAStringException;
-use Pes\Validator\Exception\TypeNotExistsException;
+use Pes\Core\Validator\IsObjectTypeValidator;
+use Pes\Core\Validator\Exception\NotValidTypeException;
+use Pes\Core\Validator\Exception\TypeNameNotAStringException;
+use Pes\Core\Validator\Exception\TypeNotExistsException;
 
 
 interface InterfaceForIsTypeValidatorTest {}
@@ -23,13 +23,13 @@ class AnotherObjectForIsTypeValidatorTest {}
 class IsObjectTypeValidatorTest extends TestCase {
 
     /**
-     * @expectedException Pes\Validator\Exception\TypeNotExistsException
+     * @expectedException Pes\Core\Validator\Exception\TypeNotExistsException
      */
     public function testTypeNotExistsException() {
             $validator = new IsObjectTypeValidator('Blabla');
     }
     /**
-     * @expectedException Pes\Validator\Exception\TypeNameNotAStringException
+     * @expectedException Pes\Core\Validator\Exception\TypeNameNotAStringException
      */
     public function testTypeNameNotAStringException() {
         $validator = new IsObjectTypeValidator(188);
@@ -54,7 +54,7 @@ class IsObjectTypeValidatorTest extends TestCase {
     }
 
     /**
-     * @expectedException Pes\Validator\Exception\NotValidTypeException
+     * @expectedException Pes\Core\Validator\Exception\NotValidTypeException
      */
     public function testInvalidInterface() {
         $validator = new IsObjectTypeValidator('InterfaceForIsTypeValidatorTest');
@@ -62,7 +62,7 @@ class IsObjectTypeValidatorTest extends TestCase {
     }
 
     /**
-     * @expectedException Pes\Validator\Exception\NotValidTypeException
+     * @expectedException Pes\Core\Validator\Exception\NotValidTypeException
      */
     public function testInvalidClass() {
         $validator = new IsObjectTypeValidator('ObjectForIsTypeValidatorTest');

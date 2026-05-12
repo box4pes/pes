@@ -15,7 +15,7 @@ class UnsuportedTemplate implements TemplateInterface {
 }
 
 /**
- * Test Pes\Type\Enum
+ * Test Pes\Core\Type\Enum
  *
  * @author pes2704
  */

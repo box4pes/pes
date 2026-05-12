@@ -1,8 +1,8 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Collection\MapCollection;
-use Pes\Validator\IsObjectTypeValidator;
+use Pes\Core\Collection\MapCollection;
+use Pes\Core\Validator\IsObjectTypeValidator;
 use Pes\Comparator\OrderComparator;
 use Pes\Comparator\SortComparator;
 use Pes\Query\Order;
@@ -35,7 +35,7 @@ class MapCollectionTest extends TestCase {
 
     public function testConstructor() {
         $collection = new MapCollection();
-        $this->assertInstanceOf('Pes\Collection\MapCollection', $collection);
+        $this->assertInstanceOf('Pes\Core\Collection\MapCollection', $collection);
     }
 
     public function testSetGetRemove() {

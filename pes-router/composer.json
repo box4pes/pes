@@ -1,0 +1,19 @@
+{
+    "name": "pes/pes-router",
+    "type": "library",
+    "description": "HTTP routing for Pes.",
+    "license": "MIT",
+    "require": {
+        "php": "<8.5.0",
+        "pes/pes-core": "@dev",
+        "psr/http-message": "^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Router\\": "src/"
+        }
+    }
+}

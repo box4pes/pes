@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Collection\SetCollection;
+use Pes\Core\Collection\SetCollection;
 use Pes\Comparator\OrderComparator;
 use Pes\Comparator\SortComparator;
 use Pes\Query\Order;
@@ -27,9 +27,9 @@ class EntitkaForSetCollectionTest {
 class SetCollectionTest extends TestCase {
     public function testConstructor() {
         $collection = new SetCollection();
-        $this->assertInstanceOf('Pes\Collection\SetCollection', $collection);
+        $this->assertInstanceOf('Pes\Core\Collection\SetCollection', $collection);
         $collection = new SetCollection([1, 2, 3]);
-        $this->assertInstanceOf('Pes\Collection\SetCollection', $collection);
+        $this->assertInstanceOf('Pes\Core\Collection\SetCollection', $collection);
         $this->assertEquals(3, $collection->count());
     }
 

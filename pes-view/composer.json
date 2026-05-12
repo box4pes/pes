@@ -1,0 +1,17 @@
+{
+    "name": "pes/pes-view",
+    "type": "library",
+    "description": "View layer for Pes (templates, renderers, DOM nodes).",
+    "license": "MIT",
+    "require": {
+        "php": "<8.5.0",
+        "pes/pes-core": "@dev",
+        "psr/container": "^2.0",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\View\\": "src/"
+        }
+    }
+}

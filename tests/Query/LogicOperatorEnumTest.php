@@ -3,7 +3,7 @@ use PHPUnit\Framework\TestCase;
 
 use Pes\Query\LogicOperatorEnum;
 /**
- * Test Pes\Type\LogicOperatorEnumTest
+ * Test Pes\Core\Type\LogicOperatorEnumTest
  *
  * @author pes2704
  */

@@ -1,11 +1,11 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Type\ContextData;
-use Pes\Type\Exception\InvalidDataTypeException;
+use Pes\Core\Type\ContextData;
+use Pes\Core\Type\Exception\InvalidDataTypeException;
 
 /**
- * Test Pes\Type\Enum
+ * Test Pes\Core\Type\Enum
  *
  * @author pes2704
  */

@@ -2,7 +2,7 @@
 
 namespace Pes\Storage;
 
-use Pes\Validator\IsArrayKeyValidator;
+use Pes\Core\Validator\IsArrayKeyValidator;
 use Pes\Utils\Directory;
 
 /**

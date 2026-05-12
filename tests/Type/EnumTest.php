@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Type\Enum;
+use Pes\Core\Type\Enum;
 
 
 class TestTypeEnum extends Enum {
@@ -10,7 +10,7 @@ class TestTypeEnum extends Enum {
 }
 
 /**
- * Test Pes\Type\Enum
+ * Test Pes\Core\Type\Enum
  *
  * @author pes2704
  */

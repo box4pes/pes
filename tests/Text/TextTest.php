@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Error\Notice;
 use PHPUnit\Framework\Error\Warning;
 
-use Pes\Text\Text;
+use Pes\Core\Text\Text;
 
 use Pes\Logger\FileLogger;
 

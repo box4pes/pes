@@ -1,8 +1,8 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use Pes\Collection\EntityCollection;
-use Pes\Validator\IsObjectTypeValidator;
+use Pes\Core\Collection\EntityCollection;
+use Pes\Core\Validator\IsObjectTypeValidator;
 // používá OrderComparatorClassMethods, SortComparatorClassMethods protože použitá entita má gettery a settery a private vlastnosti
 use Pes\Comparator\OrderComparatorClassMethods;
 use Pes\Comparator\SortComparatorClassMethods;
@@ -74,13 +74,13 @@ class EntityCollectionTest extends TestCase {
 //        } catch (TypeError $uve) {
 //            $this->assertStringStartsWith('Argument 2 passed to', $uve->getMessage());
 //        }
-//        //TypeError: Argument 2 passed to Pes\Collection\EntityCollection::__construct() must be an instance of Pes\Validator\ValidatorInterface, none given, called in C:\xampp\htdocs\Pes\Pes\tests\Collection\EntityCollectionTest.php on line 56
+//        //TypeError: Argument 2 passed to Pes\Core\Collection\EntityCollection::__construct() must be an instance of Pes\Core\Validator\ValidatorInterface, none given, called in C:\xampp\htdocs\Pes\Pes\tests\Collection\EntityCollectionTest.php on line 56
 //
 //        $validator = new IsTypeValidator('InterfacedObjectForEntityCollectionTest');
 ////        $validatorMock = $this->getMockBuilder('IsTypeValidator')->getMock();
 ////        $validatorMock->eexpects($this->any())-
 //        $collection = new EntityCollection(NULL, $validator);
-//        $this->assertInstanceOf('Pes\Collection\EntityCollection', $collection);
+//        $this->assertInstanceOf('Pes\Core\Collection\EntityCollection', $collection);
 //    }
 //    
 //    public function testSetAndRemoveEntityWithoutIdentity() {

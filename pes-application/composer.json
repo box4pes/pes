@@ -1,0 +1,22 @@
+{
+    "name": "pes/pes-application",
+    "type": "library",
+    "description": "Application bootstrap, middleware, and HTTP app wiring for Pes.",
+    "license": "MIT",
+    "require": {
+        "php": "<8.5.0",
+        "pes/pes-http": "@dev",
+        "pes/pes-di": "@dev",
+        "pes/pes-session": "@dev",
+        "psr/container": "^2.0",
+        "psr/http-message": "^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Application\\": "src/"
+        }
+    }
+}

@@ -1,7 +1,7 @@
 <?php
 namespace Pes\Storage;
 
-use Pes\Validator\ValidatorInterface;
+use Pes\Core\Validator\ValidatorInterface;
 
 /**
  * Description of StorageAbstract

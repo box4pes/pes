@@ -1,0 +1,17 @@
+{
+    "name": "pes/pes-database",
+    "type": "library",
+    "description": "Database access and query criteria for Pes.",
+    "license": "MIT",
+    "require": {
+        "php": "<8.5.0",
+        "pes/pes-core": "@dev",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Database\\": "src/Database/",
+            "Pes\\Query\\": "src/Query/"
+        }
+    }
+}

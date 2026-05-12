@@ -10,8 +10,7 @@
     },
     "suggest": {
         "ext-session": "Native PHP sessions",
-        "pes/pes-core": "Encrypted/file save handlers use Pes\\Core\\Security and Pes\\Utils",
-        "pes/pes": "SessionServicesConfigurator::registerDefaults() expects Pes\\Container\\ContainerSettingsAwareInterface"
+        "pes/pes-core": "Encrypted/file save handlers use Pes\\Core\\Security and Pes\\Utils"
     },
     "autoload": {
         "psr-4": {

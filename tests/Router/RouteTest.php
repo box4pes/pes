@@ -9,7 +9,7 @@ use Pes\Router\Resource\Resource;
 use Pes\Router\Resource\ResourceInterface;
 
 /**
- * Test Pes\Type\DbTypeEnum
+ * Test Pes\Core\Type\DbTypeEnum
  *
  * @author pes2704
  */

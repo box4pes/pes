@@ -1,0 +1,14 @@
+{
+    "name": "pes/pes-core",
+    "type": "library",
+    "description": "Core primitives for Pes (security, validation, collections, types, text).",
+    "license": "MIT",
+    "require": {
+        "php": "<8.5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Core\\": "src/"
+        }
+    }
+}

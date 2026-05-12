@@ -16,10 +16,52 @@
             "type": "path",
             "url": "pes-session",
             "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url": "pes-http",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url": "pes-di",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url": "pes-core",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url": "pes-router",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url": "pes-database",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url": "pes-view",
+            "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url": "pes-application",
+            "options": { "symlink": true }
         }
     ],
     "require": {
         "php": "<8.5.0",
+        "pes/pes-core": "@dev",
+        "pes/pes-http": "@dev",
+        "pes/pes-di": "@dev",
+        "pes/pes-router": "@dev",
+        "pes/pes-database": "@dev",
+        "pes/pes-view": "@dev",
+        "pes/pes-application": "@dev",
         "pes/pes-session": "@dev",
         "psr/http-message": "^2.0",
         "psr/http-factory": "^1.0",
@@ -34,7 +76,19 @@
     },
     "autoload": {
         "psr-4": {
-            "Pes\\": "src/"
+            "Pes\\Acl\\": "src/Acl/",
+            "Pes\\Autoloader\\": "src/Autoloader/",
+            "Pes\\Comparator\\": "src/Comparator/",
+            "Pes\\Config\\": "src/Config/",
+            "Pes\\Debug\\": "src/Debug/",
+            "Pes\\Document\\": "src/Document/",
+            "Pes\\Entity\\": "src/Entity/",
+            "Pes\\Logger\\": "src/Logger/",
+            "Pes\\Readers\\": "src/Readers/",
+            "Pes\\Repository\\": "src/Repository/",
+            "Pes\\Slot\\": "src/Slot/",
+            "Pes\\Storage\\": "src/Storage/",
+            "Pes\\Utils\\": "src/Utils/"
         }
     },
     "autoload-dev": {

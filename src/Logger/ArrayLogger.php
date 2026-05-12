@@ -2,7 +2,7 @@
 namespace Pes\Logger;
 
 use Psr\Log\AbstractLogger;
-use Pes\Text\Template;
+use Pes\Core\Text\Template;
 
 /**
  * Logger loguje do paměti (zapisuje do pole, které je svlastností instance).
