@@ -26,7 +26,7 @@ $algo  = 'aes-256-ccm';
 $ivLength = openssl_cipher_iv_length($algo);   // integer
 $iv = openssl_random_pseudo_bytes($ivLength, $isStrongCrypto);   // $isStrongCrypto je návratová hodnota - TRUE -> použitý algoritmus je kryptograficky silný, vhodný pro GPG, hesla apod.
 if (!$isStrongCrypto) {
-    throw new \RuntimeException(__METHOD__." - Not a strong key");
+    throw new \RuntimeException(basename(__FILE__) . ' - Not a strong key');
 }
 
 // key (alias password)
@@ -70,7 +70,7 @@ $ciphertext = openssl_encrypt(
 $ciphertextLength = strlen($ciphertext);
 $tagLength = strlen($tag);
 
-$store['key'] = $keyX;
+$store['key'] = $key;
 $store['iv'] = $iv;
 $store['tag'] = $tag;
 $store['aad'] = $aad;
