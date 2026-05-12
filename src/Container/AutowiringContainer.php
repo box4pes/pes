@@ -128,8 +128,8 @@ class AutowiringContainer extends Container implements AutowiringContainerInterf
         $dependencies = [];
         /* @var $parameter ReflectionParameter */
         foreach ($contructor->getParameters() as $parameter) {
-            // nová instance type hinted třídy
-            $dependency = $parameter->getClass();  // vrací ReflectionClass závislosti (ta má vlastost ->name, která obsahuje typ uvedený u proměnné v parametru konstruktoru - obvykle interface
+            // type-hinted třída / interface (ReflectionParameter::getClass() je od PHP 8.0 deprecated)
+            $dependency = $this->reflectionParameterClass($parameter);
             if (isset($dependency)) {
                 // get dependency resolved
                 assert(false, "Dodělat, pokud autowire kontejner je delegate kontejner, volá se konkrétní kontejner a pokud ten služby nnemá definovynou vyhodí exceptionn - "
