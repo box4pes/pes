@@ -1,0 +1,13 @@
+Skript je v projektu zde:
+
+tools/Migrate-PesSplit.ps1
+
+Prochází strom od -Root (výchozí je aktuální složka), soubory s příponami .php, .phtml, .twig, .neon, .xml, .md, .json.
+Přeskakuje vendor, node_modules, .git.
+Nahrazuje řetězce v tomto pořadí: Pes\Comparator\ → Pes\Core\Comparator\, Pes\Document\ → Pes\View\Document\, Pes\Slot\ → Pes\View\Slot\, Pes\Debug\ → Pes\Core\Debug\.
+Bez -Commit jen vypíše [changed] cesta a nic neukládá; s -Commit přepíše soubory UTF-8 bez BOM.
+Příklad na jiném projektu:
+
+powershell -NoProfile -File "C:\Users\pes2704\git_repo_for_vscode\pes\tools\Migrate-PesSplit.ps1" -Root "C:\work\myapp\src"
+powershell -NoProfile -File "C:\Users\pes2704\git_repo_for_vscode\pes\tools\Migrate-PesSplit.ps1" -Root "C:\work\myapp\src" -Commit
+Komentáře v hlavičce skriptu jsou anglicky kvůli spolehlivému výpisu v běžné Windows konzoli; mapování namespace je beze změny.
