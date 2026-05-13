@@ -5,12 +5,12 @@
     "license": "MIT",
     "require": {
         "php": "<8.5.0",
+        "pes/pes-core": "@dev",
         "psr/container": "^2.0",
         "psr/log": "^3.0"
     },
     "suggest": {
-        "ext-session": "Native PHP sessions",
-        "pes/pes-core": "Encrypted/file save handlers use Pes\\Core\\Security and Pes\\Utils"
+        "ext-session": "Native PHP sessions"
     },
     "autoload": {
         "psr-4": {

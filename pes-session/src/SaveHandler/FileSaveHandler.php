@@ -11,7 +11,7 @@
 
 namespace Pes\Session\SaveHandler;
 
-use Pes\Utils\Directory;
+use Pes\Core\Directory\Directory;
 
 /**
  * Description of SaveHandler

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "69fca26da2d965295be9e770234f764c",
+    "content-hash": "82bbaae3d3491562622c277cdd6b7b65",
     "packages": [
         {
             "name": "pes/pes-application",
@@ -35,6 +35,33 @@
                 "MIT"
             ],
             "description": "Application bootstrap, middleware, and HTTP app wiring for Pes.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "pes/pes-bootstrap",
+            "version": "dev-split",
+            "dist": {
+                "type": "path",
+                "url": "pes-bootstrap",
+                "reference": "005c971f12e5e04d20d8d12241b7935191fcb7a5"
+            },
+            "require": {
+                "pes/pes-logger": "@dev",
+                "php": "<8.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pes\\Bootstrap\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Procedurální bootstrap skripty pro Pes (autoloader, prostředí, error handlery, logy).",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -153,6 +180,34 @@
             }
         },
         {
+            "name": "pes/pes-logger",
+            "version": "dev-split",
+            "dist": {
+                "type": "path",
+                "url": "pes-logger",
+                "reference": "421e2d8a29b65346a8c211e470cfd4a66e2c9d88"
+            },
+            "require": {
+                "pes/pes-core": "@dev",
+                "php": "<8.5.0",
+                "psr/log": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pes\\Logger\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "File and array loggers for Pes (extends PSR-3).",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "pes/pes-router",
             "version": "dev-split",
             "dist": {
@@ -189,16 +244,16 @@
             "dist": {
                 "type": "path",
                 "url": "pes-session",
-                "reference": "6c8539c8c3aef229861ab635ca115080931e1886"
+                "reference": "773458208e65a90fe772f9cf31e9907ecca186a8"
             },
             "require": {
+                "pes/pes-core": "@dev",
                 "php": "<8.5.0",
                 "psr/container": "^2.0",
                 "psr/log": "^3.0"
             },
             "suggest": {
-                "ext-session": "Native PHP sessions",
-                "pes/pes-core": "Encrypted/file save handlers use Pes\\Core\\Security and Pes\\Utils"
+                "ext-session": "Native PHP sessions"
             },
             "type": "library",
             "autoload": {
@@ -4937,10 +4992,12 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "pes/pes-application": 20,
+        "pes/pes-bootstrap": 20,
         "pes/pes-core": 20,
         "pes/pes-database": 20,
         "pes/pes-di": 20,
         "pes/pes-http": 20,
+        "pes/pes-logger": 20,
         "pes/pes-router": 20,
         "pes/pes-session": 20,
         "pes/pes-view": 20

@@ -1,4 +1,4 @@
-n<?php
+<?php
 
 namespace Pes\View\Renderer;
 
@@ -68,6 +68,13 @@ class NodeRenderer implements NodeRendererInterface, RendererRecordableInterface
      */
     public function render(?iterable $data=NULL) {
         return $this->renderNode($this->template->getNode($data, $this->classMap));
+    }
+
+    /**
+     * Vykreslí libovolný podstrom DOMu (např. kořen &lt;html&gt; z {@see \Pes\View\Document\HtmlDocument}).
+     */
+    public function renderSubtree(NodeInterface $root): string {
+        return $this->renderNode($root);
     }
 
     /**

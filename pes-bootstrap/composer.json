@@ -1,0 +1,15 @@
+{
+    "name": "pes/pes-bootstrap",
+    "type": "library",
+    "description": "Procedurální bootstrap skripty pro Pes (autoloader, prostředí, error handlery, logy).",
+    "license": "MIT",
+    "require": {
+        "php": "<8.5.0",
+        "pes/pes-logger": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Bootstrap\\": "src/"
+        }
+    }
+}

@@ -2,7 +2,7 @@
 
 Aktualizovaný plán po přesunech: `Pes\Core\*`, `Pes\Application\*` + middleware, `Pes\View\Dom\*`, `pes/pes-session` jako samostatný path balíček.
 
-**Provedený stav:** zdrojáky jsou přesunuty do `pes-session/`, `pes-core/`, `pes-http/`, `pes-di/`, `pes-router/`, `pes-database/`, `pes-view/`, `pes-application/`. Kořenový `pes/pes` je závislý na všech těchto balíčcích (`@dev`) a jeho `autoload.psr-4` mapuje už jen zbývající namespace v `src/` (`Acl`, `Comparator`, `Document`, …), aby nedocházelo ke kolizi s balíčky.
+**Provedený stav:** zdrojáky jsou přesunuty do `pes-session/`, `pes-core/`, `pes-http/`, `pes-di/`, `pes-router/`, `pes-database/`, `pes-view/`, `pes-application/`, `pes-logger/`. Kořenový `pes/pes` je závislý na všech těchto balíčcích (`@dev`) a jeho `autoload.psr-4` mapuje už jen zbývající namespace v `src/` (`Acl`, `Comparator`, `Document`, …), aby nedocházelo ke kolizi s balíčky.
 
 ## Cílové balíčky (kromě meta `pes/pes`)
 
@@ -11,14 +11,15 @@ Aktualizovaný plán po přesunech: `Pes\Core\*`, `Pes\Application\*` + middlewa
 | `pes/pes-session` | `Pes\Session\` | `pes-session/src/` | Hotovo |
 | `pes/pes-http` | `Pes\Http\` | `pes-http/src/` | Hotovo |
 | `pes/pes-di` | `Pes\Container\` (+ případně `Pes\Config\`, `Pes\Autoloader\`) | `pes-di/src/` | Hotovo (`Config` / `Autoloader` zatím v meta `src/`) |
-| `pes/pes-core` | `Pes\Core\` | `pes-core/src/` | Hotovo |
+| `pes/pes-core` | `Pes\Core\` | `pes-core/src/` | Hotovo; pomocné třídy adresářů: `Pes\Core\Directory\Directory`, `Pes\Core\Directory\Exception\CreateDirectoryFailedException` |
 | `pes/pes-router` | `Pes\Router\` | `pes-router/src/` | Hotovo |
 | `pes/pes-database` | `Pes\Database\`, `Pes\Query\` | `pes-database/src/` | Hotovo |
 | `pes/pes-view` | `Pes\View\` | `pes-view/src/` | Hotovo |
 | `pes/pes-application` | `Pes\Application\` | `pes-application/src/` | Hotovo |
+| `pes/pes-logger` | `Pes\Logger\` | `pes-logger/src/` | Hotovo; `FileLogger` používá `Pes\Core\Directory\Directory` z `pes-core` |
 | `pes/pes` (meta) | zbývající `Pes\*` | `src/` | PSR-4 jen pro nesloučené stromy |
 
-**Zatím mimo tabulku** (další vlna nebo součást meta): `Acl`, `Autoloader`, `Bootstrap`, `Comparator`, `Config`, `Debug`, `Document`, `Entity`, `Logger`, `Readers`, `Repository`, `Slot`, `Storage`, `Utils`.
+**Zatím mimo tabulku** (další vlna nebo součást meta): `Acl`, `Autoloader`, `Bootstrap`, `Comparator`, `Config`, `Debug`, `Document`, `Entity`, `Readers`, `Repository`, `Slot`, `Storage`.
 
 ## Závislosti (logický DAG)
 

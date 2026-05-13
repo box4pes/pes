@@ -3,8 +3,8 @@ use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Collection\MapCollection;
 use Pes\Core\Validator\IsObjectTypeValidator;
-use Pes\Comparator\OrderComparator;
-use Pes\Comparator\SortComparator;
+use Pes\Core\Comparator\OrderComparator;
+use Pes\Core\Comparator\SortComparator;
 use Pes\Query\Order;
 use Pes\Query\OrderingEnum;
 

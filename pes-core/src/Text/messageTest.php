@@ -2,7 +2,8 @@
 include "../vendor/Pes/src/Text/Message.php";
 include "../vendor/Pes/src/Text/Template.php";
 include "../vendor/Pes/src/Text/Html.php";
-include "../vendor/Pes/src/Utils/Directory.php";
+include __DIR__ . '/../Directory/Exception/CreateDirectoryFailedException.php';
+include __DIR__ . '/../Directory/Directory.php';
 include  '../vendor/psr/log/Psr/Log/LoggerInterface.php';
 include  '../vendor/psr/log/Psr/Log/LogLevel.php';
 include  '../vendor/psr/log/Psr/Log/AbstractLogger.php';

@@ -4,8 +4,8 @@ use PHPUnit\Framework\TestCase;
 use Pes\Core\Collection\EntityCollection;
 use Pes\Core\Validator\IsObjectTypeValidator;
 // používá OrderComparatorClassMethods, SortComparatorClassMethods protože použitá entita má gettery a settery a private vlastnosti
-use Pes\Comparator\OrderComparatorClassMethods;
-use Pes\Comparator\SortComparatorClassMethods;
+use Pes\Core\Comparator\OrderComparatorClassMethods;
+use Pes\Core\Comparator\SortComparatorClassMethods;
 use Pes\Query\Order;
 use Pes\Query\OrderingEnum;
 
