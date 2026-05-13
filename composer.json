@@ -10,7 +10,7 @@
             "email": "svoboda@grafia.cz"
         }
     ],
-    "version": "8.26.00",
+    "version": "8.26.03",
     "repositories": [
         {
             "type": "path",
