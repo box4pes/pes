@@ -73,7 +73,7 @@
         "pes/pes-view": "@dev",
         "pes/pes-application": "@dev",
         "pes/pes-logger": "@dev",
-        "pes/pes-session": "@dev",
+        "pes/pes-session": "dev-split",
         "pes/pes-bootstrap": "@dev",
         "psr/http-message": "^2.0",
         "psr/http-factory": "^1.0",
