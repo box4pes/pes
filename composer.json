@@ -10,7 +10,7 @@
             "email": "svoboda@grafia.cz"
         }
     ],
-    "version": "8.26.03",
+    "version": "8.27.01",
     "repositories": [
         {
             "type": "path",
@@ -102,7 +102,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master_php8": "8.26.x-dev"
+            "dev-split": "8.27.x-dev"
         }
     }
 }
