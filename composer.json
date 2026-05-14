@@ -99,10 +99,5 @@
     },
     "autoload-dev": {
         "psr-4": {           }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-split": "8.27.x-dev"
-        }
     }
 }
