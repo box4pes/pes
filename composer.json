@@ -63,6 +63,8 @@
             "options": { "symlink": true }
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,    
     "require": {
         "php": "<8.5.0",
         "pes/pes-core": "dev-split",
