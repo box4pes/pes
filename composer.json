@@ -65,7 +65,7 @@
     ],
     "require": {
         "php": "<8.5.0",
-        "pes/pes-core": "@dev",
+        "pes/pes-core": "dev-split",
         "pes/pes-http": "@dev",
         "pes/pes-di": "@dev",
         "pes/pes-router": "@dev",
