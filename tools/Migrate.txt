@@ -1,13 +1,37 @@
-Skript je v projektu zde:
+Skript: tools/Migrate-PesSplit.ps1
 
-tools/Migrate-PesSplit.ps1
+Účel: hromadná náhrada namespace v kódu mimo repo pes po rozdělení větve split oproti master_php8.
 
-Prochází strom od -Root (výchozí je aktuální složka), soubory s příponami .php, .phtml, .twig, .neon, .xml, .md, .json.
+Prochází strom od -Root (výchozí aktuální složka), soubory: .php, .phtml, .twig, .neon, .xml, .md, .json.
 Přeskakuje vendor, node_modules, .git.
-Nahrazuje řetězce v tomto pořadí: Pes\Comparator\ → Pes\Core\Comparator\, Pes\Document\ → Pes\View\Document\, Pes\Slot\ → Pes\View\Slot\, Pes\Debug\ → Pes\Core\Debug\.
-Bez -Commit jen vypíše [changed] cesta a nic neukládá; s -Commit přepíše soubory UTF-8 bez BOM.
-Příklad na jiném projektu:
 
-powershell -NoProfile -File "C:\Users\pes2704\git_repo_for_vscode\pes\tools\Migrate-PesSplit.ps1" -Root "C:\work\myapp\src"
-powershell -NoProfile -File "C:\Users\pes2704\git_repo_for_vscode\pes\tools\Migrate-PesSplit.ps1" -Root "C:\work\myapp\src" -Commit
-Komentáře v hlavičce skriptu jsou anglicky kvůli spolehlivému výpisu v běžné Windows konzoli; mapování namespace je beze změny.
+Mapování (prefixy, v tomto pořadí):
+  Pes\Middleware\Exception\  -> Pes\Application\Middleware\Exception\
+  Pes\Middleware\              -> Pes\Application\Middleware\
+  Pes\Collection\Normalizer\   -> Pes\Core\Collection\Normalizer\
+  Pes\Collection\              -> Pes\Core\Collection\
+  Pes\Comparator\              -> Pes\Core\Comparator\
+  Pes\Document\                -> Pes\View\Document\
+  Pes\Dom\                     -> Pes\View\Dom\
+  Pes\Slot\                    -> Pes\View\Slot\
+  Pes\Security\                -> Pes\Core\Security\
+  Pes\Text\                    -> Pes\Core\Text\
+  Pes\Type\Exception\          -> Pes\Core\Type\Exception\
+  Pes\Type\                    -> Pes\Core\Type\
+  Pes\Utils\Exception\         -> Pes\Core\Directory\Exception\
+  Pes\Utils\                   -> Pes\Core\Directory\
+  Pes\Validator\Exception\     -> Pes\Core\Validator\Exception\
+  Pes\Validator\                 -> Pes\Core\Validator\
+  Pes\Debug\                   -> Pes\Core\Debug\
+
+Beze změny namespace (jen balíčky Composer): Http, Container, Router, Session, Logger, Database, Query, většina View, Application\App.
+
+Bez -Commit jen vypíše [changed] cestu; s -Commit uloží UTF-8 bez BOM.
+-ShowMap vypíše mapu a skončí.
+
+Příklad:
+  powershell -NoProfile -File "...\pes\tools\Migrate-PesSplit.ps1" -Root "C:\work\myapp\src"
+  powershell -NoProfile -File "...\pes\tools\Migrate-PesSplit.ps1" -Root "C:\work\myapp\src" -Commit
+
+Po skriptu ručně: composer require pes/pes-*, Bootstrap (BootstrapEntry::load()), ComparatorInterface (iterable), HtmlDocument::includeDocument().
+Odstraněné třídy: Pes\Utils\Exception\InvalidArgumentException, UtilsExceptionInterface.
