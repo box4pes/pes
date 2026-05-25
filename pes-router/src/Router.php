@@ -171,6 +171,38 @@ class Router implements RouterInterface, LoggerAwareInterface {
 
         // Zajistíme, aby cesta začínala lomítkem a nebyla prázdná
         return '/' . ltrim($uri, '/');
+        
+#######################################################################
+        
+        $uri = $request->getUri()->getPath();
+        $serverParams = $request->getServerParams();
+
+        // 1. Získáme název aktuálního skriptu (např. "/public/index.php" nebo "/app.php")
+        $scriptName = $serverParams['SCRIPT_NAME'] ?? '';
+
+        // 2. Bezpečně získáme pouze název souboru (např. "index.php" nebo "app.php")
+        $scriptFilename = basename($scriptName);
+
+        // 3. Získáme základní adresář (basePath) bez názvu souboru a koncových lomítek
+        $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+
+        // 4. Pokud URI začíná touto basePath, ořízneme ji
+        if (!empty($basePath) && strpos($uri, $basePath) === 0) {
+            $uri = substr($uri, strlen($basePath));
+        }
+
+        // 5. Odstraníme úvodní lomítko pro snazší porovnání názvu souboru
+        $uri = ltrim($uri, '/');
+
+        // 6. Dynamické ošetření přepisu: Pokud zbylé URI odpovídá názvu spuštěného souboru
+        if ($uri === $scriptFilename) {
+            $uri = '';
+        } elseif (strpos($uri, $scriptFilename . '/') === 0) {
+            $uri = substr($uri, strlen($scriptFilename) + 1);
+        }
+
+        // 7. Vždy vrátíme cestu začínající lomítkem
+        return '/' . ltrim($uri, '/');        
     }
 
     private function callMatchedRouteAction(): ResponseInterface {
