@@ -155,54 +155,59 @@ class Router implements RouterInterface, LoggerAwareInterface {
     }
 
     private function getRoutingPath(ServerRequestInterface $request): string {
-        $uri = $request->getUri()->getPath();
-        $serverParams = $request->getServerParams();
-    
-        // Získáme cestu k index.php (např. /projekt/public/index.php)
-        $scriptName = $serverParams['SCRIPT_NAME'] ?? '';
-    
-        // Získáme adresář, ve kterém index.php leží
-        $basePath = str_replace('\\', '/', dirname($scriptName));
-
-        // Odstraníme basePath ze začátku URI
-        if ($basePath !== '/' && strpos($uri, $basePath) === 0) {
-            $uri = substr($uri, strlen($basePath));
-        }
-
-        // Zajistíme, aby cesta začínala lomítkem a nebyla prázdná
-        return '/' . ltrim($uri, '/');
         
-#######################################################################
-        
-        $uri = $request->getUri()->getPath();
-        $serverParams = $request->getServerParams();
+        // $uri = $request->getUri()->getPath();
+        // $serverParams = $request->getServerParams();
 
-        // 1. Získáme název aktuálního skriptu (např. "/public/index.php" nebo "/app.php")
-        $scriptName = $serverParams['SCRIPT_NAME'] ?? '';
+        // // 1. Získáme název aktuálního skriptu (např. "/public/index.php" nebo "/app.php")
+        // $scriptName = $serverParams['SCRIPT_NAME'] ?? '';
 
-        // 2. Bezpečně získáme pouze název souboru (např. "index.php" nebo "app.php")
-        $scriptFilename = basename($scriptName);
+        // // 2. Bezpečně získáme pouze název souboru (např. "index.php" nebo "app.php")
+        // $scriptFilename = basename($scriptName);
 
-        // 3. Získáme základní adresář (basePath) bez názvu souboru a koncových lomítek
-        $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+        // // 3. Získáme základní adresář (basePath) bez názvu souboru a koncových lomítek
+        // $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
 
-        // 4. Pokud URI začíná touto basePath, ořízneme ji
-        if (!empty($basePath) && strpos($uri, $basePath) === 0) {
-            $uri = substr($uri, strlen($basePath));
+        // // 4. Pokud URI začíná touto basePath, ořízneme ji
+        // if (!empty($basePath) && strpos($uri, $basePath) === 0) {
+        //     $uri = substr($uri, strlen($basePath));
+        // }
+
+        // // 5. Odstraníme úvodní lomítko pro snazší porovnání názvu souboru
+        // $uri = ltrim($uri, '/');
+
+        // // 6. Dynamické ošetření přepisu: Pokud zbylé URI odpovídá názvu spuštěného souboru
+        // if ($uri === $scriptFilename) {
+        //     $uri = '';
+        // } elseif (strpos($uri, $scriptFilename . '/') === 0) {
+        //     $uri = substr($uri, strlen($scriptFilename) + 1);
+        // }
+
+        // // 7. Vždy vrátíme cestu začínající lomítkem
+        // return '/' . ltrim($uri, '/');        
+
+        // subdomain path a rest uri
+        $requestScriptName = parse_url($request->getServerParams()['SCRIPT_NAME'], PHP_URL_PATH);
+        $requestScriptDir = dirname($requestScriptName);
+
+        $requestUri = rawurldecode($request->getUri()->getPath());  // metoda getPath musí vracet enkódované uri 
+
+        if (stripos($requestUri, $requestScriptName) === 0) {
+            $subDomainPath = $requestScriptName;
+        } elseif ($requestScriptDir !== '/' && stripos($requestUri, $requestScriptDir) === 0) {
+            $subDomainPath = $requestScriptDir;
+        } else {
+            $subDomainPath = '';
         }
 
-        // 5. Odstraníme úvodní lomítko pro snazší porovnání názvu souboru
-        $uri = ltrim($uri, '/');
-
-        // 6. Dynamické ošetření přepisu: Pokud zbylé URI odpovídá názvu spuštěného souboru
-        if ($uri === $scriptFilename) {
-            $uri = '';
-        } elseif (strpos($uri, $scriptFilename . '/') === 0) {
-            $uri = substr($uri, strlen($scriptFilename) + 1);
+        if ($subDomainPath) {
+            $virtualPath = substr($requestUri, strlen($subDomainPath));
+        } else {
+            $virtualPath = $requestUri;
         }
 
-        // 7. Vždy vrátíme cestu začínající lomítkem
-        return '/' . ltrim($uri, '/');        
+        return'/'.ltrim($virtualPath, '/');
+
     }
 
     private function callMatchedRouteAction(): ResponseInterface {
