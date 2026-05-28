@@ -23,25 +23,25 @@ interface ResourceRegistryInterface {
     
     /**
      * 
-     * @param type $httpMethod
+     * @param string $httpMethod
      * @return bool
      */
-    public function hasHttpMethod($httpMethod): bool;
+    public function hasHttpMethod(string $httpMethod): bool;
     
     /**
      * 
-     * @param type $httpMethod
-     * @param type $urlPattern
+     * @param string $httpMethod
+     * @param string $urlPattern
      * @return bool
      */
-    public function hasUrlPattern($httpMethod, $urlPattern): bool;
+    public function hasUrlPattern(string $httpMethod, string $urlPattern): bool;
 
     /**
      *
-     * @param type $httpMethod
-     * @param type $urlPattern
+     * @param string $httpMethod
+     * @param string $urlPattern
      * @return ResourceInterface|null
      */
-    public function getResource($httpMethod, $urlPattern): ?ResourceInterface;
+    public function getResource(string $httpMethod, string $urlPattern): ?ResourceInterface;
 
 }

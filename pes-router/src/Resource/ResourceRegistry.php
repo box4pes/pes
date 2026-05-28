@@ -2,6 +2,8 @@
 
 namespace Pes\Router\Resource;
 
+use Pes\Router\Resource\ResourceInterface;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -21,8 +23,8 @@ class ResourceRegistry implements ResourceRegistryInterface {
     private $resources=[];
 
     /**
-     *
-     * @param \Pes\Router\Resource\ResourceInterface $resource
+     * 
+     * @param ResourceInterface $resource
      * @return void
      */
     #[\Override]
@@ -32,11 +34,22 @@ class ResourceRegistry implements ResourceRegistryInterface {
         $this->resources[$httpMethod][$this->canonicalize($urlPattern)] = $resource; 
     }
 
+    /**
+     * 
+     * @param string $httpMethod
+     * @return bool
+     */
     #[\Override]
     public function hasHttpMethod(string $httpMethod): bool {
         return array_key_exists($httpMethod, $this->resources);
     }
 
+    /**
+     * 
+     * @param string $httpMethod
+     * @param string $urlPattern
+     * @return bool
+     */
     #[\Override]
     public function hasUrlPattern(string $httpMethod, string $urlPattern): bool {
         return $this->hasHttpMethod($httpMethod) AND array_key_exists($this->canonicalize($urlPattern), $this->resources[$httpMethod]);
