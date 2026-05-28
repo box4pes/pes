@@ -39,7 +39,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class Request extends Message implements ServerRequestInterface
 {
-    const URI_INFO_ATTRIBUTE_NAME = 'uriInfo';
+    public const URI_INFO_ATTRIBUTE_NAME = 'uriInfo';
 
     /**
      * The oroginal request method

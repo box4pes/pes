@@ -65,7 +65,7 @@ class AppFactory implements AppFactoryInterface {
      * Vlastnosti request a UriInfo lze vytvořit z Environment.
      * @see \Pes\Http\Factory\ServerRequestFactory::createFromEnvironment(Environment $environment)
      * @see \Pes\Application\UriInfoFactory::create(Environment $environment, ServerRequestInterface $request)
-     * @see self::URI_INFO_ATTRIBUTE_NAME
+     * @see Request::URI_INFO_ATTRIBUTE_NAME
      * @see \Pes\Application\AppInterface::setServerRequest()
      *
      * @return AppInterface
