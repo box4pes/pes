@@ -9,17 +9,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-namespace Pes\Application;
+namespace Pes\Http\Helper;
 
 /**
- * Description of App
+ * Description of UrlInfo
  *
  * @author pes2704
  */
 class UrlInfo implements UriInfoInterface {
 
     /**
-     * @var string
+     * @var string  
      */
     protected $subdomainUri;
     /**

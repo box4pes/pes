@@ -11,6 +11,8 @@
 
 namespace Pes\Http\Factory;
 
+use InvalidArgumentException;
+
 /**
  * Description of CookiesArrayFactory
  *
@@ -19,13 +21,13 @@ namespace Pes\Http\Factory;
 class CookiesArrayFactory {
 
     /**
-     * Metoda přijímá hlavičku 'Cookie' ve tvaru pole. Je určena pro použití ve fázi, kdy ještě není vytvořen objekt Request.
+     * Metoda přijímá hlavičku 'Cookie' ve tvaru pole nebo string. Je určena pro použití ve fázi, kdy ještě není vytvořen objekt Request.
      * Typicky je volána v RequestFactory, kde jsou takto vytvořené cookies instančním parametrem objektu Request.
      * @param array|string $header Pole párů klíč/hodnota hlavičky. Případně řetězec hlavičky.
-     * @return array
-     * @throws \InvalidArgumentException Nelze záskat cookies z hlavičky Cookie
+     * @return array Cookies jako pole párů klíč/hodnota. Pokud hlavička Cookie neexistuje, vrací prázdné pole. Pokud je hlavička Cookie ve špatném formátu, vyhodí výjimku.                
+     * @throws InvalidArgumentException Pokud je hlavička Cookie ve špatném formátu.
      */
-    public function extractFromCookieHeader($header) {
+    public function extractFromCookieHeader(array|string $header): array {
         if (is_array($header)) {
             $header = isset($header[0]) ? $header[0] : '';
         }
@@ -35,7 +37,7 @@ class CookiesArrayFactory {
         }
 
         if (!is_string($header)) {
-            throw new \InvalidArgumentException('Nelze záskat cookies z hlavičky Cookie. Hodnota Cookie hlavičky není string.');
+            throw new InvalidArgumentException('Nelze záskat cookies z hlavičky Cookie. Hodnota Cookie hlavičky není string.');
         }
 
         $header = rtrim($header, "\r\n");
@@ -49,7 +51,7 @@ class CookiesArrayFactory {
                     $requestCookies[$name] = $value;
                 }
                 // K výskytu více cookies se stejným jménem může dojít, pokud cookie byly odeslány se stejným jméne, ale s různým path.
-                // V prohlížeči mohou být duplicitní cookie také, protože byla posláný s různou doménou. takové by se podle mě neměly objevit
+                // V prohlížeči mohou být duplicitní cookie také, protože byla poslány s různou doménou. takové by se podle mě neměly objevit
                 // v jednou requestu.  RFC 6265 říká, že prohlížeče by měly upřednostnit cookie s delší path (viz https://stackoverflow.com/questions/4056306/how-to-handle-multiple-cookies-with-the-same-name/24214538#24214538)
                 // což nové prohlížeče dělají, ale současně také platí, že pošlou všechny cookie. Např PHP7 do global pole $_COOKIE dává jen první cookie s daným jménem, další zahodí.
                 // Dělám to tedy také tak.
@@ -57,7 +59,7 @@ class CookiesArrayFactory {
 //                    throw new \InvalidArgumentException("Nelze záskat cookies z hlavičky Cookie. Duplikátní jméno cookie: $name.");
 //                }
             } else {
-                throw new \InvalidArgumentException("Nelze záskat cookies z hlavičky Cookie. Hodnota hlavičky Cookie má chybný formát: $nameValuePair.");
+                throw new InvalidArgumentException("Nelze záskat cookies z hlavičky Cookie. Hodnota hlavičky Cookie má chybný formát: $nameValuePair.");
             }
         }
 

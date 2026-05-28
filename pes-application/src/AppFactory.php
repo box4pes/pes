@@ -15,6 +15,8 @@ use Pes\Http\Environment;
 use Pes\Http\Factory\ServerRequestFactory;
 use Psr\Container\ContainerInterface;
 use Pes\Container\Container;
+use Pes\Http\Request;
+use Pes\Http\Helper\UriInfoFactory;
 
 /**
  * Description of AppFactory
@@ -44,7 +46,6 @@ use Pes\Container\Container;
  */
 class AppFactory implements AppFactoryInterface {
 
-    const URI_INFO_ATTRIBUTE_NAME = 'uriInfo';
 
     protected $appContainer;
 
@@ -73,7 +74,7 @@ class AppFactory implements AppFactoryInterface {
         $app = new App();
 
         $serverRequest = (new ServerRequestFactory())->createFromEnvironment($environment);
-        $app->setServerRequest($serverRequest->withAttribute(self::URI_INFO_ATTRIBUTE_NAME, (new UriInfoFactory())->create($environment, $serverRequest)));
+        $app->setServerRequest($serverRequest->withAttribute(Request::URI_INFO_ATTRIBUTE_NAME, (new UriInfoFactory())->create($environment, $serverRequest)));
 
         if (!$this->appContainer) {
             $this->appContainer = new Container();

@@ -21,7 +21,7 @@ interface ResourceRegistryInterface {
      *
      * @param type $httpMethod
      * @param type $urlPattern
-     * @return \Pes\Router\Resource\ResourceInterface|null
+     * @return ResourceInterface|null
      */
     public function getResource($httpMethod, $urlPattern): ?ResourceInterface;
 

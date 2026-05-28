@@ -17,10 +17,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-use Pes\Application\AppFactory;
-use Pes\Application\UriInfoInterface;
-
-use Pes\Http\Uri\UriPath;
+use Pes\Http\Request;
 
 /**
  * Description of Switch
@@ -30,9 +27,9 @@ use Pes\Http\Uri\UriPath;
 class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMiddlewareInterface {  // AppMiddlewareINterface
 
     /**
-     * @var SelectorItem array of
+     * @var SelectorItem[] $items array of SelectorItem objects
      */
-    private $items = array();
+    private array $items = [];
 
     /**
      * Přijímá prefix a přiřazenou definici zásbníku middleware. Definice zásobníku middleware je:
@@ -44,8 +41,8 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
      * pracuje "lazy load" a jednotlivá middleware jsou instancována až v okamžiku jejich volání.</li>
      * <li></li>
      * </ul>
-     * @param type $prefix
-     * @param type $stack Definice zásobníku Middelware.
+     * @param string $prefix
+     * @param mixed $stack Definice zásobníku Middelware.
      * @param callable $resolver
      */
     public function addItem($prefix, $stack, ?callable $resolver=NULL): SelectorInterface{
@@ -82,7 +79,7 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 //        $path = $request->getUri()->getPath();
         /** @var UriInfoInterface $uriInfo */
-        $uriInfo = $request->getAttribute(AppFactory::URI_INFO_ATTRIBUTE_NAME);
+        $uriInfo = $request->getAttribute(Request::URI_INFO_ATTRIBUTE_NAME);   // vyžaduje nastavení UriInfo v AppFactory
         $restUri = $uriInfo->getRestUri();
         foreach($this->items as  $item) {
             if(strpos($restUri, $item->getPrefix())===0) {
@@ -101,7 +98,7 @@ class Selector extends AppMiddlewareAbstract implements SelectorInterface, AppMi
             foreach($this->items as  $item) {
                 $pref[] = "'".$item->getPrefix()."'";
             }
-            $prefs = implode(", ", $pref);
+            $prefs = implode(", ", $pref ?? ['']);
             $this->logger->warning("Selector: Pro REST uri $restUri nebyl nalezen žádný prefix. Prefixy: $prefs.");
         }
         return $handler->handle($request);

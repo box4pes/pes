@@ -9,7 +9,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-namespace Pes\Application;
+ namespace Pes\Http\Helper;
 
 use Pes\Http\Environment;
 use Psr\Http\Message\ServerRequestInterface;

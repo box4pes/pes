@@ -9,8 +9,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-namespace Pes\Application;
-
+namespace Pes\Http\Helper;
 
 /**
  *

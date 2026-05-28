@@ -38,7 +38,7 @@ class Resource implements ResourceInterface {
     /**
      *
      * @param string $httpMethod
-     * @return \Pes\Router\Resource\ResourceInterface
+     * @return ResourceInterface
      * @throws ResourceHttpMethodNotValid
      */
     public function withHttpMethod(string $httpMethod): ResourceInterface {
@@ -57,10 +57,10 @@ class Resource implements ResourceInterface {
      * Pattern musí začínat i končit znakem '/' a může obsahovat segmenty oddělené znakem '/'. Pattern, který nemá segmenty je '/'.
      *
      * @param string $urlPattern
-     * @return \Pes\Router\Resource\ResourceInterface
+     * @return ResourceInterface
      * @throws ResourceUrlPatternNotValid
      */
-    public function withUrlPattern($urlPattern): ResourceInterface {
+    public function withUrlPattern(string $urlPattern): ResourceInterface {
         try {
             $this->urlPatternValidator->validate($urlPattern);
         } catch (WrongPatternFormatException $e) {
@@ -71,11 +71,11 @@ class Resource implements ResourceInterface {
         return $cloned;
     }
 
-    public function getHttpMethod() {
+    public function getHttpMethod(): string {
         return $this->httpMethod;
     }
 
-    public function getUrlPattern() {
+    public function getUrlPattern(): string {
         return $this->urlPattern;
     }
 
@@ -86,7 +86,7 @@ class Resource implements ResourceInterface {
      * @return string
      * @throws ResourcePathParameterDoesNotMatch
      */
-    public function getPathFor(array $pathParams) {
+    public function getPathFor(array $pathParams): string {
         $replaced = 0;
         $pattern = $this->urlPattern;
         foreach ($pathParams as $key => $value) {
@@ -113,8 +113,7 @@ class Resource implements ResourceInterface {
      * @return string       The RFC 3986 percent-encoded uri path.
      * @link   http://www.faqs.org/rfcs/rfc3986.html
      */
-    private function filterPath($path)
-    {
+    private function filterPath(string $path): string {     
         return preg_replace_callback(
             '/(?:[^a-zA-Z0-9_\-\.~:@&=\+\$,\/;%]+|%(?![A-Fa-f0-9]{2}))/',
             function ($match) {

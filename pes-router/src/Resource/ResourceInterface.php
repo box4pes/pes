@@ -16,14 +16,14 @@ interface ResourceInterface {
     
     public function withHttpMethod(string $httpMethod): ResourceInterface;
 
-    public function withUrlPattern($urlPattern): ResourceInterface;
+    public function withUrlPattern(string $urlPattern): ResourceInterface;
 
-    public function getHttpMethod();
+    public function getHttpMethod(): string;
 
-    public function getUrlPattern();
+    public function getUrlPattern(): string;
 
     /**
      * @return string Path se zadanými parametry.
      */
-    public function getPathFor(array $params);
+    public function getPathFor(array $params): string;
 }

@@ -18,7 +18,7 @@ use Pes\Router\Exception\RouteRegistrySegmentPrefixNotFoundException;
 class ResourceRegistry implements ResourceRegistryInterface {
 
     /**
-     * @var Action array of
+     * @var ResourceInterface[] array of
      */
     private $resources=[];
 
@@ -30,14 +30,14 @@ class ResourceRegistry implements ResourceRegistryInterface {
     public function register(ResourceInterface $resource): void {
         $httpMethod = $resource->getHttpMethod();
         $urlPattern = $resource->getUrlPattern();
-        $this->resources[$httpMethod][$this->canonicalize($urlPattern)] = $resource;
+        $this->resources[$httpMethod][$this->canonicalize($urlPattern)] = $resource; 
     }
 
-    public function hasHttpMethod($httpMethod): bool {
+    public function hasHttpMethod(string $httpMethod): bool {
         return array_key_exists($httpMethod, $this->resources);
     }
 
-    public function hasUrlPattern($httpMethod, $urlPattern): bool {
+    public function hasUrlPattern(string $httpMethod, string $urlPattern): bool {
         return $this->hasHttpMethod($httpMethod) AND array_key_exists($this->canonicalize($urlPattern), $this->resources[$httpMethod]);
     }
 
@@ -45,14 +45,14 @@ class ResourceRegistry implements ResourceRegistryInterface {
      *
      * @param string $httpMethod
      * @param string $urlPattern
-     * @return \Pes\Router\Resource\ResourceInterface|null
+     * @return ?ResourceInterface|null; Null pokud není resource nalezena.
      */
-    public function getResource($httpMethod, $urlPattern): ?ResourceInterface {
+    public function getResource(string $httpMethod, string $urlPattern): ?ResourceInterface {
         $canonPattern = $this->canonicalize($urlPattern);
-        return isset($this->resources[$httpMethod][$canonPattern]) ? $this->resources[$httpMethod][$canonPattern] : null;
+        return $this->resources[$httpMethod][$canonPattern] ?? null;
     }
 
-    private function canonicalize($urlPattern) {
+    private function canonicalize(string $urlPattern): string {
         // zamění parametry v pattern za :
         return preg_replace('/\\\:[a-zA-Z0-9\_\-]+/u', ':', preg_quote($urlPattern));
 

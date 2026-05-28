@@ -9,8 +9,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 use Pes\Router\Exception\RouteNotFoundException;
-//use Pes\Application\AppFactory;
-//use Pes\Application\UriInfoInterface;
+
+use Pes\Router\RouteInterface;
+use Pes\Http\Helper\UriInfoInterface;
+use Pes\Http\Request;
 
 /**
  * Description of Router
@@ -22,16 +24,19 @@ class Router implements RouterInterface, LoggerAwareInterface {
 // router --> middleware : implements ContainerMiddlewareInterface
     /**
      * Objekty Route indexované podle metody a prvího znaku pattern
-     * @var Route[]
+     * @var array<string, array<string, RouteInterface[]>> array of array of RouteInterface
      */
     private $routes = [];
 
     /**
-     * @var Route
+     * @var RouteInterface
      */
     private $matchedRoute;
 
-    private $matches;
+    /**
+     * @var array
+     */
+    private $matches = [];
 
     /**
      * @var LoggerInterface
@@ -49,7 +54,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
 
     /**
      *
-     * @param \Pes\Router\RouteInterface $route
+     * @param RouteInterface $route
      */
     public function addRoute(RouteInterface $route): void {
         // přidání routy do pole rout - první index pole je metoda, druhý index pole je druhý znak url
@@ -97,7 +102,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
      * @return type
      * @throws RouteNotFoundException
      */
-    public function route(ServerRequestInterface $request) {
+    public function route(ServerRequestInterface $request): ResponseInterface {
         if ($this->findRoute($request)) {
             return $this->callMatchedRouteAction();
         } else {
@@ -106,8 +111,7 @@ class Router implements RouterInterface, LoggerAwareInterface {
     }
 
     /**
-     * Implmentuje Middleware interface. Tato implementace nejprve provede routovánmí a jen v případě nenalezení routy nebo pokud
-     * akce routy nevrátila response, volá request handler.
+     * Implmentuje Middleware interface. Tato implementace nejprve provede routovánmí a jen v případě nenalezení routy volá request handler.
      *
      * Vybere objekt Route podle http metody a urlPattern rout. Pokud nalezne odpovídající route, vykoná action routy. Pokud akce routy vrátila response,
      * vrací tento response - návratovou hodnotu vrácenou action routy. Pokud nenalezne odpovídající route nebo akce routy nevrátila response,
@@ -132,25 +136,14 @@ class Router implements RouterInterface, LoggerAwareInterface {
 
     private function findRoute(ServerRequestInterface $request) {
         $httpMethod = $request->getMethod();
-//        $path = $request->getUri()->getPath();
-        ///** @var UriInfoInterface $uriInfo */
-        //$uriInfo = $request->getAttribute(AppFactory::URI_INFO_ATTRIBUTE_NAME, '');
-        //$restUri = $uriInfo->getRestUri();
-        $restUri = $this->getRoutingPath($request);
-        $restUriPrefix = $restUri[1] ?? '/';
-        if(array_key_exists($httpMethod, $this->routes) AND array_key_exists($restUriPrefix, $this->routes[$httpMethod])) {
-            foreach($this->routes[$httpMethod][ $restUriPrefix ] as  $route) {
-                $matches = array();
-                // původně: if($httpMethod == $route->getMethod() && preg_match($route->getPattern(), $path, $matches)) {
-                if(preg_match($route->getPatternPreg(), $restUri, $matches)) {
-                    $this->logger?->debug("Router: restUri $restUri => route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource()->getHttpMethod(), 'url'=>$route->getResource()->getUrlPattern()]);
-                    $this->matchedRoute = $route;
-                    $this->matches = $matches;
-                    $this->matchedRequest = $request->withAttribute('route', $route);
-                    return true;
-                }
-            }
+        /** @var UriInfoInterface $uriInfo */
+        $uriInfo = $request->getAttribute(Request::URI_INFO_ATTRIBUTE_NAME);   // pokud bylo UriInfo v AppFactory
+        if($uriInfo instanceof UriInfoInterface) {
+            $restUri = $uriInfo->getRestUri();
+        } else {
+            $restUri = $this->getRoutingPath($request);
         }
+
         return false;
     }
 

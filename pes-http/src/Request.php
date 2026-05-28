@@ -17,6 +17,8 @@ use Pes\Http\HeadersInterface;
 use Pes\Http\Request\MediaContentResolverInterface;
 use Pes\Http\Request\MediaContentResolver;
 use Pes\Http\Body\BodyParserInterface;
+use Pes\Http\Request\RequestMediaContentInterface;
+
 
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,6 +39,8 @@ use Psr\Http\Message\RequestInterface;
  */
 class Request extends Message implements ServerRequestInterface
 {
+    const URI_INFO_ATTRIBUTE_NAME = 'uriInfo';
+
     /**
      * The oroginal request method
      *
@@ -54,55 +58,65 @@ class Request extends Message implements ServerRequestInterface
     /**
      * The request URI object
      *
-     * @var Psr\Http\Message\UriInterface
+     * @var UriInterface
      */
-    protected $uri;
+    protected $uri;  // UriInterface        
 
-    protected $headers;
+    /**
+     * The request headers collection
+     *
+     * @var HeadersInterface
+     */
+    protected $headers;  // HeadersInterface
 
     /**
      * The request URI target (path + query string)
      *
      * @var string
      */
-    protected $requestTarget;
+    protected $requestTarget;  // string
 
     /**
      * The request query string params
      *
      * @var array
      */
-    protected $queryParams;
+    protected $queryParams;  // array
 
     /**
      * The request cookies
      *
      * @var array
      */
-    protected $cookies;
+    protected $cookies;  // array
 
     /**
      * The server environment variables at the time the request was created.
      *
      * @var array
      */
-    protected $serverParams;
+    protected $serverParams;  // array
 
     /**
      * The request attributes (route segment names and values)
      *
-     * @var \Pes\Core\Collection\MapCollection
+     * @var MapCollection
      */
-    protected $attributes;
+    protected $attributes;  // MapCollection
 
-    protected $body;
+    /**
+     * The request body
+     *
+     * @var StreamInterface
+     */
+    protected $body;  // StreamInterface
 
     /**
      * The request body parsed (if possible) into a PHP array or object
      *
      * @var null|array|object
      */
-    protected $bodyParsed = false;
+    protected $bodyParsed = false;  // bool
 
     /**
      * List of request body parsers (e.g., url-encoded, JSON, XML, multipart)
