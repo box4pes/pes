@@ -13,8 +13,27 @@ namespace Pes\Router\Resource;
  * @author pes2704
  */
 interface ResourceRegistryInterface {
+    
+    /**
+     * 
+     * @param ResourceInterface $resource
+     * @return void
+     */
     public function register(ResourceInterface $resource): void;
+    
+    /**
+     * 
+     * @param type $httpMethod
+     * @return bool
+     */
     public function hasHttpMethod($httpMethod): bool;
+    
+    /**
+     * 
+     * @param type $httpMethod
+     * @param type $urlPattern
+     * @return bool
+     */
     public function hasUrlPattern($httpMethod, $urlPattern): bool;
 
     /**
