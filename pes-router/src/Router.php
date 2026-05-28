@@ -143,7 +143,20 @@ class Router implements RouterInterface, LoggerAwareInterface {
         } else {
             $restUri = $this->getRoutingPath($request);
         }
-
+        $restUriPrefix = $restUri[1] ?? '/';
+        if(array_key_exists($httpMethod, $this->routes) AND array_key_exists($restUriPrefix, $this->routes[$httpMethod])) {
+            foreach($this->routes[$httpMethod][ $restUriPrefix ] as  $route) {
+                $matches = array();
+                // původně: if($httpMethod == $route->getMethod() && preg_match($route->getPattern(), $path, $matches)) {
+                if(preg_match($route->getPatternPreg(), $restUri, $matches)) {
+                    $this->logger?->debug("Router: restUri $restUri => route - method: {method}, urlPattern: {url}", ['method'=>$route->getResource()->getHttpMethod(), 'url'=>$route->getResource()->getUrlPattern()]);
+                    $this->matchedRoute = $route;
+                    $this->matches = $matches;
+                    $this->matchedRequest = $request->withAttribute('route', $route);
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
