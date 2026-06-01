@@ -99,5 +99,25 @@
     },
     "autoload-dev": {
         "psr-4": {           }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:core": "phpunit --testsuite pes-core",
+        "test:database": "phpunit --testsuite pes-database",
+        "test:di": "phpunit --testsuite pes-di",
+        "test:logger": "phpunit --testsuite pes-logger",
+        "test:router": "phpunit --testsuite pes-router",
+        "test:view": "phpunit --testsuite pes-view",
+        "test:root": "phpunit --testsuite pes-root"
+    },
+    "scripts-descriptions": {
+        "test": "Spustí všechny PHPUnit testsuity (viz phpunit.xml.dist)",
+        "test:core": "Spustí jen testy pro pes-core",
+        "test:database": "Spustí jen testy pro pes-database",
+        "test:di": "Spustí jen testy pro pes-di",
+        "test:logger": "Spustí jen testy pro pes-logger",
+        "test:router": "Spustí jen testy pro pes-router",
+        "test:view": "Spustí jen testy pro pes-view",
+        "test:root": "Spustí testy z kořenového balíčku (Autoloader apod.)"
     }
 }

@@ -2,3 +2,6 @@
 /Test_reports/
 /vendor/
 /nbproject/private/
+/phpunit.xml
+/.phpunit.result.cache
+/tests/.phpunit.result.cache

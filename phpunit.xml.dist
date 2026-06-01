@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Hlavni konfigurace PHPUnit pro projekt Pes.
+    Spousteni: composer test  (vsechny testsuity)
+               composer test:core, test:router, test:database, ... (jednotliva testsuita)
+               vendor/bin/phpunit (autodetekce phpunit.xml.dist)
+    Struktura: tests / <balicek> / <namespace> / *Test.php
+    Lokalni prepis: zkopirovat phpunit.xml.dist na phpunit.xml (je v .gitignore).
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         cacheResultFile="tests/.phpunit.result.cache">
+    <testsuites>
+        <testsuite name="pes-core">
+            <directory suffix="Test.php">tests/pes-core</directory>
+        </testsuite>
+        <testsuite name="pes-database">
+            <directory suffix="Test.php">tests/pes-database</directory>
+        </testsuite>
+        <testsuite name="pes-di">
+            <directory suffix="Test.php">tests/pes-di</directory>
+        </testsuite>
+        <testsuite name="pes-logger">
+            <directory suffix="Test.php">tests/pes-logger</directory>
+        </testsuite>
+        <testsuite name="pes-router">
+            <directory suffix="Test.php">tests/pes-router</directory>
+        </testsuite>
+        <testsuite name="pes-view">
+            <directory suffix="Test.php">tests/pes-view</directory>
+        </testsuite>
+        <testsuite name="pes-root">
+            <directory suffix="Test.php">tests/Autoloader</directory>
+        </testsuite>
+    </testsuites>
+    <logging>
+        <junit outputFile="Test_reports/phpunit-log.xml"/>
+        <testdoxHtml outputFile="Test_reports/phpunit-log.html"/>
+        <testdoxText outputFile="Test_reports/phpunit-log.txt"/>
+    </logging>
+</phpunit>
