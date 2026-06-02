@@ -32,14 +32,14 @@ class RouteSegmentGenerator implements RouteSegmentGeneratorInterface, \Iterator
 
     /**
      *
-     * @param type $httpMethod
-     * @param type $urlPattern
+     * @param string $httpMethod
+     * @param string $urlPattern
      * @param callable $action
      * @return void
      * @throws RoutedSegmentPrefixNotFoundException
      * @throws RoutedSegmentResourceNotFoundException
      */
-    public function addRouteForAction($httpMethod, $urlPattern, callable $action): void {
+    public function addRouteForAction(string $httpMethod, string $urlPattern, callable $action): void {
         if (!$this->resourceRegistry->hasHttpMethod($httpMethod)) {
             throw new RoutedSegmentResourceNotFoundException("No resource with requested HTTP method: '$httpMethod' was not found in the resource registry.");
         } elseif (!$this->resourceRegistry->hasUrlPattern($httpMethod, $urlPattern)) {
