@@ -68,7 +68,7 @@ abstract class EntityAbstract implements EntityInterface, \IteratorAggregate {
      * Metoda vrací iterátor obsahující vlastnosti objektu
      * @return \ArrayIterator
      */
-    public function getIterator() {
+    public function getIterator(): \Traversable {
        return new ArrayIterator($this->getValuesAssoc());
     }
 }

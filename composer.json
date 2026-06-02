@@ -98,7 +98,10 @@
         }
     },
     "autoload-dev": {
-        "psr-4": {           }
+        "psr-4": {
+            "Pes\\Router\\": "pes-router/src/",
+            "Pes\\Router\\Tests\\": "tests/pes-router/Router/"
+        }
     },
     "scripts": {
         "test": "phpunit",

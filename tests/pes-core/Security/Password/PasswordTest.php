@@ -12,6 +12,11 @@ use Pes\Core\Security\Password\Password;
  * @author pes2704
  */
 class PasswordTest extends TestCase {
+    
+    private $errorType;
+    private $errorString;
+    private $errorFile;
+    private $errorLine;
 
     public function testGetPasswordHash() {
         $passwordCrypt = new Password();

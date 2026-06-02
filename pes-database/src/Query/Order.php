@@ -2,6 +2,7 @@
 namespace Pes\Query;
 
 use Pes\Query\OrderingEnum;
+use Traversable;
 
 /**
  * Description of Order
@@ -25,9 +26,10 @@ class Order implements OrderInterface {
     
     /**
      * Vrací iterátor vhodný pro víceúrovňové třídění (multisort). 
-     * @return \ArrayIterator
+     * 
+     * @return Traversable
      */
-    public function getIterator() {
+    public function getIterator(): Traversable {
         return new \ArrayIterator($this->order);
     }
     

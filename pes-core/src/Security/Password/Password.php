@@ -11,6 +11,8 @@
 
 namespace Pes\Core\Security\Password;
 
+use Closure;
+
 /**
  * Description of Password
  *
@@ -46,10 +48,10 @@ class Password implements PasswordInterface {
      * a je zadán první parametr konstruktoru - Closure pro ukládání přepočtených hashů, pak metoda verifyPassword() vygeneruje nový hash pomocí aktuální metody a cost 
      * a nový hash uloží pomocí Closure pro ukládání přepočtených hashů. Takto lze automaticky obnovit staré uložené hashe vytvořené některou ze zastaralých metod.
      * 
-     * @param \Closure $rehashSaver Closure pro ukládání přepočtených hashů, musí přijímat jeden parametr a tím je nový hash pro uložení.
-     * @param \Closure $fallbackHashVerifier Closure pro verifikaci hashe, musí přijímat dva parametry - prvním je heslo, druhým je hash.
+     * @param Closure|null $rehashSaver Closure pro ukládání přepočtených hashů, musí přijímat jeden parametr a tím je nový hash pro uložení.
+     * @param Closure|null $fallbackHashVerifier Closure pro verifikaci hashe, musí přijímat dva parametry - prvním je heslo, druhým je hash.
      */
-    public function __construct(\Closure $rehashSaver = NULL, \Closure $fallbackHashVerifier = NULL) {
+    public function __construct(?Closure $rehashSaver = NULL, ?Closure $fallbackHashVerifier = NULL) {
         //The default algorithm to use for hashing. This may change in newer PHP releases when newer, stronger hashing algorithms are supported. 
         //Therefore you should be aware that the length of the resulting hash can change. 
         //Therefore, if you use PASSWORD_DEFAULT you should store the resulting hash in a way that can store more than 60 characters (255 is the recomended width).

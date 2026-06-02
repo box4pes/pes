@@ -6,11 +6,11 @@ use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Validator\IsSerializableValidator;
 
-class SerializableClassForTest implements \Serializable {
-    public function serialize() {
-        return 'To je série!';
+class SerializableClassForTest {
+    public function __serialize() {
+        return ['to_jsou_data' => 'To je série!'];
     }
-    public function unserialize($serialized) {
+    public function __unserialize(array $data) {
         return;
     }
 }
