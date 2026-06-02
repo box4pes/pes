@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Query\Matcher;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Query\Matcher\NotInMatcher;

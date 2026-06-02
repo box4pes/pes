@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Database\Handler\AttributesProvider;
+
 use PHPUnit\Framework\TestCase;
 
 

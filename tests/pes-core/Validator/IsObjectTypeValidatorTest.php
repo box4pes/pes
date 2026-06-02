@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Validator;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Validator\IsObjectTypeValidator;
@@ -36,20 +39,20 @@ class IsObjectTypeValidatorTest extends TestCase {
     }
 
     public function testCorrectConstruct() {
-        $this->assertInstanceOf(IsObjectTypeValidator::class, new IsObjectTypeValidator('InterfaceForIsTypeValidatorTest'));
-        $this->assertInstanceOf(IsObjectTypeValidator::class, new IsObjectTypeValidator('ObjectForIsTypeValidatorTest'));
+        $this->assertInstanceOf(IsObjectTypeValidator::class, new IsObjectTypeValidator(InterfaceForIsTypeValidatorTest::class));
+        $this->assertInstanceOf(IsObjectTypeValidator::class, new IsObjectTypeValidator(ObjectForIsTypeValidatorTest::class));
     }
 
     /**
      *
      */
     public function testIsValidClass() {
-        $validator = new IsObjectTypeValidator('ObjectForIsTypeValidatorTest');
+        $validator = new IsObjectTypeValidator(ObjectForIsTypeValidatorTest::class);
         $this->assertNull($validator->validate(new ObjectForIsTypeValidatorTest()));
     }
 
     public function testIsValidInterface() {
-        $validator = new IsObjectTypeValidator('InterfaceForIsTypeValidatorTest');
+        $validator = new IsObjectTypeValidator(InterfaceForIsTypeValidatorTest::class);
         $this->assertNull($validator->validate(new InterfacedObjectForIsTypeValidatorTest()));
     }
 
@@ -57,7 +60,7 @@ class IsObjectTypeValidatorTest extends TestCase {
      * @expectedException Pes\Core\Validator\Exception\NotValidTypeException
      */
     public function testInvalidInterface() {
-        $validator = new IsObjectTypeValidator('InterfaceForIsTypeValidatorTest');
+        $validator = new IsObjectTypeValidator(InterfaceForIsTypeValidatorTest::class);
         $validator->validate(new AnotherObjectForIsTypeValidatorTest());
     }
 
@@ -65,7 +68,7 @@ class IsObjectTypeValidatorTest extends TestCase {
      * @expectedException Pes\Core\Validator\Exception\NotValidTypeException
      */
     public function testInvalidClass() {
-        $validator = new IsObjectTypeValidator('ObjectForIsTypeValidatorTest');
+        $validator = new IsObjectTypeValidator(ObjectForIsTypeValidatorTest::class);
         $validator->validate(new AnotherObjectForIsTypeValidatorTest());
     }
 

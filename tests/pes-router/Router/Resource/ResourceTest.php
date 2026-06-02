@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Router\Resource;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Router\Resource\Resource;

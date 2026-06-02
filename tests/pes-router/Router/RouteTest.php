@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Router;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Router\Route;
@@ -45,10 +48,10 @@ class RouteTest extends TestCase {
         $route = new Route();
         $resource = (new Resource(new MethodEnum(), new UrlPatternValidator()))->withHttpMethod(MethodEnum::GET);
         $route->setResource($resource->withUrlPattern('/'));
-        $this->assertEquals("@^/$@D", $route->getPatternPreg());
+        $this->assertEquals("@^/$@Du", $route->getPatternPreg());
         $route->setResource($resource->withUrlPattern('/trdlo/'));
-        $this->assertEquals("@^/trdlo/$@D", $route->getPatternPreg());
+        $this->assertEquals("@^/trdlo/$@Du", $route->getPatternPreg());
         $route->setResource($resource->withUrlPattern('/trdlo/:id/'));
-        $this->assertEquals("@^/trdlo/([a-zA-Z0-9\-\_]+)/$@D", $route->getPatternPreg());
+        $this->assertEquals("@^/trdlo/([[:alpha:][:digit:]\-\_]+)/$@Du", $route->getPatternPreg());
     }
 }

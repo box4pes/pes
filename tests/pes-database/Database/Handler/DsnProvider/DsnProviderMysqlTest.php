@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Database\Handler\DsnProvider;
+
 use PHPUnit\Framework\TestCase;
 
 
@@ -49,7 +52,7 @@ class DsnProviderMysqlTest extends TestCase {
             $dsnProvider = new DsnProviderMysql();
             $this->assertTrue($dsnProvider instanceof DsnProviderMysql, 'Nevytvořil se objekt dsn provider.');
             $this->assertTrue(is_string($dsnProvider->getDsn($connectionInfo)), 'Metoda nevrací řetězec.');
-            $dbh = new PDO($dsnProvider->getDsn($connectionInfo), self::USER, self::PASS);
+            $dbh = new \PDO($dsnProvider->getDsn($connectionInfo), self::USER, self::PASS);
             $this->assertTrue($dbh instanceof \PDO, 'Nevytvořil se objekt PDO z dsn poskytnutého dsn providerem a zadanými parametry: '.$key.'.');
         }
 

@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\View\Renderer;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\View\Template\TemplateInterface;
@@ -39,7 +42,7 @@ class ImplodeRendererTest extends TestCase {
      * vyhození výjimky pro hodnotu, která není povoleného typu
      */
     public function testConstructorTypeError() {
-        $this->expectException(TypeError::class);
+        $this->expectException(\TypeError::class);
         $renderer = new ImplodeRenderer();
         $renderer->setTemplate(new \stdClass());
     }

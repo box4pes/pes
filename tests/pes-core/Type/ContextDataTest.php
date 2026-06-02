@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Type;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Type\ContextData;

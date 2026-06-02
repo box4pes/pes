@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Security\Password;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Security\Password\Password;

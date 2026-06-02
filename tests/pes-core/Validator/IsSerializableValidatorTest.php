@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Validator;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Validator\IsSerializableValidator;
@@ -33,7 +36,7 @@ class IsSerializableValidatorTest extends TestCase {
      */
     public function testNotSerialisableException() {
         $validator = new IsSerializableValidator();
-        $validator->validate(new stdClass());
+        $validator->validate(new \stdClass());
 
     }
 }

@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Type;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Type\Enum;
@@ -37,7 +40,7 @@ class EnumTest extends TestCase {
         try {
             $type = new TestTypeEnum();
             $blaType = $type('bla');   // Vyhodí výjimku
-        } catch (UnexpectedValueException $uve) {
+        } catch (\UnexpectedValueException $uve) {
             $this->assertStringStartsWith('Value is not in enum', $uve->getMessage());
         }
     }

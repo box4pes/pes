@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Container;
+
 use PHPUnit\Framework\TestCase;
 
 use Psr\Container\ContainerInterface;
@@ -36,13 +39,13 @@ class ContainerDuplicateFactoryKFactory extends ContainerConfiguratorAbstract {
     public function getParams(): iterable {
         return [];
     }
-    public function getAliases(): iterable {return ['servisníobjekt' => function() { return new stdClass();} ];
+    public function getAliases(): iterable {return ['servisníobjekt' => function() { return new \stdClass();} ];
     }
     public function getServicesDefinitions(): iterable {return [];
     }
     public function getServicesOverrideDefinitions(): iterable {return [];
     }
-    public function getFactoriesDefinitions(): iterable {return ['dbType' => 'type', 'dbType' => function() { return new stdClass();} ];
+    public function getFactoriesDefinitions(): iterable {return ['dbType' => 'type', 'dbType' => function() { return new \stdClass();} ];
     }
 }
 
@@ -52,11 +55,11 @@ class ContainerDuplicateFactoryKService  extends ContainerConfiguratorAbstract {
     }
     public function getAliases(): iterable {return [];
     }
-    public function getServicesDefinitions(): iterable {return ['servisníobjekt' => function() { return new stdClass();} ];
+    public function getServicesDefinitions(): iterable {return ['servisníobjekt' => function() { return new \stdClass();} ];
     }
     public function getServicesOverrideDefinitions(): iterable {return [];
     }
-    public function getFactoriesDefinitions(): iterable {return ['servisníobjekt' => function() { return new stdClass();} ];
+    public function getFactoriesDefinitions(): iterable {return ['servisníobjekt' => function() { return new \stdClass();} ];
     }
 }
 
@@ -71,7 +74,7 @@ class ContainerTestOuterConfigurator extends ContainerConfiguratorAbstract {
         return [
             "outerValue" => "outerString",
             "outerFactory" => function(ContainerInterface $c) {
-                return new stdClass();
+                return new \stdClass();
             }
         ];
     }
@@ -97,7 +100,7 @@ class ContainerTestDelegateConfigurator extends ContainerConfiguratorAbstract {
         return [
             "delegateValue" => "delegateString",
             "delegateService" => function(ContainerInterface $c) {
-                return new stdClass();
+                return new \stdClass();
             }
         ];
     }
@@ -247,8 +250,8 @@ class ContainerTest extends TestCase {
         $outer = (new ContainerTestOuterConfigurator())->configure(new Container($delegate));
         $factoryResult = $outer->get("outerFactory");
         $serviceResult = $outer->get("delegateService");
-        $this->assertEquals(new stdClass(), $factoryResult);
-        $this->assertEquals(new stdClass(), $serviceResult);
+        $this->assertEquals(new \stdClass(), $factoryResult);
+        $this->assertEquals(new \stdClass(), $serviceResult);
         $this->assertNotSame($factoryResult, $outer->get("outerFactory"));
         $this->assertSame($serviceResult, $delegate->get("delegateService"));
     }

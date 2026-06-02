@@ -1,5 +1,7 @@
 <?php
 
+namespace Pes\Core\Security\Coder;
+
 /*
  * Copyright (C) 2018 pes2704
  *

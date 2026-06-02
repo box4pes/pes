@@ -1,5 +1,7 @@
 <?php
 
+namespace Pes\Container;
+
 /*
  * Copyright (C) 2018 pes2704
  *
@@ -25,7 +27,7 @@ class AutowiringContainerTestSettingsConfigurator extends ContainerConfiguratorA
     }
     public function getServicesDefinitions(): iterable {
         return [
-            'DB_TYPE' => Pes\Database\Handler\DbTypeEnum::MySQL,
+            'DB_TYPE' => \Pes\Database\Handler\DbTypeEnum::MySQL,
             'DB_NAME' => 'pes',
             'DB_HOST' => 'localhost',
             'DB_PORT' => '3306',
@@ -91,25 +93,25 @@ class AutowiringContainerTestDefinitionsConfigurator extends ContainerConfigurat
 class AutowiringContainerTest extends TestCase {
 
     public function testCreateDbHandler() {
-        $awContainer = new Pes\Container\AutowiringContainer();
+        $awContainer = new \Pes\Container\AutowiringContainer();
         $awContainer->throwExceptions(\TRUE);
         $c = (new AutowiringContainerTestDefinitionsConfigurator())->configure(
                 (new AutowiringContainerTestSettingsConfigurator())->configure($awContainer)
             );
-        /* @var $h Pes\Database\Handler\Handler */
-        $h = $c->get(Pes\Database\Handler\Handler::class);
-        $this->assertTrue($h instanceof Pes\Database\Handler\Handler);
+        /* @var $h \Pes\Database\Handler\Handler */
+        $h = $c->get(\Pes\Database\Handler\Handler::class);
+        $this->assertTrue($h instanceof \Pes\Database\Handler\Handler);
     }
 
     public function testAutowireDependencyResolvingException() {
-        $awContainer = new Pes\Container\AutowiringContainer();
+        $awContainer = new \Pes\Container\AutowiringContainer();
         $awContainer->throwExceptions(\TRUE);
         $c = (new AutowiringContainerTestDefinitionsConfigurator())->configure(
                 (new AutowiringContainerTestSettingsConfigurator())->configure($awContainer)
             );
 
         try {
-            $h = $c->get(Pes\Application\Middleware\RequestHandler::class);  // parametr callable
+            $h = $c->get(\Pes\Application\Middleware\RequestHandler::class);  // parametr callable
         } catch (Exception\AutowireDependencyResolvingException $adrlExc) {
             $this->assertStringStartsWith("Nepodařilo se vytvořit parametr, proměnnou", $adrlExc->getMessage());
         }

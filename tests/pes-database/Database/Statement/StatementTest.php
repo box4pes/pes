@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Database\Statement;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Database\Handler\Account;
@@ -46,7 +49,7 @@ class StatementTest extends TestCase {
         //fixture:
         //vymaaže tabulku, zapíše tři řádky v UTF8
         $dsn = 'mysql:host=' . self::DB_HOST . ';dbname=' . self::DB_NAME ;
-        $dbh = new PDO($dsn, self::USER, self::PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+        $dbh = new \PDO($dsn, self::USER, self::PASS, array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
         $dbh->exec('DELETE FROM person');
         $dbh->exec('INSERT INTO person (number, name, surname) VALUES (1, "Adam","Adamov")');
         $dbh->exec('INSERT INTO person (number, name, surname) VALUES (2, "Božena","Boženová")');
@@ -84,9 +87,9 @@ class StatementTest extends TestCase {
         $res2 = $stmt->fetch();
         $this->assertTrue(is_array($res2) AND count($res2)==2, 'Fetch s nastavením fetch mode PDO::FETCH_ASSOC nevrátil pole nebo pole nemá 2 položky.');
         // 3. řádek Cyril - fetch mode \PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, 'Person'
-        $stmt->setFetchMode(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, 'Person');
+        $stmt->setFetchMode(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, Person::class);
         $res3 = $stmt->fetch();
-        $this->assertEquals('Person', get_class($res3), 'Objekt vytvořený fetch není nastaveného typu Person. Je '.get_class($res3).'.');
+        $this->assertEquals(Person::class, get_class($res3), 'Objekt vytvořený fetch není nastaveného typu Person. Je '.get_class($res3).'.');
     }
 
     // test jen pro rychlost handleru - potřebné závislosti se vytváření v SetUp()
@@ -101,7 +104,7 @@ class StatementTest extends TestCase {
 
     public function testStatementWithFileLogger() {
         $dir = 'LogsFromStatementTests/';
-        $file = get_called_class().'.log';
+        $file = str_replace('\\', '_', get_called_class()).'.log';
         $logger = FileLogger::getInstance($dir, $file, FileLogger::REWRITE_LOG);
 
         $user = new Account(self::USER, self::PASS);
@@ -115,7 +118,7 @@ class StatementTest extends TestCase {
             $prestmt = $dbh->prepare('SELECT name, surname FROM person WHERE number=:number');
             $prestmt->bindParam(':number', $i);
             $prestmt->execute();
-            $prestmt->setFetchMode(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, 'Person');
+            $prestmt->setFetchMode(\PDO::FETCH_CLASS|\PDO::FETCH_PROPS_LATE, Person::class);
             $res[] = $prestmt->fetch();
         }
         $this->assertEquals(3, count($res));     //  aby byl aspoň nějaký assert

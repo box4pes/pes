@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Collection;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Collection\KeyNormalizedMapCollection;
@@ -72,7 +75,7 @@ class KeyNormalizedMapCollectionTest extends TestCase {
         $source = array(
             'primo'=>new ObjectForNormalizedKeyMapCollectionTest(),
             'secondo'=>new ObjectForNormalizedKeyMapCollectionTest(),
-            'tertio'=>new EntitkaForNormalizedKeyMapCollectionTest('a', 2, new stdClass()));
+            'tertio'=>new EntitkaForNormalizedKeyMapCollectionTest('a', 2, new \stdClass()));
 
         $collection = new KeyNormalizedMapCollection(new LowerCaseKeyNormalizer());
         foreach ($source as $key => $value) {

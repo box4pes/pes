@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Database\Handler\OptionsProvider;
+
 use PHPUnit\Framework\TestCase;
 
 

@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Database\Handler\OptionsProvider;
+
 use PHPUnit\Framework\TestCase;
 
 
@@ -55,9 +58,9 @@ class OptionsProviderNullTest extends TestCase {
         //fixture:
         //vymaaže tabulku, zapíše tři řádky v UTF8
         $dsn = 'mysql:host=' . self::DB_HOST . ';dbname=' . self::DB_NAME ;
-        $dbh = new PDO($dsn, self::USER, self::PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+        $dbh = new \PDO($dsn, self::USER, self::PASS, array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
         if (!$dbh) {
-            throw new RuntimeException('Nevytvořil se db handler v setUp.');
+            throw new \RuntimeException('Nevytvořil se db handler v setUp.');
         }
         $dbh->exec('DELETE FROM person');
         $dbh->exec('INSERT INTO person (number, name, surname) VALUES (1, "Adam","Adamov")');

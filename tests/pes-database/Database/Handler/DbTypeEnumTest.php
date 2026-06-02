@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Database\Handler;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Database\Handler\DbTypeEnum;

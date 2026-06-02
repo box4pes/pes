@@ -1,5 +1,7 @@
 <?php
 
+namespace Pes\Core\Security\Cryptor;
+
 /*
  * Copyright (C) 2018 pes2704
  *
@@ -96,7 +98,7 @@ class CryptorOpenSSLBaseTest extends TestCase {
 //  dekódování proběhně v pořádku.
 //  - navíc v PHP 8.2 je použití metod jako je mb_strlen pro BASE deprecated 
         if ($this->isBase64Encoded($message)) {
-            throw new UnexpectedValueException("Metodu nelze použít pro řetězce kódované Base64");
+            throw new \UnexpectedValueException("Metodu nelze použít pro řetězce kódované Base64");
         }
          // Změní 1 bit
          $i = rand(0, mb_strlen($message, '8bit') - 1);

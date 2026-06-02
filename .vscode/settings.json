@@ -1,3 +1,7 @@
 {
-    "php.version": "8.4"
+    "php.version": "8.4",
+    "php.executablePath": "c:\\wamp64\\bin\\php\\php8.4.0\\php.exe",
+    "phpunit.phpunit": "${workspaceFolder}/vendor/bin/phpunit",
+    "phpunit.config": "phpunit.xml.dist",
+    "phpunit.enableAutomaticRefresh": true
 }

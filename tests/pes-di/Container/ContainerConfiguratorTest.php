@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Container;
+
 use \PHPUnit\Framework\TestCase;
 
 use Pes\Container\ContainerConfiguratorAbstract;

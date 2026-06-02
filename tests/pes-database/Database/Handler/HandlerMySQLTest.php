@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Database\Handler;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Database\Handler\Account;
@@ -83,9 +86,9 @@ class HandlerMySQLTest extends TestCase {
         //fixture:
         //vymaže tabulku, zapíše tři řádky v UTF8
         $dsn = 'mysql:host=' . self::DB_HOST . ';dbname=' . self::DB_NAME ;
-        $dbh = new PDO($dsn, self::USER, self::PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
+        $dbh = new \PDO($dsn, self::USER, self::PASS, array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
         if (!$dbh) {
-            throw new RuntimeException('Nevytvořil se db handler v setUp.');
+            throw new \RuntimeException('Nevytvořil se db handler v setUp.');
         }
         $dbh->exec('DELETE FROM person');
         $dbh->exec('INSERT INTO person (number, name, surname) VALUES (1, "Adam","Adamov")');
@@ -95,7 +98,7 @@ class HandlerMySQLTest extends TestCase {
         // nastaví logger pro použití v testech
         $baseLogsDir="../Tests_logs/";
         $dir = 'LogsFromHandlerTests/';
-        $file = get_called_class().'.log';
+        $file = str_replace('\\', '_', get_called_class()).'.log';
             // base
         FileLogger::setBaseLogsDirectory($baseLogsDir);
         $this->logger = FileLogger::getInstance($dir, $file, FileLogger::REWRITE_LOG);

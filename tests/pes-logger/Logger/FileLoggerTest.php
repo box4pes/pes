@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Logger;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Logger\FileLogger;

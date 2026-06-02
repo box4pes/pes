@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Validator;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Validator\IsArrayKeyValidator;
@@ -42,7 +45,7 @@ class IsArrayKeyValidatorTest extends TestCase {
      * @expectedException Pes\Core\Validator\Exception\NotArrayKeyException
      */
     public function testObject() {
-        $this->validator->validate(new stdClass());
+        $this->validator->validate(new \stdClass());
     }
 
     /**

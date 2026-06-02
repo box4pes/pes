@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Router;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Router\MethodEnum;

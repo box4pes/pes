@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Collection;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Collection\MapCollection;

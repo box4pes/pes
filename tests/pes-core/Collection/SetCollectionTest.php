@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Collection;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Collection\SetCollection;
@@ -37,7 +40,7 @@ class SetCollectionTest extends TestCase {
         $collection = new SetCollection();
         $obj = new EntitkaForSetCollectionTest('a', 'n', 'x');
         $collection->set($obj);
-        $collection->set(new stdClass());
+        $collection->set(new \stdClass());
         $this->assertEquals(2, $collection->count());
         $collection->remove($obj);
         $this->assertEquals(1, $collection->count());

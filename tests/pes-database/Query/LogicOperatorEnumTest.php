@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Query;
+
 use PHPUnit\Framework\TestCase;
 
 use Pes\Query\LogicOperatorEnum;

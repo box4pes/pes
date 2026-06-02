@@ -1,4 +1,7 @@
 <?php
+
+namespace Pes\Core\Text;
+
 use PHPUnit\Framework\TestCase;
 
 use PHPUnit\Framework\Error\Notice;
