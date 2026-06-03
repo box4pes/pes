@@ -4,4 +4,8 @@
 /nbproject/private/
 /phpunit.xml
 /.phpunit.result.cache
+/test-results
+/code-coverage
 /tests/.phpunit.result.cache
+/tests/test-results
+/tests/code-coverage
