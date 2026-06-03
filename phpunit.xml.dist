@@ -18,7 +18,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         cacheResultFile="tests/.phpunit.result.cache">
+         cacheDirectory="tests">
     <testsuites>
         <testsuite name="pes-core">
             <directory suffix="Test.php">tests/pes-core</directory>
