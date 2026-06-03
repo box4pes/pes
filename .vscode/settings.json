@@ -1,7 +1,18 @@
 {
     "php.version": "8.4",
     "php.executablePath": "c:\\wamp64\\bin\\php\\php8.4.0\\php.exe",
+    "php.executables": {
+        "8.4": "c:\\wamp64\\bin\\php\\php8.4.0\\php.exe"
+    },
+    "phpunit.php": "c:\\wamp64\\bin\\php\\php8.4.0\\php.exe",
     "phpunit.phpunit": "${workspaceFolder}/vendor/bin/phpunit",
-    "phpunit.config": "phpunit.xml.dist",
-    "phpunit.enableAutomaticRefresh": true
+    "phpunit.config": "phpunit.xml",
+    "phpunit.args": [
+        "-c",
+        "${workspaceFolder}/phpunit.xml"
+    ],
+    "phpunit.command": "\"${php}\" ${phpargs} \"${phpunit}\" ${phpunitargs}",
+    "phpunit.enableAutomaticRefresh": true,
+    "phpunit.saveBeforeTest": true,
+    "phpunit.clearOutputOnRun": true
 }

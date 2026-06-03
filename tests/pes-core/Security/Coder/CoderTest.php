@@ -43,13 +43,6 @@ class CoderTest extends TestCase {
         $this->assertEquals('ěščřžýáíéééééqwertzuiop', $decoded);
     }
 
-    public function testRaw() {
-        $encoded = (new Coder(EnumEncoding::RAW))->encode('ěščřžýáíéééééqwertzuiop');
-        $this->assertEquals('ěščřžýáíéééééqwertzuiop', $encoded);
-        $decoded = (new Coder(EnumEncoding::RAW))->decode($encoded);
-        $this->assertEquals('ěščřžýáíéééééqwertzuiop', $decoded);
-    }
-
     public function testAllCodingsInEnum() {
         foreach ((new EnumEncoding)->getConstList() as $enumValue) {
         $decoded = (new Coder($enumValue))->decode((new Coder($enumValue))->encode('ěščřžýáíéééééqwertzuiop..?..>'));

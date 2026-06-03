@@ -56,16 +56,16 @@ class PasswordTest extends TestCase {
         // verifyPassword() má vracet TRUE pro MD5 hash, vypočítat nový hash a ten uložit do proměnné $savedHash
         $this->assertTrue($passwordHasherWithRecalculationAndSaver->verifyPassword('nazdar', $MD5hash));
         // rehahovaný hash má být "uložen"  v proměnné $savedHash
-        $this->assertTrue(strpos($savedHash, '$')===0);  // nové hashe začínají $ - nic lepšího nemám
+        $this->assertTrue(strpos($savedHash, '$')===0);  // nové hashe začínají $ - lepší test nemám
 
         // test chyb E_USER_NOTICE při chybějících parametrech
         // password crypt s fallback funkcí pro MD5 metodou hashované hashe a bez ukládadla pro přepočítaný hash
         // pokud je třeba hash přepočítat a není ukládací Closure pro uložení přepočteného hashe - verifyPassword() vyhazuje E_USER_NOTICE
-        $oldErrorHandler = set_error_handler(array($this, 'errorHandler'));     // vlastní error handler - PHPUnit umí jen chyby PHP, neumí user error
-        $passwordHasherWithRecalculationNoSaver = new Password(NULL, $md5Verifier);
+        set_error_handler(array($this, 'errorHandler'));     // vlastní error handler - PHPUnit umí jen chyby PHP, neumí user error
+        $passwordHasherWithRecalculationAndNoSaver = new Password(NULL, $md5Verifier);
         // verifyPassword() má vracet TRUE pro MD5 hash, vypočítat nový hash a ten uložit do proměnné $savedHash
-        $this->assertTrue($passwordHasherWithRecalculationNoSaver->verifyPassword('nazdar', $MD5hash));
-        set_error_handler($oldErrorHandler);
+        $this->assertTrue($passwordHasherWithRecalculationAndNoSaver->verifyPassword('nazdar', $MD5hash));
+        restore_error_handler();
         $this->assertEquals($this->errorType, 'E_USER_NOTICE');
         $this->assertStringStartsWith('Nebyla zadána closure pro uložení ', $this->errorString);
     }
@@ -73,7 +73,8 @@ class PasswordTest extends TestCase {
     #################################################
 
     /**
-     * Rozpoznává E_USER_xxx . Nastaví několik proměných třídy, kterí se pak mohou v testu zpracovat. Nevrací chybu ke zpracování internímu PHP handleru.
+     * Pracuje bez ohledu na nastavenou úroveň error reporting.
+     * Rozpoznává E_USER_xxx . Nastaví několik proměných třídy, kterí se pak mohou v testu zpracovat. Pro chyby E_USER_xxx nevrací chybu ke zpracování internímu PHP handleru.
      *
      * Všechny parametry jsou nepoviné, zdá se, že některé chyby (warning) vyvolají volání handleru bez parametrů.
      * Pak při použití povinných parametrů vznikne kaskáda warningů (a stack trace) typu Missing argument 1,2,3,4...
@@ -85,9 +86,11 @@ class PasswordTest extends TestCase {
      * @return boolean
      */
     function errorHandler($errno=NULL, $errstr=NULL, $errfile=NULL, $errline=NULL) {
-        if (!(error_reporting() & $errno)) {
+        $erRep = (int) error_reporting();
+        if (($erRep & (int) $errno) === 0) {
             // This error code is not included in error_reporting, so let it fall through to the standard PHP error handler
-            return FALSE;
+            // return FALSE;
+            // nevracíme FALSE, aby se chyba předala internímu PHP handleru, chceme vždy chybu zpracovat bez ohledu na úroveň error reporting
         }
         switch ($errno) {
             case E_USER_ERROR:

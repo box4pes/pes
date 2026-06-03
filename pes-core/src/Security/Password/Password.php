@@ -111,7 +111,7 @@ class Password implements PasswordInterface {
             ($this->rehashSaver)($this->getPasswordHash($passwordToVerify));
         } else {
             user_error('Nebyla zadána closure pro uložení nového hashe hesla. Došlo k ověření hesla, '
-                    . 'jehož hash by měl být přepočítán a nový hash uložen. Nebyla zadána closure pro ukládání, k uložení nedošlo.', E_USER_NOTICE);
+                    . 'jehož hash by měl být přepočítán a nový hash uložen. Protože nebyla zadána closure pro ukládání, k uložení nedošlo.', E_USER_NOTICE);
         }        
     }
     
