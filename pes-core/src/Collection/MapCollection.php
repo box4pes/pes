@@ -8,19 +8,17 @@ namespace Pes\Core\Collection;
 class MapCollection extends CollectionAbstract implements MapCollectionInterface {
 
     /**
-     * Vytvoří novou kolekci
-     *
+     * Vytvoří novou kolekci z pole nebo objektu
+     * 
+     * @param array|object $array
      */
-    public function __construct(array $array=[]) {
-        parent::__construct();
-        foreach ($array as $key=>$value) {
-            $this->set($key, $value);
-        }
+    public function __construct(array|object $array = []) {
+        parent::__construct($array);
     }
 
     /**
      * Přidá do kolekce hodnotu se zadaným klíčem.
-     * Podle klíče, se kterým byl prvek přidán lze hodnotu získa metodou get().
+     * Podle klíče, se kterým byl prvek přidán lze hodnotu získat metodou get().
      *
      * @param mixed $key Klíč, se kterým bude hodnota přidána.
      * @param mixed $value Hodnota prvku.

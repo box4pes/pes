@@ -74,7 +74,8 @@ class AppFactory implements AppFactoryInterface {
         $app = new App();
 
         $serverRequest = (new ServerRequestFactory())->createFromEnvironment($environment);
-        $app->setServerRequest($serverRequest->withAttribute(Request::URI_INFO_ATTRIBUTE_NAME, (new UriInfoFactory())->create($environment, $serverRequest)));
+        $scriptName = $environment->get('SCRIPT_NAME');
+        $app->setServerRequest($serverRequest->withAttribute(Request::URI_INFO_ATTRIBUTE_NAME, (new UriInfoFactory())->create($scriptName, $serverRequest)));
 
         if (!$this->appContainer) {
             $this->appContainer = new Container();

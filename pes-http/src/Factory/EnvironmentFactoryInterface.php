@@ -39,9 +39,10 @@ interface EnvironmentFactoryInterface {
     /**
      * Vytvoří objekt Environment ze zadaného pole vstupních proměnných a zadaného streamu.
      *
-     * Očekává pole vstupních proměnných s položkami, jaké jsou v poli $_SERVER. Očekává, že stream obsahuje body vstupního requestu.
+     * Očekává pole vstupních proměnných s položkami, jaké jsou v poli $_SERVER. Očekává, že stream obsahuje tělo (body) vstupního requestu.
      *
-     * $_SERVER is an array containing information such as headers, paths, and script locations. The entries in this array are created by the web server.
+     * $_SERVER je pole obsahující informace, jako jsou hlavičky, cesty a umístění skriptů. Položky v tomto poli vytváří webový server.
+     * 
      * Pokud v poli $_SERVER neexistuje proměnná HTTP_AUTHORIZATION, metoda se pokusí získat hodnotu HTTP_AUTHORIZATION
      * z HTTP hlavičky Authorization. Hlavičky získá PHP funkcí getallheaders() - alias k apache_request_headers() - pokud tato funkce existuje.
      *

@@ -13,6 +13,7 @@ use Pes\Router\Exception\RouteNotFoundException;
 use Pes\Router\RouteInterface;
 use Pes\Http\Helper\UriInfoInterface;
 use Pes\Http\Request;
+use Pes\Http\Helper\UriInfoFactory;
 
 /**
  * Description of Router
@@ -137,12 +138,12 @@ class Router implements RouterInterface, LoggerAwareInterface {
     private function findRoute(ServerRequestInterface $request) {
         $httpMethod = $request->getMethod();
         /** @var UriInfoInterface $uriInfo */
-        $uriInfo = $request->getAttribute(Request::URI_INFO_ATTRIBUTE_NAME);   // pokud bylo UriInfo v AppFactory
-        if($uriInfo instanceof UriInfoInterface) {
-            $restUri = $uriInfo->getRestUri();
-        } else {
-            $restUri = $this->getRoutingPath($request);
+        $uriInfo = $request->getAttribute(Request::URI_INFO_ATTRIBUTE_NAME);   // pokud bylo UriInfo vyzvořeno v AppFactory
+        if(! $uriInfo instanceof UriInfoInterface) {  // pokud nebylo UriInfo vyzvořeno v AppFactory - nepoužívá se se objekt App z Pes
+            $restUri = (new UriInfoFactory())->create($request->getServerParams()['SCRIPT_NAME'], $serverRequest);
         }
+        $restUri = $uriInfo->getRestUri();
+
         $restUriPrefix = $restUri[1] ?? '/';
         if(array_key_exists($httpMethod, $this->routes) AND array_key_exists($restUriPrefix, $this->routes[$httpMethod])) {
             foreach($this->routes[$httpMethod][ $restUriPrefix ] as  $route) {
@@ -158,62 +159,6 @@ class Router implements RouterInterface, LoggerAwareInterface {
             }
         }
         return false;
-    }
-
-    private function getRoutingPath(ServerRequestInterface $request): string {
-        
-        // $uri = $request->getUri()->getPath();
-        // $serverParams = $request->getServerParams();
-
-        // // 1. Získáme název aktuálního skriptu (např. "/public/index.php" nebo "/app.php")
-        // $scriptName = $serverParams['SCRIPT_NAME'] ?? '';
-
-        // // 2. Bezpečně získáme pouze název souboru (např. "index.php" nebo "app.php")
-        // $scriptFilename = basename($scriptName);
-
-        // // 3. Získáme základní adresář (basePath) bez názvu souboru a koncových lomítek
-        // $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
-
-        // // 4. Pokud URI začíná touto basePath, ořízneme ji
-        // if (!empty($basePath) && strpos($uri, $basePath) === 0) {
-        //     $uri = substr($uri, strlen($basePath));
-        // }
-
-        // // 5. Odstraníme úvodní lomítko pro snazší porovnání názvu souboru
-        // $uri = ltrim($uri, '/');
-
-        // // 6. Dynamické ošetření přepisu: Pokud zbylé URI odpovídá názvu spuštěného souboru
-        // if ($uri === $scriptFilename) {
-        //     $uri = '';
-        // } elseif (strpos($uri, $scriptFilename . '/') === 0) {
-        //     $uri = substr($uri, strlen($scriptFilename) + 1);
-        // }
-
-        // // 7. Vždy vrátíme cestu začínající lomítkem
-        // return '/' . ltrim($uri, '/');        
-
-        // subdomain path a rest uri
-        $requestScriptName = parse_url($request->getServerParams()['SCRIPT_NAME'], PHP_URL_PATH);
-        $requestScriptDir = dirname($requestScriptName);
-
-        $requestUri = rawurldecode($request->getUri()->getPath());  // metoda getPath musí vracet enkódované uri 
-
-        if (stripos($requestUri, $requestScriptName) === 0) {
-            $subDomainPath = $requestScriptName;
-        } elseif ($requestScriptDir !== '/' && stripos($requestUri, $requestScriptDir) === 0) {
-            $subDomainPath = $requestScriptDir;
-        } else {
-            $subDomainPath = '';
-        }
-
-        if ($subDomainPath) {
-            $virtualPath = substr($requestUri, strlen($subDomainPath));
-        } else {
-            $virtualPath = $requestUri;
-        }
-
-        return'/'.ltrim($virtualPath, '/');
-
     }
 
     private function callMatchedRouteAction(): ResponseInterface {

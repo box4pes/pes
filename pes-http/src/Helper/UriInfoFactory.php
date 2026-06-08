@@ -20,11 +20,9 @@ use Psr\Http\Message\ServerRequestInterface;
  * @author pes2704
  */
 class UriInfoFactory implements UriInfoFactoryInterface {
-    public function create(Environment $environment, ServerRequestInterface $request) {
+    public function create(string $scriptName, ServerRequestInterface $request) {
         // subdomain path a rest uri
-
-        // subdomain path a rest uri
-        $requestScriptName = parse_url($environment->get('SCRIPT_NAME'), PHP_URL_PATH);
+        $requestScriptName = parse_url($scriptName, PHP_URL_PATH);
         $requestScriptDir = dirname($requestScriptName);
 
         $requestUri = rawurldecode($request->getUri()->getPath());  // metoda getPath musí vracet enkódované uri 
@@ -50,7 +48,7 @@ class UriInfoFactory implements UriInfoFactoryInterface {
         $urlInfo->setSubdomainUri($subDomainPath);
         $urlInfo->setSubdomainPath($this->normalizePath($requestScriptDir));
         $urlInfo->setRestUri($virtualPath);
-        $urlInfo->setRootAbsolutePath($this->rootAbsolutePath($environment));
+        $urlInfo->setRootAbsolutePath($this->rootAbsolutePath($scriptName));
         $urlInfo->setWorkingPath($this->workingPath());
         return $urlInfo;
     }
@@ -73,8 +71,7 @@ class UriInfoFactory implements UriInfoFactoryInterface {
      * @param Environment $environment
      * @return string
      */
-    private function rootAbsolutePath(Environment $environment) {
-        $scriptName = $environment->get('SCRIPT_NAME');
+    private function rootAbsolutePath($scriptName) {
         $ex = explode('/', $scriptName);
         array_shift($ex);
         array_pop($ex);

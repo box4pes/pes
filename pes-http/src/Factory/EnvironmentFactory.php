@@ -57,8 +57,7 @@ class EnvironmentFactory implements EnvironmentFactoryInterface {
         $authorization = $environment->get('HTTP_AUTHORIZATION');
 
         if (null === $authorization && is_callable('getallheaders')) {
-            $headers = getallheaders();
-            $headers = array_change_key_case($headers, CASE_LOWER);
+            $headers = array_change_key_case(getallheaders(), CASE_LOWER);
             if (isset($headers['authorization'])) {
                 $environment->set('HTTP_AUTHORIZATION', $headers['authorization']);
             }

@@ -41,12 +41,9 @@ class FilesFactory implements FilesFactoryInterface {
     /**
      * Create a normalized tree of UploadedFile instances from the Environment.
      *
-     * @param Environment $env The environment
-     *
-     * @return array|null A normalized tree of UploadedFile instances or null if none are provided.
+     * @return array A normalized tree of UploadedFile instances or null if none are provided.
      */
-    public function createFiles()
-    {
+    public function createFiles() {
         if (isset($_FILES)) {
             return static::parseUploadedFiles($_FILES);
         }
@@ -60,10 +57,10 @@ class FilesFactory implements FilesFactoryInterface {
      *
      * @return array A normalized tree of UploadedFile instances.
      */
-    private function parseUploadedFiles(array $uploadedFiles)
-    {
+    private function parseUploadedFiles(array $uploadedFiles) {
         $parsed = [];
         foreach ($uploadedFiles as $field => $uploadedFile) {
+            // Pokud prvek v poli nemá klíč error, znamená to, že $_FILES je vícerozměrné pole
             if (!isset($uploadedFile['error'])) {
                 if (is_array($uploadedFile)) {
                     $parsed[$field] = static::parseUploadedFiles($uploadedFile);
@@ -72,6 +69,7 @@ class FilesFactory implements FilesFactoryInterface {
             }
 
             $parsed[$field] = [];
+            // Pokud error není pole, jedná se o upload jednoho souboru
             if (!is_array($uploadedFile['error'])) {
                 $parsed[$field] = new UploadedFile(
                     $uploadedFile['tmp_name'],              // předávám filename
@@ -81,6 +79,12 @@ class FilesFactory implements FilesFactoryInterface {
                     isset($uploadedFile['type']) ? $uploadedFile['type'] : null
                     );
             } else {
+                // Pokud bylo upload více souborů přes jedno pole (např. <input name="dokumenty[]" type="file" multiple>), 
+                // PHP vytvoří v $_FILES 
+                //    $_FILES['dokumenty']['name'][0], $_FILES['dokumenty']['name'][1] ...
+                //
+                // Tento kód přeskupí (normalizuje) je do logického pole, kde má každý soubor své vlastní ucelené informace:
+                // Následně toto očištěné podpole znovu předá rekurzivně metodě parseUploadedFiles(), která z jednotlivých prvků vytvoří objekty UploadedFile.                
                 $subArray = [];
                 foreach ($uploadedFile['error'] as $fileIdx => $error) {
                     // normalise subarray and re-parse to move the input's keyname up a level
@@ -97,8 +101,7 @@ class FilesFactory implements FilesFactoryInterface {
         return $parsed;
     }
 
-    private function createUploadedFile($filepath, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null)
-    {
+    private function createUploadedFile($filepath, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null) {
         new UploadedFile($filepath, $size, $uploadErrorCode, $clientFilename, $clientMediaType);
     }    
 }

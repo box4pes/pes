@@ -16,11 +16,12 @@ abstract class CollectionAbstract implements CollectionInterface {
     protected $internalStorage;
 
     /**
-     * Vytvoří novou prázdnou kolekci
-     *
+     * Vytvoří novou kolekci z pole nebo objektu
+     * 
+     * @param array|object $array
      */
-    public function __construct() {
-        $this->internalStorage = new ArrayObject();
+    public function __construct(array|object $array = []) {
+        $this->internalStorage = new ArrayObject($array);
     }
 
     public function __clone() {
