@@ -19,6 +19,6 @@ use Psr\Http\Message\ServerRequestInterface;
  * @author pes2704
  */
 interface UriInfoFactoryInterface {
-    public function create(Environment $environment, ServerRequestInterface $request);
+    public function create(string $scriptName, ServerRequestInterface $request);
 
 }
