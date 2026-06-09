@@ -40,6 +40,6 @@ class HeaderKeyNormalizer implements KeyNormalizerInterface {
     }
 
     public function getOriginalKey($normalizedKey) {
-        return $this->originalKeys[$normalizedKey];
+        return $this->originalKeys[$normalizedKey] ?? NULL;
     }
 }
