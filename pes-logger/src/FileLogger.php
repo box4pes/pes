@@ -18,19 +18,46 @@ class FileLogger extends AbstractLogger {
 
     /**
      *
-     * @var FileLogger array of
+     * @var FileLogger[] array of FileLogger instances 
      */
-    private static $instances = array();
+    private static $instances = [];
 
     private static $baseLogsDirectory = '';
 
+    /**
+     * Summary of loggerFullLogFileName
+     * @var string full path to log file
+     */
     private $loggerFullLogFileName;
+
+    /**
+     * Summary of logFileHandle
+     * @var resource file handle
+     */
     private $logFileHandle;
 
+    /**
+     * Summary of ODSAZENI
+     * @var string indentation
+     */
     const ODSAZENI = "    ";
 
+    /**
+     * Summary of REWRITE_LOG
+     * @var string rewrite log file
+     */
     const REWRITE_LOG = 'replace log file';
+
+    /**
+     * Summary of APPEND_TO_LOG
+     * @var string append to existing log file
+     */
     const APPEND_TO_LOG = 'append to existing log file';
+
+    /**
+     * Summary of FILE_PER_DAY
+     * @var string new log file for day, apend to log in one day range
+     */
     const FILE_PER_DAY = 'new log file for day, apend to log in one day range';
 
     /**
@@ -65,18 +92,17 @@ class FileLogger extends AbstractLogger {
      *      bázové složky a musí být zadán jako relativní cesta. Pokud nebyla nastavena bázová složka, musí být tento parametr zadán jako relativní cesta i jako relativní cesta
      *      ke kořenovému skriptu.
      * @param string $logFileName Název logovacího souboru (řetězec ve formátu jméno.přípona např. Mujlogsoubor.log).
-     * @param type $mode
+     * @param string $mode Mode of log file creation: REWRITE_LOG, APPEND_TO_LOG, FILE_PER_DAY
      *
      * @return FileLogger
      */
-    public static function getInstance($logDirectoryPath, $logFileName, $mode = self::REWRITE_LOG) {
+    public static function getInstance(string $logDirectoryPath, string $logFileName, string $mode = self::FILE_PER_DAY) {
         if (!self::$baseLogsDirectory) {
             self::$baseLogsDirectory = getcwd();
         }
         $fullLogDirectoryPath = self::$baseLogsDirectory.Directory::normalizePath($logDirectoryPath);
-        try {
+        try {   
             $filePath = Directory::createDirectory($fullLogDirectoryPath);          
-//            self::panicLog("Log filepath found or created: '$filePath'.".PHP_EOL);
         } catch (CreateDirectoryFailedException $exc) {
             self::panicLog(self::getExcLogMessage($exc).PHP_EOL);
         }
@@ -97,6 +123,13 @@ class FileLogger extends AbstractLogger {
             default:
                 $mode = self::APPEND_TO_LOG;
                 $fopenMode = 'a+';
+                $fullLogFileName = $fullLogDirectoryPath.$logFileName;
+                self::panicLog("Full log file name: $fullLogFileName.");
+                self::panicLog("Log directory path: $fullLogDirectoryPath.");
+                self::panicLog("Log file name: $logFileName.");
+                self::panicLog("Mode: $mode.");
+                self::panicLog("Fopen mode: $fopenMode.");
+                self::panicLog("Instances: ".print_r(self::$instances, true).".}");
                 user_error('Zadán neznámý parametr $mode při vytváření loggeru. Použit mode APPEND_TO_LOG.', E_USER_WARNING);
                 break;
         }
@@ -120,8 +153,9 @@ class FileLogger extends AbstractLogger {
                     }
                     break;
                 default:
-                    $fopenMode = self::APPEND_TO_LOG;
-                    user_error('Zadán neznámý parametr $mode při vytváření loggeru. Použit mode APPEND_TO_LOG.', E_USER_WARNING);
+                    $loggerInstance->debug("Logger start. New log file created: {fullLogFileName}. ", ['time'=>date('Y-m-d H:i:s'), 'fullLogFileName'=>$fullLogFileName]);
+                    $loggerInstance->debug("Mode '{mode}'.", ['mode'=>$mode]);
+                    $loggerInstance->debug("Zadán neznámý parametr {mode} při vytváření loggeru. Použit mode APPEND_TO_LOG.", ['mode'=>$mode]);
                     break;
             }
             self::$instances[$fullLogFileName] = $loggerInstance;
@@ -135,7 +169,6 @@ private static function panicLog($message) {
 }
 
 private static function getExcLogMessage( \Throwable $e) {
-    // v20
     if (class_exists('\\Error') AND $e instanceof \Error) {
         $cls = get_class($e);
     } else {
@@ -184,7 +217,7 @@ private static function getExcLogMessage( \Throwable $e) {
         if (is_resource($this->logFileHandle)) {
             fwrite($this->logFileHandle, $newString);
         } else {
-            user_error("Není handler k souboru logu při pokusu o logování zprávy: $message", E_USER_WARNING);
+            self::panicLog("Není handler k souboru logu při pokusu o logování zprávy: $message");
         }
     }
 
