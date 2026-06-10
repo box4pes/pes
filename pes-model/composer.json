@@ -1,0 +1,16 @@
+{
+    "name": "pes/pes-model",
+    "type": "library",
+    "description": "Data model layer for Pes (DAO, repository, entity, hydrator, row data).",
+    "license": "MIT",
+    "require": {
+        "php": "<8.5.0",
+        "pes/pes-database": "@dev",
+        "pes/pes-session": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Model\\": "src/"
+        }
+    }
+}

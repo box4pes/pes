@@ -61,6 +61,11 @@
             "type": "path",
             "url": "pes-bootstrap",
             "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url": "pes-model",
+            "options": { "symlink": true }
         }
     ],
     "require": {
@@ -75,6 +80,7 @@
         "pes/pes-logger": "@dev",
         "pes/pes-session": "@dev",
         "pes/pes-bootstrap": "@dev",
+        "pes/pes-model": "@dev",
         "psr/http-message": "^2.0",
         "psr/http-factory": "^1.0",
         "psr/container": "^2.0",

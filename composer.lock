@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3068895acea8752c5bd72d48c244e16d",
+    "content-hash": "4ad896cd1f7288ccf1533b4c00d24e4d",
     "packages": [
         {
             "name": "pes/pes-application",
@@ -202,6 +202,34 @@
                 "MIT"
             ],
             "description": "File and array loggers for Pes (extends PSR-3).",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "pes/pes-model",
+            "version": "dev-split",
+            "dist": {
+                "type": "path",
+                "url": "pes-model",
+                "reference": "c123b8769d3b374fcc939359b628e401455783b2"
+            },
+            "require": {
+                "pes/pes-database": "@dev",
+                "pes/pes-session": "@dev",
+                "php": "<8.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pes\\Model\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Data model layer for Pes (DAO, repository, entity, hydrator, row data).",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -4884,6 +4912,7 @@
         "pes/pes-di": 20,
         "pes/pes-http": 20,
         "pes/pes-logger": 20,
+        "pes/pes-model": 20,
         "pes/pes-router": 20,
         "pes/pes-session": 20,
         "pes/pes-view": 20
