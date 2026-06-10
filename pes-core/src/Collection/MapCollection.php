@@ -12,8 +12,12 @@ class MapCollection extends CollectionAbstract implements MapCollectionInterface
      * 
      * @param array|object $array
      */
-    public function __construct(array|object $array = []) {
-        parent::__construct($array);
+    public function __construct(array $array=[]) {
+        // nutno naplňovat ve foreach (nedávat array do konstruktoru) - v některách potomkovských třídách se v metodě set mění $value
+        parent::__construct();
+        foreach ($array as $key=>$value) {
+            $this->set($key, $value);
+    }
     }
 
     /**
