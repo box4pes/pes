@@ -304,6 +304,14 @@ class Handler implements HandlerInterface { //extends PDO {   // //
 
 ######### PŘETÍŽENÉ METODY PDO ( metody PDO Interface) #######################################################################
 
+    public function inTransaction() {
+        if ($this->logger) {
+                $this->logger->debug($this->getInstanceInfo().' inTransaction()');
+        }
+        $ret = $this->connection->inTransaction();
+        return $ret;
+    }
+    
     public function beginTransaction(): bool {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' beginTransaction()');
