@@ -9,8 +9,6 @@
 namespace Pes\Model\Dao;
 
 use Pes\Model\RowData\RowDataInterface;
-use Pes\Model\RowData\RowData;
-
 use Pes\Model\Dao\DaoEditKeyDbVerifiedInterface;
 use Pes\Model\Dao\DaoEditAutoincrementKeyInterface;
 
