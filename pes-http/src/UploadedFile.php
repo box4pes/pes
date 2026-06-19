@@ -63,8 +63,7 @@ class UploadedFile implements UploadedFileInterface
      * @param string|null $clientMediaType
      * @throws InvalidArgumentException
      */
-    public function __construct($filenameOrResourceOrStream, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null)
-    {
+    public function __construct($filenameOrResourceOrStream, $size, $uploadErrorCode, $clientFilename = null, $clientMediaType = null) {
         $this->error = $uploadErrorCode;
         if ($this->error === UPLOAD_ERR_OK) {
             if (is_string($filenameOrResourceOrStream)) {
@@ -76,6 +75,8 @@ class UploadedFile implements UploadedFileInterface
             } else {
                 throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile');
             }
+        } else {
+            throw new UploadException('Cannot retrieve stream due to upload error', $this->error);            
         }
 
         if (! is_int($size)) {
@@ -103,12 +104,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     #[\Override]
-    public function getStream(): StreamInterface 
-    {
-        if ($this->error !== UPLOAD_ERR_OK) {
-            throw new UploadException('Cannot retrieve stream due to upload error', $this->error);
-        }
-
+    public function getStream(): StreamInterface {
         if ($this->moved) {
             throw new RuntimeException('Cannot retrieve stream after it has already been moved');
         }
@@ -122,13 +118,9 @@ class UploadedFile implements UploadedFileInterface
     }
 
     #[\Override]
-    public function moveTo(string $targetPath): void
-    {
+    public function moveTo(string $targetPath): void {
         if ($this->moved) {
             throw new RuntimeException('Cannot move file; already moved!');
-        }
-        if ($this->error !== UPLOAD_ERR_OK) {
-            throw new UploadException('Cannot retrieve stream due to upload error', $this->error);
         }
         if (! is_string($targetPath) || empty($targetPath)) {
             throw new InvalidArgumentException('Invalid path provided for move operation; must be a non-empty string');
@@ -154,23 +146,19 @@ class UploadedFile implements UploadedFileInterface
         $this->moved = true;
     }
 
-    public function getSize(): ?int
-    {
+    public function getSize(): ?int {
         return $this->size;
     }
 
-    public function getError(): int
-    {
+    public function getError(): int {
         return $this->error;
     }
 
-    public function getClientFilename(): ?string
-    {
+    public function getClientFilename(): ?string {
         return $this->clientFilename;
     }
 
-    public function getClientMediaType(): ?string
-    {
+    public function getClientMediaType(): ?string {
         return $this->clientMediaType;
     }
 
@@ -179,8 +167,7 @@ class UploadedFile implements UploadedFileInterface
      *
      * @param string $path
      */
-    private function writeStreamContentIntoFile($path)
-    {
+    private function writeStreamContentIntoFile($path) {
         $handle = fopen($path, 'wb+');
         if (false === $handle) {
             throw new RuntimeException('Unable to write to designated path');
