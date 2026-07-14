@@ -1,0 +1,16 @@
+{
+    "name": "pes/pes-mail",
+    "type": "library",
+    "description": "Mail sending layer for Pes (PHPMailer wrapper, assembly, SMTP configuration).",
+    "license": "MIT",
+    "require": {
+        "php": "<8.5.0",
+        "phpmailer/phpmailer": "^6.2",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Mail\\": "src/"
+        }
+    }
+}

@@ -66,6 +66,11 @@
             "type": "path",
             "url": "pes-model",
             "options": { "symlink": true }
+        },
+        {
+            "type": "path",
+            "url": "pes-mail",
+            "options": { "symlink": true }
         }
     ],
     "require": {
@@ -81,6 +86,7 @@
         "pes/pes-session": "@dev",
         "pes/pes-bootstrap": "@dev",
         "pes/pes-model": "@dev",
+        "pes/pes-mail": "@dev",
         "psr/http-message": "^2.0",
         "psr/http-factory": "^1.0",
         "psr/container": "^2.0",
