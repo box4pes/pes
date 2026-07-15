@@ -200,7 +200,6 @@ class Mail implements MailInterface {
                 self::$logger->error("To: {toString}", ['toString'=>$toString]);
                 self::$logger->error("PHPmail error info:: '{info}'.", ['info'=>$this->phpMailer->ErrorInfo]);
                 self::$logger->error("PHPmail exception message: '{message}'.", ['message'=>$e->errorMessage()]);
-                echo "<h4>Mailerror info:</h4>".PHP_EOL.$this->phpMailer->ErrorInfo;
             }
             throw new MailException("Nepodařilo se odeslat mail", 0, $e);
         }
