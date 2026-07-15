@@ -75,6 +75,35 @@ class ParamsTemplates {
     }
     //-----------------------------------------------------------------------------------------------------------------------
     /**
+     * Parametry pro integrační testy odesílání mailů přes lokální fake SMTP (smtp4dev apod.).
+     *
+     * @return Assembly
+     */
+    private static function smtp4devIntegrationTest() {
+
+        $params = new Assembly();
+        $params
+            ->setHost(
+                    (new Host())
+                        ->setHost('localhost')
+                    )
+            ->setSmtp(
+                    (new SmtpConnection())
+                        ->setSmtpAuth(true)
+                        ->setUserName('test@localhost')
+                        ->setPassword('test')
+                        ->setEncryption(SmtpConnection::NONE)
+                    )
+            ->setHeaders(
+                    (new Headers())
+                        ->setHeaders(['X-Mailer' => 'pes-mail-integration-test'])
+                    )
+            ;
+
+        return $params;
+    }
+    //-----------------------------------------------------------------------------------------------------------------------
+    /**
      * Parametry pro odesílání prostřednictvím smtp.gmail.com
      * Pro přihlášení k SMTP serveru se používají údaje emailového účtu it.grafia@gmail.com
      *
