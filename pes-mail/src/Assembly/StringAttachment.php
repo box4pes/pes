@@ -16,23 +16,23 @@ namespace Pes\Mail\Assembly;
 class StringAttachment {
 
 
-    private $stringAttachment;
-    private $altText;
+    private string $stringAttachment;
+    private string $altText;
 
-    public function getStringAttachment() {
+    public function getStringAttachment(): string {
         return $this->stringAttachment;
     }
 
-    public function getAltText() {
+    public function getAltText(): string {
         return $this->altText;
     }
 
-    public function setStringAttachment($stringAttachment) {
+    public function setStringAttachment($stringAttachment): self {
         $this->stringAttachment = $stringAttachment;
         return $this;
     }
 
-    public function setAltText($altText) {
+    public function setAltText($altText): self {
         $this->altText = $altText;
         return $this;
     }

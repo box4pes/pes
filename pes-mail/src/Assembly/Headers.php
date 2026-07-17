@@ -14,9 +14,9 @@ namespace Pes\Mail\Assembly;
  * @author pes2704
  */
 class Headers {
-    private $headers = [];
+    private array $headers = [];
 
-    public function getHeader($name): array {
+    public function getHeader(string $name): array {
         if (array_key_exists($name, $this->headers)) {
             return $this->headers[$name];
         } else {
@@ -24,7 +24,7 @@ class Headers {
         }
     }
 
-    public function getHeaderLine($name) {
+    public function getHeaderLine(string $name): string {
         if (array_key_exists($name, $this->headers)) {
             return implode(', ', $this->headers[$name]);
         } else {
@@ -37,15 +37,16 @@ class Headers {
     }
 
 
-    public function addHeader($name, $directive) {
+    public function addHeader(string $name, string|array $directive): self {
         if (is_array($directive)) {
             $this->headers[$name] = $this->headers + [$name, $directive];
         } else {
             $this->headers[$name] = $this->headers + [$name, [$directive]];
         }
+        return $this;
     }
 
-    public function setHeaders(array $headers) {
+    public function setHeaders(array $headers): self {
         $this->headers = $headers;
         return $this;
     }

@@ -28,14 +28,14 @@ class Mail implements MailInterface {
     /*
      * @var PHPMailer
      */
-    private $phpMailer;
+    private PHPMailer $phpMailer;
     
     /**
      *
      * @var Assembly
      */
-    private $assembly;
-    private static $logger;
+    private ?AssemblyInterface $assembly;
+    private static ?LoggerInterface $logger;
 
     /**
      * Přijímá výchozí sadu parametrů. Tyto parametru mohou být doplněny nebo zaměněny dalšími paramatery zadanými 
@@ -73,7 +73,7 @@ class Mail implements MailInterface {
      * @param string $subject
      * @param string $body
      * @param string $from
-     * @param string $extra
+     * @param array $extra
      *
      */
     public static function actionOnSend(bool $result, array $to, array $cc, array $bcc, string $subject, string $body, string $from, array $extra) {
@@ -99,9 +99,9 @@ class Mail implements MailInterface {
          * @var string
          */
         if (self::$logger) {
+            $toString = implode(', ', array_map(function($pair) {return implode('|', $pair);}, $to));  // $to je pole polí - pole dvojic hodnot 'adresa' a 'jméno adresáta'
+            $time = (new \DateTime())->format("Y-m-d H:i:s");
             if ($result) {
-                $toString = implode(', ', array_map(function($pair) {return implode('|', $pair);}, $to));  // $to je pole polí - pole dvojic hodnot 'adresa' a 'jméno adresáta'
-                $time = (new \DateTime())->format("Y-m-d H:i:s");
                 $decodedSubject = base64_decode(str_replace("=?utf-8?B?", "", $subject));
                 self::$logger->info("[$time] Result: '{result}'.", ['result'=>$result]);
                 self::$logger->info("[$time] Odeslán mail '{subject}' na adresy {to}.", ['subject'=>$decodedSubject, 'to'=>$toString]);
@@ -125,10 +125,10 @@ class Mail implements MailInterface {
      * - předmět mailu, tělo mailu, přílohy (objekt objekt Mail\Assembly\Content)
      * 
      * 
-     * @param Assembly $assembly Parametry skladby aktuálně odesílaného mailu
+     * @param ?AssemblyInterface $assembly Parametry skladby aktuálně odesílaného mailu
      * @return bool false on error 
      */
-    public function mail(AssemblyInterface $assembly = null): bool {
+    public function mail(?AssemblyInterface $assembly = null): bool {
         $actualAssembly = $this->assembly ;
         if (isset($assembly)) {
             $actualAssembly->adoptConfigurationParams($assembly);

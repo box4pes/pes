@@ -18,44 +18,18 @@ use Pes\Mail\Assembly\Headers;
  * @author pes2704
  */
 class Assembly implements AssemblyInterface {
+    
+    private ?Host $host = null;
 
-    /**
-     *
-     * @var Host
-     */
-    private $host;
+    private ?SmtpConnection $smtp = null;
 
-    /**
-     *
-     * @var SmtpConnection
-     */
-    private $smtp;
+    private ?Party $party = null;
 
-    /**
-     *
-     * @var Encryption
-     */
-    private $encryption;
+    private ?Content $content = null;
 
-    /**
-     *
-     * @var Party
-     */
-    private $party;
+    private ?Headers $headers = null;
 
-    /**
-     *
-     * @var Content
-     */
-    private $content;
-
-    /**
-     *
-     * @var Headers
-     */
-    private $headers;
-
-    public function adoptConfigurationParams(AssemblyInterface $params) {
+    public function adoptConfigurationParams(AssemblyInterface $params): void {
         if ($params->getContent()) {
             $this->setContent($params->getContent());
         }
@@ -94,27 +68,27 @@ class Assembly implements AssemblyInterface {
         return $this->headers;
     }
 
-    public function setHost(Host $host): AssemblyInterface {
+    public function setHost(Host $host): self {
         $this->host = $host;
         return $this;
     }
 
-    public function setSmtp(SmtpConnection $smtp): AssemblyInterface {
+    public function setSmtp(SmtpConnection $smtp): self {
         $this->smtp = $smtp;
         return $this;
     }
 
-    public function setParty(Party $party): AssemblyInterface {
+    public function setParty(Party $party): self {
         $this->party = $party;
         return $this;
     }
 
-    public function setContent(Content $content): AssemblyInterface {
+    public function setContent(Content $content): self {
         $this->content = $content;
         return $this;
     }
 
-    public function setHeaders(Headers $headers): AssemblyInterface {
+    public function setHeaders(Headers $headers): self {
         $this->headers = $headers;
         return $this;
     }

@@ -8,18 +8,18 @@ namespace Pes\Mail\Assembly;
  * @author pes2704
  */
 class Party {
-    private $from;
-    private $to;
-    private $cc;
-    private $bcc;
-    private $replyTo;
+    private array $from = [];
+    private array $to = [];
+    private array $cc = [];
+    private array $bcc = [];
+    private array $replyTo = [];
 
     /**
      * Vrací pole obsahující dvě položky typu string: mail adresu odesilatele a zobrazované jméno odesílatele.
      * 
      * @return array
      */
-    public function getFrom() {
+    public function getFromToArray(): array {
         return $this->encodeNames($this->from);
     }
 
@@ -28,7 +28,7 @@ class Party {
      * 
      * @return array
      */
-    public function getToArray() {
+    public function getToToArray(): array {
         return $this->encodeNames($this->to);
     }
 
@@ -37,7 +37,7 @@ class Party {
      * 
      * @return array
      */
-    public function getCcArray() {
+    public function getCcToArray(): array {
         return $this->encodeNames($this->cc);
     }
 
@@ -46,7 +46,7 @@ class Party {
      * 
      * @return array
      */
-    public function getBccArray() {
+    public function getBccToArray(): array {
         return $this->encodeNames($this->bcc);
     }
 
@@ -55,7 +55,7 @@ class Party {
      * 
      * @return array
      */
-    public function getReplyTo() {
+    public function getReplyToArray(): array {
         return $this->encodeNames($this->replyTo);
     }
 
@@ -64,9 +64,9 @@ class Party {
      * 
      * @param string $fromAddress Mail adresa odesilatele
      * @param string $fromName Zobrazované jméno odesílatele
-     * @return $this
+     * @return self
      */
-    public function setFrom($fromAddress, $fromName) {
+    public function setFrom(string $fromAddress, string $fromName): self {
         $this->from = [$fromAddress, $fromName];
         return $this;
     }
@@ -76,9 +76,9 @@ class Party {
      * 
      * @param string $toAddress Mail adresa příjemce
      * @param string $toName Zobrazované jméno příjemce
-     * @return $this
+     * @return self
      */
-    public function addTo($toAddress, $toName = '') {
+    public function addTo(string $toAddress, string $toName = ''): self {
         $this->to[] = [$toAddress, $toName];
         return $this;
     }
@@ -88,9 +88,9 @@ class Party {
      * 
      * @param string $ccAddress Mail adresa příjemce kopie mailu
      * @param string $ccName Zobrazované jméno příjemce kopie mailu
-     * @return $this
+     * @return self
      */
-    public function addCc($ccAddress, $ccName = '') {
+    public function addCc(string $ccAddress, string $ccName = ''): self {
         $this->cc[] = [$ccAddress, $ccName];
         return $this;
     }
@@ -99,9 +99,9 @@ class Party {
      * 
      * @param string $bccAddress Mail adresa příjemce skryté kopie mailu
      * @param string $bccName Zobrazované jméno příjemce skryté kopie mailu
-     * @return $this
+     * @return self
      */
-    public function addBcc($bccAddress, $bccName = '') {
+    public function addBcc(string $bccAddress, string $bccName = ''): self {
         $this->bcc[] =  [$bccAddress, $bccName];
         return $this;
     }
@@ -109,16 +109,16 @@ class Party {
     /**
      * Přidá příjemce odpovědi na mail.
      * 
-     * @param type $replyToAddress Mail adresa příjemce odpovědi na mail
-     * @param type $replyToName Zobrazované jméno příjemce odpovědi na  mail
-     * @return $this
+     * @param string $replyToAddress Mail adresa příjemce odpovědi na mail
+     * @param string $replyToName Zobrazované jméno příjemce odpovědi na mail
+     * @return self
      */
-    public function addReplyTo($replyToAddress, $replyToName) {
+    public function addReplyTo(string $replyToAddress, string $replyToName): self {
         $this->replyTo[] = [$replyToAddress, $replyToName];
         return $this;
     }
 
-    private function encodeNames($addressArray) {
+    private function encodeNames(array $addressArray) {
         return $addressArray;
         $addr = [];
         foreach ($addressArray as $address) {

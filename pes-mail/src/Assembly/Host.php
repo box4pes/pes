@@ -15,7 +15,7 @@ class Host {
         return $this->host;
     }
 
-    public function setHost(string $host) {
+    public function setHost(string $host): self {
         $this->host = $host;
         return $this;
     }

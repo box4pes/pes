@@ -49,7 +49,7 @@ class EnvironmentFactory implements EnvironmentFactoryInterface {
     /**
      * {@inheritdoc}
      */
-    public function create(array $serverParams, $inputStream) : Environment {
+    public function create(array $serverParams, mixed $inputStream) : Environment {
         if (!is_resource($inputStream)) {
             throw new \UnexpectedValueException("Parametr \$inpustream musí báýt tyou resource.");
         }

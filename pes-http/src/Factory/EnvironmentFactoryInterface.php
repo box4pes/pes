@@ -47,8 +47,8 @@ interface EnvironmentFactoryInterface {
      * z HTTP hlavičky Authorization. Hlavičky získá PHP funkcí getallheaders() - alias k apache_request_headers() - pokud tato funkce existuje.
      *
      * @param array $serverParams
-     * @param StreamInterface $inputStream
+     * @param mixed $inputStream
      * @return Environment
      */
-    public function create(array $serverParams, $inputStream) : Environment;
+    public function create(array $serverParams, mixed $inputStream) : Environment;
 }

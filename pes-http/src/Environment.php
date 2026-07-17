@@ -8,9 +8,8 @@
 
 namespace Pes\Http;
 
-use Psr\Http\Message\StreamInterface;
-
 use Pes\Core\Collection\MapCollection;
+use UnexpectedValueException;
 
 /**
  * Description of Environment
@@ -25,13 +24,13 @@ class Environment extends MapCollection implements EnvironmentInterface {
      *
      * $_SERVER je pole obsahující informace, jako jsou hlavičky, cesty a umístění skriptů. Položky v tomto poli vytváří webový server.
      * 
-     * @param type $entriesArray
-     * @param type $inputStream
-     * @throws \UnexpectedValueException
+     * @param array $entriesArray
+     * @param mixed $inputStream
+     * @throws UnexpectedValueException
      */
-    public function __construct($entriesArray, $inputStream) {
+    public function __construct(array $entriesArray, $inputStream) {
         if (!is_resource($inputStream)) {
-            throw new \UnexpectedValueException("Parametr \$inpustream musí být tyou resource.");
+            throw new UnexpectedValueException("Parametr \$inpustream musí být typu resource.");
         }
         parent::__construct($entriesArray);
         $this->set(EnvironmentInterface::INPUT_STREAM, $inputStream);

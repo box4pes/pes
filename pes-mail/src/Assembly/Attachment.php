@@ -9,8 +9,8 @@ namespace Pes\Mail\Assembly;
  */
 class Attachment {
 
-    private $fileName;
-    private $altText;
+    private string $fileName;
+    private string $altText;
 
     public function getFileName(): string {
         return $this->fileName;
@@ -20,12 +20,12 @@ class Attachment {
         return $this->altText;
     }
 
-    public function setFileName(string $fileName) {
+    public function setFileName(string $fileName): self {
         $this->fileName = $fileName;
         return $this;
     }
 
-    public function setAltText(string $altText) {
+    public function setAltText(string $altText): self {
         $this->altText = $altText;
         return $this;
     }

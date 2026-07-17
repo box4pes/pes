@@ -11,11 +11,11 @@ use Pes\Mail\Assembly\Attachment;
  */
 class Content {
 
-    private $subject;
+    private string $subject;
 
-    private $html;
+    private string $html;
 
-    private $attachments = [];
+    private array $attachments = [];
 
     /**
      * Vrací předmět mailu v kódování vhodném pro přenost e-mailenm a e-mail klienty. V e-mail klientovi je tento text správně automaticky dekódován a zobrazen.
@@ -40,7 +40,7 @@ class Content {
         return $this->html;
     }
 
-    public function getAltBody() {
+    public function getAltBody(): string {
         // In case any of our lines are larger than 70 characters, we should use wordwrap()
         return "Content without HTML: ".wordwrap(strip_tags($this->html), 70, PHP_EOL);
     }
@@ -53,17 +53,17 @@ class Content {
         return $this->attachments;
     }
 
-    public function setSubject(string $subject) {
+    public function setSubject(string $subject): self {
         $this->subject = $subject;
         return $this;
     }
 
-    public function setHtml(string $html) {
+    public function setHtml(string $html): self {
         $this->html = $html;
         return $this;
     }
 
-    public function setAttachments(iterable $attachments) {
+    public function setAttachments(iterable $attachments): self {
         $this->attachments = $attachments;
         return $this;
     }
