@@ -4,7 +4,6 @@ namespace Pes\Mail;
 
 use Pes\Mail\AssemblyInterface;
 use Pes\Mail\Assembly\Host;
-use Pes\Mail\Assembly\Encryption;
 use Pes\Mail\Assembly\SmtpConnection;
 use Pes\Mail\Assembly\Party;
 use Pes\Mail\Assembly\Content;

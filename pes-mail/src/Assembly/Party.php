@@ -19,7 +19,7 @@ class Party {
      * 
      * @return array
      */
-    public function getFromToArray(): array {
+    public function getFromArray(): array {
         return $this->encodeNames($this->from);
     }
 
@@ -28,7 +28,7 @@ class Party {
      * 
      * @return array
      */
-    public function getToToArray(): array {
+    public function getToArray(): array {
         return $this->encodeNames($this->to);
     }
 
@@ -37,7 +37,7 @@ class Party {
      * 
      * @return array
      */
-    public function getCcToArray(): array {
+    public function getCcArray(): array {
         return $this->encodeNames($this->cc);
     }
 
@@ -46,7 +46,7 @@ class Party {
      * 
      * @return array
      */
-    public function getBccToArray(): array {
+    public function getBccArray(): array {
         return $this->encodeNames($this->bcc);
     }
 
