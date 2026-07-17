@@ -262,7 +262,6 @@ class Handler implements HandlerInterface { //extends PDO {   // //
     private static function varPrint($param) {
         $pr = [];
         foreach ($param as $var) {
-            $vartype = gettype($var);
             $pr[] = static::renderValueAsInfo($var);
         }
         return print_r($pr, TRUE);
@@ -311,7 +310,11 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         $ret = $this->connection->inTransaction();
         return $ret;
     }
-    
+        
+    public function errorInfo(): array {
+        return $this->connection->errorInfo();
+    }
+
     public function beginTransaction(): bool {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' beginTransaction()');
@@ -319,7 +322,15 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         $ret = $this->connection->beginTransaction();
         return $ret;
     }
-
+    
+    public function lastInsertId(?string $name = null): string|false {
+        $ret = $this->connection->lastInsertId($name);
+        if ($this->logger) {
+            $this->logger->debug($this->getInstanceInfo().' lastInsertId({name})', ['name'=>$name ?? 'null']);
+        }
+        return $ret;
+    }
+    
     public function commit(): bool {
         if ($this->logger) {
                 $this->logger->debug($this->getInstanceInfo().' commit()');
@@ -377,7 +388,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
                 $message = " Metoda {method} selhala. Vyhozena výjimka \PDOException: {exc}.";
                 $this->logger->error($message, ['method'=>__METHOD__, 'exc'=>$pdoException->getMessage()]);
             }
-            $einfo = $this->errorInfo();
+            $einfo = $this->connection->errorInfo();
 //            throw new HandlerFailureException($einfo[2].PHP_EOL.". Nevznikl PDO statement z sql příkazu: $sql", $einfo[1]);
             throw new Exception\PrepareException($einfo[2]." Metoda ".__METHOD__." selhala.", 0, $pdoException);
         } finally {
