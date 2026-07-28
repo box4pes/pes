@@ -76,7 +76,7 @@ class Mail implements MailInterface {
      * @param array $extra
      *
      */
-    public static function actionOnSend(bool $result, array $to, array $cc, array $bcc, string $subject, string $body, string $from, array $extra) {
+    public static function actionOnSend(bool $result, array $to, array $cc, array $bcc, string $subject, string $body, string $from, array $extra): void {
         /**
          * Callback Action function name.
          *
