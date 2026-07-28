@@ -11,12 +11,16 @@ namespace Pes\Model\Repository;
 use Pes\Model\Dao\StatusDao;
 
 use Pes\Model\Entity\EntityInterface;
+use Pes\Model\Exception\SessionFinishedException;
 
 use LogicException;
 
 /**
  * StatusRepositoryAbstract má metody pro zápis (aktualizaci) dat v session a destruktor, který zajišťuje automatické uložení (aktualizaci)
- * sat v session při zániku objektu.
+ * dat v session při zániku objektu.
+ *
+ * Po StatusDao::finish() je session uzavřená: get/add/remove/load/flush vyhodí SessionFinishedException.
+ * Pro read-only snapshot po finish() použijte isFinished() + getClone().
  *
  * @author pes2704
  */
@@ -27,7 +31,7 @@ abstract class StatusRepositoryAbstract {
      */
     protected $statusDao;
 
-    private static $loadedFragment = [];   // proměnná společná pro všechny SttausRepository
+    private static $loadedFragment = [];   // proměnná společná pro všechny StatusRepository
 
     protected $entity;
 
@@ -35,11 +39,44 @@ abstract class StatusRepositoryAbstract {
         $this->statusDao = $statusDao;
     }
 
+    public function isFinished(): bool {
+        return $this->statusDao->isFinished();
+    }
+
+    /**
+     * Vrátí klon entity držené v paměti repo — bez vazby na session fragment.
+     * Funguje i po StatusDao::finish(); nečte ani nezapisuje session.
+     *
+     * @throws LogicException pokud entita ještě nebyla načtena
+     */
+    public function getClone(): EntityInterface {
+        if (!isset($this->entity) || $this->entity === null) {
+            throw new LogicException(sprintf(
+                '%s::getClone() — no entity loaded; call get() before StatusDao::finish().',
+                static::class
+            ));
+        }
+        return clone $this->entity;
+    }
+
+    /**
+     * Striktní režim: po finish() nelze číst/zapisovat přes session.
+     */
+    protected function assertSessionWritable(): void {
+        if ($this->statusDao->isFinished()) {
+            throw new SessionFinishedException(sprintf(
+                'Cannot use %s after StatusDao::finish(); session is closed.',
+                static::class
+            ));
+        }
+    }
+
     protected function load() {
+        $this->assertSessionWritable();
         if (empty($_SESSION)) {
             throw new LogicException("Nejsou data v globálním poli \$_SESSION. Session v tomto běhu skriptu ještě nebyla spuštěna");
         }
-        
+
         if (!isset(self::$loadedFragment[static::FRAGMENT_NAME])) {
             $row = $this->statusDao->get(static::FRAGMENT_NAME);
             if ($row) {
@@ -57,16 +94,19 @@ abstract class StatusRepositoryAbstract {
     }
 
     public function flush(): void {
-        if (isset(self::$loadedFragment[static::FRAGMENT_NAME])) {   // pokud není loaded -> není entita
-            if ($this->entity) {
-                $this->statusDao->set(static::FRAGMENT_NAME, [$this->entity]);
-            } else {
-                $this->statusDao->delete(static::FRAGMENT_NAME);
-            }
-            // smaže fragment
-            unset(self::$loadedFragment[static::FRAGMENT_NAME]);
+        // Bez pending zápisu: po finish() (např. UnlockStatus) nesmí __destruct padat.
+        if (!isset(self::$loadedFragment[static::FRAGMENT_NAME])) {   // pokud není loaded -> není entita
+            return;
         }
-    } 
+        $this->assertSessionWritable();
+        if ($this->entity) {
+            $this->statusDao->set(static::FRAGMENT_NAME, [$this->entity]);
+        } else {
+            $this->statusDao->delete(static::FRAGMENT_NAME);
+        }
+        // smaže fragment
+        unset(self::$loadedFragment[static::FRAGMENT_NAME]);
+    }
 
     public function __destruct() {
         $this->flush();
