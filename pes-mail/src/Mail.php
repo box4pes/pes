@@ -158,16 +158,16 @@ class Mail implements MailInterface {
             $this->phpMailer->Encoding = self::ENCODING;
 
             //Recipients
-            $from = $actualAssembly->getParty()->getFromToArray();
+            $from = $actualAssembly->getParty()->getFromArray();
             $this->phpMailer->setFrom($from[0], $from[1]);
             $this->phpMailer->clearAllRecipients();   // vymaže všechny To, Cc, Bcc
-            foreach ($actualAssembly->getParty()->getToToArray() as $to) {
+            foreach ($actualAssembly->getParty()->getToArray() as $to) {
                 $this->phpMailer->addAddress($to[0], $to[1]);     //Add a recipient            //Name is optional
             };
-            foreach ($actualAssembly->getParty()->getCcToArray() as $cc) {
+            foreach ($actualAssembly->getParty()->getCcArray() as $cc) {
                 $this->phpMailer->addCC($cc[0], $cc[1]);     //Add a cc            //Name is optional
             };
-            foreach ($actualAssembly->getParty()->getBccToArray() as $bcc) {
+            foreach ($actualAssembly->getParty()->getBccArray() as $bcc) {
                 $this->phpMailer->addBCC($bcc[0], $bcc[1]);     //Add a bcc            //Name is optional
             };            
             //Attachments
@@ -196,7 +196,7 @@ class Mail implements MailInterface {
             if (self::$logger) {
                 $time = (new \DateTime())->format("Y-m-d H:i:s");
                 self::$logger->error("[$time] Nepodařilo se odeslat mail. Subject: '{subject}'.", ['subject'=>$actualAssembly->getContent()->getSubjectRaw()]);        
-                $toString = implode(', ', array_column($actualAssembly->getParty()->getToToArray(), 0));
+                $toString = implode(', ', array_column($actualAssembly->getParty()->getToArray(), 0));
                 self::$logger->error("To: {toString}", ['toString'=>$toString]);
                 self::$logger->error("PHPmail error info:: '{info}'.", ['info'=>$this->phpMailer->ErrorInfo]);
                 self::$logger->error("PHPmail exception message: '{message}'.", ['message'=>$e->errorMessage()]);
