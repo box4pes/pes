@@ -56,7 +56,12 @@ abstract class StatusRepositoryAbstract {
                 static::class
             ));
         }
-        return clone $this->entity;
+        $clone = clone $this->entity;
+        // Read-only snapshot: forbid using clone to mutate state.
+        if (method_exists($clone, 'makeImmutable')) {
+            $clone->makeImmutable();
+        }
+        return $clone;
     }
 
     /**
