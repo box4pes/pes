@@ -60,19 +60,43 @@ abstract class StatusRepositoryAbstract {
     }
 
     /**
-     * Striktní režim: po finish() nelze číst/zapisovat přes session.
+     * Po StatusDao::finish() nelze volat get() přes session.
+     * Pro read-only snapshot použijte getClone() (entita musí být načtená před finish()).
      */
-    protected function assertSessionWritable(): void {
+    protected function assertSessionWritableForGet(): void {
         if ($this->statusDao->isFinished()) {
             throw new SessionFinishedException(sprintf(
-                'Cannot use %s after StatusDao::finish(); session is closed.',
+                '%s::get() failed: session is closed after StatusDao::finish(). '
+                . 'For read-only access use %s::getClone() (entity must already be loaded before finish()). '
+                . 'Otherwise remove/move the code that calls StatusDao::finish() (e.g. UnlockStatus) so session stays open for this request.',
+                static::class,
                 static::class
             ));
         }
     }
 
+    /**
+     * Po StatusDao::finish() nelze volat metody měnící / znovu načítající session fragment.
+     *
+     * @param string $methodName jméno volané metody (get se řeší assertSessionWritableForGet)
+     */
+    protected function assertSessionWritable(string $methodName): void {
+        if ($this->statusDao->isFinished()) {
+            throw new SessionFinishedException(sprintf(
+                '%s::%s() failed: session is closed after StatusDao::finish(). '
+                . 'This method needs a writable session. '
+                . 'Remove/move the code that calls StatusDao::finish() (e.g. UnlockStatus) so session stays open for this request, '
+                . 'or avoid calling %s::%s() after finish().',
+                static::class,
+                $methodName,
+                static::class,
+                $methodName
+            ));
+        }
+    }
+
     protected function load() {
-        $this->assertSessionWritable();
+        $this->assertSessionWritable('load');
         if (empty($_SESSION)) {
             throw new LogicException("Nejsou data v globálním poli \$_SESSION. Session v tomto běhu skriptu ještě nebyla spuštěna");
         }
@@ -98,7 +122,7 @@ abstract class StatusRepositoryAbstract {
         if (!isset(self::$loadedFragment[static::FRAGMENT_NAME])) {   // pokud není loaded -> není entita
             return;
         }
-        $this->assertSessionWritable();
+        $this->assertSessionWritable('flush');
         if ($this->entity) {
             $this->statusDao->set(static::FRAGMENT_NAME, [$this->entity]);
         } else {
