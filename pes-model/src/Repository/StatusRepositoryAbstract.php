@@ -21,6 +21,7 @@ use LogicException;
  *
  * Po StatusDao::finish() je session uzavřená: get/add/remove/load/flush vyhodí SessionFinishedException.
  * Pro read-only snapshot po finish() použijte isFinished() + getClone().
+ * Pro mutable snapshot (např. flash consume) použijte getClone(false) + replaceEntityInMemory() a po reopen() flush().
  *
  * @author pes2704
  */
@@ -47,9 +48,10 @@ abstract class StatusRepositoryAbstract {
      * Vrátí klon entity držené v paměti repo — bez vazby na session fragment.
      * Funguje i po StatusDao::finish(); nečte ani nezapisuje session.
      *
+     * @param bool $immutable true = makeImmutable() (default); false = mutable clone (např. flash getMessages)
      * @throws LogicException pokud entita ještě nebyla načtena
      */
-    public function getClone(): EntityInterface {
+    public function getClone(bool $immutable = true): EntityInterface {
         if (!isset($this->entity) || $this->entity === null) {
             throw new LogicException(sprintf(
                 '%s::getClone() — no entity loaded; call get() before StatusDao::finish().',
@@ -57,11 +59,19 @@ abstract class StatusRepositoryAbstract {
             ));
         }
         $clone = clone $this->entity;
-        // Read-only snapshot: forbid using clone to mutate state.
-        if (method_exists($clone, 'makeImmutable')) {
+        if ($immutable && method_exists($clone, 'makeImmutable')) {
             $clone->makeImmutable();
         }
         return $clone;
+    }
+
+    /**
+     * Nahradí entitu v paměti repo (bez zápisu do session).
+     * Použití po mutate getClone(false) — např. spotřebované flash messages — před reopen()+flush().
+     */
+    public function replaceEntityInMemory(EntityInterface $entity): void {
+        $this->entity = $entity;
+        self::$loadedFragment[static::FRAGMENT_NAME] = true;
     }
 
     /**

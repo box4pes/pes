@@ -62,6 +62,18 @@ class StatusDao {
         $this->finished = true;
     }
 
+    /**
+     * Znovu otevře session po finish() (session_start).
+     * Použití: flash cascade GET — finish před handle, reopen po handle pro zápis spotřebovaných messages.
+     */
+    public function reopen(): void {
+        if (!$this->finished && session_status() === PHP_SESSION_ACTIVE) {
+            return;
+        }
+        $this->sessionHandler->sessionStart();
+        $this->finished = false;
+    }
+
     public function reset() {
         $this->sessionHandler->sessionReset();
         $this->finished = false;
