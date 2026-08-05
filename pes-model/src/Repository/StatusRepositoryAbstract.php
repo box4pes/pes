@@ -19,7 +19,8 @@ use LogicException;
  * StatusRepositoryAbstract má metody pro zápis (aktualizaci) dat v session a destruktor, který zajišťuje automatické uložení (aktualizaci)
  * dat v session při zániku objektu.
  *
- * Po StatusDao::finish() je session uzavřená: get/add/remove/load/flush vyhodí SessionFinishedException.
+ * Po StatusDao::finish() je session uzavřená: get/add/remove/load vyhodí SessionFinishedException.
+ * flush() po finish() je no-op (kvůli __destruct u cascade requestů).
  * Pro read-only snapshot po finish() použijte isFinished() + getClone().
  * Pro mutable snapshot (např. flash consume) použijte getClone(false) + replaceEntityInMemory() a po reopen() flush().
  *
@@ -137,7 +138,12 @@ abstract class StatusRepositoryAbstract {
         if (!isset(self::$loadedFragment[static::FRAGMENT_NAME])) {   // pokud není loaded -> není entita
             return;
         }
-        $this->assertSessionWritable('flush');
+        // Cascade finish bez reopen: nelze zapisovat. __destruct volá flush() — nesmí vyhodit výjimku.
+        // Po reopen() je session zase writable a flush zapíše in-memory změny (flash / presenteddriver).
+        if ($this->statusDao->isFinished()) {
+            unset(self::$loadedFragment[static::FRAGMENT_NAME]);
+            return;
+        }
         if ($this->entity) {
             $this->statusDao->set(static::FRAGMENT_NAME, [$this->entity]);
         } else {
