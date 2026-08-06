@@ -128,9 +128,10 @@ interface SessionStatusHandlerInterface {
 
     /**
      * Vrací TRUE, pokud session byla nastartována poprvé v průběhu trvání skutečného sezení klienta.
+     * Hodnota je request-scoped — stabilní i po sessionFinish()/sessionStart() (reopen) ve stejném requestu.
      *
      * @return bool
      */
-    public function isNew();
+    public function isNew(): bool;
 
 }

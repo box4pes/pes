@@ -40,6 +40,12 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
     private $sessionSaveHandler;
     private $sessionHandlerVars;   // reference na $_SESSION[self::HANDLER_VARS]
 
+    /** Request-scoped: true jen když session vznikla v tomto HTTP requestu. */
+    private bool $isNewSession = false;
+
+    /** True po prvním prepareOrRegenerate v tomto requestu (ochrana finish/reopen). */
+    private bool $handlerInitializedThisRequest = false;
+
     /**
      * @var LoggerInterface
      */
@@ -220,25 +226,42 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
     }
     
     private function setSessionHandlerVariables() {
-        $this->sessionHandlerVars = & $_SESSION[self::HANDLER_VARS];  // reference
+        // Vždy znovu nabindovat — po finish/reopen je $_SESSION nové pole.
+        if (!isset($_SESSION[self::HANDLER_VARS]) || !is_array($_SESSION[self::HANDLER_VARS])) {
+            $_SESSION[self::HANDLER_VARS] = [];
+        }
+        $this->sessionHandlerVars = &$_SESSION[self::HANDLER_VARS];
 
-        // pro novou session nastaví flag IS_NEW_SESSION a vyrobí fingerprint a čas vytvoření
-        if (!isset($this->sessionHandlerVars)) {  // první request v session
-            $this->setNewSessionHandlerVars();
-        } elseif ($this->sessionHandlerVars[self::IS_NEW] ?? FALSE) {    // následný request po prvním, kdy byla nastavena session new
-            $this->sessionHandlerVars[self::IS_NEW] = FALSE;
+        if (!$this->handlerInitializedThisRequest) {
+            // pro novou session nastaví flag IS_NEW a vyrobí fingerprint a čas vytvoření
+            if (!isset($this->sessionHandlerVars[self::CREATION_TIME])) {
+                $this->setNewSessionHandlerVars();
+                $this->isNewSession = true;
+            } else {
+                // latch z minulého requestu jen uklidit — isNew() pro tento request zůstane false
+                if (!empty($this->sessionHandlerVars[self::IS_NEW])) {
+                    $this->sessionHandlerVars[self::IS_NEW] = false;
+                }
+                $this->isNewSession = false;
+            }
+            $this->handlerInitializedThisRequest = true;
+        } else {
+            // reopen ve stejném requestu: nesmíme shodit latch ani změnit isNewSession
+            $this->sessionHandlerVars[self::IS_NEW] = $this->isNewSession;
         }
 
         // časy obnovení session
-        $this->sessionHandlerVars[self::PREVIOUS_START_TIME] = $this->sessionHandlerVars[self::CURRENT_START_TIME] ?? NULL;
-        $this->sessionHandlerVars[self::CURRENT_START_TIME] = time();        
+        $this->sessionHandlerVars[self::PREVIOUS_START_TIME] = $this->sessionHandlerVars[self::CURRENT_START_TIME] ?? null;
+        $this->sessionHandlerVars[self::CURRENT_START_TIME] = time();
     }
     
     private function autodestructOnFingerprintChange() {
         if ($this->fingerprintBasedAutodestuction AND !$this->hasFingerprint()) {
-            $this->forget();  // provede sesiion close
+            $this->forget();  // provede session close
             if (session_start()) {
-                $this->setNewSessionHandlerVars();
+                // po forget()+session_start() je $_SESSION nové — znovu prepare (včetně rebind reference)
+                $this->handlerInitializedThisRequest = false;
+                $this->setSessionHandlerVariables();
                 $this->sessionHandlerVars[self::FINGERPRINT_WARNING] = "Session destroyed, bad fingerprint.";
                 if (isset($this->logger)) {
                     $this->logger->debug("Session byla smazána, došlo ke změně fingerprintu. Nastartována nová session.");
@@ -251,7 +274,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
     }
     
     private function refreshSessionOnDurabilityExceeding() {
-        if ($this->sessionHandlerVars[self::IS_NEW] == FALSE && mt_rand(1, $this->sessionIdDurability) === 1) {  // náhodné int číslo mezi min, max
+        if ($this->isNewSession === false && mt_rand(1, $this->sessionIdDurability) === 1) {  // náhodné int číslo mezi min, max
             if ($this->regenerate()) {
                 return;
             } else {
@@ -262,7 +285,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
     }
     
     private function setNewSessionHandlerVars() {
-        $this->sessionHandlerVars[self::IS_NEW] = TRUE;
+        $this->sessionHandlerVars[self::IS_NEW] = true;
         $this->sessionHandlerVars[self::CREATION_TIME] = time();
         $this->sessionHandlerVars[self::FINGERPRINT] = $this->getFingerprintHash();
     }
@@ -341,11 +364,12 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
 
     /**
      * Vrací TRUE, pokud session byla nastartována poprvé v průběhu trvání skutečného sezení klienta.
+     * Hodnota je request-scoped — stabilní i po sessionFinish()/sessionStart() (reopen) ve stejném requestu.
      *
      * @return bool
      */
-    public function isNew() {
-        return $this->sessionHandlerVars[self::IS_NEW];
+    public function isNew(): bool {
+        return $this->isNewSession;
     }
 
     /**
@@ -354,7 +378,7 @@ class SessionStatusHandler implements SessionStatusHandlerInterface {
      * @return int
      */
     public function getCreationTime() {
-        return $this->sessionHandlerVars[self::PREVIOUS_START_TIME];
+        return $this->sessionHandlerVars[self::CREATION_TIME];
     }
 
     /**
