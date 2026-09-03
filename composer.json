@@ -123,6 +123,7 @@
         "test:logger": "phpunit --testsuite pes-logger",
         "test:router": "phpunit --testsuite pes-router",
         "test:view": "phpunit --testsuite pes-view",
+        "test:model": "phpunit --testsuite pes-model",
         "test:root": "phpunit --testsuite pes-root"
     },
     "scripts-descriptions": {
@@ -133,6 +134,7 @@
         "test:logger": "Spustí jen testy pro pes-logger",
         "test:router": "Spustí jen testy pro pes-router",
         "test:view": "Spustí jen testy pro pes-view",
+        "test:model": "Spustí jen testy pro pes-model (RowData apod.)",
         "test:root": "Spustí testy z kořenového balíčku (Autoloader apod.)"
     }
 }

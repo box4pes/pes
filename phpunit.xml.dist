@@ -38,6 +38,9 @@
         <testsuite name="pes-view">
             <directory suffix="Test.php">tests/pes-view</directory>
         </testsuite>
+        <testsuite name="pes-model">
+            <directory suffix="Test.php">tests/pes-model</directory>
+        </testsuite>
         <testsuite name="pes-root">
             <directory suffix="Test.php">tests/Autoloader</directory>
         </testsuite>
