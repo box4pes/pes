@@ -491,11 +491,11 @@ abstract class RepoAbstract {
                 if (!$entity->isPersisted()) {
                     throw new \LogicException("V collection je nepersistovaná entita.");
                 }
-                $this->addNonpersistedAssociatedEntities($entity);
+//                $this->addNonpersistedAssociatedEntities($entity);
             }
-            foreach ($this->removed as $index => $entity) {
-                $this->removePersistedAssociatedEntities($entity);
-            }
+//            foreach ($this->removed as $index => $entity) {
+//                $this->removePersistedAssociatedEntities($entity);
+//            }
             $this->flushChildRepos();
 //            if ( ! ($this->dataManager instanceof DaoEditKeyDbVerifiedInterface)) {   // DaoKeyDbVerifiedInterface musí ukládat (insert) vždy již při nastavování hodnoty primárního klíče
                 foreach ($this->new as $entity) {
