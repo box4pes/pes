@@ -3,14 +3,36 @@
     "type": "library",
     "description": "Data model layer for Pes (DAO, repository, entity, hydrator, row data).",
     "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "model",
+        "dao",
+        "repository"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "svoboda@grafia.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-model"
+    },
     "require": {
         "php": "<8.5.0",
-        "pes/pes-database": "@dev",
-        "pes/pes-session": "@dev"
+        "pes/pes-database": "^8.27",
+        "pes/pes-session": "^8.27"
     },
     "autoload": {
         "psr-4": {
             "Pes\\Model\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }

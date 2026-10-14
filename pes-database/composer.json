@@ -3,15 +3,36 @@
     "type": "library",
     "description": "Database access and query criteria for Pes.",
     "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "database",
+        "pdo"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "svoboda@grafia.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-database"
+    },
     "require": {
         "php": "<8.5.0",
-        "pes/pes-core": "@dev",
+        "pes/pes-core": "^8.27",
         "psr/log": "^3.0"
     },
     "autoload": {
         "psr-4": {
             "Pes\\Database\\": "src/Database/",
             "Pes\\Query\\": "src/Query/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }

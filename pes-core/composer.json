@@ -3,12 +3,32 @@
     "type": "library",
     "description": "Core primitives for Pes (security, validation, collections, types, text).",
     "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "core"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "svoboda@grafia.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-core"
+    },
     "require": {
         "php": "<8.5.0"
     },
     "autoload": {
         "psr-4": {
             "Pes\\Core\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }

@@ -3,13 +3,33 @@
     "type": "library",
     "description": "Procedurální bootstrap skripty pro Pes (autoloader, prostředí, error handlery, logy).",
     "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "bootstrap"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "svoboda@grafia.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-bootstrap"
+    },
     "require": {
         "php": "<8.5.0",
-        "pes/pes-logger": "@dev"
+        "pes/pes-logger": "^8.27"
     },
     "autoload": {
         "psr-4": {
             "Pes\\Bootstrap\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }
