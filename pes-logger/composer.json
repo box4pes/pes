@@ -3,14 +3,35 @@
     "type": "library",
     "description": "File and array loggers for Pes (extends PSR-3).",
     "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "logger",
+        "psr-3"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "svoboda@grafia.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-logger"
+    },
     "require": {
         "php": "<8.5.0",
-        "pes/pes-core": "@dev",
+        "pes/pes-core": "^8.27",
         "psr/log": "^3.0"
     },
     "autoload": {
         "psr-4": {
             "Pes\\Logger\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }

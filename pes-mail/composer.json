@@ -3,6 +3,21 @@
     "type": "library",
     "description": "Mail sending layer for Pes (PHPMailer wrapper, assembly, SMTP configuration).",
     "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "mail",
+        "phpmailer"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "svoboda@grafia.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-mail"
+    },
     "require": {
         "php": "<8.5.0",
         "phpmailer/phpmailer": "^6.2",
@@ -11,6 +26,12 @@
     "autoload": {
         "psr-4": {
             "Pes\\Mail\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }

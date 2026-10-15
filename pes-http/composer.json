@@ -3,9 +3,24 @@
     "type": "library",
     "description": "HTTP stack for Pes (PSR-7 environment, factories, cookies, URI helpers).",
     "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "http",
+        "psr-7"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "svoboda@grafia.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-http"
+    },
     "require": {
         "php": "<8.5.0",
-        "pes/pes-core": "@dev",
+        "pes/pes-core": "^8.27",
         "psr/http-message": "^2.0",
         "psr/http-factory": "^1.0",
         "psr/log": "^3.0"
@@ -13,6 +28,12 @@
     "autoload": {
         "psr-4": {
             "Pes\\Http\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }

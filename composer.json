@@ -3,90 +3,117 @@
     "type": "library",
     "description": "Psí framework pro PHP 8.4.",
     "license": "MIT",
-    "keywords": ["pes", "framework"],
+    "keywords": [
+        "pes",
+        "framework",
+        "php"
+    ],
     "authors": [
         {
             "name": "Petr Svoboda",
             "email": "svoboda@grafia.cz"
         }
     ],
-    "version": "8.27.01",
     "repositories": [
         {
             "type": "path",
             "url": "pes-session",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-http",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-di",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-core",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-router",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-database",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-view",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-application",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-logger",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-bootstrap",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-model",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         },
         {
             "type": "path",
             "url": "pes-mail",
-            "options": { "symlink": true }
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "require": {
         "php": "<8.5.0",
-        "pes/pes-core": "@dev",
-        "pes/pes-http": "@dev",
-        "pes/pes-di": "@dev",
-        "pes/pes-router": "@dev",
-        "pes/pes-database": "@dev",
-        "pes/pes-view": "@dev",
-        "pes/pes-application": "@dev",
-        "pes/pes-logger": "@dev",
-        "pes/pes-session": "@dev",
-        "pes/pes-bootstrap": "@dev",
-        "pes/pes-model": "@dev",
-        "pes/pes-mail": "@dev",
+        "pes/pes-core": "^8.27",
+        "pes/pes-http": "^8.27",
+        "pes/pes-di": "^8.27",
+        "pes/pes-router": "^8.27",
+        "pes/pes-database": "^8.27",
+        "pes/pes-view": "^8.27",
+        "pes/pes-application": "^8.27",
+        "pes/pes-logger": "^8.27",
+        "pes/pes-session": "^8.27",
+        "pes/pes-bootstrap": "^8.27",
+        "pes/pes-model": "^8.27",
+        "pes/pes-mail": "^8.27",
         "psr/http-message": "^2.0",
         "psr/http-factory": "^1.0",
         "psr/container": "^2.0",
@@ -136,5 +163,16 @@
         "test:view": "Spustí jen testy pro pes-view",
         "test:model": "Spustí jen testy pro pes-model (RowData apod.)",
         "test:root": "Spustí testy z kořenového balíčku (Autoloader apod.)"
+    },
+    "support": {
+        "source": "https://github.com/box4pes/pes"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
+        }
     }
 }

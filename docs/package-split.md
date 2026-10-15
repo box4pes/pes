@@ -1,100 +1,122 @@
 # Rozdělení monorepa `pes/pes` na Composer balíčky
 
-Aktualizovaný plán po přesunech: `Pes\Core\*`, `Pes\Application\*` + middleware, `Pes\View\Dom\*`, `pes/pes-session` jako samostatný path balíček.
+**Zdroj pravdy (vývoj):** větev `split` v `https://github.com/box4pes/pes`.  
+**Release line:** `8.27` — interní `require` mezi balíčky používají `^8.27` (ne `@dev`).  
+**Verze:** z git tagů (např. `v8.27.0`); root `composer.json` **nemá** hardcoded `version`.  
+**Širší plán (Packagist / split repo):** viz plán dokončení rozdělení (Agent Store / projektová dokumentace mimo monorepo).
 
-**Provedený stav:** zdrojáky jsou přesunuty do `pes-session/`, `pes-core/`, `pes-http/`, `pes-di/`, `pes-router/`, `pes-database/`, `pes-view/`, `pes-application/`, `pes-logger/`. Kořenový `pes/pes` je závislý na všech těchto balíčcích (`@dev`) a jeho `autoload.psr-4` mapuje už jen zbývající namespace v `src/` (`Acl`, `Comparator`, `Document`, …), aby nedocházelo ke kolizi s balíčky.
+## Cílové balíčky
 
-## Cílové balíčky (kromě meta `pes/pes`)
+| Balíček | Namespace (PSR-4) | Adresář | Závislosti (Pes) |
+|---------|-------------------|---------|------------------|
+| `pes/pes-core` | `Pes\Core\` | `pes-core/` | — |
+| `pes/pes-di` | `Pes\Container\` | `pes-di/` | — |
+| `pes/pes-mail` | `Pes\Mail\` | `pes-mail/` | — (phpmailer + psr/log) |
+| `pes/pes-logger` | `Pes\Logger\` | `pes-logger/` | `pes-core` |
+| `pes/pes-http` | `Pes\Http\` | `pes-http/` | `pes-core` |
+| `pes/pes-session` | `Pes\Session\` | `pes-session/` | `pes-core` |
+| `pes/pes-router` | `Pes\Router\` | `pes-router/` | `pes-core` + `pes-http` |
+| `pes/pes-database` | `Pes\Database\`, `Pes\Query\` | `pes-database/` | `pes-core` |
+| `pes/pes-view` | `Pes\View\` | `pes-view/` | `pes-core` |
+| `pes/pes-bootstrap` | `Pes\Bootstrap\` + `bootstrap/*.php` | `pes-bootstrap/` | `pes-logger` |
+| `pes/pes-model` | `Pes\Model\` | `pes-model/` | `pes-database` + `pes-session` |
+| `pes/pes-application` | `Pes\Application\` | `pes-application/` | `pes-http` + `pes-di` + `pes-session` |
+| `pes/pes` (meta) | `Acl`, `Autoloader`, `Config`, `Entity`, `Readers`, `Repository`, `Storage` | `src/` | všechny výše |
 
-| Balíček | Namespace (PSR-4) | Zdrojová složka po extrakci | Poznámka |
-|---------|---------------------|-----------------------------|----------|
-| `pes/pes-session` | `Pes\Session\` | `pes-session/src/` | Hotovo |
-| `pes/pes-http` | `Pes\Http\` | `pes-http/src/` | Hotovo |
-| `pes/pes-di` | `Pes\Container\` (+ případně `Pes\Config\`, `Pes\Autoloader\`) | `pes-di/src/` | Hotovo (`Config` / `Autoloader` zatím v meta `src/`) |
-| `pes/pes-core` | `Pes\Core\` | `pes-core/src/` | Hotovo; pomocné třídy adresářů: `Pes\Core\Directory\Directory`, `Pes\Core\Directory\Exception\CreateDirectoryFailedException` |
-| `pes/pes-router` | `Pes\Router\` | `pes-router/src/` | Hotovo |
-| `pes/pes-database` | `Pes\Database\`, `Pes\Query\` | `pes-database/src/` | Hotovo |
-| `pes/pes-view` | `Pes\View\` | `pes-view/src/` | Hotovo |
-| `pes/pes-application` | `Pes\Application\` | `pes-application/src/` | Hotovo |
-| `pes/pes-logger` | `Pes\Logger\` | `pes-logger/src/` | Hotovo; `FileLogger` používá `Pes\Core\Directory\Directory` z `pes-core` |
-| `pes/pes` (meta) | zbývající `Pes\*` | `src/` | PSR-4 jen pro nesloučené stromy |
+Procedurální soubory v `pes-bootstrap/bootstrap/` jsou mimo PSR-4; doručují se v dist a načítají se přes `BootstrapEntry`.
 
-**Zatím mimo tabulku** (další vlna nebo součást meta): `Acl`, `Autoloader`, `Bootstrap`, `Comparator`, `Config`, `Debug`, `Document`, `Entity`, `Readers`, `Repository`, `Slot`, `Storage`.
+## DAG závislostí (publish pořadí = list → kořen)
 
-## Závislosti (logický DAG)
+```
+pes-core
+pes-di
+pes-mail                    (jen phpmailer + psr/log)
+   ├─ pes-logger ← pes-core
+   ├─ pes-http ← pes-core
+   ├─ pes-session ← pes-core
+   ├─ pes-router ← pes-core + pes-http
+   ├─ pes-database ← pes-core
+   ├─ pes-view ← pes-core
+   ├─ pes-bootstrap ← pes-logger
+   ├─ pes-model ← pes-database + pes-session
+   └─ pes-application ← pes-http + pes-di + pes-session
+pes/pes (meta) ← všechny výše
+```
 
 ```mermaid
 flowchart TB
-  psr7[psr/http-message atd.]
-  psr15[psr/http-server-*]
-  psr_container[psr/container]
-  psr_log[psr/log]
+  core[pes-core]
+  di[pes-di]
+  mail[pes-mail]
+  logger[pes-logger]
+  http[pes-http]
+  session[pes-session]
+  router[pes-router]
+  db[pes-database]
+  view[pes-view]
+  boot[pes-bootstrap]
+  model[pes-model]
+  app[pes-application]
+  meta[pes/pes meta]
 
-  pes_http[pes-http]
-  pes_di[pes-di]
-  pes_core[pes-core]
-  pes_session[pes-session]
-  pes_router[pes-router]
-  pes_db[pes-database]
-  pes_view[pes-view]
-  pes_app[pes-application]
-  pes_meta[pes/pes meta]
-
-  psr7 --> pes_http
-  pes_http --> pes_router
-  pes_http --> pes_app
-  psr15 --> pes_router
-  psr15 --> pes_app
-  psr_container --> pes_di
-  psr_container --> pes_session
-  psr_log --> pes_session
-
-  pes_di --> pes_app
-  pes_http --> pes_app
-  pes_session --> pes_app
-  pes_core --> pes_view
-  pes_http --> pes_view
-  pes_di --> pes_view
-  pes_core --> pes_db
-  pes_di --> pes_db
-
-  pes_http --> pes_meta
-  pes_di --> pes_meta
-  pes_core --> pes_meta
-  pes_router --> pes_meta
-  pes_db --> pes_meta
-  pes_view --> pes_meta
-  pes_app --> pes_meta
-  pes_session --> pes_meta
+  core --> logger
+  core --> http
+  core --> session
+  core --> router
+  core --> db
+  core --> view
+  http --> router
+  logger --> boot
+  db --> model
+  session --> model
+  http --> app
+  di --> app
+  session --> app
+  core --> meta
+  di --> meta
+  mail --> meta
+  logger --> meta
+  http --> meta
+  session --> meta
+  router --> meta
+  db --> meta
+  view --> meta
+  boot --> meta
+  model --> meta
+  app --> meta
 ```
 
-## Doporučené pořadí extrakce
+## Lokální vývoj (path)
 
-1. **pes-http** — málo vnitřních závislostí na zbytek Pesu; ostatní je na něj napojené.
-2. **pes-di** — čistý `Pes\Container\*` (+ volitelně `Config` / `Autoloader` po analýze importů).
-3. **pes-core** — ověřit odkazy z `pes-session` na `Pes\Core\Security` (už v suggest).
-4. **pes-router** — odstranit zbytky vazeb na legacy `Pes\Action` (již částečně hotovo).
-5. **pes-database** — `Database`, `Query`; doplnit `require` podle reálných `use` (např. `Pes\Core`, `Psr\Log`).
-6. **pes-view** — přesun `src/View/**/*`; namespace už `Pes\View\…` včetně `Pes\View\Dom\…`.
-7. **pes-application** — závisí na http, di, session; middleware zůstává v `Pes\Application\Middleware`.
-8. **Root `pes/pes`** — postupně ztenčit `src/` na „zbytek“ nebo rozšířit o další balíčky.
+Kořenový `composer.json` má `repositories` typu `path` + `symlink: true` na všechny `pes-*`.  
+Branch alias: `dev-split` / `dev-master` → `8.27.x-dev` (`extra.branch-alias`), aby `^8.27` fungovalo i před Packagist tagy.
 
-## Kroky při dalším vývoji balíčku
+```bash
+composer install
+composer test
+composer dump-autoload -o
+```
 
-1. Upravovat kód primárně v příslušném `pes-*/src/` (ne v odstraněných cestách pod `src/`).
-2. Doplňovat `require` v `composer.json` daného balíčku podle nových `use` vazeb.
-3. Po změně závislostí v meta projektu: `composer update` v kořeni.
+## Úklid před publish
 
-## Balíčky v repozitáři
+- Odstraněn `pes-core/src/Text/messageTestQ.php` (testovací šum s `Pes\Logger` — falešný dojem cyklu core↔logger).
+- `pes-session/vzory/` — referenční / cizí vzory (Aura); **nejsou** součástí dist (`archive.exclude`).
 
-Adresáře `pes-*` obsahují přesunutý kód a vlastní `composer.json`. Kořenový `pes/pes` je na ně závislý (`@dev`) a `repositories` používají `path` + `symlink: true`.
+## Tagovací konvence (Fáze B)
 
-## `pes-session` a `pes-application`
+- Sdílené číslo verze sady: **8.27.0** (první split release; major 8 = PHP 8 řada).
+- Monorepo tag: `v8.27.0` (všechny balíčky najednou).
+- Split repo (až existují): stejný tag `v8.27.0` na každém `box4pes/pes-*`.
+- Interní require: `"pes/pes-core": "^8.27"` (ne `@dev`, ne `*`).
 
-- `SessionServicesConfigurator` žije v `Pes\Application` a potřebuje `pes/pes-session` + kontejner (`ContainerSettingsAwareInterface`).
-- Šifrované save handlery v session dál suggestují `pes/pes-core` kvůli `Pes\Core\Security\Cryptor`.
+## Co zbývá mimo monorepo (neřeší tento dokument)
 
-## Kontrola po extrakci
+1. GitHub repozitáře `box4pes/pes-*` + subtree/splitsh automatizace.
+2. Registrace na Packagist (list first podle DAG).
+3. Spotřebitelé (`grafiaware/web`) — odstranit path repositories až po Packagist release.
 
-- Žádné duplicitní stromy (`src/Dom` vs `src/View/Dom`) — ponechat jen kanonickou cestu odpovídající namespace.
-- `composer dump-autoload -o` a oprava PSR-4 varování v rootu i v balíčcích.
+Dokud Packagist `pes/pes-*` neexistují, path checkout monorepa zůstává nutný pro instalaci meta `pes/pes`.
+
+## Migrace namespace
+
+`tools/Migrate-PesSplit.ps1` (+ `tools/Migrate.txt`) pro spotřebitele se starými namespace.

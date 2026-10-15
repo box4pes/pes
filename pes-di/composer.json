@@ -3,6 +3,22 @@
     "type": "library",
     "description": "Dependency injection container for Pes (Pes\\Container).",
     "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "di",
+        "container",
+        "psr-11"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "svoboda@grafia.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-di"
+    },
     "require": {
         "php": "<8.5.0",
         "psr/container": "^2.0"
@@ -10,6 +26,12 @@
     "autoload": {
         "psr-4": {
             "Pes\\Container\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }

@@ -3,9 +3,25 @@
     "type": "library",
     "description": "HTTP routing for Pes.",
     "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "router",
+        "psr-15"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "svoboda@grafia.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-router"
+    },
     "require": {
         "php": "<8.5.0",
-        "pes/pes-core": "@dev",
+        "pes/pes-core": "^8.27",
+        "pes/pes-http": "^8.27",
         "psr/http-message": "^2.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
@@ -14,6 +30,12 @@
     "autoload": {
         "psr-4": {
             "Pes\\Router\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }
