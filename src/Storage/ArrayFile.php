@@ -2,8 +2,8 @@
 
 namespace Pes\Storage;
 
-use Pes\Validator\IsArrayKeyValidator;
-use Pes\Utils\Directory;
+use Pes\Core\Validator\IsArrayKeyValidator;
+use Pes\Core\Directory\Directory;
 
 /**
  * Třída pro ukládání informací do souboru.

@@ -1,8 +1,8 @@
 <?php
 namespace Pes\Repository;
 
-use Pes\Collection\MapCollectionInterface;
-use Pes\Collection\MapCollection;
+use Pes\Core\Collection\MapCollectionInterface;
+use Pes\Core\Collection\MapCollection;
 use Pes\Criteria\CriteriaInterface;
 
 /**

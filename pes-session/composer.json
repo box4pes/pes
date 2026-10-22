@@ -1,0 +1,45 @@
+{
+    "name": "pes/pes-session",
+    "type": "library",
+    "description": "PHP session handling for Pes (SessionStatusHandler, save handlers).",
+    "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "session"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "pesbox@email.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-session"
+    },
+    "require": {
+        "php": "<8.5.0",
+        "pes/pes-core": "^8.27",
+        "psr/container": "^2.0",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Session\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
+        }
+    },
+    "suggest": {
+        "ext-session": "Native PHP sessions"
+    },
+    "archive": {
+        "exclude": [
+            "/vzory"
+        ]
+    }
+}

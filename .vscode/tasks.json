@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "PHPUnit: current file",
+            "type": "shell",
+            "command": "c:\\wamp64\\bin\\php\\php8.4.0\\php.exe",
+            "args": [
+                "vendor/bin/phpunit",
+                "-c",
+                "phpunit.xml",
+                "${relativeFile}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "PHPUnit: router suite",
+            "type": "shell",
+            "command": "composer",
+            "args": ["test:router"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "test"
+        }
+    ]
+}

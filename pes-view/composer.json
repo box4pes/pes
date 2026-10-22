@@ -1,0 +1,38 @@
+{
+    "name": "pes/pes-view",
+    "type": "library",
+    "description": "View layer for Pes (templates, renderers, DOM nodes).",
+    "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "view",
+        "template"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "pesbox@email.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-view"
+    },
+    "require": {
+        "php": "<8.5.0",
+        "pes/pes-core": "^8.27",
+        "psr/container": "^2.0",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\View\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
+        }
+    }
+}

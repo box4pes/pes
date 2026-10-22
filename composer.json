@@ -3,16 +3,117 @@
     "type": "library",
     "description": "Psí framework pro PHP 8.4.",
     "license": "MIT",
-    "keywords": ["pes", "framework"],
+    "keywords": [
+        "pes",
+        "framework",
+        "php"
+    ],
     "authors": [
         {
             "name": "Petr Svoboda",
-            "email": "svoboda@grafia.cz"
+            "email": "pesbox@email.cz"
         }
     ],
-    "version": "8.26.02",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "pes-session",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-http",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-di",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-core",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-router",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-database",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-view",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-application",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-logger",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-bootstrap",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-model",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "pes-mail",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require": {
         "php": "<8.5.0",
+        "pes/pes-core": "^8.27",
+        "pes/pes-http": "^8.27",
+        "pes/pes-di": "^8.27",
+        "pes/pes-router": "^8.27",
+        "pes/pes-database": "^8.27",
+        "pes/pes-view": "^8.27",
+        "pes/pes-application": "^8.27",
+        "pes/pes-logger": "^8.27",
+        "pes/pes-session": "^8.27",
+        "pes/pes-bootstrap": "^8.27",
+        "pes/pes-model": "^8.27",
+        "pes/pes-mail": "^8.27",
         "psr/http-message": "^2.0",
         "psr/http-factory": "^1.0",
         "psr/container": "^2.0",
@@ -21,20 +122,57 @@
         "psr/http-server-middleware": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.6",
+        "phpunit/phpunit": "^12.5",
         "friendsofphp/php-cs-fixer": "^3.93"
     },
     "autoload": {
         "psr-4": {
-            "Pes\\": "src/"
+            "Pes\\Acl\\": "src/Acl/",
+            "Pes\\Autoloader\\": "src/Autoloader/",
+            "Pes\\Config\\": "src/Config/",
+            "Pes\\Entity\\": "src/Entity/",
+            "Pes\\Readers\\": "src/Readers/",
+            "Pes\\Repository\\": "src/Repository/",
+            "Pes\\Storage\\": "src/Storage/"
         }
     },
     "autoload-dev": {
-        "psr-4": {           }
+        "psr-4": {
+            "Pes\\Router\\": "pes-router/src/",
+            "Pes\\Router\\Tests\\": "tests/pes-router/Router/"
+        }
     },
+    "scripts": {
+        "test": "phpunit",
+        "test:core": "phpunit --testsuite pes-core",
+        "test:database": "phpunit --testsuite pes-database",
+        "test:di": "phpunit --testsuite pes-di",
+        "test:logger": "phpunit --testsuite pes-logger",
+        "test:router": "phpunit --testsuite pes-router",
+        "test:view": "phpunit --testsuite pes-view",
+        "test:model": "phpunit --testsuite pes-model",
+        "test:root": "phpunit --testsuite pes-root"
+    },
+    "scripts-descriptions": {
+        "test": "Spustí všechny PHPUnit testsuity (viz phpunit.xml.dist)",
+        "test:core": "Spustí jen testy pro pes-core",
+        "test:database": "Spustí jen testy pro pes-database",
+        "test:di": "Spustí jen testy pro pes-di",
+        "test:logger": "Spustí jen testy pro pes-logger",
+        "test:router": "Spustí jen testy pro pes-router",
+        "test:view": "Spustí jen testy pro pes-view",
+        "test:model": "Spustí jen testy pro pes-model (RowData apod.)",
+        "test:root": "Spustí testy z kořenového balíčku (Autoloader apod.)"
+    },
+    "support": {
+        "source": "https://github.com/box4pes/pes"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "8.26.x-dev"
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
         }
     }
 }

@@ -20,7 +20,7 @@ abstract class PersistableEntityAbstract extends EntityAbstract implements Persi
      * 
      * @param IdentityInterface $identity
      */
-    public function __construct(IdentityInterface $identity=NULL) {
+    public function __construct(?IdentityInterface $identity=NULL) {
         $this->identity = $identity;
     }
     

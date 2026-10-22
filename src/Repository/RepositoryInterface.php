@@ -65,7 +65,7 @@ interface RepositoryInterface extends \Countable, \IteratorAggregate, \ArrayAcce
     /**
      * Vrací kolekci kořenů agregátů - kořen je entita.
      *
-     * @return Pes\Collection\EntityCollectionInterface
+     * @return Pes\Core\Collection\EntityCollectionInterface
      */
     public function find(CriteriaInterface $criteria);
 

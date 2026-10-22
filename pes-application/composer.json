@@ -1,0 +1,43 @@
+{
+    "name": "pes/pes-application",
+    "type": "library",
+    "description": "Application bootstrap, middleware, and HTTP app wiring for Pes.",
+    "license": "MIT",
+    "keywords": [
+        "pes",
+        "framework",
+        "application",
+        "middleware"
+    ],
+    "authors": [
+        {
+            "name": "Petr Svoboda",
+            "email": "pesbox@email.cz"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/box4pes/pes-application"
+    },
+    "require": {
+        "php": "<8.5.0",
+        "pes/pes-http": "^8.27",
+        "pes/pes-di": "^8.27",
+        "pes/pes-session": "^8.27",
+        "psr/container": "^2.0",
+        "psr/http-message": "^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pes\\Application\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-split": "8.27.x-dev",
+            "dev-master": "8.27.x-dev"
+        }
+    }
+}
