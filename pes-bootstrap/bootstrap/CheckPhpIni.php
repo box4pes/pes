@@ -19,7 +19,7 @@ if (isset($bootstrapLogger)) {
     if (ini_get('session.use_only_cookies') == 0) {
         $bootstrapLogger->warning( "CheckPhpIni: Je vypnutý 'session.use_only_cookies'!");
     }
-    if ((ini_get('session.gc_divisor')/ini_get('session.gc_probability')) > 100) {
+    if (ini_get('session.gc_probability')=0 || (ini_get('session.gc_divisor')/ini_get('session.gc_probability')) > 100) {
         $bootstrapLogger->notice( "CheckPhpIni: Garbage collection se spouští jen jednou za ".(ini_get('session.gc_divisor')/ini_get('session.gc_probability')) ." spuštění skriptu! Např. session tak může být uklizena za dlouhou dobu.");
     }
 
