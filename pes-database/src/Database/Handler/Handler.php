@@ -144,13 +144,6 @@ class Handler implements HandlerInterface { //extends PDO {   // //
     private function setAttributes($attributes) {
         foreach ($attributes as $key => $value) {
             $succ = $this->connection->setAttribute($key, $value);
-            if (!$succ) {
-                $dump = $this->dumpPDOParameters();
-                if ($this->logger) {
-                    $this->logger->alert($this->getInstanceInfo().' Selhalo nastavení hodnoty atributu handleru (PDO): {key} na hodnotu {value}', array('key'=>$key, 'value'=>print_r($dump, TRUE)));
-                }
-                throw new \RuntimeException($this->getInstanceInfo().' Selhalo nastavení atributu '.$key.'. '.$dump);
-            }
         }
     }
 
@@ -166,25 +159,32 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         //TODO: pro PDO::PARAM_ v options
 
         // všechny PDO ATTR atributy
-        $attributes = array(
-	 "ATTR_AUTOCOMMIT", "ATTR_CASE", "ATTR_CLIENT_VERSION", "ATTR_CONNECTION_STATUS",
-         "ATTR_DRIVER_NAME", "ATTR_ERRMODE", "ATTR_ORACLE_NULLS", "ATTR_PERSISTENT",
-	 "ATTR_PREFETCH", "ATTR_SERVER_INFO", "ATTR_SERVER_VERSION", "ATTR_TIMEOUT"
+        $attributeNames = array(
+            "ATTR_AUTOCOMMIT", "ATTR_PREFETCH", "ATTR_TIMEOUT", "ATTR_ERRMODE", "ATTR_SERVER_VERSION", "ATTR_CLIENT_VERSION", "ATTR_SERVER_INFO", 
+            "ATTR_CONNECTION_STATUS", "ATTR_CASE", "ATTR_CURSOR_NAME", "ATTR_DRIVER_NAME", "ATTR_ORACLE_NULLS", "ATTR_PERSISTENT", "ATTR_STATEMENT_CLASS", 
+            "ATTR_FETCH_CATALOG_NAMES", "ATTR_FETCH_TABLE_NAMES", "ATTR_STRINGIFY_FETCHES", "ATTR_MAX_COLUMN_LEN", "ATTR_DEFAULT_FETCH_MODE", 
+            "ATTR_EMULATE_PREPARES", "ATTR_DEFAULT_STR_PARAM"
         );
 
-        foreach ($attributes as $attribute) {
-            try {
-                $attr = $this->connection->getAttribute(constant("\PDO::$attribute"));
-                $dump[] = "PDO::$attribute: (atribut číslo ".constant("\PDO::$attribute").") má hodnotu ".$attr;
-            } catch (PDOException $pdoex) {
-                if (strpos($pdoex->getMessage(), self::UNSUPPORTED_ATTRIBUTE_MESSAGE) !== FALSE) {
-                    $dump[] = "Použitý PHP interpret neakceptuje atribut PDO::$attribute";
-                } else {
-                    throw $pdoex;
-                }
-            }
+        foreach ($attributeNames as $attributeName) {
+            $dump[$attributeName] = $this->dumpPDOParameter($attributeName);
         }
         return var_export($dump, TRUE);
+    }
+    
+    private function dumpPDOParameter($attributeName) {    
+        try {
+                $attributeConstant = constant("\PDO::$attributeName");
+                $attributeValue = $this->connection->getAttribute($attributeConstant);
+                $dump = "PDO::$attributeName: atribut (konstanta $attributeConstant) má hodnotu ".$attributeValue;
+        } catch (PDOException $pdoex) {
+            if (strpos($pdoex->getMessage(), self::UNSUPPORTED_ATTRIBUTE_MESSAGE) !== FALSE) {
+                $dump = "Použitý PHP interpret neakceptuje atribut PDO::$attributeName";
+            } else {
+                throw $pdoex;
+            }
+        }
+        return $dump;
     }
 
     /**
@@ -301,7 +301,7 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         return $rendered;
     }
 
-######### PŘETÍŽENÉ METODY PDO ( metody PDO Interface) #######################################################################
+######### WRAPPER METODY PDO  #######################################################################
 
     public function inTransaction() {
         if ($this->logger) {
@@ -312,7 +312,23 @@ class Handler implements HandlerInterface { //extends PDO {   // //
     }
     
     public function getAttribute(int $attribute): mixed{
-        return $this->connection->getAttribute($attribute);
+        $value = $this->connection->getAttribute($attribute);
+        if ($this->logger) {
+                $this->logger->debug($this->getInstanceInfo().' beginTransaction()');
+        }
+        return $value;
+    }
+    
+    public function setAttribute(int $attribute, mixed $value): bool {
+        $succ = $this->connection->setAttribute($attribute, $value);
+        if (!$succ) {
+            $dump = $this->dumpPDOParameter($attribute);
+            if ($this->logger) {
+                $this->logger->alert($this->getInstanceInfo().' Selhalo nastavení hodnoty atributu handleru (PDO): {key} na hodnotu {value}', array('key'=>$key, 'value'=>print_r($dump, TRUE)));
+            }
+            throw new \RuntimeException($this->getInstanceInfo().' Selhalo nastavení atributu '.$key.'. '.$dump);
+        }
+        return $succ;        
     }
     
     public function errorInfo(): array {
