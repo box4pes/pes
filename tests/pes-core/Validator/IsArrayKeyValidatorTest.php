@@ -5,6 +5,7 @@ namespace Pes\Core\Validator;
 use PHPUnit\Framework\TestCase;
 
 use Pes\Core\Validator\IsArrayKeyValidator;
+use Pes\Core\Validator\Exception\NotArrayKeyException;
 
 /**
  * Description of IndexedCollectionTest
@@ -34,31 +35,23 @@ class IsArrayKeyValidatorTest extends TestCase {
         $this->assertNull($this->validator->validate(''));
     }
 
-    /**
-     * @expectedException Pes\Core\Validator\Exception\NotArrayKeyException
-     */
     public function testArray() {
+        $this->expectException(NotArrayKeyException::class);
         $this->validator->validate([654]);
     }
 
-    /**
-     * @expectedException Pes\Core\Validator\Exception\NotArrayKeyException
-     */
     public function testObject() {
+        $this->expectException(NotArrayKeyException::class);
         $this->validator->validate(new \stdClass());
     }
 
-    /**
-     * @expectedException Pes\Core\Validator\Exception\NotArrayKeyException
-     */
     public function testBool() {
+        $this->expectException(NotArrayKeyException::class);
         $this->validator->validate(FALSE);
     }
 
-    /**
-     * @expectedException Pes\Core\Validator\Exception\NotArrayKeyException
-     */
     public function testNull() {
+        $this->expectException(NotArrayKeyException::class);
         $this->validator->validate(NULL);
     }
 }

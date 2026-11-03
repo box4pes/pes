@@ -57,10 +57,8 @@ class ContainerConfiguratorTest extends TestCase {
 
     }
 
-    /**
-     * @expectedException Pes\Container\Exception\LockedContainerException
-     */
     public function testLockedContainerException() {
+        $this->expectException(LockedContainerException::class);
         $delegate = new Container();
         $outer = new Container($delegate);
         $outer = (new ContainerConfiguratorTestOuterConfigurator())->configure($outer);
