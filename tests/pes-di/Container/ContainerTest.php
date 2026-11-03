@@ -27,7 +27,10 @@ class ContainerDuplicateServiceKService   extends ContainerConfiguratorAbstract 
     }
     public function getAliases(): iterable {return [];
     }
-    public function getServicesDefinitions(): iterable {return ['dbNick' => 'NICK', 'dbNick' => 'duplikátnínick'];
+    public function getServicesDefinitions(): iterable {
+        // yield so the same name is configured twice (PHP array literals collapse duplicate keys)
+        yield 'dbNick' => 'NICK';
+        yield 'dbNick' => 'duplikátnínick';
     }
     public function getServicesOverrideDefinitions(): iterable {return [];
     }
@@ -39,13 +42,16 @@ class ContainerDuplicateFactoryKFactory extends ContainerConfiguratorAbstract {
     public function getParams(): iterable {
         return [];
     }
-    public function getAliases(): iterable {return ['servisníobjekt' => function() { return new \stdClass();} ];
+    public function getAliases(): iterable {return [];
     }
     public function getServicesDefinitions(): iterable {return [];
     }
     public function getServicesOverrideDefinitions(): iterable {return [];
     }
-    public function getFactoriesDefinitions(): iterable {return ['dbType' => 'type', 'dbType' => function() { return new \stdClass();} ];
+    public function getFactoriesDefinitions(): iterable {
+        // yield so the same name is configured twice (PHP array literals collapse duplicate keys)
+        yield 'dbType' => 'type';
+        yield 'dbType' => function() { return new \stdClass();};
     }
 }
 
@@ -186,24 +192,18 @@ class ContainerTestSettingsConfigurator extends ContainerConfiguratorAbstract {
  */
 class ContainerTest extends TestCase {
 
-    /**
-     * @expectedException Pes\Container\Exception\ConfiguratorDuplicateServiceDefinionException
-     */
     public function testDuplicateServiceKServiceException() {
+            $this->expectException(Exception\ConfiguratorDuplicateServiceDefinionException::class);
             $c = (new ContainerDuplicateServiceKService  ())->configure(new Container());
     }
 
-    /**
-     * @expectedException Pes\Container\Exception\ConfiguratorDuplicateServiceDefinionException
-     */
     public function testDuplicateFactoryKFactoryException() {
+            $this->expectException(Exception\ConfiguratorDuplicateServiceDefinionException::class);
             $c = (new ContainerDuplicateFactoryKFactory())->configure(new Container());
     }
 
-    /**
-     * @expectedException Pes\Container\Exception\ConfiguratorDuplicateServiceDefinionException
-     */
     public function testDuplicateFactoryKServiceException() {
+            $this->expectException(Exception\ConfiguratorDuplicateServiceDefinionException::class);
             $c = (new ContainerDuplicateFactoryKService())->configure(new Container());
     }
 

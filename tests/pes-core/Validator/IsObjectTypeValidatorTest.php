@@ -25,16 +25,13 @@ class AnotherObjectForIsTypeValidatorTest {}
  */
 class IsObjectTypeValidatorTest extends TestCase {
 
-    /**
-     * @expectedException Pes\Core\Validator\Exception\TypeNotExistsException
-     */
     public function testTypeNotExistsException() {
-            $validator = new IsObjectTypeValidator('Blabla');
+        $this->expectException(TypeNotExistsException::class);
+        $validator = new IsObjectTypeValidator('Blabla');
     }
-    /**
-     * @expectedException Pes\Core\Validator\Exception\TypeNameNotAStringException
-     */
+
     public function testTypeNameNotAStringException() {
+        $this->expectException(TypeNameNotAStringException::class);
         $validator = new IsObjectTypeValidator(188);
     }
 
@@ -56,18 +53,14 @@ class IsObjectTypeValidatorTest extends TestCase {
         $this->assertNull($validator->validate(new InterfacedObjectForIsTypeValidatorTest()));
     }
 
-    /**
-     * @expectedException Pes\Core\Validator\Exception\NotValidTypeException
-     */
     public function testInvalidInterface() {
+        $this->expectException(NotValidTypeException::class);
         $validator = new IsObjectTypeValidator(InterfaceForIsTypeValidatorTest::class);
         $validator->validate(new AnotherObjectForIsTypeValidatorTest());
     }
 
-    /**
-     * @expectedException Pes\Core\Validator\Exception\NotValidTypeException
-     */
     public function testInvalidClass() {
+        $this->expectException(NotValidTypeException::class);
         $validator = new IsObjectTypeValidator(ObjectForIsTypeValidatorTest::class);
         $validator->validate(new AnotherObjectForIsTypeValidatorTest());
     }
