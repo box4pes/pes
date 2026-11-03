@@ -310,7 +310,11 @@ class Handler implements HandlerInterface { //extends PDO {   // //
         $ret = $this->connection->inTransaction();
         return $ret;
     }
-        
+    
+    public function getAttribute(int $attribute): mixed{
+        return $this->connection->getAttribute($attribute);
+    }
+    
     public function errorInfo(): array {
         return $this->connection->errorInfo();
     }
