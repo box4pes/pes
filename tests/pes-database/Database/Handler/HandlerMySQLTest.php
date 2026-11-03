@@ -176,4 +176,61 @@ class HandlerMySQLTest extends TestCase {
                 . ' neodpovídá přečtené Surname ve 3 řádku resultsetu testovacímu stringu převedenému do cp1250.');
 
     }
+
+    /**
+     * Helper - vytvoří Handler s Null attributes providerem a loggerem z setUp.
+     *
+     * @return Handler
+     */
+    private function createHandler() {
+        $user = new Account(self::USER, self::PASS);
+        $connectionInfoUtf8 = new ConnectionInfo(DbTypeEnum::MySQL, self::DB_HOST, self::DB_NAME, self::CHARSET_UTF8, self::COLLATION_UTF8, self::DB_PORT);
+        $dsnProvider = new DsnProviderMysql();
+        $dsnProvider->setLogger($this->logger);
+        $optionsProvider = new OptionsProviderMysql();
+        $optionsProvider->setLogger($this->logger);
+        $attributesProviderNull = new AttributesProviderNull();
+        $attributesProviderNull->setLogger($this->logger);
+        return new Handler($user, $connectionInfoUtf8, $dsnProvider, $optionsProvider, $attributesProviderNull, $this->logger);
+    }
+
+    /**
+     * Testuje Handler::getAttribute() - wrapper nad PDO::getAttribute().
+     */
+    public function testGetAttribute() {
+        $dbh = $this->createHandler();
+
+        $driverName = $dbh->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        $this->assertSame('mysql', $driverName, 'getAttribute(ATTR_DRIVER_NAME) má vrátit "mysql".');
+
+        $errMode = $dbh->getAttribute(\PDO::ATTR_ERRMODE);
+        $this->assertContains(
+            $errMode,
+            [\PDO::ERRMODE_SILENT, \PDO::ERRMODE_WARNING, \PDO::ERRMODE_EXCEPTION],
+            'getAttribute(ATTR_ERRMODE) má vrátit jednu z platných PDO ERRMODE hodnot.'
+        );
+    }
+
+    /**
+     * Testuje Handler::setAttribute() a zpětné čtení přes getAttribute().
+     */
+    public function testSetAndGetAttribute() {
+        $dbh = $this->createHandler();
+
+        $succ = $dbh->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_UPPER);
+        $this->assertTrue($succ, 'setAttribute(ATTR_CASE, CASE_UPPER) má vrátit true.');
+        $this->assertSame(
+            \PDO::CASE_UPPER,
+            $dbh->getAttribute(\PDO::ATTR_CASE),
+            'getAttribute(ATTR_CASE) má po setAttribute vracet CASE_UPPER.'
+        );
+
+        $succ = $dbh->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_NATURAL);
+        $this->assertTrue($succ, 'setAttribute(ATTR_CASE, CASE_NATURAL) má vrátit true.');
+        $this->assertSame(
+            \PDO::CASE_NATURAL,
+            $dbh->getAttribute(\PDO::ATTR_CASE),
+            'getAttribute(ATTR_CASE) má po setAttribute vracet CASE_NATURAL.'
+        );
+    }
 }
